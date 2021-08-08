@@ -1,0 +1,26 @@
+.login-container {
+    background-image: url("../../images/backgrounds/1.jpg");
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.login {
+    width: 400px;
+}
+.login-title {
+    font-weight: 200;
+}
+.form-control {
+    font-size: 20px;
+    font-weight: 200;
+}
+.btn {
+    font-size: 24px;
+    font-weight: 200;
+}

@@ -2,3 +2,20 @@
     margin: 0;
     padding: 0;
 }
+
+.app {
+    height: 90vh;
+}
+
+.btn-purple {
+    color: #ffffff;
+    background-color: #4527a0 !important;
+}
+.btn-purple:hover {
+    color: #ffffff;
+    background-color: #5334af !important;
+}
+
+.purple {
+    color: #4527a0;
+}
