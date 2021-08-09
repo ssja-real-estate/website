@@ -12,7 +12,7 @@ function SignupScreen() {
     }
     return (
         <div className="signup-container">
-            <div className="signup card rounded-3 py-4 px-3">
+            <div className="signup card shadow rounded-3 py-4 px-3">
                 <h1 className="signup-title text-center">ثبت نام</h1>
                 <form className="signup-form">
                     <TextInput

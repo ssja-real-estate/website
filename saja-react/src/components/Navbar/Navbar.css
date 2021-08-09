@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    box-shadow: 0 0px 10px 0 #00000033;
     z-index: 10;
 }
 .nav-right {

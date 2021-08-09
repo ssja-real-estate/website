@@ -12,7 +12,7 @@ function LoginScreen() {
     }
     return (
         <div className="login-container">
-            <div className="login card rounded-3 py-4 px-3">
+            <div className="login card shadow rounded-3 py-4 px-3">
                 <h1 className="login-title text-center">ورود</h1>
                 <form className="login-form">
                     <TextInput

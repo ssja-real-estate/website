@@ -3,7 +3,7 @@ import "./Navbar.css";
 
 function Navbar() {
     return (
-        <nav className="navbar">
+        <nav className="navbar shadow-sm">
             <div className="nav-right">
                 <Link className="nav-item btn btn-lg" to="/add-estate">
                     ثبت ملک

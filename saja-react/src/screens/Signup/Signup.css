@@ -12,6 +12,8 @@
 }
 .signup {
     width: 400px;
+    background-color: #ffffff33;
+    backdrop-filter: blur(5px);
 }
 .signup-title {
     font-weight: 200;
