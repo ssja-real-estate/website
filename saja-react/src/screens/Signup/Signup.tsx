@@ -31,9 +31,9 @@ function SignupScreen() {
                     <TextInput
                         className="form-control rounded-3 py-2 my-3"
                         type={visibility ? "text" : "password"}
-                        name="password"
+                        name="repeatPassword"
                         placeholder="تکرار گذرواژه"
-                        id="password"
+                        id="repeatPassword"
                     />
                     <Checkbox
                         className="form-check-input me-2"

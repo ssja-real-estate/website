@@ -2,7 +2,7 @@ import Button from "../../components/Button/Button";
 import Select from "../../components/Select/Select";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import "./AddEstate.css";
+import "./SearchEstate.css";
 
 const delegationTypes = [
     { value: "sell", text: "فروش" },
@@ -44,7 +44,7 @@ const estateTypes = [
     { value: "warehouse", text: "سوله" },
 ];
 
-function AddEstateScreen() {
+function SearchEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
     const [estateType, setEstateType] = useState<string>("default");
 
@@ -66,10 +66,10 @@ function AddEstateScreen() {
     }
 
     return (
-        <div className="add-estate-container">
-            <div className="add-estate card shadow rounded-3 py-4 px-3">
-                <h1 className="add-estate-title text-center">ثبت ملک</h1>
-                <form className="add-estate-form" onSubmit={handleSubmit}>
+        <div className="search-estate-container">
+            <div className="search-estate card shadow rounded-3 py-4 px-3">
+                <h1 className="search-estate-title text-center">جستجوی ملک</h1>
+                <form className="search-estate-form" onSubmit={handleSubmit}>
                     <Select
                         className="form-select py-2 mb-3 rounded-3"
                         name="delegationType"
@@ -90,10 +90,10 @@ function AddEstateScreen() {
                     />
                     <Button
                         className="btn btn-purple w-100 mt-5 rounded-3"
-                        name="addEstateBtn"
-                        id="addEstateBtn"
+                        name="searchEstateBtn"
+                        id="searchEstateBtn"
                         type="submit"
-                        value="ثبت ملک"
+                        value="جستجوی ملک"
                     />
                 </form>
             </div>
@@ -101,4 +101,4 @@ function AddEstateScreen() {
     );
 }
 
-export default AddEstateScreen;
+export default SearchEstateScreen;

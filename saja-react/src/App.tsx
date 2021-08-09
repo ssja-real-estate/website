@@ -11,6 +11,7 @@ import LoginScreen from "./screens/Login/Login";
 import SignupScreen from "./screens/Signup/Signup";
 import NotFoundScreen from "./screens/NotFound/NotFound";
 import AddEstateScreen from "./screens/AddEstate/AddEstate";
+import SearchEstateScreen from "./screens/SearchEstate/SearchEstate";
 
 function App() {
     return (
@@ -26,6 +27,11 @@ function App() {
                         path="/add-estate"
                         exact
                         component={AddEstateScreen}
+                    />
+                    <Route
+                        path="/search-estate"
+                        exact
+                        component={SearchEstateScreen}
                     />
                     <Route path="/" component={NotFoundScreen} />
                 </Switch>

@@ -9,7 +9,7 @@ function Navbar() {
                     ثبت ملک
                     <i className="bi-building pe-2" />
                 </Link>
-                <Link className="nav-item btn btn-lg" to="/search">
+                <Link className="nav-item btn btn-lg" to="/search-estate">
                     جستجوی املاک
                     <i className="bi-search pe-2" />
                 </Link>
