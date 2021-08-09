@@ -10,6 +10,7 @@ import HomeScreen from "./screens/Home/Home";
 import LoginScreen from "./screens/Login/Login";
 import SignupScreen from "./screens/Signup/Signup";
 import NotFoundScreen from "./screens/NotFound/NotFound";
+import AddEstateScreen from "./screens/AddEstate/AddEstate";
 
 function App() {
     return (
@@ -21,6 +22,11 @@ function App() {
                     <Redirect from="/home" to="/"></Redirect>
                     <Route path="/login" exact component={LoginScreen} />
                     <Route path="/signup" exact component={SignupScreen} />
+                    <Route
+                        path="/add-estate"
+                        exact
+                        component={AddEstateScreen}
+                    />
                     <Route path="/" component={NotFoundScreen} />
                 </Switch>
             </Router>

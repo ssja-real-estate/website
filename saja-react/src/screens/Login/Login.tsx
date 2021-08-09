@@ -1,7 +1,9 @@
 import "./Login.css";
-import Input from "../../components/Input/Input";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import TextInput from "../../components/TextInput/TextInput";
+import Checkbox from "../../components/Checkbox/Checkbox";
+import Button from "../../components/Button/Button";
 
 function LoginScreen() {
     const [visibility, setVisibility] = useState(false);
@@ -13,30 +15,26 @@ function LoginScreen() {
             <div className="login card rounded-3 py-4 px-3">
                 <h1 className="login-title text-center">ورود</h1>
                 <form className="login-form">
-                    <Input
+                    <TextInput
                         className="form-control rounded-3 py-2 my-3"
-                        type="phone"
                         name="phone"
                         placeholder="شماره موبایل"
-                        id="email"
+                        id="phone"
                     />
-                    <Input
+                    <TextInput
                         className="form-control rounded-3 py-2 my-3"
                         type={visibility ? "text" : "password"}
                         name="password"
                         placeholder="گذرواژه"
                         id="password"
                     />
-                    <label className="form-check-label" htmlFor="visCheck">
-                        نمایش گذرواژه
-                    </label>
-                    <Input
+                    <Checkbox
                         className="form-check-input me-2"
-                        type="checkbox"
                         name="visCheck"
                         id="visCheck"
                         checked={visibility}
                         onChange={passwordVisible}
+                        label="نمایش گذرواژه"
                     />
                     <div className="text-center my-3">
                         <span className="fw-light">
@@ -49,7 +47,7 @@ function LoginScreen() {
                             بازیابی گذرواژه
                         </a>
                     </div>
-                    <Input
+                    <Button
                         className="btn btn-purple w-100 rounded-3"
                         type="submit"
                         name="submit"

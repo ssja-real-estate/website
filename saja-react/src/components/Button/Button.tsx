@@ -1,39 +1,30 @@
-interface InputProps {
+interface ButtonProps {
     className?: string;
     type: string;
-    placeholder?: string;
     name: string;
     id: string;
     value?: string;
-    checked?: boolean;
     onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
-    onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
 
-function Input({
+function Button({
     className = "form-control",
-    type = "text",
-    placeholder,
+    type,
     name,
     id,
     value,
-    checked,
     onClick,
-    onChange,
-}: InputProps) {
+}: ButtonProps) {
     return (
         <input
             className={className}
             type={type}
-            placeholder={placeholder}
             name={name}
             id={id}
             value={value}
-            checked={checked}
             onClick={onClick}
-            onChange={onChange}
         ></input>
     );
 }
 
-export default Input;
+export default Button;

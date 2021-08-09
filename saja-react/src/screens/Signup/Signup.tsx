@@ -1,7 +1,9 @@
 import "./Signup.css";
 import { useState } from "react";
-import Input from "../../components/Input/Input";
 import { Link } from "react-router-dom";
+import TextInput from "../../components/TextInput/TextInput";
+import Checkbox from "../../components/Checkbox/Checkbox";
+import Button from "../../components/Button/Button";
 
 function SignupScreen() {
     const [visibility, setVisibility] = useState(false);
@@ -13,39 +15,35 @@ function SignupScreen() {
             <div className="signup card rounded-3 py-4 px-3">
                 <h1 className="signup-title text-center">ثبت نام</h1>
                 <form className="signup-form">
-                    <Input
+                    <TextInput
                         className="form-control rounded-3 py-2 my-3"
-                        type="phone"
                         name="phone"
                         placeholder="شماره موبایل"
                         id="phone"
                     />
-                    <Input
-                        className="form-control rounded-3 py-2"
+                    <TextInput
+                        className="form-control rounded-3 py-2 my-3"
                         type={visibility ? "text" : "password"}
                         name="password"
                         placeholder="گذرواژه"
                         id="password"
                     />
-                    <Input
+                    <TextInput
                         className="form-control rounded-3 py-2 my-3"
                         type={visibility ? "text" : "password"}
                         name="password"
                         placeholder="تکرار گذرواژه"
                         id="password"
                     />
-                    <label className="form-check-label" htmlFor="visCheck">
-                        نمایش گذرواژه
-                    </label>
-                    <Input
+                    <Checkbox
                         className="form-check-input me-2"
-                        type="checkbox"
                         name="visCheck"
                         id="visCheck"
                         checked={visibility}
                         onChange={passwordVisible}
+                        label="نمایش گذرواژه"
                     />
-                    <Input
+                    <Button
                         className="btn btn-purple w-100 rounded-3 my-3"
                         type="submit"
                         name="submit"
