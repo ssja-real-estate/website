@@ -1,7 +1,20 @@
 .add-estate-container {
+    background-image: url("../../images/backgrounds/4.jpg");
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100%;
+}
+.add-estate {
+    width: 400px;
+    background-color: #ffffff60;
+    backdrop-filter: blur(5px);
+}
+.add-estate-title {
+    font-weight: 200;
 }
