@@ -6,15 +6,19 @@
     background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     height: 100%;
 }
 .search-estate {
-    width: 400px;
     background-color: #ffffff60;
     backdrop-filter: blur(5px);
+    top: 70px;
 }
 .search-estate-title {
     font-weight: 200;
+}
+.glass {
+    background-color: #ffffff60;
+    backdrop-filter: blur(5px);
 }

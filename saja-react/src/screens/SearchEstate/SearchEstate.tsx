@@ -1,7 +1,5 @@
-import Button from "../../components/Button/Button";
 import Select from "../../components/Select/Select";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
 import "./SearchEstate.css";
 
 const delegationTypes = [
@@ -47,8 +45,8 @@ const estateTypes = [
 function SearchEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
     const [estateType, setEstateType] = useState<string>("default");
-
-    let history = useHistory();
+    const isDefault: boolean =
+        delegationType !== "default" && estateType !== "default" ? true : false;
 
     function handleDelegationChange(
         event: React.ChangeEvent<HTMLSelectElement>
@@ -59,19 +57,13 @@ function SearchEstateScreen() {
         setEstateType(event.target.value);
     }
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        console.log(delegationType, estateType);
-        history.push("/");
-    }
-
     return (
         <div className="search-estate-container">
-            <div className="search-estate card shadow rounded-3 py-4 px-3">
-                <h1 className="search-estate-title text-center">جستجوی ملک</h1>
-                <form className="search-estate-form" onSubmit={handleSubmit}>
+            <div className="search-estate card glass shadow rounded-3 py-3 px-4 my-4 sticky-top">
+                <h2 className="search-estate-title text-center">جستجوی ملک</h2>
+                <form className="search-estate-form input-group d-flex align-items-center">
                     <Select
-                        className="form-select py-2 mb-3 rounded-3"
+                        className="form-select rounded-3 my-1 me-3 ms-5"
                         name="delegationType"
                         id="delegationType"
                         label="نوع واگذاری"
@@ -80,7 +72,7 @@ function SearchEstateScreen() {
                         onChange={handleDelegationChange}
                     />
                     <Select
-                        className="form-select py-2 rounded-3"
+                        className="form-select rounded-3 my-1 me-3"
                         name="estateType"
                         id="estateType"
                         label="نوع ملک"
@@ -88,15 +80,20 @@ function SearchEstateScreen() {
                         value={estateType}
                         onChange={handleTypeChange}
                     />
-                    <Button
-                        className="btn btn-purple w-100 mt-5 rounded-3"
-                        name="searchEstateBtn"
-                        id="searchEstateBtn"
-                        type="submit"
-                        value="جستجوی ملک"
-                    />
                 </form>
             </div>
+            {!isDefault ? (
+                <div className="card shadow rounded-3 glass p-5">
+                    <h4 className="fw-light fs-4">
+                        لطفاً نوع واگذاری و نوع ملک را انتخاب کنید
+                    </h4>
+                </div>
+            ) : (
+                <div>
+                    <h6>{delegationType}</h6>
+                    <h6>{estateType}</h6>
+                </div>
+            )}
         </div>
     );
 }
