@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
+    let loggedIn = localStorage.getItem("loggedIn") ? true : false;
+
     return (
         <nav className="navbar bg-white shadow-sm sticky-top">
             <div className="nav-right">
@@ -20,10 +22,17 @@ function Navbar() {
                 </Link>
             </div>
             <div className="nav-left">
-                <Link className="nav-item btn btn-lg" to="/login">
-                    ورود / ثبت نام
-                    <i className="bi-box-arrow-in-left pe-2" />
-                </Link>
+                {!loggedIn ? (
+                    <Link className="nav-item btn btn-lg" to="/login">
+                        ورود / ثبت نام
+                        <i className="bi-box-arrow-in-left pe-2" />
+                    </Link>
+                ) : (
+                    <Link className="nav-item btn btn-lg" to="/profile">
+                        پروفایل
+                        <i className="bi-person-fill pe-2" />
+                    </Link>
+                )}
             </div>
         </nav>
     );
