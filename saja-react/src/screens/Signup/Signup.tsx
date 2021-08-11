@@ -1,6 +1,8 @@
 import "./Signup.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { elevationEffect } from "../../motion/motionVariants";
 import TextInput from "../../components/TextInput/TextInput";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Button from "../../components/Button/Button";
@@ -12,7 +14,12 @@ function SignupScreen() {
     }
     return (
         <div className="signup-container">
-            <div className="signup card shadow rounded-3 py-4 px-3">
+            <motion.div
+                variants={elevationEffect}
+                initial="first"
+                animate="second"
+                className="signup card shadow rounded-3 py-4 px-3"
+            >
                 <h1 className="signup-title text-center">ثبت نام</h1>
                 <form className="signup-form">
                     <TextInput
@@ -63,7 +70,7 @@ function SignupScreen() {
                         </Link>
                     </div>
                 </form>
-            </div>
+            </motion.div>
         </div>
     );
 }

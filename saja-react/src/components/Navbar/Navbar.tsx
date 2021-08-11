@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 
@@ -5,7 +6,15 @@ function Navbar() {
     let loggedIn = localStorage.getItem("loggedIn") ? true : false;
 
     return (
-        <nav className="navbar bg-white shadow-sm sticky-top">
+        <motion.nav
+            initial={{ y: -200 }}
+            animate={{ y: 0 }}
+            transition={{
+                type: "spring",
+                mass: 0.5,
+            }}
+            className="navbar bg-white shadow-sm sticky-top"
+        >
             <div className="nav-right">
                 <Link className="nav-item btn btn-lg" to="/add-estate">
                     ثبت ملک
@@ -34,7 +43,7 @@ function Navbar() {
                     </Link>
                 )}
             </div>
-        </nav>
+        </motion.nav>
     );
 }
 

@@ -1,6 +1,8 @@
 import "./Login.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { elevationEffect } from "../../motion/motionVariants";
 import TextInput from "../../components/TextInput/TextInput";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Button from "../../components/Button/Button";
@@ -12,7 +14,12 @@ function LoginScreen() {
     }
     return (
         <div className="login-container">
-            <div className="login card shadow rounded-3 py-4 px-3">
+            <motion.div
+                variants={elevationEffect}
+                initial="first"
+                animate="second"
+                className="login card shadow rounded-3 py-4 px-3"
+            >
                 <h1 className="login-title text-center">ورود</h1>
                 <form className="login-form">
                     <TextInput
@@ -67,7 +74,7 @@ function LoginScreen() {
                         </Link>
                     </div>
                 </form>
-            </div>
+            </motion.div>
         </div>
     );
 }

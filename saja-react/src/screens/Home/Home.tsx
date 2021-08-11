@@ -1,9 +1,16 @@
 import "./Home.css";
+import { motion } from "framer-motion";
+import { crossfadeAnimation } from "../../motion/motionVariants";
 
 function HomeScreen() {
     return (
         <div className="home-container">
-            <div className="content">
+            <motion.div
+                variants={crossfadeAnimation}
+                initial="first"
+                animate="second"
+                className="content"
+            >
                 <h1 className="fw-light">سامانه ثبت و جستجوی املاک</h1>
                 <p>
                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و
@@ -13,7 +20,7 @@ function HomeScreen() {
                     کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و
                     آینده، شناخت فراوان جامعه و متخصصان را می طلبد.
                 </p>
-            </div>
+            </motion.div>
         </div>
     );
 }

@@ -1,6 +1,11 @@
 import Select from "../../components/Select/Select";
 import { useState } from "react";
 import "./SearchEstate.css";
+import { motion } from "framer-motion";
+import {
+    crossfadeAnimation,
+    elevationEffect,
+} from "../../motion/motionVariants";
 
 const delegationTypes = [
     { value: "sell", text: "فروش" },
@@ -59,7 +64,12 @@ function SearchEstateScreen() {
 
     return (
         <div className="search-estate-container">
-            <div className="search-estate card glass shadow rounded-3 py-3 px-4 my-4 sticky-top">
+            <motion.div
+                variants={elevationEffect}
+                initial="first"
+                animate="second"
+                className="search-estate card glass shadow rounded-3 py-3 px-4 my-4 sticky-top"
+            >
                 <h2 className="search-estate-title text-center">جستجوی ملک</h2>
                 <form className="search-estate-form input-group d-flex align-items-center">
                     <Select
@@ -81,13 +91,18 @@ function SearchEstateScreen() {
                         onChange={handleTypeChange}
                     />
                 </form>
-            </div>
+            </motion.div>
             {!isDefault ? (
-                <div className="card shadow rounded-3 glass p-5">
+                <motion.div
+                    variants={crossfadeAnimation}
+                    initial="first"
+                    animate="second"
+                    className="card shadow rounded-3 glass p-5"
+                >
                     <h4 className="fw-light fs-4">
                         لطفاً نوع واگذاری و نوع ملک را انتخاب کنید
                     </h4>
-                </div>
+                </motion.div>
             ) : (
                 <div>
                     <h6>{delegationType}</h6>
