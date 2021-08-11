@@ -2,7 +2,7 @@ import "./Login.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { elevationEffect } from "../../motion/motionVariants";
+import { elevationEffect } from "../../animations/motionVariants";
 import TextInput from "../../components/TextInput/TextInput";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Button from "../../components/Button/Button";

@@ -1,6 +1,6 @@
 import notFound from "../../images/404/404_screen.png";
 import { motion } from "framer-motion";
-import { crossfadeAnimation } from "../../motion/motionVariants";
+import { crossfadeAnimation } from "../../animations/motionVariants";
 import "./NotFound.css";
 
 function NotFoundScreen() {

@@ -1,6 +1,6 @@
 import "./Home.css";
 import { motion } from "framer-motion";
-import { crossfadeAnimation } from "../../motion/motionVariants";
+import { crossfadeAnimation } from "../../animations/motionVariants";
 
 function HomeScreen() {
     return (

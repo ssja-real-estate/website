@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
     crossfadeAnimation,
     elevationEffect,
-} from "../../motion/motionVariants";
+} from "../../animations/motionVariants";
 
 const delegationTypes = [
     { value: "sell", text: "فروش" },
