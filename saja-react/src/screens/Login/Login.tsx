@@ -1,14 +1,19 @@
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
 import TextInput from "../../components/TextInput/TextInput";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Button from "../../components/Button/Button";
+import { useRecoilState } from "recoil";
+import { isLoggedIn } from "../../global/globalStates";
 
 function LoginScreen() {
     const [visibility, setVisibility] = useState(false);
+    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedIn);
+    const history = useHistory();
+
     function passwordVisible() {
         setVisibility(!visibility);
     }
@@ -62,6 +67,8 @@ function LoginScreen() {
                         value="ورود به سامانه ثجـــا"
                         onClick={(event) => {
                             event.preventDefault();
+                            setLoggedIn(true);
+                            history.push("/dashboard");
                         }}
                     />
                     <div className="text-center my-3">

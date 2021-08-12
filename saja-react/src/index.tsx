@@ -5,10 +5,13 @@ import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { RecoilRoot } from "recoil";
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <RecoilRoot>
+            <App />
+        </RecoilRoot>
     </React.StrictMode>,
     document.getElementById("root")
 );

@@ -1,9 +1,11 @@
+import "./Navbar.css";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import "./Navbar.css";
+import { useRecoilValue } from "recoil";
+import { isLoggedIn } from "../../global/globalStates";
 
 function Navbar() {
-    let loggedIn = localStorage.getItem("loggedIn") === "true" ? true : false;
+    const loggedIn = useRecoilValue(isLoggedIn);
 
     return (
         <motion.nav
@@ -37,8 +39,8 @@ function Navbar() {
                         <i className="bi-box-arrow-in-left pe-2" />
                     </Link>
                 ) : (
-                    <Link className="nav-item btn btn-lg" to="/profile">
-                        پروفایل
+                    <Link className="nav-item btn btn-lg" to="/dashboard">
+                        داشبورد
                         <i className="bi-person-fill pe-2" />
                     </Link>
                 )}
