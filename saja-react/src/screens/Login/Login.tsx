@@ -18,7 +18,7 @@ function LoginScreen() {
                 variants={elevationEffect}
                 initial="first"
                 animate="second"
-                className="login card shadow rounded-3 py-4 px-3"
+                className="login card glass shadow rounded-3 py-4 px-3"
             >
                 <h1 className="login-title text-center">ورود</h1>
                 <form className="login-form">

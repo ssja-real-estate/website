@@ -97,7 +97,7 @@ function AddEstateScreen() {
                     variants={crossfadeAnimation}
                     initial="first"
                     animate="second"
-                    className="card shadow rounded-3 glass p-5"
+                    className="card glass shadow rounded-3 glass p-5"
                 >
                     <h4 className="fw-light fs-4">
                         لطفاً نوع واگذاری و نوع ملک را انتخاب کنید

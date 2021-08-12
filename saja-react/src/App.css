@@ -19,3 +19,8 @@
 .purple {
     color: #4527a0;
 }
+
+.glass {
+    background-color: #ffffff60;
+    backdrop-filter: blur(5px);
+}

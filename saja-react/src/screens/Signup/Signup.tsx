@@ -18,7 +18,7 @@ function SignupScreen() {
                 variants={elevationEffect}
                 initial="first"
                 animate="second"
-                className="signup card shadow rounded-3 py-4 px-3"
+                className="signup card glass shadow rounded-3 py-4 px-3"
             >
                 <h1 className="signup-title text-center">ثبت نام</h1>
                 <form className="signup-form">

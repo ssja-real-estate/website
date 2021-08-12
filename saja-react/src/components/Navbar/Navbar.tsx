@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
-    let loggedIn = localStorage.getItem("loggedIn") ? true : false;
+    let loggedIn = localStorage.getItem("loggedIn") === "true" ? true : false;
 
     return (
         <motion.nav
