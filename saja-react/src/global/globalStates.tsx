@@ -7,7 +7,7 @@ const isLoggedInAtom = atom({
 
 const userTypeAtom = atom({
     key: "userTypeState",
-    default: "admin",
+    default: "user",
 });
 
 export { isLoggedInAtom, userTypeAtom };
