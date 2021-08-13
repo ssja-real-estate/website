@@ -1,13 +1,13 @@
 import { atom } from "recoil";
 
-const isLoggedIn = atom({
-    key: "loggedIn",
+const isLoggedInAtom = atom({
+    key: "loggedInState",
     default: true,
 });
 
-const userType = atom({
-    key: "userType",
+const userTypeAtom = atom({
+    key: "userTypeState",
     default: "admin",
 });
 
-export { isLoggedIn, userType };
+export { isLoggedInAtom, userTypeAtom };

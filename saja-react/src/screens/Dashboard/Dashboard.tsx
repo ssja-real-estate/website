@@ -7,11 +7,11 @@ import {
 } from "../../animations/motionVariants";
 import Button from "../../components/Button/Button";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { isLoggedIn, userType } from "../../global/globalStates";
+import { isLoggedInAtom, userTypeAtom } from "../../global/globalStates";
 import { useHistory } from "react-router";
 
 function DashboardScreen() {
-    const isAdmin = useRecoilValue(userType) === "admin" ? true : false;
+    const isAdmin = useRecoilValue(userTypeAtom) === "admin" ? true : false;
 
     return (
         <div className="dashboard-container">
@@ -22,7 +22,7 @@ function DashboardScreen() {
 
 function AdminDashboard() {
     const [section, setSection] = useState("profile");
-    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedIn);
+    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 
     return (
@@ -92,7 +92,7 @@ function AdminDashboard() {
                 variants={elevationEffect}
                 initial="first"
                 animate="second"
-                className="dashboard-section card glass shadow rounded-3 text-center p-5 me-2"
+                className="admin-dashboard-section card glass shadow rounded-3 text-center p-5 me-2"
             >
                 {section === "profile" ? (
                     <div className="profile">
@@ -127,7 +127,7 @@ function AdminDashboard() {
 
 function UserDashboard() {
     const [section, setSection] = useState("profile");
-    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedIn);
+    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 
     return (
@@ -171,7 +171,7 @@ function UserDashboard() {
                 variants={elevationEffect}
                 initial="first"
                 animate="second"
-                className="dashboard-section card glass shadow rounded-3 text-center p-5 me-2"
+                className="user-dashboard-section card glass shadow rounded-3 text-center p-5 me-2"
             >
                 {section === "profile" ? (
                     <div className="profile">

@@ -2,10 +2,10 @@ import "./Navbar.css";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { isLoggedIn } from "../../global/globalStates";
+import { isLoggedInAtom } from "../../global/globalStates";
 
 function Navbar() {
-    const loggedIn = useRecoilValue(isLoggedIn);
+    const loggedIn = useRecoilValue(isLoggedInAtom);
 
     return (
         <motion.nav

@@ -7,11 +7,11 @@ import TextInput from "../../components/TextInput/TextInput";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Button from "../../components/Button/Button";
 import { useRecoilState } from "recoil";
-import { isLoggedIn } from "../../global/globalStates";
+import { isLoggedInAtom } from "../../global/globalStates";
 
 function SignupScreen() {
     const [visibility, setVisibility] = useState(false);
-    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedIn);
+    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 
     function passwordVisible() {
