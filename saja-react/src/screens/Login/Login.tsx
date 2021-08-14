@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../global/globalStates";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, InputGroup } from "react-bootstrap";
 
 function LoginScreen() {
     const [visibility, setVisibility] = useState(false);
@@ -38,13 +38,15 @@ function LoginScreen() {
                         placeholder="گذرواژه"
                         id="password"
                     />
-                    <Form.Check
-                        name="visCheck"
-                        id="visCheck"
-                        checked={visibility}
-                        onChange={passwordVisible}
-                        label="نمایش گذرواژه"
-                    />
+                    <InputGroup>
+                        <Form.Check
+                            name="visCheck"
+                            id="visCheck"
+                            checked={visibility}
+                            onChange={passwordVisible}
+                            label="نمایش گذرواژه"
+                        />
+                    </InputGroup>
                     <div className="text-center my-3">
                         <span className="fw-light">
                             گذرواژه خود را فراموش کردید؟

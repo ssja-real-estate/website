@@ -1,5 +1,5 @@
 function UsersSection() {
-    return <div></div>;
+    return <div className="users-section"></div>;
 }
 
 export default UsersSection;

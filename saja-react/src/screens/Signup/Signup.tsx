@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../global/globalStates";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, InputGroup } from "react-bootstrap";
 
 function SignupScreen() {
     const [visibility, setVisibility] = useState(false);
@@ -45,13 +45,15 @@ function SignupScreen() {
                         placeholder="تکرار گذرواژه"
                         id="repeatPassword"
                     />
-                    <Form.Check
-                        name="visCheck"
-                        id="visCheck"
-                        checked={visibility}
-                        onChange={passwordVisible}
-                        label="نمایش گذرواژه"
-                    />
+                    <InputGroup>
+                        <Form.Check
+                            name="visCheck"
+                            id="visCheck"
+                            checked={visibility}
+                            onChange={passwordVisible}
+                            label="نمایش گذرواژه"
+                        />
+                    </InputGroup>
                     <Button
                         variant=""
                         className="btn-purple w-100 rounded-3 my-3"
