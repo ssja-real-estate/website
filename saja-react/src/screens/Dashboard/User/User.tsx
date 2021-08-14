@@ -1,50 +1,24 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-    crossfadeAnimation,
-    elevationEffect,
-} from "../../animations/motionVariants";
-import { useRecoilState } from "recoil";
-import { isLoggedInAtom } from "../../global/globalStates";
+import { elevationEffect } from "../../../animations/motionVariants";
+import { atom, useRecoilState, useRecoilValue } from "recoil";
+import { isLoggedInAtom } from "../../../global/globalStates";
 import { useHistory } from "react-router";
 import { Button } from "react-bootstrap";
+import AdminSidebar from "../Admin/Sidebar";
+
+export const userSectionAtom = atom({
+    key: "userSidebarState",
+    default: "profile",
+});
 
 function UserDashboard() {
-    const [section, setSection] = useState("profile");
+    const section = useRecoilValue(userSectionAtom);
     const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 
     return (
         <div className="dashboard">
-            <motion.div
-                variants={crossfadeAnimation}
-                initial="first"
-                animate="second"
-                className="sidebar gap-1 card glass shadow rounded-3 text-center p-1"
-            >
-                <Button
-                    variant=""
-                    className={
-                        section === "profile" ? "btn-purple" : "btn-light"
-                    }
-                    onClick={() => {
-                        setSection("profile");
-                    }}
-                >
-                    <i className="edit-icon bi-grid-1x2-fill"></i>
-                </Button>
-                <Button
-                    variant=""
-                    className={
-                        section === "estates" ? "btn-purple" : "btn-light"
-                    }
-                    onClick={() => {
-                        setSection("estates");
-                    }}
-                >
-                    <i className="edit-icon bi-grid-3x3-gap-fill"></i>
-                </Button>
-            </motion.div>
+            <AdminSidebar />
             <motion.div
                 variants={elevationEffect}
                 initial="first"

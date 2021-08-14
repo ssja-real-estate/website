@@ -40,7 +40,7 @@ function Navbar() {
                     </Link>
                 ) : (
                     <Link className="nav-item btn btn-lg" to="/dashboard">
-                        داشبورد
+                        حساب کاربری
                         <i className="bi-person-fill pe-2" />
                     </Link>
                 )}
