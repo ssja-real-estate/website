@@ -4,10 +4,10 @@ import {
     crossfadeAnimation,
     elevationEffect,
 } from "../../animations/motionVariants";
-import Button from "../../components/Button/Button";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../global/globalStates";
 import { useHistory } from "react-router";
+import { Button } from "react-bootstrap";
 
 function UserDashboard() {
     const [section, setSection] = useState("profile");
@@ -20,28 +20,30 @@ function UserDashboard() {
                 variants={crossfadeAnimation}
                 initial="first"
                 animate="second"
-                className="sidebar card glass shadow rounded-3 text-center p-1"
+                className="sidebar gap-1 card glass shadow rounded-3 text-center p-1"
             >
-                <button
-                    className={`btn ${
+                <Button
+                    variant=""
+                    className={
                         section === "profile" ? "btn-purple" : "btn-light"
-                    }`}
+                    }
                     onClick={() => {
                         setSection("profile");
                     }}
                 >
                     <i className="edit-icon bi-grid-1x2-fill"></i>
-                </button>
-                <button
-                    className={`btn ${
+                </Button>
+                <Button
+                    variant=""
+                    className={
                         section === "estates" ? "btn-purple" : "btn-light"
-                    }`}
+                    }
                     onClick={() => {
                         setSection("estates");
                     }}
                 >
                     <i className="edit-icon bi-grid-3x3-gap-fill"></i>
-                </button>
+                </Button>
             </motion.div>
             <motion.div
                 variants={elevationEffect}
@@ -57,16 +59,18 @@ function UserDashboard() {
                             <i className="bi-telephone-fill me-3"></i>
                         </h4>
                         <Button
-                            className="btn btn-outline-danger rounded-3 px-4 mt-4"
+                            variant="outline-danger"
+                            className="rounded-3 px-4 mt-4"
                             id="edit"
                             name="edit"
                             type="button"
-                            value="خروج از حساب کاربری"
                             onClick={() => {
                                 setLoggedIn(false);
                                 history.push("/");
                             }}
-                        />
+                        >
+                            خروج از حساب کاربری
+                        </Button>
                     </div>
                 ) : section === "users" ? (
                     <div>Users</div>

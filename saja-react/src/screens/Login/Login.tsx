@@ -3,11 +3,9 @@ import { Link, useHistory } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
-import TextInput from "../../components/TextInput/TextInput";
-import Checkbox from "../../components/Checkbox/Checkbox";
-import Button from "../../components/Button/Button";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../global/globalStates";
+import { Button, Form } from "react-bootstrap";
 
 function LoginScreen() {
     const [visibility, setVisibility] = useState(false);
@@ -27,21 +25,20 @@ function LoginScreen() {
             >
                 <h1 className="login-title text-center">ورود</h1>
                 <form className="login-form">
-                    <TextInput
+                    <Form.Control
                         className="form-control rounded-3 py-2 my-3"
                         name="phone"
                         placeholder="شماره موبایل"
                         id="phone"
                     />
-                    <TextInput
+                    <Form.Control
                         className="form-control rounded-3 py-2 my-3"
                         type={visibility ? "text" : "password"}
                         name="password"
                         placeholder="گذرواژه"
                         id="password"
                     />
-                    <Checkbox
-                        className="form-check-input me-2"
+                    <Form.Check
                         name="visCheck"
                         id="visCheck"
                         checked={visibility}
@@ -60,17 +57,19 @@ function LoginScreen() {
                         </a>
                     </div>
                     <Button
-                        className="btn btn-purple w-100 rounded-3"
+                        variant=""
+                        className="btn-purple w-100 rounded-3"
                         type="submit"
                         name="submit"
                         id="submit"
-                        value="ورود به سامانه ثجـــا"
                         onClick={(event) => {
                             event.preventDefault();
                             setLoggedIn(true);
                             history.push("/dashboard");
                         }}
-                    />
+                    >
+                        ورود به سامانه ثجـــا
+                    </Button>
                     <div className="text-center my-3">
                         <span className="fw-light">حساب کاربری ندارید؟</span>
                         <Link

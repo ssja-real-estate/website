@@ -1,4 +1,3 @@
-import Select from "../../components/Select/Select";
 import { useState } from "react";
 import "./SearchEstate.css";
 import { motion } from "framer-motion";
@@ -6,6 +5,7 @@ import {
     crossfadeAnimation,
     elevationEffect,
 } from "../../animations/motionVariants";
+import { Form } from "react-bootstrap";
 
 const delegationTypes = [
     { value: "sell", text: "فروش" },
@@ -72,24 +72,44 @@ function SearchEstateScreen() {
             >
                 <h2 className="search-estate-title text-center">جستجوی ملک</h2>
                 <form className="search-estate-form input-group d-flex align-items-center">
-                    <Select
+                    <label htmlFor="delegationType">نوع واگذاری</label>
+                    <Form.Select
                         className="form-select rounded-3 my-1 me-3 ms-5"
                         name="delegationType"
                         id="delegationType"
-                        label="نوع واگذاری"
-                        options={delegationTypes}
                         value={delegationType}
                         onChange={handleDelegationChange}
-                    />
-                    <Select
+                    >
+                        <option value="default" disabled>
+                            انتخاب کنید
+                        </option>
+                        {delegationTypes.map((option, index) => {
+                            return (
+                                <option key={index} value={option.value}>
+                                    {option.text}
+                                </option>
+                            );
+                        })}
+                    </Form.Select>
+                    <label htmlFor="delegationType">نوع ملک</label>
+                    <Form.Select
                         className="form-select rounded-3 my-1 me-3"
                         name="estateType"
                         id="estateType"
-                        label="نوع ملک"
-                        options={estateTypes}
                         value={estateType}
                         onChange={handleTypeChange}
-                    />
+                    >
+                        <option value="default" disabled>
+                            انتخاب کنید
+                        </option>
+                        {estateTypes.map((option, index) => {
+                            return (
+                                <option key={index} value={option.value}>
+                                    {option.text}
+                                </option>
+                            );
+                        })}
+                    </Form.Select>
                 </form>
             </motion.div>
             {!isDefault ? (
