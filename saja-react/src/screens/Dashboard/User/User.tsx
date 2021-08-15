@@ -13,6 +13,7 @@ export const userSectionAtom = atom({
 
 function UserDashboard() {
     const section = useRecoilValue(userSectionAtom);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 

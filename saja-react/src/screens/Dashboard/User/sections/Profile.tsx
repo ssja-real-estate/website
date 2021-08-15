@@ -9,11 +9,11 @@ function ProfileSection() {
 
     return (
         <div className="profile-section">
-            <h1 className="pb-4 fw-light">
+            <h1 className="user-name pb-4 fw-light">
                 محمد احمدی
                 <i className="bi-star-fill text-warning me-3"></i>
             </h1>
-            <h4>
+            <h4 className="user-phone">
                 09123456789
                 <i className="bi-telephone-fill me-3"></i>
             </h4>

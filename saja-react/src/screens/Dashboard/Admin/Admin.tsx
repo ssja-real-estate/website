@@ -22,7 +22,7 @@ function AdminDashboard() {
                 variants={elevationEffect}
                 initial="first"
                 animate="second"
-                className="admin-dashboard-section card glass shadow rounded-3 text-center p-5 me-2"
+                className="admin-dashboard-section card glass shadow rounded-3 text-center p-5 me-2 overflow-auto"
             >
                 {section === "profile" ? (
                     <ProfileSection />
