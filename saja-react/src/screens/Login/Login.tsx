@@ -9,6 +9,7 @@ import { Button, Form, InputGroup } from "react-bootstrap";
 
 function LoginScreen() {
     const [visibility, setVisibility] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 

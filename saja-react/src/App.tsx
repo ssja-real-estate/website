@@ -15,14 +15,9 @@ import DashboardScreen from "./screens/Dashboard/Dashboard";
 import NotFoundScreen from "./screens/NotFound/NotFound";
 import { isLoggedInAtom } from "./global/globalStates";
 import { useRecoilValue } from "recoil";
-import { useEffect } from "react";
 
 function App() {
     const loggedIn = useRecoilValue(isLoggedInAtom);
-
-    useEffect(() => {
-        console.log("loggedIn:", loggedIn);
-    }, [loggedIn]);
 
     return (
         <div className="app">

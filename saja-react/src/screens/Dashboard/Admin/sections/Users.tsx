@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Card, Col, Form, ListGroup, Row, Tab } from "react-bootstrap";
 
 interface User {
@@ -9,6 +9,7 @@ interface User {
 
 function UsersSection() {
     const [searchValue, setSearchValue] = useState<string>("");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [users, setUsers] = useState<User[]>([
         { name: "رحمان رحیمی", phone: "09123456234", isAdmin: true },
         { name: "ابراهیم حسن پور", phone: "09112876789", isAdmin: false },

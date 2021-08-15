@@ -4,7 +4,8 @@ import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../../../global/globalStates";
 
 function ProfileSection() {
-    const setLoggedIn = useRecoilState(isLoggedInAtom)[1];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
 
     return (
