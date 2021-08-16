@@ -3,10 +3,6 @@
     padding: 0;
 }
 
-.app {
-    height: 90vh;
-}
-
 .btn-purple {
     color: #ffffff;
     background-color: #4527a0 !important;
@@ -17,6 +13,9 @@
 }
 
 .purple {
+    color: #4527a0;
+}
+.purple:focus {
     color: #4527a0;
 }
 

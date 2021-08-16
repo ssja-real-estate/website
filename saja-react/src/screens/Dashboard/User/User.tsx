@@ -4,7 +4,9 @@ import { atom, useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInAtom } from "../../../global/globalStates";
 import { useHistory } from "react-router";
 import { Button } from "react-bootstrap";
-import AdminSidebar from "../Admin/Sidebar";
+import UserSidebar from "./Sidebar";
+import ProfileSection from "./sections/Profile";
+import EstatesSection from "./sections/Estates";
 
 export const userSectionAtom = atom({
     key: "userSidebarState",
@@ -19,7 +21,7 @@ function UserDashboard() {
 
     return (
         <div className="dashboard">
-            <AdminSidebar />
+            <UserSidebar />
             <motion.div
                 variants={elevationEffect}
                 initial="first"
@@ -27,32 +29,9 @@ function UserDashboard() {
                 className="user-dashboard-section card glass shadow rounded-3 text-center p-5 me-2"
             >
                 {section === "profile" ? (
-                    <div className="profile">
-                        <h1 className="pb-4 fw-light">رحمان رحیمی</h1>
-                        <h4>
-                            09123456789
-                            <i className="bi-telephone-fill me-3"></i>
-                        </h4>
-                        <Button
-                            variant="outline-danger"
-                            className="rounded-3 px-4 mt-4"
-                            id="edit"
-                            name="edit"
-                            type="button"
-                            onClick={() => {
-                                setLoggedIn(false);
-                                history.push("/");
-                            }}
-                        >
-                            خروج از حساب کاربری
-                        </Button>
-                    </div>
-                ) : section === "users" ? (
-                    <div>Users</div>
-                ) : section === "estates" ? (
-                    <div>Estates</div>
+                    <ProfileSection />
                 ) : (
-                    section === "templates" && <div>Templates</div>
+                    section === "estates" && <EstatesSection />
                 )}
             </motion.div>
         </div>

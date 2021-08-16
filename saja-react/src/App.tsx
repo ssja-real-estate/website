@@ -5,7 +5,7 @@ import {
     Route,
     Switch,
 } from "react-router-dom";
-import Navbar from "./components/Navbar/Navbar";
+import AppNavbar from "./components/AppNavbar/Navbar";
 import HomeScreen from "./screens/Home/Home";
 import SearchEstateScreen from "./screens/SearchEstate/SearchEstate";
 import AddEstateScreen from "./screens/AddEstate/AddEstate";
@@ -22,7 +22,7 @@ function App() {
     return (
         <div className="app">
             <Router>
-                <Navbar />
+                <AppNavbar />
                 <Switch>
                     <Route exact path="/" component={HomeScreen} />
                     <Route
