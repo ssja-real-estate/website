@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { elevationEffect } from "../../../animations/motionVariants";
 import { atom, useRecoilValue } from "recoil";
 import AdminSidebar from "./Sidebar";
-import ProfileSection from "./sections/Profile";
-import UsersSection from "./sections/Users";
-import EstatesSection from "./sections/Estates";
-import TemplatesSection from "./sections/Templates";
+import ProfileSection from "./sections/Profile/Profile";
+import UsersSection from "./sections/Users/Users";
+import EstatesSection from "./sections/Estates/Estates";
+import TemplatesSection from "./sections/Templates/Templates";
 
 export const adminSectionAtom = atom({
     key: "adminSidebarState",

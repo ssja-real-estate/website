@@ -1,16 +1,16 @@
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
-import { isLoggedInAtom } from "../../../../global/globalStates";
+import { isLoggedInAtom } from "../../../../../global/globalStates";
 
-const showModalAtom = atom({
-    key: "showModalState",
+const showEditProfileModalAtom = atom({
+    key: "userShowEditProfileState",
     default: false,
 });
 
 function ProfileSection() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [show, setShow] = useRecoilState(showModalAtom);
+    const [show, setShow] = useRecoilState(showEditProfileModalAtom);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
@@ -58,7 +58,7 @@ function ProfileSection() {
 }
 
 function EditProfileModal() {
-    const [show, setShow] = useRecoilState(showModalAtom);
+    const [show, setShow] = useRecoilState(showEditProfileModalAtom);
 
     return (
         <Modal

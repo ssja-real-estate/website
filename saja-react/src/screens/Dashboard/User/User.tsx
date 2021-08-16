@@ -2,11 +2,9 @@ import { motion } from "framer-motion";
 import { elevationEffect } from "../../../animations/motionVariants";
 import { atom, useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInAtom } from "../../../global/globalStates";
-import { useHistory } from "react-router";
-import { Button } from "react-bootstrap";
 import UserSidebar from "./Sidebar";
-import ProfileSection from "./sections/Profile";
-import EstatesSection from "./sections/Estates";
+import ProfileSection from "./sections/Profile/Profile";
+import EstatesSection from "./sections/Estates/Estates";
 
 export const userSectionAtom = atom({
     key: "userSidebarState",
@@ -17,7 +15,6 @@ function UserDashboard() {
     const section = useRecoilValue(userSectionAtom);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
-    const history = useHistory();
 
     return (
         <div className="dashboard">
