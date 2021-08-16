@@ -1,9 +1,16 @@
-import { Button, Modal } from "react-bootstrap";
+import { Button, Container, Form, Modal } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { atom, useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../../../global/globalStates";
 
+const showModalAtom = atom({
+    key: "showModalState",
+    default: false,
+});
+
 function ProfileSection() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [show, setShow] = useRecoilState(showModalAtom);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
     const history = useHistory();
@@ -19,12 +26,16 @@ function ProfileSection() {
                 <i className="bi-telephone-fill me-3"></i>
             </h4>
             <div className="d-flex flex-column justify-content-center align-items-center">
+                <EditProfileModal />
                 <Button
                     variant="outline-secondary"
                     className="rounded-3 px-4 my-4"
                     id="edit"
                     name="edit"
                     type="button"
+                    onClick={() => {
+                        setShow(true);
+                    }}
                 >
                     ویرایش حساب کاربری
                 </Button>
@@ -43,6 +54,64 @@ function ProfileSection() {
                 </Button>
             </div>
         </div>
+    );
+}
+
+function EditProfileModal() {
+    const [show, setShow] = useRecoilState(showModalAtom);
+
+    return (
+        <Modal
+            centered
+            show={show}
+            onHide={() => {
+                setShow(false);
+            }}
+        >
+            <Modal.Header>
+                <Modal.Title>ویرایش حساب کاربری</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                    <Container>
+                        <Form.Control
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="نام و نام خانوادگی"
+                            className="mt-4"
+                        />
+                        <Form.Control
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            placeholder="شماره موبایل"
+                            className="my-4"
+                        />
+                    </Container>
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button
+                    className="rounded-3"
+                    variant="outline-secondary"
+                    onClick={() => {
+                        setShow(false);
+                    }}
+                >
+                    لغو
+                </Button>
+                <Button
+                    className="rounded-3"
+                    variant="purple"
+                    onClick={() => {
+                        setShow(false);
+                    }}
+                >
+                    ذخیره
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 }
 

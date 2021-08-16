@@ -56,8 +56,8 @@ function SignupScreen() {
                         />
                     </InputGroup>
                     <Button
-                        variant=""
-                        className="btn-purple w-100 rounded-3 my-3"
+                        variant="purple"
+                        className="w-100 rounded-3 my-3"
                         type="submit"
                         name="submit"
                         id="submit"

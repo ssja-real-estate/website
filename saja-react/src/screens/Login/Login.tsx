@@ -60,8 +60,8 @@ function LoginScreen() {
                         </a>
                     </div>
                     <Button
-                        variant=""
-                        className="btn-purple w-100 rounded-3"
+                        variant="purple"
+                        className="w-100 rounded-3"
                         type="submit"
                         name="submit"
                         id="submit"
