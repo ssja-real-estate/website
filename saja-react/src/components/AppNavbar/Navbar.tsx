@@ -1,7 +1,7 @@
 import "./Navbar.css";
 import { useHistory } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { isLoggedInAtom } from "../../global/globalStates";
+import { isLoggedInAtom } from "../../global/states/globalStates";
 import { Container, Nav, Navbar } from "react-bootstrap";
 
 function AppNavbar() {

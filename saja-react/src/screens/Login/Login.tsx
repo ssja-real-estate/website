@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
 import { useRecoilState } from "recoil";
-import { isLoggedInAtom } from "../../global/globalStates";
+import { isLoggedInAtom } from "../../global/states/globalStates";
 import { Button, Form, InputGroup } from "react-bootstrap";
 
 function LoginScreen() {

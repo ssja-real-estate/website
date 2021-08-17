@@ -1,23 +1,21 @@
 import { Button } from "react-bootstrap";
 import Tilt from "react-parallax-tilt";
-
-interface Estate {
-    title: string;
-    user: string;
-    delegationType: string;
-    estateType: string;
-    city: string;
-    province: string;
-}
+import { Estate } from "../../global/types/Estate";
 
 interface EstateCardProps {
     estate: Estate;
+    verifyButton?: boolean;
+    rejectButton?: boolean;
 }
 
-function EstateCard({ estate }: EstateCardProps) {
+function EstateCard({
+    estate,
+    verifyButton = false,
+    rejectButton = false,
+}: EstateCardProps) {
     return (
         <Tilt>
-            <div className="estate card p-4 rounded-3 d-flex flex-row justify-content-between align-items-start">
+            <div className="estate card shadow p-4 rounded-3 d-flex flex-row justify-content-between align-items-start">
                 <div className="estate-info d-flex flex-column justify-content-center align-items-start">
                     <div>
                         <h4 className="estate-title fs-4 fw-normal">
@@ -37,12 +35,19 @@ function EstateCard({ estate }: EstateCardProps) {
                     </h6>
                 </div>
                 <div className="buttons gap-2 d-flex flex-column">
-                    <Button className="verify-btn" variant="outline-success">
-                        <i className="verify-icon bi-check2"></i>
-                    </Button>
-                    <Button className="reject-btn" variant="outline-danger">
-                        <i className="reject-icon bi-x"></i>
-                    </Button>
+                    {verifyButton && (
+                        <Button
+                            className="verify-btn"
+                            variant="outline-success"
+                        >
+                            <i className="verify-icon bi-check2"></i>
+                        </Button>
+                    )}
+                    {rejectButton && (
+                        <Button className="reject-btn" variant="outline-danger">
+                            <i className="reject-icon bi-x"></i>
+                        </Button>
+                    )}
                     <Button className="info-btn" variant="outline-secondary">
                         <i className="info-icon bi-info-circle-fill"></i>
                     </Button>

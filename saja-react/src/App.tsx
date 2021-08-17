@@ -13,7 +13,7 @@ import LoginScreen from "./screens/Login/Login";
 import SignupScreen from "./screens/Signup/Signup";
 import DashboardScreen from "./screens/Dashboard/Dashboard";
 import NotFoundScreen from "./screens/NotFound/NotFound";
-import { isLoggedInAtom } from "./global/globalStates";
+import { isLoggedInAtom } from "./global/states/globalStates";
 import { useRecoilValue } from "recoil";
 
 function App() {

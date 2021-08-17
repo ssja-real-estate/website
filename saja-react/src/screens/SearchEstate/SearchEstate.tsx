@@ -6,46 +6,7 @@ import {
     elevationEffect,
 } from "../../animations/motionVariants";
 import { Form } from "react-bootstrap";
-
-const delegationTypes = [
-    { value: "sell", text: "فروش" },
-    { value: "exchange", text: "معاوضه" },
-    { value: "mortgage", text: "رهن" },
-    { value: "rent", text: "اجاره" },
-    { value: "preSell", text: "پیش‌فروش" },
-    { value: "constructionParticipation", text: "مشارکت در ساخت" },
-    { value: "interestParticipation", text: "مشارکت در بهره برداری" },
-];
-
-const estateTypes = [
-    { value: "house", text: "خانه" },
-    { value: "apartment", text: "آپارتمان" },
-    { value: "villa", text: "ویلا" },
-    { value: "residentialLand", text: "زمین مسکونی" },
-    { value: "farmingLand", text: "زمین کشاورزی" },
-    { value: "garden", text: "باغ" },
-    { value: "shop", text: "مغازه" },
-    { value: "office", text: "دفتر کار" },
-    { value: "basement", text: "زیرزمین" },
-    { value: "storehouse", text: "انبار" },
-    { value: "parking", text: "پارکینگ" },
-    { value: "garage", text: "گاراژ" },
-    { value: "workshop", text: "کارگاه" },
-    { value: "manufactory", text: "کارخانه" },
-    { value: "chickenFarm", text: "مرغداری" },
-    { value: "ranch", text: "دامداری" },
-    { value: "refrigeratedRoom", text: "سردخانه" },
-    { value: "hotel", text: "هتل" },
-    { value: "motel", text: "مسافرخانه" },
-    { value: "restaurant", text: "رستوران" },
-    { value: "suite", text: "سوئیت" },
-    { value: "weddingVenue", text: "تالار عروسی" },
-    { value: "mine", text: "معدن" },
-    { value: "loan", text: "وام" },
-    { value: "receipt", text: "فیش" },
-    { value: "petrolStation", text: "جایگاه سوخت" },
-    { value: "warehouse", text: "سوله" },
-];
+import { delegationTypes, estateTypes } from "../../global/constants/estates";
 
 function SearchEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
@@ -86,7 +47,7 @@ function SearchEstateScreen() {
                         {delegationTypes.map((option, index) => {
                             return (
                                 <option key={index} value={option.value}>
-                                    {option.text}
+                                    {option.value}
                                 </option>
                             );
                         })}
@@ -105,7 +66,7 @@ function SearchEstateScreen() {
                         {estateTypes.map((option, index) => {
                             return (
                                 <option key={index} value={option.value}>
-                                    {option.text}
+                                    {option.value}
                                 </option>
                             );
                         })}

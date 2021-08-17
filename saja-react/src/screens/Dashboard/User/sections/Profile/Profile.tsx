@@ -1,7 +1,7 @@
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
-import { isLoggedInAtom } from "../../../../../global/globalStates";
+import { isLoggedInAtom } from "../../../../../global/states/globalStates";
 
 const showEditProfileModalAtom = atom({
     key: "userShowEditProfileState",

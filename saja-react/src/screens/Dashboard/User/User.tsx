@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { elevationEffect } from "../../../animations/motionVariants";
 import { atom, useRecoilState, useRecoilValue } from "recoil";
-import { isLoggedInAtom } from "../../../global/globalStates";
+import { isLoggedInAtom } from "../../../global/states/globalStates";
 import UserSidebar from "./Sidebar";
 import ProfileSection from "./sections/Profile/Profile";
 import EstatesSection from "./sections/Estates/Estates";

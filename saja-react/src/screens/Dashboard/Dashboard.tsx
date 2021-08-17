@@ -1,6 +1,6 @@
 import "./Dashboard.css";
 import { useRecoilValue } from "recoil";
-import { userTypeAtom } from "../../global/globalStates";
+import { userTypeAtom } from "../../global/states/globalStates";
 import AdminDashboard from "./Admin/Admin";
 import UserDashboard from "./User/User";
 
