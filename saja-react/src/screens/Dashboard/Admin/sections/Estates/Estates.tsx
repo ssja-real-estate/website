@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import Tilt from "react-parallax-tilt";
-
+import EstateCard from "../../../../../components/EstateCard/EstateCard";
 import "./Estates.css";
 
 interface Estate {
@@ -201,60 +200,41 @@ function EstatesSection() {
             province: "آذربایجان غربی",
         },
     ]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    }, []);
 
     return (
         <div className="estates-section">
             <div className="estates-grid">
-                {estates.map((estate, index) => {
-                    return (
-                        <Tilt>
-                            <div
-                                className="estate card p-4 d-flex flex-row justify-content-between align-items-start"
-                                key={index}
-                            >
-                                <div className="estate-info d-flex flex-column justify-content-center align-items-start">
-                                    <div>
-                                        <h4 className="estate-title fs-4 fw-normal">
-                                            <i className="bi-building ms-3"></i>
-                                            {estate.title}
-                                        </h4>
-                                    </div>
-                                    <h4 className="delegation-and-estate-type fs-5 fw-bold py-4">
-                                        {estate.delegationType}{" "}
-                                        {estate.estateType}
-                                    </h4>
-                                    <h5 className="user fw-light">
-                                        <i className="bi-person-fill ms-3"></i>
-                                        {estate.user}
-                                    </h5>
-                                    <h6 className="province-and-city fw-light text-secondary">
-                                        {estate.city}، {estate.province}
-                                    </h6>
-                                </div>
-                                <div className="buttons gap-2 d-flex flex-column">
-                                    <Button
-                                        className="verify-btn"
-                                        variant="outline-success"
-                                    >
-                                        <i className="verify-icon bi-check2"></i>
-                                    </Button>
-                                    <Button
-                                        className="reject-btn"
-                                        variant="outline-danger"
-                                    >
-                                        <i className="reject-icon bi-x"></i>
-                                    </Button>
-                                    <Button
-                                        className="info-btn"
-                                        variant="outline-secondary"
-                                    >
-                                        <i className="info-icon bi-info-circle-fill"></i>
-                                    </Button>
-                                </div>
-                            </div>
-                        </Tilt>
-                    );
-                })}
+                {loading
+                    ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => {
+                          return (
+                              <Tilt key={index}>
+                                  <div className="estate card rounded-3 p-4">
+                                      <h4 className="card-title placeholder-glow d-flex flex-column justify-content-center align-items-start">
+                                          <span className="placeholder col-6 py-3 rounded-3"></span>
+                                      </h4>
+                                      <h4 className="card-text placeholder-glow">
+                                          <span className="placeholder col-4 my-4 rounded-3 d-block"></span>
+                                          <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
+                                          <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
+                                      </h4>
+                                  </div>
+                              </Tilt>
+                          );
+                      })
+                    : estates.map((estate, index) => {
+                          return (
+                              <React.Fragment key={index}>
+                                  <EstateCard estate={estate} />
+                              </React.Fragment>
+                          );
+                      })}
             </div>
         </div>
     );
