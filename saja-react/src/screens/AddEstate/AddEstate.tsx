@@ -32,10 +32,10 @@ function AddEstateScreen() {
                 className="add-estate card glass shadow rounded-3 py-3 px-4 my-4 sticky-top"
             >
                 <h2 className="add-estate-title text-center">ثبت ملک</h2>
-                <form className="add-estate-form input-group d-flex align-items-center">
+                <form className="add-estate-form">
                     <label htmlFor="delegationType">نوع واگذاری</label>
                     <Form.Select
-                        className="form-select rounded-3 my-1 me-3 ms-5"
+                        className="form-select rounded-3"
                         name="delegationType"
                         id="delegationType"
                         value={delegationType}
@@ -54,7 +54,7 @@ function AddEstateScreen() {
                     </Form.Select>
                     <label htmlFor="delegationType">نوع ملک</label>
                     <Form.Select
-                        className="form-select rounded-3 my-1 me-3"
+                        className="form-select rounded-3"
                         name="estateType"
                         id="estateType"
                         value={estateType}

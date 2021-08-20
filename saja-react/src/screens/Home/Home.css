@@ -18,4 +18,11 @@
     align-items: center;
     height: 200px;
     width: 500px;
+    max-width: 90vw;
+    text-align: center;
+}
+.app-description {
+    text-align: justify;
+    max-width: 80vw;
+    color: #333333;
 }

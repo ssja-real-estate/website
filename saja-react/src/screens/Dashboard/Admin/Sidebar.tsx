@@ -12,7 +12,7 @@ function AdminSidebar() {
             variants={crossfadeAnimation}
             initial="first"
             animate="second"
-            className="sidebar gap-1 card glass shadow rounded-3 text-center p-1"
+            className="sidebar gap-1 card glass shadow rounded-3 text-center p-1 my-2"
         >
             <OverlayTrigger
                 placement="left"

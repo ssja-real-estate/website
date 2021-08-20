@@ -9,6 +9,7 @@
     justify-content: center;
     align-items: center;
     min-height: 90vh;
+    overflow: hidden;
 }
 .dashboard {
     display: flex;
@@ -23,4 +24,16 @@
 .admin-dashboard-section {
     width: 90vw;
     height: 80vh;
+}
+
+@media (max-width: 900px) {
+    .dashboard {
+        flex-direction: column;
+    }
+    .admin-dashboard-section {
+        width: 100vw;
+    }
+    .sidebar {
+        flex-direction: row;
+    }
 }

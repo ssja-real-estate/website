@@ -78,7 +78,7 @@ function EstatesSection() {
 
     return (
         <div className="estates-section">
-            <div className="estates-filter card shadow p-4 mb-4">
+            <div className="estates-filter card shadow p-4 mb-4 sticky-top">
                 <Row md={4}>
                     <h4 className="fw-light">فیلتر نتایج</h4>
                     <div>

@@ -1,5 +1,10 @@
 import { atom } from "recoil";
 
+enum UserRole {
+    Admin = "admin",
+    User = "user",
+}
+
 const isLoggedInAtom = atom({
     key: "loggedInState",
     default: true,
@@ -7,7 +12,7 @@ const isLoggedInAtom = atom({
 
 const userTypeAtom = atom({
     key: "userTypeState",
-    default: "admin",
+    default: UserRole.Admin,
 });
 
 export { isLoggedInAtom, userTypeAtom };
