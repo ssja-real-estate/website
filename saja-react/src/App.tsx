@@ -14,14 +14,28 @@ import SignupScreen from "./screens/Signup/Signup";
 import DashboardScreen from "./screens/Dashboard/Dashboard";
 import NotFoundScreen from "./screens/NotFound/NotFound";
 import { isLoggedInAtom } from "./global/states/globalStates";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import LoadingBar from "react-top-loading-bar";
+import { progressBarAtom } from "./global/states/loadingBar";
+import { useEffect } from "react";
 
 function App() {
+    const [progress, setProgress] = useRecoilState(progressBarAtom);
     const loggedIn = useRecoilValue(isLoggedInAtom);
+
+    useEffect(() => {
+        setProgress(100);
+    });
 
     return (
         <div className="app">
             <Router>
+                <LoadingBar
+                    className="loading-bar"
+                    progress={progress}
+                    color="#4527a0"
+                    height={5}
+                />
                 <AppNavbar />
                 <Switch>
                     <Route exact path="/" component={HomeScreen} />

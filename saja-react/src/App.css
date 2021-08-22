@@ -23,3 +23,7 @@
     background-color: #ffffff60;
     backdrop-filter: blur(5px);
 }
+
+.loading-bar {
+    direction: ltr;
+}

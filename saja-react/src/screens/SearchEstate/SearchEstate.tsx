@@ -29,7 +29,7 @@ function SearchEstateScreen() {
                 variants={elevationEffect}
                 initial="first"
                 animate="second"
-                className="search-estate card glass shadow rounded-3 py-3 px-4 my-4 sticky-top"
+                className="search-estate card glass shadow rounded-3 py-3 px-4 my-4"
             >
                 <h2 className="search-estate-title text-center">جستجوی ملک</h2>
                 <form className="search-estate-form py-3">

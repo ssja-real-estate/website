@@ -3,9 +3,9 @@ import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
-import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../../global/states/globalStates";
 import { Button, Form, InputGroup } from "react-bootstrap";
+import { useRecoilState } from "recoil";
 
 function SignupScreen() {
     const [visibility, setVisibility] = useState(false);

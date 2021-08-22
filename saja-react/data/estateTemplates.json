@@ -1,0 +1,187 @@
+{
+    "items": [
+        {
+            "section": {
+                "name": "section1",
+                "title": "مشخصات جغرافیایی",
+                "order": 1,
+                "items": [
+                    {
+                        "name": "locationname",
+                        "type": "string",
+                        "title": "محله",
+                        "order": 1,
+                        "value": "نام محله"
+                    },
+                    {
+                        "name": "area",
+                        "type": "int",
+                        "title": "مساحت زمین",
+                        "order": 2,
+                        "value": 0
+                    },
+                    {
+                        "name": "width",
+                        "type": "int",
+                        "title": "عرض زمین",
+                        "order": 3,
+                        "value": 0
+                    },
+                    {
+                        "name": "foundation",
+                        "type": "int",
+                        "title": "زیربنا",
+                        "order": 4,
+                        "value": 0
+                    },
+                    {
+                        "name": "allroof",
+                        "type": "int",
+                        "title": "تعداد کل طبقات",
+                        "order": 5,
+                        "value": 0
+                    },
+                    {
+                        "name": "Commercialarea",
+                        "type": "int",
+                        "title": "متراژ تجاری",
+                        "order": 6,
+                        "value": 0
+                    },
+                    {
+                        "name": "buildingage",
+                        "type": "list",
+                        "title": "سن بنا",
+                        "order": 7,
+                        "value": "",
+                        "data": [
+                            "نوساز",
+                            "یک تا پنج سال",
+                            "پنج تا ده سال",
+                            "ده تا پانزده سال"
+                        ]
+                    },
+                    {
+                        "name": "buildingType",
+                        "type": "list",
+                        "title": "نوع بنا",
+                        "order": 8,
+                        "value": "",
+                        "data": [
+                            "اسکلت بتنی",
+                            "شناژ",
+                            "اسکلت فلزی",
+                            "دیوار باربر"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "section": {
+                "name": "section2",
+                "title": "امکانات خانه",
+                "order": 2,
+                "items": [
+                    {
+                        "name": "iswater",
+                        "type": "bool",
+                        "title": "امتیاز آب",
+                        "order": 1,
+                        "value": false
+                    },
+                    {
+                        "name": "isgaz",
+                        "type": "bool",
+                        "title": "امتیاز گاز",
+                        "order": 2,
+                        "value": false
+                    },
+                    {
+                        "name": "istel",
+                        "type": "bool",
+                        "title": "امتیاز تلفن",
+                        "order": 3,
+                        "value": false
+                    }
+                ]
+            }
+        },
+        {
+            "section": {
+                "name": "section3",
+                "title": "اطلاعات وام",
+                "order": 3,
+                "items": [
+                    {
+                        "name": "isloan",
+                        "type": "conditional",
+                        "title": "وام دارد",
+                        "order": 1,
+                        "value": false
+                    },
+                    {
+                        "name": "noloan",
+                        "type": "conditional",
+                        "title": "وام ندارد",
+                        "order": 2,
+                        "value": false
+                    }
+                ]
+            }
+        },
+        {
+            "section": {
+                "name": "section4",
+                "title": "اطلاعات سند",
+                "order": 4,
+                "items": [
+                    {
+                        "name": " Documentinformation",
+                        "type": "list",
+                        "title": "وضعیت ",
+                        "order": 1,
+                        "value": "",
+                        "data": [
+                            "در رهن بانک",
+                            "در دهن دادگاه",
+                            "در دهن اجرای ثبت"
+                        ]
+                    },
+                    {
+                        "name": "documenttype",
+                        "type": "list",
+                        "title": "وام ندارد",
+                        "order": 2,
+                        "value": "",
+                        "data": ["تک برگ", "دفترچه ای", "سرقفلی", "مشاع"]
+                    }
+                ]
+            }
+        },
+        {
+            "section": {
+                "name": "section5",
+                "title": "آگهی دهنده",
+                "order": 5,
+                "items": [
+                    {
+                        "name": " Advertiser",
+                        "type": "list",
+                        "title": "آگهی دهنده ",
+                        "order": 1,
+                        "value": "",
+                        "data": ["مستاجر", "مالک", "مشاور املاک"]
+                    },
+                    {
+                        "name": "price",
+                        "type": "int",
+                        "title": "قیمت نهایی",
+                        "order": 2,
+                        "value": 0
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -16,6 +16,7 @@ function LoginScreen() {
     function passwordVisible() {
         setVisibility(!visibility);
     }
+
     return (
         <div className="login-container">
             <motion.div

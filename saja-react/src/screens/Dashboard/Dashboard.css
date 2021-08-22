@@ -18,12 +18,12 @@
     align-items: center;
 }
 .user-dashboard-section {
-    width: 800px;
-    height: 400px;
+    min-width: 50vw;
+    min-height: 50vh;
 }
 .admin-dashboard-section {
-    width: 90vw;
-    height: 80vh;
+    width: 92vw;
+    height: 88vh;
 }
 
 @media (max-width: 900px) {
