@@ -1,19 +1,35 @@
-interface InputItems {
+enum FieldType {
+    String,
+    Number,
+    Select,
+    Bool,
+    Conditional,
+    Image,
+    Range,
+}
+
+interface Field {
     name: string;
-    type: string;
+    type: FieldType;
     title: string;
     order: number;
-    value: string;
-    data?: string[];
+    value: any;
+    options?: string[];
+    fields?: Field[];
+    min?: number;
+    max?: number;
 }
 
 interface Section {
-    section: {
-        name: string;
-        title: string;
-        order: number;
-        items: InputItems[];
-    };
+    name: string;
+    title: string;
+    fields: Field[];
 }
 
-export type { Section };
+interface EstateForm {
+    id: number;
+    sections: Section[];
+}
+
+export type { EstateForm, Section, Field };
+export { FieldType };

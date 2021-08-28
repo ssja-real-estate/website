@@ -8,14 +8,14 @@ import {
 import { Button, Form } from "react-bootstrap";
 import { delegationTypes, estateTypes } from "../../global/constants/estates";
 import axios from "axios";
-import { Section } from "../../global/types/EstateSection";
+import { FieldType, EstateForm } from "../../global/types/EstateSection";
 
 function AddEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
     const [estateType, setEstateType] = useState<string>("default");
     const isDefault: boolean =
         delegationType !== "default" && estateType !== "default" ? true : false;
-    const [sections, setSections] = useState<Section[]>();
+    const [form, setForm] = useState<EstateForm>();
 
     function handleDelegationChange(
         event: React.ChangeEvent<HTMLSelectElement>
@@ -26,10 +26,37 @@ function AddEstateScreen() {
         setEstateType(event.target.value);
     }
 
+    function onFormItemChange(
+        targetValue: any,
+        form: EstateForm,
+        sectionIndex: number,
+        fieldIndex: number
+    ) {
+        const currentField = {
+            ...form.sections[sectionIndex].fields[fieldIndex],
+            value: targetValue,
+        };
+        const sections = form.sections;
+        const fields = sections[sectionIndex].fields;
+        fields[fieldIndex] = currentField;
+        sections[sectionIndex].fields = fields;
+
+        console.log(currentField);
+        setForm({
+            ...form,
+            sections: sections,
+        });
+    }
+
+    async function fetchData(url: string) {
+        const response = await axios.get(url);
+        const data = response.data;
+        return data;
+    }
+
     useEffect(() => {
-        axios.get("http://localhost:8000/items").then((response) => {
-            const data = response.data;
-            setSections(data);
+        fetchData("http://localhost:8000/forms/1").then((data) => {
+            setForm(data);
         });
     }, []);
 
@@ -96,45 +123,109 @@ function AddEstateScreen() {
                 </motion.div>
             ) : (
                 <div className="items-container">
-                    {sections?.map((item, index) => {
+                    {form?.sections.map((section, sectionIndex) => {
                         return (
                             <div
                                 className="section card glass shadow-sm py-2 px-4 my-2"
-                                key={index}
+                                key={sectionIndex}
                             >
                                 <h3 className="section-title py-3">
-                                    {item.section.title}
+                                    {section.title}
                                 </h3>
-                                {item.section.items.map((item, index) => {
+                                {section.fields.map((field, fieldIndex) => {
                                     return (
                                         <div
-                                            key={index}
+                                            key={fieldIndex}
                                             className="input-item py-3"
                                         >
-                                            <label htmlFor={item.name}>
-                                                {item.title}
+                                            <label htmlFor={field.name}>
+                                                {field.title}
                                             </label>
-                                            {item.type === "string" ? (
+                                            {field.type === FieldType.String ? (
                                                 <Form.Control
                                                     type="text"
-                                                    name={item.name}
-                                                    id={item.name}
+                                                    name={field.name}
+                                                    id={field.name}
+                                                    value={
+                                                        field.value
+                                                            ? String(
+                                                                  field.value
+                                                              )
+                                                            : ""
+                                                    }
+                                                    onChange={(e) => {
+                                                        const stringValue =
+                                                            String(
+                                                                e.target.value
+                                                            );
+
+                                                        onFormItemChange(
+                                                            stringValue,
+                                                            form,
+                                                            sectionIndex,
+                                                            fieldIndex
+                                                        );
+                                                    }}
                                                 />
-                                            ) : item.type === "int" ? (
+                                            ) : field.type ===
+                                              FieldType.Number ? (
                                                 <Form.Control
                                                     type="number"
-                                                    name={item.name}
-                                                    id={item.name}
+                                                    name={field.name}
+                                                    id={field.name}
+                                                    value={
+                                                        field.value
+                                                            ? Number(
+                                                                  field.value
+                                                              )
+                                                            : ""
+                                                    }
+                                                    onChange={(e) => {
+                                                        const numberValue =
+                                                            Number(
+                                                                e.target.value
+                                                            );
+
+                                                        onFormItemChange(
+                                                            numberValue,
+                                                            form,
+                                                            sectionIndex,
+                                                            fieldIndex
+                                                        );
+                                                    }}
                                                 />
-                                            ) : item.type === "list" ? (
-                                                <Form.Select defaultValue="default">
+                                            ) : field.type ===
+                                              FieldType.Select ? (
+                                                <Form.Select
+                                                    value={
+                                                        field.value
+                                                            ? String(
+                                                                  field.value
+                                                              )
+                                                            : "default"
+                                                    }
+                                                    onChange={(e) => {
+                                                        const numberValue =
+                                                            String(
+                                                                e.currentTarget
+                                                                    .value
+                                                            );
+
+                                                        onFormItemChange(
+                                                            numberValue,
+                                                            form,
+                                                            sectionIndex,
+                                                            fieldIndex
+                                                        );
+                                                    }}
+                                                >
                                                     <option
                                                         value="default"
                                                         disabled
                                                     >
                                                         انتخاب کنید
                                                     </option>
-                                                    {item.data?.map(
+                                                    {field.options?.map(
                                                         (option, index) => {
                                                             return (
                                                                 <option
@@ -146,20 +237,76 @@ function AddEstateScreen() {
                                                         }
                                                     )}
                                                 </Form.Select>
-                                            ) : item.type === "bool" ? (
+                                            ) : field.type ===
+                                              FieldType.Bool ? (
                                                 <Form.Check
                                                     className="d-inline mx-3"
                                                     type="switch"
-                                                    name={item.name}
-                                                    id={item.name}
+                                                    name={field.name}
+                                                    id={field.name}
+                                                    checked={
+                                                        field.value
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(e) => {
+                                                        const booleanValue =
+                                                            e.target.checked;
+
+                                                        onFormItemChange(
+                                                            booleanValue,
+                                                            form,
+                                                            sectionIndex,
+                                                            fieldIndex
+                                                        );
+                                                    }}
                                                 />
-                                            ) : (
-                                                item.type === "conditional" && (
+                                            ) : field.type ===
+                                              FieldType.Conditional ? (
+                                                <>
                                                     <Form.Check
                                                         className="d-inline mx-3"
-                                                        type="radio"
+                                                        type="switch"
+                                                        checked={
+                                                            field.value
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        onChange={(e) => {
+                                                            const booleanValue =
+                                                                e.target
+                                                                    .checked;
+                                                            onFormItemChange(
+                                                                booleanValue,
+                                                                form,
+                                                                sectionIndex,
+                                                                fieldIndex
+                                                            );
+                                                        }}
                                                     />
-                                                )
+                                                    {field.value && <div></div>}
+                                                </>
+                                            ) : (
+                                                <Form.Control
+                                                    type="text"
+                                                    name={field.name}
+                                                    id={field.name}
+                                                    value={
+                                                        field.value
+                                                            ? String(
+                                                                  field.value
+                                                              )
+                                                            : ""
+                                                    }
+                                                    onChange={(e) => {
+                                                        onFormItemChange(
+                                                            e.target.value,
+                                                            form,
+                                                            sectionIndex,
+                                                            fieldIndex
+                                                        );
+                                                    }}
+                                                />
                                             )}
                                         </div>
                                     );
@@ -167,7 +314,13 @@ function AddEstateScreen() {
                             </div>
                         );
                     })}
-                    <Button className="w-100 mb-5 mt-3" variant="purple">
+                    <Button
+                        className="w-100 mb-5 mt-3"
+                        variant="purple"
+                        onClick={() => {
+                            console.log(form);
+                        }}
+                    >
                         ثبت ملک
                     </Button>
                 </div>
