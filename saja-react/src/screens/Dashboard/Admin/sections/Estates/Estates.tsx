@@ -7,55 +7,14 @@ import {
     estateTypes,
 } from "../../../../../global/constants/estates";
 import { Estate } from "../../../../../global/types/Estate";
+import { fetchData } from "../../../../../services/api/fetchData";
 import "./Estates.css";
 
 function EstatesSection() {
     const [delegationType, setDelegationType] = useState<string>("default");
     const [estateType, setEstateType] = useState<string>("default");
     const [location, setLocation] = useState<string>("");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [estates, setEstates] = useState<Estate[]>([
-        {
-            title: "فروش خانه در جام جم",
-            user: "کاوه خلیلی",
-            delegationType: "فروش",
-            estateType: "خانه",
-            city: "مهاباد",
-            province: "آذربایجان غربی",
-        },
-        {
-            title: "فروش خانه در جام جم",
-            user: "کاوه خلیلی",
-            delegationType: "اجاره",
-            estateType: "خانه",
-            city: "مهاباد",
-            province: "آذربایجان غربی",
-        },
-        {
-            title: "فروش خانه در جام جم",
-            user: "کاوه خلیلی",
-            delegationType: "اجاره",
-            estateType: "خانه",
-            city: "مهاباد",
-            province: "آذربایجان غربی",
-        },
-        {
-            title: "فروش خانه در جام جم",
-            user: "کاوه خلیلی",
-            delegationType: "فروش",
-            estateType: "آپارتمان",
-            city: "مهاباد",
-            province: "آذربایجان غربی",
-        },
-        {
-            title: "فروش خانه در جام جم",
-            user: "کاوه خلیلی",
-            delegationType: "فروش",
-            estateType: "آپارتمان",
-            city: "مهاباد",
-            province: "آذربایجان غربی",
-        },
-    ]);
+    const [estates, setEstates] = useState<Estate[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     function handleDelegationChange(
@@ -71,9 +30,10 @@ function EstatesSection() {
     }
 
     useEffect(() => {
-        setTimeout(() => {
+        fetchData("http://localhost:8000/estates").then((data) => {
+            setEstates(data);
             setLoading(false);
-        }, 1000);
+        });
     }, []);
 
     return (

@@ -116,5 +116,47 @@
                 }
             ]
         }
+    ],
+    "estates": [
+        {
+            "id": 1,
+            "title": "فروش خانه در جام جم",
+            "delegationType": "فروش",
+            "estateType": "خانه",
+            "city": "مهاباد",
+            "province": "آذربایجان غربی"
+        },
+        {
+            "id": 2,
+            "title": "فروش خانه در جام جم",
+            "delegationType": "اجاره",
+            "estateType": "خانه",
+            "city": "مهاباد",
+            "province": "آذربایجان غربی"
+        },
+        {
+            "id": 3,
+            "title": "فروش خانه در جام جم",
+            "delegationType": "اجاره",
+            "estateType": "خانه",
+            "city": "مهاباد",
+            "province": "آذربایجان غربی"
+        },
+        {
+            "id": 4,
+            "title": "فروش خانه در جام جم",
+            "delegationType": "فروش",
+            "estateType": "آپارتمان",
+            "city": "مهاباد",
+            "province": "آذربایجان غربی"
+        },
+        {
+            "id": 5,
+            "title": "فروش خانه در جام جم",
+            "delegationType": "فروش",
+            "estateType": "آپارتمان",
+            "city": "مهاباد",
+            "province": "آذربایجان غربی"
+        }
     ]
 }

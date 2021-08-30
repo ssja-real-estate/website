@@ -26,10 +26,6 @@ function EstateCard({
                     <h4 className="delegation-and-estate-type fs-5 fw-bold py-4">
                         {estate.delegationType} {estate.estateType}
                     </h4>
-                    <h5 className="user fw-light">
-                        <i className="bi-person-fill ms-3"></i>
-                        {estate.user}
-                    </h5>
                     <h6 className="province-and-city fw-light text-secondary">
                         {estate.city}، {estate.province}
                     </h6>

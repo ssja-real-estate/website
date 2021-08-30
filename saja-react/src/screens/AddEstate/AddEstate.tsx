@@ -7,8 +7,8 @@ import {
 } from "../../animations/motionVariants";
 import { Button, Form } from "react-bootstrap";
 import { delegationTypes, estateTypes } from "../../global/constants/estates";
-import axios from "axios";
-import { FieldType, EstateForm } from "../../global/types/EstateSection";
+import { FieldType, EstateForm, Field } from "../../global/types/EstateForm";
+import { fetchData } from "../../services/api/fetchData";
 
 function AddEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
@@ -21,12 +21,18 @@ function AddEstateScreen() {
         event: React.ChangeEvent<HTMLSelectElement>
     ) {
         setDelegationType(event.target.value);
+        fetchData("http://localhost:8000/forms/1").then((data) => {
+            setForm(data);
+        });
     }
     function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
         setEstateType(event.target.value);
+        fetchData("http://localhost:8000/forms/1").then((data) => {
+            setForm(data);
+        });
     }
 
-    function onFormItemChange(
+    function onFieldChange(
         targetValue: any,
         form: EstateForm,
         sectionIndex: number,
@@ -41,17 +47,183 @@ function AddEstateScreen() {
         fields[fieldIndex] = currentField;
         sections[sectionIndex].fields = fields;
 
-        console.log(currentField);
+        console.log(currentField.value);
+
         setForm({
             ...form,
             sections: sections,
         });
     }
 
-    async function fetchData(url: string) {
-        const response = await axios.get(url);
-        const data = response.data;
-        return data;
+    function onConditionalFieldChange(
+        targetValue: any,
+        sectionIndex: number,
+        fieldIndex: number,
+        innerFieldIndex: number,
+        form: EstateForm
+    ) {
+        const currentField = {
+            ...form.sections[sectionIndex].fields[fieldIndex].fields![
+                innerFieldIndex
+            ],
+            value: targetValue,
+        };
+        const sections = form.sections;
+        const fields = sections[sectionIndex].fields;
+        const innerFields = fields[fieldIndex].fields!;
+        innerFields[innerFieldIndex] = currentField;
+        fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
+        sections[sectionIndex].fields = fields;
+
+        console.log(currentField.value);
+
+        setForm({
+            ...form,
+            sections: sections,
+        });
+    }
+
+    function mapConditionalFields(
+        fields: Field[],
+        form: EstateForm,
+        sectionIndex: number,
+        fieldIndex: number
+    ) {
+        return fields.map((innerField, innerFieldIndex) => {
+            return (
+                <div key={innerFieldIndex} className="input-item py-3">
+                    <label htmlFor={innerField.name}>{innerField.title}</label>
+                    {innerField.type === FieldType.String ? (
+                        <Form.Control
+                            type="text"
+                            name={innerField.name}
+                            id={innerField.name}
+                            value={
+                                innerField.value ? String(innerField.value) : ""
+                            }
+                            onChange={(e) => {
+                                const stringValue = String(e.target.value);
+
+                                onConditionalFieldChange(
+                                    stringValue,
+                                    sectionIndex,
+                                    fieldIndex,
+                                    innerFieldIndex,
+                                    form
+                                );
+                            }}
+                        />
+                    ) : innerField.type === FieldType.Number ? (
+                        <Form.Control
+                            type="number"
+                            name={innerField.name}
+                            id={innerField.name}
+                            value={
+                                innerField.value ? Number(innerField.value) : ""
+                            }
+                            onChange={(e) => {
+                                const numberValue = Number(e.target.value);
+
+                                onConditionalFieldChange(
+                                    numberValue,
+                                    sectionIndex,
+                                    fieldIndex,
+                                    innerFieldIndex,
+                                    form
+                                );
+                            }}
+                        />
+                    ) : innerField.type === FieldType.Select ? (
+                        <Form.Select
+                            value={
+                                innerField.value
+                                    ? String(innerField.value)
+                                    : "default"
+                            }
+                            onChange={(e) => {
+                                const numberValue = String(
+                                    e.currentTarget.value
+                                );
+
+                                onConditionalFieldChange(
+                                    numberValue,
+                                    sectionIndex,
+                                    fieldIndex,
+                                    innerFieldIndex,
+                                    form
+                                );
+                            }}
+                        >
+                            <option value="default" disabled>
+                                انتخاب کنید
+                            </option>
+                            {innerField.options?.map((option, index) => {
+                                return <option key={index}>{option}</option>;
+                            })}
+                        </Form.Select>
+                    ) : innerField.type === FieldType.Bool ? (
+                        <Form.Check
+                            className="d-inline mx-3"
+                            type="switch"
+                            name={innerField.name}
+                            id={innerField.name}
+                            checked={innerField.value ? true : false}
+                            onChange={(e) => {
+                                const booleanValue = e.target.checked;
+
+                                onConditionalFieldChange(
+                                    booleanValue,
+                                    sectionIndex,
+                                    fieldIndex,
+                                    innerFieldIndex,
+                                    form
+                                );
+                            }}
+                        />
+                    ) : innerField.type === FieldType.Conditional ? (
+                        <>
+                            <Form.Check
+                                className="d-inline mx-3"
+                                type="switch"
+                                checked={innerField.value ? true : false}
+                                onChange={(e) => {
+                                    const booleanValue = e.target.checked;
+
+                                    onConditionalFieldChange(
+                                        booleanValue,
+                                        sectionIndex,
+                                        fieldIndex,
+                                        innerFieldIndex,
+                                        form
+                                    );
+                                }}
+                            />
+                            {innerField.value && <div></div>}
+                        </>
+                    ) : (
+                        <Form.Control
+                            type="text"
+                            name={innerField.name}
+                            id={innerField.name}
+                            value={
+                                innerField.value ? String(innerField.value) : ""
+                            }
+                            onChange={(e) => {
+                                const stringValue = String(e.target.value);
+
+                                onConditionalFieldChange(
+                                    stringValue,
+                                    sectionIndex,
+                                    fieldIndex,
+                                    innerFieldIndex,
+                                    form
+                                );
+                            }}
+                        />
+                    )}
+                </div>
+            );
+        });
     }
 
     useEffect(() => {
@@ -159,7 +331,7 @@ function AddEstateScreen() {
                                                                 e.target.value
                                                             );
 
-                                                        onFormItemChange(
+                                                        onFieldChange(
                                                             stringValue,
                                                             form,
                                                             sectionIndex,
@@ -186,7 +358,7 @@ function AddEstateScreen() {
                                                                 e.target.value
                                                             );
 
-                                                        onFormItemChange(
+                                                        onFieldChange(
                                                             numberValue,
                                                             form,
                                                             sectionIndex,
@@ -211,7 +383,7 @@ function AddEstateScreen() {
                                                                     .value
                                                             );
 
-                                                        onFormItemChange(
+                                                        onFieldChange(
                                                             numberValue,
                                                             form,
                                                             sectionIndex,
@@ -253,7 +425,7 @@ function AddEstateScreen() {
                                                         const booleanValue =
                                                             e.target.checked;
 
-                                                        onFormItemChange(
+                                                        onFieldChange(
                                                             booleanValue,
                                                             form,
                                                             sectionIndex,
@@ -276,7 +448,8 @@ function AddEstateScreen() {
                                                             const booleanValue =
                                                                 e.target
                                                                     .checked;
-                                                            onFormItemChange(
+
+                                                            onFieldChange(
                                                                 booleanValue,
                                                                 form,
                                                                 sectionIndex,
@@ -284,7 +457,13 @@ function AddEstateScreen() {
                                                             );
                                                         }}
                                                     />
-                                                    {field.value && <div></div>}
+                                                    {field.value &&
+                                                        mapConditionalFields(
+                                                            field.fields!,
+                                                            form,
+                                                            sectionIndex,
+                                                            fieldIndex
+                                                        )}
                                                 </>
                                             ) : (
                                                 <Form.Control
@@ -299,8 +478,13 @@ function AddEstateScreen() {
                                                             : ""
                                                     }
                                                     onChange={(e) => {
-                                                        onFormItemChange(
-                                                            e.target.value,
+                                                        const stringValue =
+                                                            String(
+                                                                e.target.value
+                                                            );
+
+                                                        onFieldChange(
+                                                            stringValue,
                                                             form,
                                                             sectionIndex,
                                                             fieldIndex
