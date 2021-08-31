@@ -4,6 +4,16 @@
             "id": 1,
             "sections": [
                 {
+                    "title": "تصاویر",
+                    "fields": [
+                        {
+                            "type": 5,
+                            "title": "انتخاب تصاویر",
+                            "value": null
+                        }
+                    ]
+                },
+                {
                     "title": "مشخصات جغرافیایی",
                     "fields": [
                         {

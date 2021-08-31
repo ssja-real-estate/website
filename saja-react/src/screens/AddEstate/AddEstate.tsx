@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import "./AddEstate.css";
 import { motion } from "framer-motion";
 import {
@@ -7,7 +7,8 @@ import {
 } from "../../animations/motionVariants";
 import { Button, Form } from "react-bootstrap";
 import { delegationTypes, estateTypes } from "../../global/constants/estates";
-import { FieldType, EstateForm, Field } from "../../global/types/EstateForm";
+import { EstateForm } from "../../global/types/EstateForm";
+import { FieldType, Field } from "../../global/types/Field";
 import { fetchData } from "../../services/api/fetchData";
 
 function AddEstateScreen() {
@@ -30,6 +31,12 @@ function AddEstateScreen() {
         fetchData("http://localhost:8000/forms/1").then((data) => {
             setForm(data);
         });
+    }
+
+    function checkMaxFiles(files: File[]): boolean {
+        const maxFiles = 10;
+
+        return files.length > maxFiles ? false : true;
     }
 
     function onFieldChange(
@@ -80,6 +87,182 @@ function AddEstateScreen() {
         setForm({
             ...form,
             sections: sections,
+        });
+    }
+
+    async function getData() {
+        fetchData("http://localhost:8000/forms/1").then((data) => {
+            setForm(data);
+        });
+    }
+
+    useEffect(() => {
+        getData();
+    }, [delegationType, estateType]);
+
+    function mapFields(
+        fields: Field[],
+        form: EstateForm,
+        sectionIndex: number
+    ) {
+        return fields.map((field, fieldIndex) => {
+            return (
+                <div key={fieldIndex} className="input-item py-3">
+                    <label htmlFor={field.name}>{field.title}</label>
+                    {field.type === FieldType.String ? (
+                        <Form.Control
+                            type="text"
+                            name={field.name}
+                            id={field.name}
+                            value={field.value ? String(field.value) : ""}
+                            onChange={(e) => {
+                                const stringValue = String(e.target.value);
+
+                                onFieldChange(
+                                    stringValue,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        />
+                    ) : field.type === FieldType.Number ? (
+                        <Form.Control
+                            type="number"
+                            name={field.name}
+                            id={field.name}
+                            value={field.value ? Number(field.value) : ""}
+                            onChange={(e) => {
+                                const numberValue = Number(e.target.value);
+
+                                onFieldChange(
+                                    numberValue,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        />
+                    ) : field.type === FieldType.Select ? (
+                        <Form.Select
+                            value={
+                                field.value ? String(field.value) : "default"
+                            }
+                            onChange={(e) => {
+                                const numberValue = String(
+                                    e.currentTarget.value
+                                );
+
+                                onFieldChange(
+                                    numberValue,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        >
+                            <option value="default" disabled>
+                                انتخاب کنید
+                            </option>
+                            {field.options?.map((option, index) => {
+                                return <option key={index}>{option}</option>;
+                            })}
+                        </Form.Select>
+                    ) : field.type === FieldType.Bool ? (
+                        <Form.Check
+                            className="d-inline mx-3"
+                            type="switch"
+                            name={field.name}
+                            id={field.name}
+                            checked={field.value ? true : false}
+                            onChange={(e) => {
+                                const booleanValue = e.target.checked;
+
+                                onFieldChange(
+                                    booleanValue,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        />
+                    ) : field.type === FieldType.Conditional ? (
+                        <>
+                            <Form.Check
+                                className="d-inline mx-3"
+                                type="switch"
+                                checked={field.value ? true : false}
+                                onChange={(e) => {
+                                    const booleanValue = e.target.checked;
+
+                                    onFieldChange(
+                                        booleanValue,
+                                        form,
+                                        sectionIndex,
+                                        fieldIndex
+                                    );
+                                }}
+                            />
+                            {field.value &&
+                                mapConditionalFields(
+                                    field.fields!,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                )}
+                        </>
+                    ) : field.type === FieldType.Image ? (
+                        <Form.Control
+                            type="file"
+                            multiple
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                let selectedFiles = Array.from(e.target.files!);
+
+                                if (!checkMaxFiles(selectedFiles)) {
+                                    alert(
+                                        "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!"
+                                    );
+                                    e.target.value = "";
+                                    selectedFiles = [];
+                                }
+
+                                const data = new FormData();
+                                selectedFiles.forEach((file, index) => {
+                                    data.append(`image${index}`, file);
+                                });
+
+                                data.forEach((file, index) => {
+                                    console.log(file, index);
+                                });
+
+                                onFieldChange(
+                                    data,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        />
+                    ) : (
+                        <Form.Control
+                            type="text"
+                            name={field.name}
+                            id={field.name}
+                            value={field.value ? String(field.value) : ""}
+                            onChange={(e) => {
+                                const stringValue = String(e.target.value);
+
+                                onFieldChange(
+                                    stringValue,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        />
+                    )}
+                </div>
+            );
         });
     }
 
@@ -198,8 +381,46 @@ function AddEstateScreen() {
                                     );
                                 }}
                             />
-                            {innerField.value && <div></div>}
+                            {innerField.value &&
+                                mapConditionalFields(
+                                    innerField.fields!,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                )}
                         </>
+                    ) : innerField.type === FieldType.Image ? (
+                        <Form.Control
+                            type="file"
+                            multiple
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                let selectedFiles = Array.from(e.target.files!);
+
+                                if (!checkMaxFiles(selectedFiles)) {
+                                    alert(
+                                        "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!"
+                                    );
+                                    e.target.value = "";
+                                    selectedFiles = [];
+                                }
+
+                                const data = new FormData();
+                                selectedFiles.forEach((file, index) => {
+                                    data.append(`image${index}`, file);
+                                });
+
+                                data.forEach((file, index) => {
+                                    console.log(file, index);
+                                });
+
+                                onFieldChange(
+                                    data,
+                                    form,
+                                    sectionIndex,
+                                    fieldIndex
+                                );
+                            }}
+                        />
                     ) : (
                         <Form.Control
                             type="text"
@@ -226,11 +447,6 @@ function AddEstateScreen() {
         });
     }
 
-    useEffect(() => {
-        fetchData("http://localhost:8000/forms/1").then((data) => {
-            setForm(data);
-        });
-    }, []);
 
     return (
         <div className="add-estate-container">
@@ -304,197 +520,7 @@ function AddEstateScreen() {
                                 <h3 className="section-title py-3">
                                     {section.title}
                                 </h3>
-                                {section.fields.map((field, fieldIndex) => {
-                                    return (
-                                        <div
-                                            key={fieldIndex}
-                                            className="input-item py-3"
-                                        >
-                                            <label htmlFor={field.name}>
-                                                {field.title}
-                                            </label>
-                                            {field.type === FieldType.String ? (
-                                                <Form.Control
-                                                    type="text"
-                                                    name={field.name}
-                                                    id={field.name}
-                                                    value={
-                                                        field.value
-                                                            ? String(
-                                                                  field.value
-                                                              )
-                                                            : ""
-                                                    }
-                                                    onChange={(e) => {
-                                                        const stringValue =
-                                                            String(
-                                                                e.target.value
-                                                            );
-
-                                                        onFieldChange(
-                                                            stringValue,
-                                                            form,
-                                                            sectionIndex,
-                                                            fieldIndex
-                                                        );
-                                                    }}
-                                                />
-                                            ) : field.type ===
-                                              FieldType.Number ? (
-                                                <Form.Control
-                                                    type="number"
-                                                    name={field.name}
-                                                    id={field.name}
-                                                    value={
-                                                        field.value
-                                                            ? Number(
-                                                                  field.value
-                                                              )
-                                                            : ""
-                                                    }
-                                                    onChange={(e) => {
-                                                        const numberValue =
-                                                            Number(
-                                                                e.target.value
-                                                            );
-
-                                                        onFieldChange(
-                                                            numberValue,
-                                                            form,
-                                                            sectionIndex,
-                                                            fieldIndex
-                                                        );
-                                                    }}
-                                                />
-                                            ) : field.type ===
-                                              FieldType.Select ? (
-                                                <Form.Select
-                                                    value={
-                                                        field.value
-                                                            ? String(
-                                                                  field.value
-                                                              )
-                                                            : "default"
-                                                    }
-                                                    onChange={(e) => {
-                                                        const numberValue =
-                                                            String(
-                                                                e.currentTarget
-                                                                    .value
-                                                            );
-
-                                                        onFieldChange(
-                                                            numberValue,
-                                                            form,
-                                                            sectionIndex,
-                                                            fieldIndex
-                                                        );
-                                                    }}
-                                                >
-                                                    <option
-                                                        value="default"
-                                                        disabled
-                                                    >
-                                                        انتخاب کنید
-                                                    </option>
-                                                    {field.options?.map(
-                                                        (option, index) => {
-                                                            return (
-                                                                <option
-                                                                    key={index}
-                                                                >
-                                                                    {option}
-                                                                </option>
-                                                            );
-                                                        }
-                                                    )}
-                                                </Form.Select>
-                                            ) : field.type ===
-                                              FieldType.Bool ? (
-                                                <Form.Check
-                                                    className="d-inline mx-3"
-                                                    type="switch"
-                                                    name={field.name}
-                                                    id={field.name}
-                                                    checked={
-                                                        field.value
-                                                            ? true
-                                                            : false
-                                                    }
-                                                    onChange={(e) => {
-                                                        const booleanValue =
-                                                            e.target.checked;
-
-                                                        onFieldChange(
-                                                            booleanValue,
-                                                            form,
-                                                            sectionIndex,
-                                                            fieldIndex
-                                                        );
-                                                    }}
-                                                />
-                                            ) : field.type ===
-                                              FieldType.Conditional ? (
-                                                <>
-                                                    <Form.Check
-                                                        className="d-inline mx-3"
-                                                        type="switch"
-                                                        checked={
-                                                            field.value
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        onChange={(e) => {
-                                                            const booleanValue =
-                                                                e.target
-                                                                    .checked;
-
-                                                            onFieldChange(
-                                                                booleanValue,
-                                                                form,
-                                                                sectionIndex,
-                                                                fieldIndex
-                                                            );
-                                                        }}
-                                                    />
-                                                    {field.value &&
-                                                        mapConditionalFields(
-                                                            field.fields!,
-                                                            form,
-                                                            sectionIndex,
-                                                            fieldIndex
-                                                        )}
-                                                </>
-                                            ) : (
-                                                <Form.Control
-                                                    type="text"
-                                                    name={field.name}
-                                                    id={field.name}
-                                                    value={
-                                                        field.value
-                                                            ? String(
-                                                                  field.value
-                                                              )
-                                                            : ""
-                                                    }
-                                                    onChange={(e) => {
-                                                        const stringValue =
-                                                            String(
-                                                                e.target.value
-                                                            );
-
-                                                        onFieldChange(
-                                                            stringValue,
-                                                            form,
-                                                            sectionIndex,
-                                                            fieldIndex
-                                                        );
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                                {mapFields(section.fields, form, sectionIndex)}
                             </div>
                         );
                     })}
