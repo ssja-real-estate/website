@@ -38,7 +38,7 @@ function UsersSection() {
         <div className="users-section">
             <Tab.Container>
                 <Row>
-                    <Col md={6} className="users-list">
+                    <Col md={5} className="users-list">
                         <h3 className="users-list-title fw-light mb-4">
                             لیست کاربران
                         </h3>
@@ -91,7 +91,7 @@ function UsersSection() {
                                 })}
                         </ListGroup>
                     </Col>
-                    <Col md={6} className="user-info">
+                    <Col md={7} className="user-info">
                         <Tab.Content className="sticky-top">
                             <h3 className="user-info-title fw-light mb-4">
                                 مشخصات کاربر

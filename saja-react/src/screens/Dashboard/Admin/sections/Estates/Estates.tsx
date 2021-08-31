@@ -101,37 +101,17 @@ function EstatesSection() {
                               </Tilt>
                           );
                       })
-                    : estates
-                          //   .filter((estate) => {
-                          //       return delegationType === "default" &&
-                          //           estateType === "default" &&
-                          //           location.trim() === ""
-                          //           ? true
-                          //           : delegationType === "default"
-                          //           ? (estate.estateType === estateType &&
-                          //                 estate.city === location.trim()) ||
-                          //             estate.province === location.trim()
-                          //           : estateType === "default"
-                          //           ? (estate.delegationType === delegationType &&
-                          //                 estate.city === location.trim()) ||
-                          //             estate.province === location.trim()
-                          //           : location.trim() === ""
-                          //           ? estate.delegationType === delegationType &&
-                          //             estate.estateType === estateType
-                          //           : estate.delegationType === delegationType &&
-                          //             estate.estateType === estateType;
-                          //   })
-                          .map((estate, index) => {
-                              return (
-                                  <React.Fragment key={index}>
-                                      <EstateCard
-                                          estate={estate}
-                                          verifyButton
-                                          rejectButton
-                                      />
-                                  </React.Fragment>
-                              );
-                          })}
+                    : estates.map((estate, index) => {
+                          return (
+                              <React.Fragment key={index}>
+                                  <EstateCard
+                                      estate={estate}
+                                      verifyButton
+                                      rejectButton
+                                  />
+                              </React.Fragment>
+                          );
+                      })}
             </div>
         </div>
     );

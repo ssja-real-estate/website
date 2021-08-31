@@ -1,18 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./SearchEstate.css";
 import { motion } from "framer-motion";
 import {
     crossfadeAnimation,
     elevationEffect,
 } from "../../animations/motionVariants";
-import { Form } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import { delegationTypes, estateTypes } from "../../global/constants/estates";
+import { fetchData } from "../../services/api/fetchData";
+import { Estate } from "../../global/types/Estate";
+import Tilt from "react-parallax-tilt";
+import React from "react";
+import EstateCard from "../../components/EstateCard/EstateCard";
 
 function SearchEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
     const [estateType, setEstateType] = useState<string>("default");
-    const isDefault: boolean =
-        delegationType !== "default" && estateType !== "default" ? true : false;
+    // const isDefault: boolean =
+    //     delegationType !== "default" && estateType !== "default" ? true : false;
+    const [estates, setEstates] = useState<Estate[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     function handleDelegationChange(
         event: React.ChangeEvent<HTMLSelectElement>
@@ -22,6 +29,18 @@ function SearchEstateScreen() {
     function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
         setEstateType(event.target.value);
     }
+
+    async function getData() {
+        fetchData("http://localhost:8000/estates").then((data) => {
+            setEstates(data);
+            setLoading(false);
+        });
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        getData();
+    }, [delegationType, estateType]);
 
     return (
         <div className="search-estate-container">
@@ -73,23 +92,43 @@ function SearchEstateScreen() {
                     </Form.Select>
                 </form>
             </motion.div>
-            {!isDefault ? (
-                <motion.div
-                    variants={crossfadeAnimation}
-                    initial="first"
-                    animate="second"
-                    className="card glass shadow rounded-3 glass p-5"
-                >
-                    <h4 className="fw-light fs-4">
-                        لطفاً نوع واگذاری و نوع ملک را انتخاب کنید
-                    </h4>
-                </motion.div>
-            ) : (
-                <div>
-                    <h6>{delegationType}</h6>
-                    <h6>{estateType}</h6>
-                </div>
-            )}
+            {
+                <Container>
+                    <motion.div
+                        variants={crossfadeAnimation}
+                        initial="first"
+                        animate="second"
+                        className="estates-grid"
+                    >
+                        {loading
+                            ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+                                  (_, index) => {
+                                      return (
+                                          <Tilt key={index}>
+                                              <div className="estate card shadow rounded-3 p-4">
+                                                  <h4 className="card-title placeholder-glow d-flex flex-column justify-content-center align-items-start">
+                                                      <span className="placeholder col-6 py-3 rounded-3"></span>
+                                                  </h4>
+                                                  <h4 className="card-text placeholder-glow">
+                                                      <span className="placeholder col-4 my-4 rounded-3 d-block"></span>
+                                                      <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
+                                                      <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
+                                                  </h4>
+                                              </div>
+                                          </Tilt>
+                                      );
+                                  }
+                              )
+                            : estates.map((estate, index) => {
+                                  return (
+                                      <React.Fragment key={index}>
+                                          <EstateCard estate={estate} />
+                                      </React.Fragment>
+                                  );
+                              })}
+                    </motion.div>
+                </Container>
+            }
         </div>
     );
 }
