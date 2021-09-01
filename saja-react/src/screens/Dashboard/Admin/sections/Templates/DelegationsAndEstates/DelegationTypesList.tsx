@@ -26,7 +26,7 @@ function DelegationTypesList() {
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
 
-        setDelegationTypes([...items]);
+        setDelegationTypes(items);
     }
 
     useEffect(() => {
@@ -69,14 +69,14 @@ function DelegationTypesList() {
                         setNewDelegationType({ value: "" });
                     }}
                 >
-                    <i className="bi-plus-lg"></i>
+                    <i className="bi-plus-lg fs-6"></i>
                 </Button>
                 <Form.Control
                     type="text"
                     placeholder="افزودن نوع جدید"
                     value={newDelegationType.value}
                     onChange={(e) => {
-                        setNewDelegationType({ value: e.target.value.trim() });
+                        setNewDelegationType({ value: e.target.value });
                     }}
                 />
             </InputGroup>

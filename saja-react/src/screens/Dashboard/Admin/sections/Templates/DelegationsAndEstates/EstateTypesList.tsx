@@ -67,7 +67,7 @@ function EstateTypesList() {
                         setNewEstateType({ value: "" });
                     }}
                 >
-                    <i className="bi-plus-lg"></i>
+                    <i className="bi-plus-lg fs-6"></i>
                 </Button>
                 <Form.Control
                     type="text"
