@@ -30,10 +30,14 @@ function EstatesSection() {
     }
 
     useEffect(() => {
-        fetchData("http://localhost:8000/estates").then((data) => {
-            setEstates(data);
-            setLoading(false);
-        });
+        fetchData("http://localhost:8000/estates")
+            .then((data) => {
+                setEstates(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }, []);
 
     return (

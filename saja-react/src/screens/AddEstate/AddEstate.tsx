@@ -22,15 +22,23 @@ function AddEstateScreen() {
         event: React.ChangeEvent<HTMLSelectElement>
     ) {
         setDelegationType(event.target.value);
-        fetchData("http://localhost:8000/forms/1").then((data) => {
-            setForm(data);
-        });
+        fetchData("http://localhost:8000/forms/1")
+            .then((data) => {
+                setForm(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
     function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
         setEstateType(event.target.value);
-        fetchData("http://localhost:8000/forms/1").then((data) => {
-            setForm(data);
-        });
+        fetchData("http://localhost:8000/forms/1")
+            .then((data) => {
+                setForm(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     function checkMaxFiles(files: File[]): boolean {
@@ -91,9 +99,13 @@ function AddEstateScreen() {
     }
 
     async function getData() {
-        fetchData("http://localhost:8000/forms/1").then((data) => {
-            setForm(data);
-        });
+        fetchData("http://localhost:8000/forms/1")
+            .then((data) => {
+                setForm(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     useEffect(() => {
@@ -446,7 +458,6 @@ function AddEstateScreen() {
             );
         });
     }
-
 
     return (
         <div className="add-estate-container">

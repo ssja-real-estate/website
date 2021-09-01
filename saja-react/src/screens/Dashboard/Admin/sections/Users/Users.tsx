@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { Card, Col, Form, ListGroup, Row, Tab } from "react-bootstrap";
-
-interface User {
-    name: string;
-    phone: string;
-    isAdmin: boolean;
-}
+import { User } from "../../../../../global/types/User";
 
 function UsersSection() {
     const [searchValue, setSearchValue] = useState<string>("");
