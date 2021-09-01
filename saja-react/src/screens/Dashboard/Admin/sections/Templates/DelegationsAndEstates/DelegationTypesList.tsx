@@ -6,11 +6,16 @@ import {
     DropResult,
 } from "react-beautiful-dnd";
 import { Row, Col, Button, InputGroup, Form, ListGroup } from "react-bootstrap";
-import { fetchData } from "../../../../../../services/api/fetchData";
+import { DelegationType } from "../../../../../../global/types/Estate";
+import { fetchGet } from "../../../../../../services/api/fetch";
 
 function DelegationTypesList() {
-    const [delegationTypes, setDelegationTypes] = useState<string[]>([]);
-    const [newDelegationType, setNewDelegationType] = useState<string>("");
+    const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>(
+        []
+    );
+    const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
+        value: "",
+    });
 
     function handleDelegationTypesDragEnd(result: DropResult) {
         if (!result.destination) {
@@ -21,18 +26,18 @@ function DelegationTypesList() {
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
 
-        setDelegationTypes(items);
+        setDelegationTypes([...items]);
     }
 
     useEffect(() => {
-        fetchData("http://localhost:8000/delegationTypes")
+        fetchGet("http://localhost:8000/delegationTypes")
             .then((data) => {
                 setDelegationTypes(data);
             })
             .catch((error) => {
                 console.log(error);
             });
-    });
+    }, []);
 
     return (
         <>
@@ -56,12 +61,12 @@ function DelegationTypesList() {
                 <Button
                     variant="dark"
                     onClick={() => {
-                        newDelegationType.trim() !== "" &&
+                        newDelegationType.value.trim() !== "" &&
                             setDelegationTypes((prev) => [
                                 ...prev,
-                                newDelegationType,
+                                { value: newDelegationType.value.trim() },
                             ]);
-                        setNewDelegationType("");
+                        setNewDelegationType({ value: "" });
                     }}
                 >
                     <i className="bi-plus-lg"></i>
@@ -69,9 +74,9 @@ function DelegationTypesList() {
                 <Form.Control
                     type="text"
                     placeholder="افزودن نوع جدید"
-                    value={newDelegationType}
+                    value={newDelegationType.value}
                     onChange={(e) => {
-                        setNewDelegationType(e.target.value);
+                        setNewDelegationType({ value: e.target.value.trim() });
                     }}
                 />
             </InputGroup>
@@ -100,7 +105,9 @@ function DelegationTypesList() {
                                                                 provided.innerRef
                                                             }
                                                         >
-                                                            {delegationType}
+                                                            {
+                                                                delegationType.value
+                                                            }
                                                         </ListGroup.Item>
                                                     );
                                                 }}

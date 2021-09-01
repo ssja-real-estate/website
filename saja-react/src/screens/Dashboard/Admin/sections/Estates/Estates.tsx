@@ -7,7 +7,7 @@ import {
     estateTypes,
 } from "../../../../../global/constants/estates";
 import { Estate } from "../../../../../global/types/Estate";
-import { fetchData } from "../../../../../services/api/fetchData";
+import { fetchGet } from "../../../../../services/api/fetch";
 import "./Estates.css";
 
 function EstatesSection() {
@@ -30,7 +30,7 @@ function EstatesSection() {
     }
 
     useEffect(() => {
-        fetchData("http://localhost:8000/estates")
+        fetchGet("http://localhost:8000/estates")
             .then((data) => {
                 setEstates(data);
                 setLoading(false);

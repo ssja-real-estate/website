@@ -1,10 +1,17 @@
 interface Estate {
     title: string;
-    user: string;
     delegationType: string;
     estateType: string;
     city: string;
     province: string;
 }
 
-export type { Estate };
+interface DelegationType {
+    value: string;
+}
+
+interface EstateType {
+    value: string;
+}
+
+export type { Estate, DelegationType, EstateType };

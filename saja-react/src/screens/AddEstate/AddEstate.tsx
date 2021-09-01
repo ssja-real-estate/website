@@ -9,7 +9,7 @@ import { Button, Form } from "react-bootstrap";
 import { delegationTypes, estateTypes } from "../../global/constants/estates";
 import { EstateForm } from "../../global/types/EstateForm";
 import { FieldType, Field } from "../../global/types/Field";
-import { fetchData } from "../../services/api/fetchData";
+import { fetchGet } from "../../services/api/fetch";
 
 function AddEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
@@ -22,7 +22,7 @@ function AddEstateScreen() {
         event: React.ChangeEvent<HTMLSelectElement>
     ) {
         setDelegationType(event.target.value);
-        fetchData("http://localhost:8000/forms/1")
+        fetchGet("http://localhost:8000/forms/1")
             .then((data) => {
                 setForm(data);
             })
@@ -32,7 +32,7 @@ function AddEstateScreen() {
     }
     function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
         setEstateType(event.target.value);
-        fetchData("http://localhost:8000/forms/1")
+        fetchGet("http://localhost:8000/forms/1")
             .then((data) => {
                 setForm(data);
             })
@@ -99,7 +99,7 @@ function AddEstateScreen() {
     }
 
     async function getData() {
-        fetchData("http://localhost:8000/forms/1")
+        fetchGet("http://localhost:8000/forms/1")
             .then((data) => {
                 setForm(data);
             })

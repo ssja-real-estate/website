@@ -7,7 +7,7 @@ import {
 } from "../../animations/motionVariants";
 import { Container, Form } from "react-bootstrap";
 import { delegationTypes, estateTypes } from "../../global/constants/estates";
-import { fetchData } from "../../services/api/fetchData";
+import { fetchGet } from "../../services/api/fetch";
 import { Estate } from "../../global/types/Estate";
 import Tilt from "react-parallax-tilt";
 import React from "react";
@@ -31,7 +31,7 @@ function SearchEstateScreen() {
     }
 
     async function getData() {
-        fetchData("http://localhost:8000/estates")
+        fetchGet("http://localhost:8000/estates")
             .then((data) => {
                 setEstates(data);
                 setLoading(false);

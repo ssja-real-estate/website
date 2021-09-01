@@ -6,11 +6,14 @@ import {
     DropResult,
 } from "react-beautiful-dnd";
 import { Row, Col, Button, InputGroup, Form, ListGroup } from "react-bootstrap";
-import { fetchData } from "../../../../../../services/api/fetchData";
+import { EstateType } from "../../../../../../global/types/Estate";
+import { fetchGet } from "../../../../../../services/api/fetch";
 
 function EstateTypesList() {
-    const [estateTypes, setEstateTypes] = useState<string[]>([]);
-    const [newEstateType, setNewEstateType] = useState<string>("");
+    const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
+    const [newEstateType, setNewEstateType] = useState<EstateType>({
+        value: "",
+    });
 
     function handleEstateTypesDragEnd(result: DropResult) {
         if (!result.destination) {
@@ -25,14 +28,14 @@ function EstateTypesList() {
     }
 
     useEffect(() => {
-        fetchData("http://localhost:8000/estateTypes")
+        fetchGet("http://localhost:8000/estateTypes")
             .then((data) => {
                 setEstateTypes(data);
             })
             .catch((error) => {
                 console.log(error);
             });
-    });
+    }, []);
 
     return (
         <>
@@ -56,9 +59,12 @@ function EstateTypesList() {
                 <Button
                     variant="dark"
                     onClick={() => {
-                        newEstateType.trim() !== "" &&
-                            setEstateTypes((prev) => [...prev, newEstateType]);
-                        setNewEstateType("");
+                        newEstateType.value.trim() !== "" &&
+                            setEstateTypes((prev) => [
+                                ...prev,
+                                { value: newEstateType.value.trim() },
+                            ]);
+                        setNewEstateType({ value: "" });
                     }}
                 >
                     <i className="bi-plus-lg"></i>
@@ -66,9 +72,9 @@ function EstateTypesList() {
                 <Form.Control
                     type="text"
                     placeholder="افزودن نوع جدید"
-                    value={newEstateType}
+                    value={newEstateType.value}
                     onChange={(e) => {
-                        setNewEstateType(e.target.value);
+                        setNewEstateType({ value: e.target.value });
                     }}
                 />
             </InputGroup>
@@ -94,7 +100,7 @@ function EstateTypesList() {
                                                         {...provided.dragHandleProps}
                                                         ref={provided.innerRef}
                                                     >
-                                                        {estateType}
+                                                        {estateType.value}
                                                     </ListGroup.Item>
                                                 );
                                             }}
