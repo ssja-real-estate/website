@@ -18,6 +18,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import LoadingBar from "react-top-loading-bar";
 import { progressBarAtom } from "./global/states/loadingBar";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 function App() {
     const [progress, setProgress] = useRecoilState(progressBarAtom);
@@ -37,6 +38,7 @@ function App() {
                     height={5}
                 />
                 <AppNavbar />
+                <Toaster />
                 <Switch>
                     <Route exact path="/" component={HomeScreen} />
                     <Route

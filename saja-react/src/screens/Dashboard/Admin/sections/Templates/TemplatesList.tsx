@@ -1,16 +1,26 @@
 import { ListGroup } from "react-bootstrap";
 
-function TemplatesList() {
+interface TemplatesListProps {
+    sticky: boolean;
+}
+
+function TemplatesList({ sticky }: TemplatesListProps) {
     return (
-        <ListGroup>
-            <ListGroup.Item href="#d&e" action>
-                نوع واگذاری ها و ملک ها
+        <ListGroup className={sticky ? "sticky-top" : ""}>
+            <ListGroup.Item href="#delegationTypes" action>
+                نوع واگذاری ها
             </ListGroup.Item>
-            <ListGroup.Item href="#locations" action>
-                استان ها و شهر ها
+            <ListGroup.Item href="#estateTypes" action>
+                نوع ملک ها
+            </ListGroup.Item>
+            <ListGroup.Item href="#provinceList" action>
+                استان ها
+            </ListGroup.Item>
+            <ListGroup.Item href="#cityList" action>
+                شهر ها
             </ListGroup.Item>
             <ListGroup.Item href="#forms" action>
-                فرم ها و ورودی ها
+                فرم ها
             </ListGroup.Item>
         </ListGroup>
     );

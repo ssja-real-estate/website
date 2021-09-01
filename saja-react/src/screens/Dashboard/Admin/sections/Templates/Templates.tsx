@@ -1,7 +1,9 @@
 import { Col, Row, Tab } from "react-bootstrap";
-import DelegationsAndEstates from "./DelegationsAndEstates/DelegationsAndEstates";
+import ProvinceList from "./ProvinceList/ProvinceList";
+import CityList from "./CityList/CityList";
+import DelegationTypesList from "./DelegationTypes/DelegationTypesList";
+import EstateTypesList from "./EstateTypes/EstateTypesList";
 import Forms from "./Forms/Forms";
-import Locations from "./Locations/Locations";
 import TemplatesList from "./TemplatesList";
 
 function TemplatesSection() {
@@ -9,15 +11,21 @@ function TemplatesSection() {
         <Tab.Container>
             <Row>
                 <Col md={4}>
-                    <TemplatesList />
+                    <TemplatesList sticky />
                 </Col>
                 <Col md={8}>
                     <Tab.Content>
-                        <Tab.Pane eventKey="#d&e">
-                            <DelegationsAndEstates />
+                        <Tab.Pane eventKey="#delegationTypes">
+                            <DelegationTypesList />
                         </Tab.Pane>
-                        <Tab.Pane eventKey="#locations">
-                            <Locations />
+                        <Tab.Pane eventKey="#estateTypes">
+                            <EstateTypesList />
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="#provinceList">
+                            <ProvinceList />
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="#cityList">
+                            <CityList />
                         </Tab.Pane>
                         <Tab.Pane eventKey="#forms">
                             <Forms />
