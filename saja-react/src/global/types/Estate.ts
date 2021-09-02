@@ -16,4 +16,14 @@ interface EstateType {
     value: string;
 }
 
-export type { Estate, DelegationType, EstateType };
+interface Province {
+    id: string;
+    value: string;
+}
+
+interface City {
+    id: string;
+    value: string;
+}
+
+export type { Estate, DelegationType, EstateType, Province, City };

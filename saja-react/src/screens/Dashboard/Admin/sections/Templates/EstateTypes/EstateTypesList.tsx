@@ -47,14 +47,14 @@ function EstateTypesList() {
         <>
             <h4 className="mt-4 ms-3 d-inline">نوع ملک ها</h4>
             <Button
-                variant="light"
-                className="d-inline rounded-circle"
+                variant="dark"
+                className="refresh-btn d-inline rounded-circle"
                 onClick={() => {
                     setLoading(true);
                     getData("http://localhost:8000/estateTypes");
                 }}
             >
-                <i className="bi-arrow-counterclockwise"></i>
+                <i className="refresh-icon bi-arrow-counterclockwise"></i>
             </Button>
             <Row>
                 <Col>
