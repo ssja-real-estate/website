@@ -7,10 +7,12 @@ interface Estate {
 }
 
 interface DelegationType {
+    id: string;
     value: string;
 }
 
 interface EstateType {
+    id: string;
     value: string;
 }
 

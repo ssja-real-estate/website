@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import {
     Row,
@@ -9,17 +10,21 @@ import {
     Spinner,
 } from "react-bootstrap";
 import toast from "react-hot-toast";
+import ListItem from "../../../../../../components/ListItem/ListItem";
 import { DelegationType } from "../../../../../../global/types/Estate";
-import { fetchGet, fetchPost } from "../../../../../../services/api/fetch";
+import { fetchGet, fetchPut } from "../../../../../../services/api/fetch";
 import { randomId } from "../../../../../../services/utilities/randomId";
+import "./DelegationTypesList.css";
 
 function DelegationTypesList() {
     const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>(
         []
     );
+    const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
     const [newItems, setNewItems] = useState<DelegationType[]>([]);
     const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
         value: "",
+        id: randomId(),
     });
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -27,6 +32,8 @@ function DelegationTypesList() {
         fetchGet(url)
             .then((data) => {
                 setDelegationTypes(data.data);
+                setNewItems([]);
+                setRemovedItems([]);
                 setLoading(false);
             })
             .catch((error) => {
@@ -40,7 +47,17 @@ function DelegationTypesList() {
 
     return (
         <>
-            <h4 className="mt-4">نوع واگذاری ها</h4>
+            <h4 className="mt-4 ms-3 d-inline">نوع واگذاری ها</h4>
+            <Button
+                variant="light"
+                className="d-inline rounded-circle"
+                onClick={() => {
+                    setLoading(true);
+                    getData("http://localhost:8000/delegationTypes");
+                }}
+            >
+                <i className="bi-arrow-counterclockwise"></i>
+            </Button>
             <Row>
                 <Col>
                     <InputGroup className="my-4" style={{ direction: "ltr" }}>
@@ -55,7 +72,10 @@ function DelegationTypesList() {
                                             value: newDelegationType.value.trim(),
                                         },
                                     ]);
-                                setNewDelegationType({ value: "" });
+                                setNewDelegationType({
+                                    ...newDelegationType,
+                                    value: "",
+                                });
                             }}
                         >
                             <i className="bi-plus-lg fs-6"></i>
@@ -65,7 +85,10 @@ function DelegationTypesList() {
                             placeholder="افزودن نوع جدید"
                             value={newDelegationType.value}
                             onChange={(e) => {
-                                setNewDelegationType({ value: e.target.value });
+                                setNewDelegationType({
+                                    ...newDelegationType,
+                                    value: e.target.value,
+                                });
                             }}
                         />
                     </InputGroup>
@@ -75,20 +98,27 @@ function DelegationTypesList() {
                         variant="success"
                         className="my-4"
                         onClick={() => {
+                            setLoading(true);
+                            setNewItems([]);
+                            setRemovedItems([]);
+                            const allItems = [...newItems, ...delegationTypes];
+                            const finalItems = allItems.filter(
+                                (item) =>
+                                    !removedItems
+                                        .map((removedItem) => removedItem.id)
+                                        .includes(item.id)
+                            );
                             toast.promise(
-                                fetchPost(
+                                fetchPut(
                                     "http://localhost:8000/delegationTypes",
                                     {
                                         id: 1,
-                                        data: [...newItems, ...delegationTypes],
+                                        data: finalItems,
                                     }
                                 ).then(() => {
-                                    setLoading(true);
                                     getData(
                                         "http://localhost:8000/delegationTypes"
-                                    ).then(() => {
-                                        setNewItems([]);
-                                    });
+                                    );
                                 }),
                                 {
                                     loading: "در حال ذخیره سازی تغییرات",
@@ -108,10 +138,25 @@ function DelegationTypesList() {
             <Row>
                 <Col>
                     <ListGroup>
-                        {newItems.map((item, index) => {
+                        {newItems.map((newItem, index) => {
                             return (
-                                <ListGroup.Item key={index} variant="warning">
-                                    {item.value}
+                                <ListGroup.Item
+                                    key={index}
+                                    variant="warning"
+                                    action
+                                    className="new-item d-flex flex-row justify-content-between align-items-center"
+                                >
+                                    {newItem.value}
+                                    <i
+                                        className="remove-icon bi-x-lg"
+                                        onClick={() => {
+                                            setNewItems((prev) =>
+                                                prev.filter(
+                                                    (_, id) => id !== index
+                                                )
+                                            );
+                                        }}
+                                    ></i>
                                 </ListGroup.Item>
                             );
                         })}
@@ -128,9 +173,43 @@ function DelegationTypesList() {
                         <ListGroup>
                             {delegationTypes.map((delegationType, index) => {
                                 return (
-                                    <ListGroup.Item key={index}>
-                                        {delegationType.value}
-                                    </ListGroup.Item>
+                                    <React.Fragment key={index}>
+                                        <ListItem
+                                            title={delegationType.value}
+                                            onRemove={() => {
+                                                setRemovedItems((prev) => {
+                                                    let exists: boolean = false;
+                                                    prev.every((item) => {
+                                                        if (
+                                                            item.id ===
+                                                            delegationType.id
+                                                        ) {
+                                                            exists = true;
+                                                            return false;
+                                                        } else {
+                                                            return true;
+                                                        }
+                                                    });
+                                                    if (exists) {
+                                                        const newRemovedItems =
+                                                            prev.filter(
+                                                                (item) =>
+                                                                    item.id !==
+                                                                    delegationType.id
+                                                            );
+                                                        return newRemovedItems;
+                                                    } else {
+                                                        const newRemovedItems =
+                                                            [
+                                                                ...prev,
+                                                                delegationType,
+                                                            ];
+                                                        return newRemovedItems;
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    </React.Fragment>
                                 );
                             })}
                         </ListGroup>

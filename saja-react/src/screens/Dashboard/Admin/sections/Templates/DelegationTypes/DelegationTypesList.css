@@ -1,0 +1,9 @@
+.remove-icon {
+    opacity: 0%;
+}
+.new-item:hover .remove-icon {
+    opacity: 100%;
+}
+.list-item:hover .remove-icon {
+    opacity: 100%;
+}

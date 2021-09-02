@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import {
     Row,
@@ -9,25 +10,28 @@ import {
     Spinner,
 } from "react-bootstrap";
 import toast from "react-hot-toast";
-import { useHistory } from "react-router-dom";
+import ListItem from "../../../../../../components/ListItem/ListItem";
 import { EstateType } from "../../../../../../global/types/Estate";
-import { fetchGet, fetchPost } from "../../../../../../services/api/fetch";
+import { fetchGet, fetchPut } from "../../../../../../services/api/fetch";
 import { randomId } from "../../../../../../services/utilities/randomId";
+import "./EstateTypesList.css";
 
 function EstateTypesList() {
     const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
+    const [removedItems, setRemovedItems] = useState<EstateType[]>([]);
     const [newItems, setNewItems] = useState<EstateType[]>([]);
     const [newEstateType, setNewEstateType] = useState<EstateType>({
         value: "",
+        id: randomId(),
     });
     const [loading, setLoading] = useState<boolean>(true);
-
-    const history = useHistory();
 
     async function getData(url: string) {
         fetchGet(url)
             .then((data) => {
                 setEstateTypes(data.data);
+                setNewItems([]);
+                setRemovedItems([]);
                 setLoading(false);
             })
             .catch((error) => {
@@ -37,11 +41,21 @@ function EstateTypesList() {
 
     useEffect(() => {
         getData("http://localhost:8000/estateTypes");
-    }, [history.location]);
+    }, []);
 
     return (
         <>
-            <h4 className="mt-4">نوع ملک ها</h4>
+            <h4 className="mt-4 ms-3 d-inline">نوع ملک ها</h4>
+            <Button
+                variant="light"
+                className="d-inline rounded-circle"
+                onClick={() => {
+                    setLoading(true);
+                    getData("http://localhost:8000/estateTypes");
+                }}
+            >
+                <i className="bi-arrow-counterclockwise"></i>
+            </Button>
             <Row>
                 <Col>
                     <InputGroup className="my-4" style={{ direction: "ltr" }}>
@@ -56,7 +70,10 @@ function EstateTypesList() {
                                             value: newEstateType.value.trim(),
                                         },
                                     ]);
-                                setNewEstateType({ value: "" });
+                                setNewEstateType({
+                                    ...newEstateType,
+                                    value: "",
+                                });
                             }}
                         >
                             <i className="bi-plus-lg fs-6"></i>
@@ -66,7 +83,10 @@ function EstateTypesList() {
                             placeholder="افزودن نوع جدید"
                             value={newEstateType.value}
                             onChange={(e) => {
-                                setNewEstateType({ value: e.target.value });
+                                setNewEstateType({
+                                    ...newEstateType,
+                                    value: e.target.value,
+                                });
                             }}
                         />
                     </InputGroup>
@@ -76,17 +96,24 @@ function EstateTypesList() {
                         variant="success"
                         className="my-4"
                         onClick={() => {
+                            setLoading(true);
+                            setNewItems([]);
+                            setRemovedItems([]);
+                            const allItems = [...newItems, ...estateTypes];
+                            const finalItems = allItems.filter(
+                                (item) =>
+                                    !removedItems
+                                        .map((removedItem) => removedItem.id)
+                                        .includes(item.id)
+                            );
                             toast.promise(
-                                fetchPost("http://localhost:8000/estateTypes", {
+                                fetchPut("http://localhost:8000/estateTypes", {
                                     id: 1,
-                                    data: [...newItems, ...estateTypes],
+                                    data: finalItems,
                                 }).then(() => {
-                                    setLoading(true);
                                     getData(
                                         "http://localhost:8000/estateTypes"
-                                    ).then(() => {
-                                        setNewItems([]);
-                                    });
+                                    );
                                 }),
                                 {
                                     loading: "در حال ذخیره سازی تغییرات",
@@ -106,10 +133,25 @@ function EstateTypesList() {
             <Row>
                 <Col>
                     <ListGroup>
-                        {newItems.map((item, index) => {
+                        {newItems.map((newItem, index) => {
                             return (
-                                <ListGroup.Item key={index} variant="warning">
-                                    {item.value}
+                                <ListGroup.Item
+                                    key={index}
+                                    variant="warning"
+                                    action
+                                    className="new-item d-flex flex-row justify-content-between align-items-center"
+                                >
+                                    {newItem.value}
+                                    <i
+                                        className="remove-icon bi-x-lg"
+                                        onClick={() => {
+                                            setNewItems((prev) =>
+                                                prev.filter(
+                                                    (_, id) => id !== index
+                                                )
+                                            );
+                                        }}
+                                    ></i>
                                 </ListGroup.Item>
                             );
                         })}
@@ -126,9 +168,43 @@ function EstateTypesList() {
                         <ListGroup>
                             {estateTypes.map((estateType, index) => {
                                 return (
-                                    <ListGroup.Item key={index}>
-                                        {estateType.value}
-                                    </ListGroup.Item>
+                                    <React.Fragment key={index}>
+                                        <ListItem
+                                            title={estateType.value}
+                                            onRemove={() => {
+                                                setRemovedItems((prev) => {
+                                                    let exists: boolean = false;
+                                                    prev.every((item) => {
+                                                        if (
+                                                            item.id ===
+                                                            estateType.id
+                                                        ) {
+                                                            exists = true;
+                                                            return false;
+                                                        } else {
+                                                            return true;
+                                                        }
+                                                    });
+                                                    if (exists) {
+                                                        const newRemovedItems =
+                                                            prev.filter(
+                                                                (item) =>
+                                                                    item.id !==
+                                                                    estateType.id
+                                                            );
+                                                        return newRemovedItems;
+                                                    } else {
+                                                        const newRemovedItems =
+                                                            [
+                                                                ...prev,
+                                                                estateType,
+                                                            ];
+                                                        return newRemovedItems;
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    </React.Fragment>
                                 );
                             })}
                         </ListGroup>

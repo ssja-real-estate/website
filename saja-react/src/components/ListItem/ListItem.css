@@ -1,0 +1,6 @@
+.remove-icon {
+    opacity: 0%;
+}
+.list-item:hover .remove-icon {
+    opacity: 100%;
+}
