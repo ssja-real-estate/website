@@ -5,6 +5,7 @@ import DelegationTypesList from "./DelegationTypes/DelegationTypesList";
 import EstateTypesList from "./EstateTypes/EstateTypesList";
 import Forms from "./Forms/Forms";
 import TemplatesList from "./TemplatesList";
+import UnitList from "./UnitList/UnitList";
 
 function TemplatesSection() {
     return (
@@ -26,6 +27,9 @@ function TemplatesSection() {
                         </Tab.Pane>
                         <Tab.Pane eventKey="#cityList">
                             <CityList />
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="#units">
+                            <UnitList />
                         </Tab.Pane>
                         <Tab.Pane eventKey="#forms">
                             <Forms />

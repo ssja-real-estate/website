@@ -26,4 +26,9 @@ interface City {
     value: string;
 }
 
-export type { Estate, DelegationType, EstateType, Province, City };
+interface Unit {
+    id: string;
+    value: string;
+}
+
+export type { Estate, DelegationType, EstateType, Province, City, Unit };

@@ -12,6 +12,15 @@
     background-color: #5334af !important;
 }
 
+.btn-outline-purple {
+    border-color: #4527a0;
+    color: #4527a0;
+}
+.btn-outline-purple:hover {
+    background-color: #4527a0;
+    color: white;
+}
+
 .purple {
     color: #4527a0;
 }

@@ -91,7 +91,7 @@ function ProvinceList() {
                 </Col>
                 <Col sm={"auto"}>
                     <Button
-                        variant="success"
+                        variant="purple"
                         className="my-4"
                         onClick={() => {
                             setLoading(true);

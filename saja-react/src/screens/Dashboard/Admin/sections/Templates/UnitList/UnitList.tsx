@@ -1,9 +1,8 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
+    Button,
     Row,
     Col,
-    Button,
     InputGroup,
     Form,
     ListGroup,
@@ -11,18 +10,15 @@ import {
 } from "react-bootstrap";
 import toast from "react-hot-toast";
 import ListItem from "../../../../../../components/ListItem/ListItem";
-import { DelegationType } from "../../../../../../global/types/Estate";
+import { Unit } from "../../../../../../global/types/Estate";
 import { fetchGet, fetchPut } from "../../../../../../services/api/fetch";
 import { randomId } from "../../../../../../services/utilities/randomId";
-import "./DelegationTypesList.css";
 
-function DelegationTypesList() {
-    const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>(
-        []
-    );
-    const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
-    const [newItems, setNewItems] = useState<DelegationType[]>([]);
-    const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
+function UnitList() {
+    const [units, setUnits] = useState<Unit[]>([]);
+    const [removedItems, setRemovedItems] = useState<Unit[]>([]);
+    const [newItems, setNewItems] = useState<Unit[]>([]);
+    const [newUnit, setNewUnit] = useState<Unit>({
         value: "",
         id: randomId(),
     });
@@ -31,7 +27,7 @@ function DelegationTypesList() {
     async function getData(url: string) {
         fetchGet(url)
             .then((data) => {
-                setDelegationTypes(data.data);
+                setUnits(data.data);
                 setNewItems([]);
                 setRemovedItems([]);
                 setLoading(false);
@@ -42,18 +38,18 @@ function DelegationTypesList() {
     }
 
     useEffect(() => {
-        getData("http://localhost:8000/delegationTypes");
+        getData("http://localhost:8000/units");
     }, []);
 
     return (
         <>
-            <h4 className="mt-4 ms-3 d-inline">نوع واگذاری ها</h4>
+            <h4 className="mt-4 ms-3 d-inline">واحد ها</h4>
             <Button
                 variant="dark"
                 className="refresh-btn d-inline rounded-circle"
                 onClick={() => {
                     setLoading(true);
-                    getData("http://localhost:8000/delegationTypes");
+                    getData("http://localhost:8000/units");
                 }}
             >
                 <i className="bi-arrow-counterclockwise"></i>
@@ -64,16 +60,16 @@ function DelegationTypesList() {
                         <Button
                             variant="dark"
                             onClick={() => {
-                                newDelegationType.value.trim() !== "" &&
+                                newUnit.value.trim() !== "" &&
                                     setNewItems((prev) => [
                                         ...prev,
                                         {
                                             id: randomId(),
-                                            value: newDelegationType.value.trim(),
+                                            value: newUnit.value.trim(),
                                         },
                                     ]);
-                                setNewDelegationType({
-                                    ...newDelegationType,
+                                setNewUnit({
+                                    ...newUnit,
                                     value: "",
                                 });
                             }}
@@ -82,11 +78,11 @@ function DelegationTypesList() {
                         </Button>
                         <Form.Control
                             type="text"
-                            placeholder="افزودن نوع جدید"
-                            value={newDelegationType.value}
+                            placeholder="افزودن واحد جدید"
+                            value={newUnit.value}
                             onChange={(e) => {
-                                setNewDelegationType({
-                                    ...newDelegationType,
+                                setNewUnit({
+                                    ...newUnit,
                                     value: e.target.value,
                                 });
                             }}
@@ -101,7 +97,7 @@ function DelegationTypesList() {
                             setLoading(true);
                             setNewItems([]);
                             setRemovedItems([]);
-                            const allItems = [...newItems, ...delegationTypes];
+                            const allItems = [...newItems, ...units];
                             const finalItems = allItems.filter(
                                 (item) =>
                                     !removedItems
@@ -109,16 +105,11 @@ function DelegationTypesList() {
                                         .includes(item.id)
                             );
                             toast.promise(
-                                fetchPut(
-                                    "http://localhost:8000/delegationTypes",
-                                    {
-                                        id: 1,
-                                        data: finalItems,
-                                    }
-                                ).then(() => {
-                                    getData(
-                                        "http://localhost:8000/delegationTypes"
-                                    );
+                                fetchPut("http://localhost:8000/units", {
+                                    id: 1,
+                                    data: finalItems,
+                                }).then(() => {
+                                    getData("http://localhost:8000/units");
                                 }),
                                 {
                                     loading: "در حال ذخیره سازی تغییرات",
@@ -171,18 +162,17 @@ function DelegationTypesList() {
                         />
                     ) : (
                         <ListGroup>
-                            {delegationTypes.map((delegationType, index) => {
+                            {units.map((unit, index) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <ListItem
-                                            title={delegationType.value}
+                                            title={unit.value}
                                             onRemove={() => {
                                                 setRemovedItems((prev) => {
                                                     let exists: boolean = false;
                                                     prev.every((item) => {
                                                         if (
-                                                            item.id ===
-                                                            delegationType.id
+                                                            item.id === unit.id
                                                         ) {
                                                             exists = true;
                                                             return false;
@@ -195,15 +185,12 @@ function DelegationTypesList() {
                                                             prev.filter(
                                                                 (item) =>
                                                                     item.id !==
-                                                                    delegationType.id
+                                                                    unit.id
                                                             );
                                                         return newRemovedItems;
                                                     } else {
                                                         const newRemovedItems =
-                                                            [
-                                                                ...prev,
-                                                                delegationType,
-                                                            ];
+                                                            [...prev, unit];
                                                         return newRemovedItems;
                                                     }
                                                 });
@@ -220,4 +207,4 @@ function DelegationTypesList() {
     );
 }
 
-export default DelegationTypesList;
+export default UnitList;

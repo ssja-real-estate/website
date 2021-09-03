@@ -12,7 +12,6 @@ interface Field {
     name: string;
     type: FieldType;
     title: string;
-    order: number;
     value: string | number | boolean | string[] | [number, number];
     options?: string[];
     fields?: Field[];

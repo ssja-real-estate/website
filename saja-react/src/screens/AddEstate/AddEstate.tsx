@@ -15,14 +15,14 @@ function AddEstateScreen() {
     const [delegationType, setDelegationType] = useState<string>("default");
     const [estateType, setEstateType] = useState<string>("default");
     const isDefault: boolean =
-        delegationType !== "default" && estateType !== "default" ? true : false;
+        delegationType === "default" || estateType === "default" ? true : false;
     const [form, setForm] = useState<EstateForm>();
 
     function handleDelegationChange(
         event: React.ChangeEvent<HTMLSelectElement>
     ) {
         setDelegationType(event.target.value);
-        fetchGet("http://localhost:8000/forms/1")
+        fetchGet("http://localhost:8000/forms/1-1")
             .then((data) => {
                 setForm(data);
             })
@@ -32,7 +32,7 @@ function AddEstateScreen() {
     }
     function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
         setEstateType(event.target.value);
-        fetchGet("http://localhost:8000/forms/1")
+        fetchGet("http://localhost:8000/forms/1-1")
             .then((data) => {
                 setForm(data);
             })
@@ -99,7 +99,7 @@ function AddEstateScreen() {
     }
 
     async function getData() {
-        fetchGet("http://localhost:8000/forms/1")
+        fetchGet("http://localhost:8000/forms/1-1")
             .then((data) => {
                 setForm(data);
             })
@@ -509,7 +509,7 @@ function AddEstateScreen() {
                     </Form.Select>
                 </form>
             </motion.div>
-            {!isDefault ? (
+            {isDefault ? (
                 <motion.div
                     variants={crossfadeAnimation}
                     initial="first"
