@@ -6,6 +6,7 @@ interface CustomModalProps {
     cancelTitle?: string;
     successTitle?: string;
     isLarge?: boolean;
+    isFullscreen?: boolean;
     handleClose: () => void;
     handleSuccess?: () => void;
 }
@@ -18,6 +19,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
     handleClose,
     handleSuccess,
     isLarge = false,
+    isFullscreen = false,
     children,
 }) => {
     return (
@@ -25,6 +27,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
             show={show}
             onHide={handleClose}
             size={isLarge ? "lg" : undefined}
+            fullscreen={isFullscreen ? true : undefined}
             centered
         >
             <Modal.Header>

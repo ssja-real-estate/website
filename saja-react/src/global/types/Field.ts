@@ -1,5 +1,5 @@
 enum FieldType {
-    String,
+    Text,
     Number,
     Select,
     Bool,
@@ -8,9 +8,19 @@ enum FieldType {
     Range,
 }
 
+enum FieldTypeTitle {
+    Text = "متن",
+    Number = "عدد",
+    Select = "انتخابی",
+    Bool = "کلید",
+    Conditional = "شرطی",
+    Image = "تصویر",
+    Range = "بازه",
+}
+
 interface Field {
     name: string;
-    type: FieldType;
+    type: number;
     title: string;
     value: string | number | boolean | string[] | [number, number];
     options?: string[];
@@ -20,4 +30,4 @@ interface Field {
 }
 
 export type { Field };
-export { FieldType };
+export { FieldType, FieldTypeTitle };

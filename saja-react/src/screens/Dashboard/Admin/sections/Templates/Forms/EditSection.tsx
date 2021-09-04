@@ -1,8 +1,17 @@
-import { useState } from "react";
-import { Button, Col, Form, ListGroup, Row } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import {
+    Button,
+    CloseButton,
+    Col,
+    Form,
+    InputGroup,
+    ListGroup,
+    Row,
+} from "react-bootstrap";
 import { useRecoilState } from "recoil";
 import { FieldType } from "../../../../../../global/types/Field";
 import { modalSectionAtom } from "./Forms";
+import NewField from "./NewField/NewField";
 
 function EditSection() {
     const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -27,13 +36,35 @@ function EditSection() {
         setModalSection({ ...modalSection!, fields: tempFields });
     }
 
+    useEffect(() => {
+        modalSection && setSectionTitle(modalSection.title);
+    }, [modalSection, modalSection?.title]);
+
     return (
         <>
-            <Row className="align-items-center">
+            <Row className="align-items-center my-3">
                 <Col sm="auto">
-                    <Form.Label>تغییر عنوان بخش</Form.Label>
+                    <Form.Label>عنوان بخش</Form.Label>
                 </Col>
-                <Col sm="auto">
+                <InputGroup style={{ direction: "ltr" }}>
+                    <Button
+                        variant="dark"
+                        onClick={() => {
+                            if (sectionTitle.trim() === "") {
+                                alert(
+                                    "لطفاً یک عنوان معتبر برای بخش انتخاب کنید"
+                                );
+                                setSectionTitle("");
+                            } else {
+                                setModalSection({
+                                    ...modalSection!,
+                                    title: sectionTitle!,
+                                });
+                            }
+                        }}
+                    >
+                        ذخیره
+                    </Button>
                     <Form.Control
                         type="text"
                         value={sectionTitle}
@@ -41,17 +72,7 @@ function EditSection() {
                             setSectionTitle(e.target.value);
                         }}
                     />
-                </Col>
-            </Row>
-            <Row className="align-items-center my-3">
-                <Col xs={"auto"}>
-                    <h5>ورودی ها</h5>
-                </Col>
-                <Col xs={"auto"}>
-                    <Button variant="dark">
-                        <i className="bi-plus-lg fs-6"></i>
-                    </Button>
-                </Col>
+                </InputGroup>
             </Row>
             <ListGroup>
                 {modalSection?.fields.map((field, fieldIndex) => {
@@ -79,7 +100,7 @@ function EditSection() {
                                 </Col>
                                 <Col>
                                     <h6 className="d-inline text-muted">
-                                        {field.type === FieldType.String
+                                        {field.type === FieldType.Text
                                             ? "متن"
                                             : field.type === FieldType.Number
                                             ? "عدد"
@@ -95,11 +116,36 @@ function EditSection() {
                                             : "---"}
                                     </h6>
                                 </Col>
+                                <CloseButton
+                                    className="m-3"
+                                    onClick={() => {
+                                        const fields = modalSection.fields;
+                                        const filteredFields = fields.filter(
+                                            (_, index) => {
+                                                return fieldIndex !== index;
+                                            }
+                                        );
+                                        if (
+                                            window.confirm(
+                                                "آیا از حذف این ورودی مطمئن هستید؟"
+                                            )
+                                        ) {
+                                            setModalSection({
+                                                ...modalSection,
+                                                fields: filteredFields,
+                                            });
+                                        }
+                                    }}
+                                />
                             </Row>
                         </ListGroup.Item>
                     );
                 })}
             </ListGroup>
+            <div className="d-flex flex-column justify-content-center align-items-stretch my-3">
+                <h5>ورودی ها</h5>
+                <NewField />
+            </div>
         </>
     );
 }

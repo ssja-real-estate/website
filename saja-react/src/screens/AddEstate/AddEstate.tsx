@@ -121,7 +121,7 @@ function AddEstateScreen() {
             return (
                 <div key={fieldIndex} className="input-item py-3">
                     <label htmlFor={field.name}>{field.title}</label>
-                    {field.type === FieldType.String ? (
+                    {field.type === FieldType.Text ? (
                         <Form.Control
                             type="text"
                             name={field.name}
@@ -288,7 +288,7 @@ function AddEstateScreen() {
             return (
                 <div key={innerFieldIndex} className="input-item py-3">
                     <label htmlFor={innerField.name}>{innerField.title}</label>
-                    {innerField.type === FieldType.String ? (
+                    {innerField.type === FieldType.Text ? (
                         <Form.Control
                             type="text"
                             name={innerField.name}

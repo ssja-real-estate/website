@@ -19,16 +19,29 @@ import {
     EstateType,
 } from "../../../../../../global/types/Estate";
 import { EstateForm, Section } from "../../../../../../global/types/EstateForm";
-import { FieldType } from "../../../../../../global/types/Field";
-import { fetchGet } from "../../../../../../services/api/fetch";
+import {
+    FieldType,
+    FieldTypeTitle,
+} from "../../../../../../global/types/Field";
+import { fetchGet, fetchPut } from "../../../../../../services/api/fetch";
 import CustomModal from "../../../../../../components/CustomModal/CustomModal";
-import "./Forms.css";
 import EditSection from "./EditSection";
-import { atom, useRecoilState } from "recoil";
+import { atom, useRecoilState, useSetRecoilState } from "recoil";
+import { optionsAtom } from "./NewField/NewSelectField";
+import toast from "react-hot-toast";
 
-export const modalSectionAtom = atom<Section | undefined>({
+interface ModalSection extends Section {
+    id: number;
+}
+
+export const modalSectionAtom = atom<ModalSection>({
     key: "modalSectionState",
-    default: undefined,
+    default: {
+        id: 0,
+        title: "",
+        name: "",
+        fields: [],
+    },
 });
 
 function Forms() {
@@ -57,6 +70,7 @@ function Forms() {
     const [showEditSectionModal, setShowEditSectionModal] =
         useState<boolean>(false);
     const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
+    const setOptions = useSetRecoilState(optionsAtom);
 
     function handleSectionDragEnd(result: DropResult) {
         if (!result.destination) {
@@ -97,7 +111,7 @@ function Forms() {
                 {
                     type: FieldType.Image,
                     title: "انتخاب تصاویر",
-                    value: [""],
+                    value: [],
                     name: "image",
                 },
             ],
@@ -133,6 +147,16 @@ function Forms() {
         const newForm = { ...form, sections: sections };
 
         return newForm;
+    }
+
+    function updateChangedSection(form: EstateForm, sectionIndex: number) {
+        const sections = form.sections;
+        const changedSection: Section = {
+            title: modalSection.title,
+            name: modalSection.name,
+            fields: modalSection.fields,
+        };
+        sections.splice(sectionIndex, 1, changedSection);
     }
 
     async function getDelegationTypes(url: string) {
@@ -196,8 +220,12 @@ function Forms() {
                 variant="dark"
                 className="refresh-btn d-inline rounded-circle"
                 onClick={() => {
+                    setLoading(true);
                     getDelegationTypes("http://localhost:8000/delegationTypes");
                     getEstateTypes("http://localhost:8000/estateTypes");
+                    getFormData(
+                        `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`
+                    );
                 }}
             >
                 <i className="bi-arrow-counterclockwise"></i>
@@ -289,7 +317,32 @@ function Forms() {
                     <Button
                         variant="purple"
                         className="my-4"
-                        onClick={() => {}}
+                        onClick={() => {
+                            setLoading(true);
+                            if (form) {
+                                toast.promise(
+                                    fetchPut(
+                                        `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`,
+                                        {
+                                            id: `${delegationType.value}-${estateType.value}`,
+                                            sections: form?.sections,
+                                        }
+                                    ).then(() => {
+                                        getFormData(
+                                            `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`
+                                        );
+                                    }),
+                                    {
+                                        loading: "در حال ذخیره سازی تغییرات",
+                                        success: "تغییرات با موفقیت ذخیره شد",
+                                        error: "خطا در ذخیره سازی تغییرات",
+                                    },
+                                    {
+                                        style: { width: 250 },
+                                    }
+                                );
+                            }
+                        }}
                     >
                         ذخیره تغییرات
                     </Button>
@@ -328,14 +381,21 @@ function Forms() {
                         />
                         <CustomModal
                             isLarge
+                            isFullscreen
                             show={showEditSectionModal}
                             title={modalSection?.title}
                             cancelTitle="لغو"
                             successTitle="ذخیره"
                             handleClose={() => {
                                 setShowEditSectionModal(false);
+                                setOptions([]);
                             }}
-                            handleSuccess={() => {}}
+                            handleSuccess={() => {
+                                if (form) {
+                                    updateChangedSection(form, modalSection.id);
+                                    setShowEditSectionModal(false);
+                                }
+                            }}
                         >
                             <EditSection />
                         </CustomModal>
@@ -402,7 +462,7 @@ function Forms() {
                                                                                         <Col>
                                                                                             <h6 className="d-inline text-muted">
                                                                                                 {field.type ===
-                                                                                                FieldType.String
+                                                                                                FieldType.Text
                                                                                                     ? "متن"
                                                                                                     : field.type ===
                                                                                                       FieldType.Number
@@ -464,7 +524,10 @@ function Forms() {
                                                                                 className="section-edit-btn"
                                                                                 onClick={() => {
                                                                                     setModalSection(
-                                                                                        section
+                                                                                        {
+                                                                                            ...section,
+                                                                                            id: sectionIndex,
+                                                                                        }
                                                                                     );
                                                                                     setShowEditSectionModal(
                                                                                         true
@@ -497,23 +560,23 @@ function Forms() {
                                                                                                     <Col>
                                                                                                         <h6 className="d-inline text-muted">
                                                                                                             {field.type ===
-                                                                                                            FieldType.String
-                                                                                                                ? "متن"
+                                                                                                            FieldType.Text
+                                                                                                                ? FieldTypeTitle.Text
                                                                                                                 : field.type ===
                                                                                                                   FieldType.Number
-                                                                                                                ? "عدد"
+                                                                                                                ? FieldTypeTitle.Number
                                                                                                                 : field.type ===
                                                                                                                   FieldType.Select
-                                                                                                                ? "انتخابی"
+                                                                                                                ? FieldTypeTitle.Select
                                                                                                                 : field.type ===
                                                                                                                   FieldType.Bool
-                                                                                                                ? "کلید"
+                                                                                                                ? FieldTypeTitle.Bool
                                                                                                                 : field.type ===
                                                                                                                   FieldType.Conditional
-                                                                                                                ? "شرطی"
+                                                                                                                ? FieldTypeTitle.Conditional
                                                                                                                 : field.type ===
                                                                                                                   FieldType.Image
-                                                                                                                ? "تصویر"
+                                                                                                                ? FieldTypeTitle.Image
                                                                                                                 : "---"}
                                                                                                         </h6>
                                                                                                     </Col>
