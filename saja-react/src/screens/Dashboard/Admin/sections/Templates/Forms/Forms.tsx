@@ -7,6 +7,7 @@ import {
 } from "react-beautiful-dnd";
 import {
     Button,
+    CloseButton,
     Col,
     Form,
     InputGroup,
@@ -512,28 +513,59 @@ function Forms() {
                                                                             }
                                                                             className="section py-3"
                                                                         >
-                                                                            <h5 className="d-inline ps-4">
-                                                                                {
-                                                                                    section.title
-                                                                                }
-                                                                            </h5>
-                                                                            <Button
-                                                                                variant="outline-secondary"
-                                                                                className="section-edit-btn"
-                                                                                onClick={() => {
-                                                                                    setModalSection(
+                                                                            <div className="d-flex flex-row justify-content-between align-items-center py-3">
+                                                                                <div>
+                                                                                    <h5 className="d-inline ps-4">
                                                                                         {
-                                                                                            ...section,
-                                                                                            id: sectionIndex,
+                                                                                            section.title
                                                                                         }
-                                                                                    );
-                                                                                    setShowEditSectionModal(
-                                                                                        true
-                                                                                    );
-                                                                                }}
-                                                                            >
-                                                                                <i className="bi-pencil-square"></i>
-                                                                            </Button>
+                                                                                    </h5>
+                                                                                    <Button
+                                                                                        variant="outline-secondary"
+                                                                                        className="section-edit-btn"
+                                                                                        onClick={() => {
+                                                                                            setModalSection(
+                                                                                                {
+                                                                                                    ...section,
+                                                                                                    id: sectionIndex,
+                                                                                                }
+                                                                                            );
+                                                                                            setShowEditSectionModal(
+                                                                                                true
+                                                                                            );
+                                                                                        }}
+                                                                                    >
+                                                                                        <i className="bi-pencil-square"></i>
+                                                                                    </Button>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <CloseButton
+                                                                                        onClick={() => {
+                                                                                            const sections =
+                                                                                                form.sections;
+                                                                                            const filterdSections =
+                                                                                                sections.filter(
+                                                                                                    (
+                                                                                                        _,
+                                                                                                        id
+                                                                                                    ) => {
+                                                                                                        return (
+                                                                                                            sectionIndex !==
+                                                                                                            id
+                                                                                                        );
+                                                                                                    }
+                                                                                                );
+                                                                                            setForm(
+                                                                                                {
+                                                                                                    ...form,
+                                                                                                    sections:
+                                                                                                        filterdSections,
+                                                                                                }
+                                                                                            );
+                                                                                        }}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
                                                                             <ListGroup className="my-3">
                                                                                 {section.fields.map(
                                                                                     (
