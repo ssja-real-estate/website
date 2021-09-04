@@ -4,9 +4,47 @@
       "id": "1-1",
       "sections": [
         {
+          "title": "تصاویر",
+          "name": "imageSection",
+          "fields": [
+            {
+              "type": 5,
+              "title": "انتخاب تصاویر",
+              "value": [],
+              "name": "image"
+            }
+          ]
+        },
+        {
           "title": "dfgdg",
           "name": "dfgdg",
           "fields": [
+            {
+              "name": "gfdsgf",
+              "title": "gfdsgf",
+              "type": 4,
+              "value": false,
+              "fields": [
+                {
+                  "name": "fdgdgd",
+                  "title": "fdgdgd",
+                  "type": 3,
+                  "value": false
+                },
+                {
+                  "name": "dfgdg",
+                  "title": "dfgdg",
+                  "type": 0,
+                  "value": ""
+                }
+              ]
+            },
+            {
+              "name": "dsfgd",
+              "title": "dsfgd",
+              "type": 3,
+              "value": false
+            },
             {
               "name": "dfgdsgf",
               "title": "dfgdsgf",
