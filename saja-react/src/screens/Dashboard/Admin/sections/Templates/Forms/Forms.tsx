@@ -26,8 +26,7 @@ import {
 import { fetchGet, fetchPut } from "../../../../../../services/api/fetch";
 import CustomModal from "../../../../../../components/CustomModal/CustomModal";
 import EditSection from "./EditSection";
-import { atom, useRecoilState, useSetRecoilState } from "recoil";
-import { optionsAtom } from "./NewField/NewSelectField";
+import { atom, useRecoilState } from "recoil";
 import toast from "react-hot-toast";
 
 interface ModalSection extends Section {
@@ -70,7 +69,6 @@ function Forms() {
     const [showEditSectionModal, setShowEditSectionModal] =
         useState<boolean>(false);
     const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
-    const setOptions = useSetRecoilState(optionsAtom);
 
     function handleSectionDragEnd(result: DropResult) {
         if (!result.destination) {
@@ -157,6 +155,8 @@ function Forms() {
             fields: modalSection.fields,
         };
         sections.splice(sectionIndex, 1, changedSection);
+
+        setForm({ ...form, sections: sections });
     }
 
     async function getDelegationTypes(url: string) {
@@ -380,7 +380,6 @@ function Forms() {
                             }}
                         />
                         <CustomModal
-                            isLarge
                             isFullscreen
                             show={showEditSectionModal}
                             title={modalSection?.title}
@@ -388,7 +387,6 @@ function Forms() {
                             successTitle="ذخیره"
                             handleClose={() => {
                                 setShowEditSectionModal(false);
-                                setOptions([]);
                             }}
                             handleSuccess={() => {
                                 if (form) {

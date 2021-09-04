@@ -67,7 +67,7 @@ function NewConditionalField() {
                                     variant="warning"
                                 >
                                     <Row className="align-items-center">
-                                        <Col>
+                                        <Col xs="auto">
                                             <i
                                                 className="bi-chevron-up d-block"
                                                 style={{ cursor: "pointer" }}

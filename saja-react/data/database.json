@@ -20,11 +20,35 @@
           "name": "dfgdg",
           "fields": [
             {
+              "title": "choose something maaaaan",
+              "name": "choose something maaaaaaaaan",
+              "type": 2,
+              "value": "",
+              "options": [
+                "sdfgfdg",
+                "sdgdfg",
+                "dasd"
+              ]
+            },
+            {
+              "title": "gfdsgfdfsfs432555",
               "name": "gfdsgf",
-              "title": "gfdsgf",
               "type": 4,
               "value": false,
               "fields": [
+                {
+                  "title": "dfsdfsdfs",
+                  "name": "dfsdfsdfs",
+                  "type": 2,
+                  "value": "",
+                  "options": [
+                    "sdfsdfsffsfs",
+                    "dfghdfg",
+                    "gfhjgfj",
+                    "sdfg3456t3465",
+                    "234242"
+                  ]
+                },
                 {
                   "name": "fdgdgd",
                   "title": "fdgdgd",
@@ -326,7 +350,7 @@
           ]
         },
         {
-          "title": "مشخصات جغرافیایی",
+          "title": "مشخصات جغرافیاییnnn",
           "fields": [
             {
               "type": 0,
