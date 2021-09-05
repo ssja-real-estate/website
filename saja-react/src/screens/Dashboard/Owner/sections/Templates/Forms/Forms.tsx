@@ -35,7 +35,7 @@ interface ModalSection extends Section {
 }
 
 export const modalSectionAtom = atom<ModalSection>({
-    key: "adminModalSectionState",
+    key: "ownerModalSectionState",
     default: {
         id: 0,
         title: "",

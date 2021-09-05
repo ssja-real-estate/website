@@ -11,10 +11,10 @@ function TemplatesSection() {
     return (
         <Tab.Container>
             <Row>
-                <Col md={3}>
+                <Col md={2}>
                     <TemplatesList sticky />
                 </Col>
-                <Col md={9}>
+                <Col md={10}>
                     <Tab.Content>
                         <Tab.Pane eventKey="#delegationTypes">
                             <DelegationTypesList />

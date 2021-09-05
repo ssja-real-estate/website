@@ -26,7 +26,7 @@ interface ModalField extends Field {
 }
 
 export const innerFieldModalDataAtom = atom<ModalField>({
-    key: "adminEditInnerFieldsModalDataState",
+    key: "ownerEditInnerFieldsModalDataState",
     default: {
         title: "",
         name: "",
@@ -38,7 +38,7 @@ export const innerFieldModalDataAtom = atom<ModalField>({
 });
 
 export const editSelectFieldModalDataAtom = atom<ModalField>({
-    key: "adminEditSelectFieldModalState",
+    key: "ownerEditSelectFieldModalState",
     default: {
         title: "",
         name: "",

@@ -1,6 +1,7 @@
 import { atom } from "recoil";
 
 enum UserRole {
+    Owner = "owner",
     Admin = "admin",
     User = "user",
 }
@@ -15,4 +16,4 @@ const userTypeAtom = atom({
     default: UserRole.Admin,
 });
 
-export { isLoggedInAtom, userTypeAtom };
+export { UserRole, isLoggedInAtom, userTypeAtom };

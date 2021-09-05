@@ -17,7 +17,7 @@ import {
 } from "../../../../../../../global/types/Field";
 
 export const innerFieldsAtom = atom<Field[]>({
-    key: "adminInnerFieldsState",
+    key: "ownerInnerFieldsState",
     default: [],
 });
 

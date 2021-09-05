@@ -18,6 +18,11 @@
     min-width: 50vw;
     min-height: 50vh;
 }
+.owner-dashboard-section {
+    width: 100%;
+    height: 90vh;
+    max-height: 85vh;
+}
 .admin-dashboard-section {
     width: 100%;
     height: 90vh;

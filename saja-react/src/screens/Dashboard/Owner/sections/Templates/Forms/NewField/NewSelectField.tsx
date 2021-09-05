@@ -10,7 +10,7 @@ import {
 import { atom, useRecoilState } from "recoil";
 
 export const optionsAtom = atom<string[]>({
-    key: "adminModalOptionsState",
+    key: "ownerModalOptionsState",
     default: [],
 });
 
