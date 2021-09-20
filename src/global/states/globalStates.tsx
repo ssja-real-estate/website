@@ -1,3 +1,4 @@
+import { TOKEN } from "local";
 import { atom } from "recoil";
 
 enum UserRole {
@@ -13,7 +14,12 @@ const isLoggedInAtom = atom({
 
 const userTypeAtom = atom({
     key: "userTypeState",
-    default: UserRole.Admin,
+    default: UserRole.Owner,
 });
 
-export { UserRole, isLoggedInAtom, userTypeAtom };
+const tokenAtom = atom({
+    key: "token",
+    default: TOKEN
+});
+
+export { UserRole, isLoggedInAtom, userTypeAtom, tokenAtom };

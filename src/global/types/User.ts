@@ -1,7 +1,12 @@
 interface User {
-    name: string;
-    phone: string;
-    isAdmin: boolean;
+    id: string;
+    userName: string;
+    name?: string;
+    password?: string;
+    mobile: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export type { User };

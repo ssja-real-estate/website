@@ -1,33 +1,11 @@
 import { useState } from "react";
 import { Card, Col, Form, ListGroup, Row, Tab } from "react-bootstrap";
-import { User } from "../../../../../global/types/User";
+import { User } from "../../../../../../global/types/User";
 
-function UsersSection() {
+function UsersList() {
     const [searchValue, setSearchValue] = useState<string>("");
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [users, setUsers] = useState<User[]>([
-        { name: "رحمان رحیمی", phone: "09123456234", isAdmin: true },
-        { name: "ابراهیم حسن پور", phone: "09112876789", isAdmin: false },
-        { name: "رحفهخغعن", phone: "09148764744", isAdmin: false },
-        { name: "رحمااااااااان", phone: "09148744444", isAdmin: false },
-        { name: "رحمااابااااااان", phone: "09148764244", isAdmin: false },
-        { name: "رحناماااان", phone: "09148744646", isAdmin: false },
-        { name: "رحااااااان", phone: "09148764443", isAdmin: false },
-        { name: "رحااااااان", phone: "09148764344", isAdmin: false },
-        { name: "رحااااااان", phone: "09154487644", isAdmin: false },
-        { name: "رحااااااان", phone: "09148876484", isAdmin: false },
-        { name: "رحااااااان", phone: "09148765444", isAdmin: false },
-        { name: "رحااااااان", phone: "09147658876", isAdmin: false },
-        { name: "رحااااااان", phone: "09148764844", isAdmin: false },
-        { name: "رحااااااان", phone: "09148766844", isAdmin: false },
-        { name: "رحااااااان", phone: "09148764446", isAdmin: false },
-        { name: "رحااااااان", phone: "09146678788", isAdmin: false },
-        { name: "رحااااااان", phone: "09148764444", isAdmin: false },
-        { name: "رحااااااان", phone: "09148764484", isAdmin: false },
-        { name: "رحااااااان", phone: "09187687487", isAdmin: false },
-        { name: "رحااااااان", phone: "09148768878", isAdmin: false },
-        { name: "رحااااااان", phone: "09148756444", isAdmin: false },
-    ]);
+    const [users, setUsers] = useState<User[]>([]);
 
     return (
         <div className="users-section">
@@ -50,19 +28,19 @@ function UsersSection() {
                                 .filter((user) => {
                                     return searchValue.trim() === ""
                                         ? true
-                                        : user.name.includes(
-                                              searchValue.trim()
-                                          ) ||
-                                              user.phone.includes(
-                                                  searchValue.trim()
-                                              );
+                                        : user.userName.includes(
+                                            searchValue.trim()
+                                        ) ||
+                                        user.mobile.includes(
+                                            searchValue.trim()
+                                        );
                                 })
                                 .map((user, index) => {
                                     return (
                                         <ListGroup.Item
                                             key={index}
                                             action
-                                            href={`#user${user.phone}`}
+                                            href={`#user${user.mobile}`}
                                         >
                                             <div className="d-flex">
                                                 <span
@@ -70,15 +48,15 @@ function UsersSection() {
                                                     style={{ width: 200 }}
                                                 >
                                                     {user.name}
-                                                    {user.isAdmin ? (
+                                                    {/* {user.isAdmin ? (
                                                         <i className="bi-star-fill text-warning me-2"></i>
-                                                    ) : null}
+                                                    ) : null} */}
                                                 </span>
                                                 <span
                                                     className="user-phone"
                                                     style={{ width: 150 }}
                                                 >
-                                                    {user.phone}
+                                                    {user.mobile}
                                                 </span>
                                             </div>
                                         </ListGroup.Item>
@@ -95,17 +73,17 @@ function UsersSection() {
                                 return (
                                     <Tab.Pane
                                         key={index}
-                                        eventKey={`#user${user.phone}`}
+                                        eventKey={`#user${user.mobile}`}
                                     >
                                         <Card className="shadow p-5">
                                             <span className="user-name fw-bold fs-4">
                                                 {user.name}
-                                                {user.isAdmin ? (
+                                                {/* {user.isAdmin ? (
                                                     <i className="bi-star-fill text-warning me-2"></i>
-                                                ) : null}
+                                                ) : null} */}
                                             </span>
                                             <span className="user-phone pt-4">
-                                                {user.phone}
+                                                {user.mobile}
                                                 <i className="bi-telephone-fill me-2"></i>
                                             </span>
                                         </Card>
@@ -120,4 +98,4 @@ function UsersSection() {
     );
 }
 
-export default UsersSection;
+export default UsersList;
