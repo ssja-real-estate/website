@@ -1,8 +1,6 @@
 import { Col, Row, Tab } from 'react-bootstrap';
-import AdminList from './AdminList/AdminList';
+import UsersList from './UsersList/UsersList';
 import UsersSectionList from './UsersSectionList';
-import UsersList from './UsersLists/UsersList';
-import OwnerList from './OwnerList/OwnerList';
 
 function UsersSection() {
   return (
@@ -13,12 +11,6 @@ function UsersSection() {
         </Col>
         <Col md={10}>
           <Tab.Content>
-            <Tab.Pane eventKey="#owners">
-              <OwnerList />
-            </Tab.Pane>
-            <Tab.Pane eventKey="#admins">
-              <AdminList />
-            </Tab.Pane>
             <Tab.Pane eventKey="#users">
               <UsersList />
             </Tab.Pane>

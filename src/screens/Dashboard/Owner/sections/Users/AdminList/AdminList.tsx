@@ -1,8 +1,9 @@
 import { tokenAtom } from 'global/states/globalStates';
-import User from 'global/types/User';
+import User, { Role } from 'global/types/User';
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Form, ListGroup, Row, Tab } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
+import UserService from 'services/api/UserService/UserService';
 
 const AdminList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>('');
@@ -17,7 +18,9 @@ const AdminList = (): JSX.Element => {
   }, []);
 
   const loadData = async () => {
-    console.log(token);
+    const userService = new UserService(token);
+    const admins = await userService.fetchUsers(Role.ADMIN);
+    setUsers(admins);
   };
 
   return (
@@ -42,9 +45,9 @@ const AdminList = (): JSX.Element => {
 
                   let result = false;
                   if (user.name) {
-                    result ||= user.name.includes(value);
+                    result = result || user.name.includes(value);
                   }
-                  result ||= user.mobile.includes(value);
+                  result = result || user.mobile.includes(value);
 
                   return result;
                 })

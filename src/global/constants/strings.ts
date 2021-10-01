@@ -6,9 +6,9 @@ class Strings {
   static cities = 'شهر‌ها';
   static units = 'واحدها';
   static forms = 'فرم‌ها';
-  static owners = 'مالکان سایت';
+  static owners = 'مالک‌ها';
   static admins = 'ادمین‌ها';
-  static users = 'کاربران عادی';
+  static users = 'کاربرها';
 }
 
 export default Strings;

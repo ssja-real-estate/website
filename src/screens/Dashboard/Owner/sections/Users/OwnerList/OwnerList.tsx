@@ -1,16 +1,16 @@
 import { tokenAtom } from 'global/states/globalStates';
-import User from 'global/types/User';
-import { useEffect, useState } from 'react';
+import User, { Role } from 'global/types/User';
+import React, { useEffect, useState } from 'react';
 import { Card, Col, Form, ListGroup, Row, Tab } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import UserService from 'services/api/UserService/UserService';
 
-function UsersList() {
+const OwnerList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   const token = useRecoilValue(tokenAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [users, setUsers] = useState<User[]>([]);
+  const [owners, setOwners] = useState<User[]>([]);
 
   useEffect(() => {
     loadData();
@@ -19,8 +19,9 @@ function UsersList() {
 
   const loadData = async () => {
     const userService = new UserService(token);
-    const users = await userService.fetchUsers();
-    setUsers(users);
+    const owners = await userService.fetchUsers(Role.OWNER);
+
+    setOwners(owners);
   };
 
   return (
@@ -38,10 +39,11 @@ function UsersList() {
               }}
             ></Form.Control>
             <ListGroup>
-              {users
+              {owners
                 .filter((user) => {
                   const value = searchValue.trim();
                   if (value === '') return true;
+
                   let result = false;
                   if (user.name) {
                     result = result || user.name.includes(value);
@@ -78,13 +80,16 @@ function UsersList() {
           <Col md={7} className="user-info">
             <Tab.Content className="sticky-top">
               <h3 className="user-info-title fw-light mb-4">مشخصات کاربر</h3>
-              {users.map((user, index) => {
+              {owners.map((user, index) => {
                 return (
                   <Tab.Pane key={index} eventKey={`#user${user.mobile}`}>
                     <Card className="shadow p-5">
                       {user.name ? (
                         <span className="user-name fw-bold fs-4">
                           {user.name}
+                          {/* {user.isAdmin ? (
+                          <i className="bi-star-fill text-warning me-2"></i>
+                        ) : null} */}
                         </span>
                       ) : null}
                       <span className="user-phone pt-4">
@@ -101,6 +106,6 @@ function UsersList() {
       </Tab.Container>
     </div>
   );
-}
+};
 
-export default UsersList;
+export default OwnerList;

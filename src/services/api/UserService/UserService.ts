@@ -1,14 +1,12 @@
-import { AxiosRequestConfig } from 'axios';
 import Strings from 'global/constants/strings';
 import ModelUtility from 'global/types/ModelUtility';
 import User, { Role } from 'global/types/User';
 import toast from 'react-hot-toast';
-import Api from '../base';
+import BaseService from '../BaseService';
 
-class UserService {
-  config: AxiosRequestConfig | undefined;
-
+class UserService extends BaseService {
   constructor(token: string) {
+    super(token);
     this.config = {
       headers: {
         Authorization: token,
@@ -16,16 +14,21 @@ class UserService {
     };
   }
 
-  async fetchUsers(role: Role): Promise<User[]> {
+  async fetchUsers(role: Role = Role.USER): Promise<User[]> {
     let users: User[] = [];
+
     try {
-      var response = await Api.get('/users', this.config);
+      var response = await this.Api.get('/users', this.config);
 
       response.data.forEach((element: any) => {
-        users.push(ModelUtility.convertToUser(element));
+        const user = ModelUtility.convertToUser(element);
+        if (user.role === role) {
+          users.push(user);
+        }
       });
     } catch (error) {
       toast.error(Strings.errorFetchData);
+      console.log(error);
     }
 
     return users;

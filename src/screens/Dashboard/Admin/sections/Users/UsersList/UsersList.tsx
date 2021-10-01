@@ -1,11 +1,27 @@
-import User from 'global/types/User';
-import { useState } from 'react';
+import { tokenAtom } from 'global/states/globalStates';
+import User, { Role } from 'global/types/User';
+import { useEffect, useState } from 'react';
 import { Card, Col, Form, ListGroup, Row, Tab } from 'react-bootstrap';
+import { useRecoilValue } from 'recoil';
+import UserService from 'services/api/UserService/UserService';
 
-function UsersSection() {
+function UsersList() {
   const [searchValue, setSearchValue] = useState<string>('');
+
+  const token = useRecoilValue(tokenAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadData = async () => {
+    const userService = new UserService(token);
+    const users = await userService.fetchUsers(Role.USER);
+    setUsers(users);
+  };
 
   return (
     <div className="users-section">
@@ -29,9 +45,9 @@ function UsersSection() {
 
                   let result = false;
                   if (user.name) {
-                    result ||= user.name.includes(value);
+                    result = result || user.name.includes(value);
                   }
-                  result ||= user.mobile.includes(value);
+                  result = result || user.mobile.includes(value);
 
                   return result;
                 })
@@ -91,4 +107,4 @@ function UsersSection() {
   );
 }
 
-export default UsersSection;
+export default UsersList;
