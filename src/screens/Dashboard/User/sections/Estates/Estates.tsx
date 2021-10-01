@@ -1,5 +1,5 @@
 function EstatesSection() {
-    return <div></div>;
+  return <div></div>;
 }
 
 export default EstatesSection;

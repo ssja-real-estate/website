@@ -1,18 +1,15 @@
-import { tokenAtom } from "global/states/globalStates";
-import React, { useEffect, useState } from "react";
-import { Card, Col, Form, ListGroup, Row, Tab } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
-import { fetchAdmins } from "services/api/admins/adminService";
-import { User } from "../../../../../../global/types/User";
-
+import { tokenAtom } from 'global/states/globalStates';
+import User from 'global/types/User';
+import React, { useEffect, useState } from 'react';
+import { Card, Col, Form, ListGroup, Row, Tab } from 'react-bootstrap';
+import { useRecoilValue } from 'recoil';
 
 const AdminList = (): JSX.Element => {
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const token = useRecoilValue(tokenAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [users, setUsers] = useState<User[]>([]);
-
 
   useEffect(() => {
     loadData();
@@ -20,18 +17,15 @@ const AdminList = (): JSX.Element => {
   }, []);
 
   const loadData = async () => {
-    const users = await fetchAdmins(token);
-    setUsers(users);
-  }
+    console.log(token);
+  };
 
   return (
     <div className="users-section">
       <Tab.Container>
         <Row>
           <Col md={5} className="users-list">
-            <h3 className="users-list-title fw-light mb-4">
-              لیست کاربران
-            </h3>
+            <h3 className="users-list-title fw-light mb-4">لیست کاربران</h3>
             <Form.Control
               className="mb-3"
               placeholder="جستجوی کاربران"
@@ -43,14 +37,16 @@ const AdminList = (): JSX.Element => {
             <ListGroup>
               {users
                 .filter((user) => {
-                  return searchValue.trim() === ""
-                    ? true
-                    : user.userName.includes(
-                      searchValue.trim()
-                    ) ||
-                    user.mobile.includes(
-                      searchValue.trim()
-                    );
+                  const value = searchValue.trim();
+                  if (value === '') return true;
+
+                  let result = false;
+                  if (user.name) {
+                    result ||= user.name.includes(value);
+                  }
+                  result ||= user.mobile.includes(value);
+
+                  return result;
                 })
                 .map((user, index) => {
                   return (
@@ -60,17 +56,15 @@ const AdminList = (): JSX.Element => {
                       href={`#user${user.mobile}`}
                     >
                       <div className="d-flex">
-                        <span
-                          className="user-name ms-3"
-                          style={{ width: 200 }}
-                        >
-                          {user.userName}
-
-                        </span>
-                        <span
-                          className="user-phone"
-                          style={{ width: 150 }}
-                        >
+                        {user.name ? (
+                          <span
+                            className="user-name ms-3"
+                            style={{ width: 200 }}
+                          >
+                            {user.name}
+                          </span>
+                        ) : null}
+                        <span className="user-phone" style={{ width: 150 }}>
                           {user.mobile}
                         </span>
                       </div>
@@ -81,22 +75,19 @@ const AdminList = (): JSX.Element => {
           </Col>
           <Col md={7} className="user-info">
             <Tab.Content className="sticky-top">
-              <h3 className="user-info-title fw-light mb-4">
-                مشخصات کاربر
-              </h3>
+              <h3 className="user-info-title fw-light mb-4">مشخصات کاربر</h3>
               {users.map((user, index) => {
                 return (
-                  <Tab.Pane
-                    key={index}
-                    eventKey={`#user${user.mobile}`}
-                  >
+                  <Tab.Pane key={index} eventKey={`#user${user.mobile}`}>
                     <Card className="shadow p-5">
-                      <span className="user-name fw-bold fs-4">
-                        {user.userName}
-                        {/* {user.isAdmin ? (
+                      {user.name ? (
+                        <span className="user-name fw-bold fs-4">
+                          {user.name}
+                          {/* {user.isAdmin ? (
                           <i className="bi-star-fill text-warning me-2"></i>
                         ) : null} */}
-                      </span>
+                        </span>
+                      ) : null}
                       <span className="user-phone pt-4">
                         {user.mobile}
                         <i className="bi-telephone-fill me-2"></i>
@@ -111,7 +102,6 @@ const AdminList = (): JSX.Element => {
       </Tab.Container>
     </div>
   );
-}
-
+};
 
 export default AdminList;
