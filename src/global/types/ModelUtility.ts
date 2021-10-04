@@ -1,4 +1,5 @@
 import Base from './Base';
+import DelegationType from './DelegationType';
 import User, { Role } from './User';
 
 class ModelUtility {
@@ -31,6 +32,13 @@ class ModelUtility {
       password: json.password,
       mobile: json.mobile,
       role: json.role,
+      ...this.getBaseData(json),
+    };
+  }
+
+  static convertToDelegationType(json: any): DelegationType {
+    return {
+      ...json,
       ...this.getBaseData(json),
     };
   }

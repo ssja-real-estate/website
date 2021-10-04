@@ -9,7 +9,7 @@ const isLoggedInAtom = atom({
 
 const userTypeAtom = atom({
   key: 'userTypeState',
-  default: Role.USER,
+  default: Role.OWNER,
 });
 
 const tokenAtom = atom({

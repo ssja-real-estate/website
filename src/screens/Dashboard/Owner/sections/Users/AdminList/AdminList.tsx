@@ -1,6 +1,6 @@
 import { tokenAtom } from 'global/states/globalStates';
 import User, { Role } from 'global/types/User';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card, Col, Form, ListGroup, Row, Tab } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import UserService from 'services/api/UserService/UserService';
@@ -11,15 +11,16 @@ const AdminList = (): JSX.Element => {
   const token = useRecoilValue(tokenAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [users, setUsers] = useState<User[]>([]);
+  const userService = useRef(new UserService());
 
   useEffect(() => {
+    userService.current.setToken(token);
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const loadData = async () => {
-    const userService = new UserService(token);
-    const admins = await userService.fetchUsers(Role.ADMIN);
+    const admins = await userService.current.fetchUsers(Role.ADMIN);
     setUsers(admins);
   };
 

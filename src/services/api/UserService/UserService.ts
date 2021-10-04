@@ -5,15 +5,6 @@ import toast from 'react-hot-toast';
 import BaseService from '../BaseService';
 
 class UserService extends BaseService {
-  constructor(token: string) {
-    super(token);
-    this.config = {
-      headers: {
-        Authorization: token,
-      },
-    };
-  }
-
   async fetchUsers(role: Role = Role.USER): Promise<User[]> {
     let users: User[] = [];
 

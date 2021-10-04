@@ -1,4 +1,6 @@
-import React from 'react';
+import { tokenAtom } from 'global/states/globalStates';
+import DelegationType from 'global/types/DelegationType';
+import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import {
   Row,
@@ -10,10 +12,9 @@ import {
   Spinner,
 } from 'react-bootstrap';
 import toast from 'react-hot-toast';
+import { useRecoilValue } from 'recoil';
+import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
-import { DelegationType } from '../../../../../../global/types/Estate';
-import { fetchGet, fetchPut } from '../../../../../../services/api/fetch';
-import { randomId } from '../../../../../../services/utilities/randomId';
 import './DelegationTypesList.css';
 
 function DelegationTypesList() {
@@ -21,27 +22,33 @@ function DelegationTypesList() {
   const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
   const [newItems, setNewItems] = useState<DelegationType[]>([]);
   const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
-    value: '',
-    id: randomId(),
+    name: '',
+    id: '',
+    createdAt: new Date(),
+    updateAt: new Date(),
   });
+  const token = useRecoilValue(tokenAtom);
+  const service = useRef(new DelegationTypeService());
   const [loading, setLoading] = useState<boolean>(true);
 
-  async function getData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setDelegationTypes(data.data);
-        setNewItems([]);
-        setRemovedItems([]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   useEffect(() => {
-    getData('http://localhost:8000/delegationTypes');
-  }, []);
+    service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const loadData = async () => {
+    setLoading((prev) => true);
+    const data = await service.current.getAllDelegationTypes();
+    setDelegationTypes(data);
+    setLoading((prev) => false);
+  };
+
+  const createNewDelegationType = async (delegationTypes: DelegationType[]) => {
+    delegationTypes.forEach(async (element) => {
+      await service.current.createDelegationType(element);
+    });
+  };
 
   return (
     <>
@@ -49,9 +56,8 @@ function DelegationTypesList() {
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getData('http://localhost:8000/delegationTypes');
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
@@ -62,17 +68,17 @@ function DelegationTypesList() {
             <Button
               variant="dark"
               onClick={() => {
-                newDelegationType.value.trim() !== '' &&
+                newDelegationType.name.trim() !== '' &&
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      id: randomId(),
-                      value: newDelegationType.value.trim(),
+                      ...newDelegationType,
+                      name: newDelegationType.name.trim(),
                     },
                   ]);
                 setNewDelegationType({
                   ...newDelegationType,
-                  value: '',
+                  name: '',
                 });
               }}
             >
@@ -81,11 +87,11 @@ function DelegationTypesList() {
             <Form.Control
               type="text"
               placeholder="افزودن نوع جدید"
-              value={newDelegationType.value}
+              value={newDelegationType.name}
               onChange={(e) => {
                 setNewDelegationType({
                   ...newDelegationType,
-                  value: e.target.value,
+                  name: e.target.value,
                 });
               }}
             />
@@ -107,11 +113,8 @@ function DelegationTypesList() {
                     .includes(item.id)
               );
               toast.promise(
-                fetchPut('http://localhost:8000/delegationTypes', {
-                  id: 1,
-                  data: finalItems,
-                }).then(() => {
-                  getData('http://localhost:8000/delegationTypes');
+                createNewDelegationType(finalItems).then(() => {
+                  loadData();
                 }),
                 {
                   loading: 'در حال ذخیره سازی تغییرات',
@@ -138,13 +141,14 @@ function DelegationTypesList() {
                 return (
                   <React.Fragment key={index}>
                     <ListItem
-                      title={delegationType.value}
+                      title={delegationType.name}
                       onRemove={() => {
                         setRemovedItems((prev) => {
                           let exists: boolean = false;
                           prev.every((item) => {
                             if (item.id === delegationType.id) {
                               exists = true;
+
                               return false;
                             } else {
                               return true;
@@ -178,7 +182,7 @@ function DelegationTypesList() {
                   action
                   className="new-item d-flex flex-row justify-content-between align-items-center"
                 >
-                  {newItem.value}
+                  {newItem.name}
                   <i
                     className="remove-icon bi-x-lg"
                     onClick={() => {
