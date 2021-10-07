@@ -1,3 +1,4 @@
+import Strings from 'global/constants/strings';
 import { tokenAtom } from 'global/states/globalStates';
 import City from 'global/types/City';
 import Province from 'global/types/Province';
@@ -17,22 +18,33 @@ function CityList() {
 
   useEffect(() => {
     service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  async function getProvinceData(url: string) {}
-
-  async function getCityData(url: string) {}
-
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+    const provinces = await service.current.getAllProvinces();
+    setProvinces(provinces);
+    if (selectedProvince) {
+      const province = provinces.find((p) => p.id === selectedProvince.id);
+      if (province) {
+        setSelectedProvince(province);
+        setCities(province.cities);
+      }
+    }
+    setLoading((prev) => false);
+  };
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">شهر ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.cities}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getProvinceData('http://localhost:8000/provinces');
-          getCityData(`http://localhost:8000/cities`);
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
@@ -41,16 +53,20 @@ function CityList() {
         <Form.Select
           style={{ maxWidth: 300 }}
           defaultValue="default"
-          value={selectedProvince?.name}
+          value={selectedProvince?.id}
           onChange={(e) => {
-            setSelectedProvince({
-              ...selectedProvince!,
-              id: e.currentTarget.value,
-            });
+            const provinceId = e.currentTarget.value;
+            if (provinceId) {
+              const province = provinces.find((p) => p.id === provinceId);
+              if (province) {
+                setSelectedProvince(province);
+                setCities(province.cities);
+              }
+            }
           }}
         >
           <option value="default" disabled>
-            انتخاب کنید
+            {Strings.choose}
           </option>
           {provinces.map((province, index) => {
             return (

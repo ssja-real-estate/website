@@ -25,8 +25,9 @@ function EstateTypesList() {
     id: '',
     name: '',
   });
-  const token = useRecoilValue(tokenAtom);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const token = useRecoilValue(tokenAtom);
   const service = useRef(new EstateTypeService());
 
   useEffect(() => {

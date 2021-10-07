@@ -20,7 +20,7 @@ const AdminList = (): JSX.Element => {
   }, [token]);
 
   const loadData = async () => {
-    const admins = await userService.current.fetchUsers(Role.ADMIN);
+    const admins = await userService.current.getAllUsers(Role.ADMIN);
     setUsers(admins);
   };
 

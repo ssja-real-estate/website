@@ -78,7 +78,7 @@ function UnitList() {
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">واحد ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.units}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"

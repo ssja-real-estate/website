@@ -1,36 +1,41 @@
+import Strings from 'global/constants/strings';
+import { tokenAtom } from 'global/states/globalStates';
 import EstateType from 'global/types/EstateType';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
+import { useRecoilValue } from 'recoil';
+import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
 import './EstateTypesList.css';
 
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  async function getData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setEstateTypes(data.data);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  const token = useRecoilValue(tokenAtom);
+  const service = useRef(new EstateTypeService());
 
   useEffect(() => {
-    getData('http://localhost:8000/estateTypes');
-  }, []);
+    service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+    const data = await service.current.getAllEstateTypes();
+    setEstateTypes(data);
+    setLoading((prev) => false);
+  };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">نوع ملک ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.estateTypes}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getData('http://localhost:8000/estateTypes');
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="refresh-icon bi-arrow-counterclockwise"></i>

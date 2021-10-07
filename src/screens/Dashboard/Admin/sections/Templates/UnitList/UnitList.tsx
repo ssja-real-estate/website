@@ -1,3 +1,4 @@
+import Strings from 'global/constants/strings';
 import { tokenAtom } from 'global/states/globalStates';
 import Unit from 'global/types/Unit';
 import { useState, useEffect, useRef } from 'react';
@@ -25,12 +26,12 @@ function UnitList() {
     }
     const units = await service.current.getAllUnits();
     setUnits(units);
-    setLoading((prev) => true);
+    setLoading((prev) => false);
   };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">واحد ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.units}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"

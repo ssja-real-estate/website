@@ -1,36 +1,41 @@
+import Strings from 'global/constants/strings';
+import { tokenAtom } from 'global/states/globalStates';
 import DelegationType from 'global/types/DelegationType';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
+import { useRecoilValue } from 'recoil';
+import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
 import './DelegationTypesList.css';
 
 function DelegationTypesList() {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  async function getData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setDelegationTypes(data.data);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  const token = useRecoilValue(tokenAtom);
+  const service = useRef(new DelegationTypeService());
 
   useEffect(() => {
-    getData('http://localhost:8000/delegationTypes');
-  }, []);
+    service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+    const data = await service.current.getAllDelegationTypes();
+    setDelegationTypes(data);
+    setLoading((prev) => false);
+  };
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">نوع واگذاری ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.delegationTypes}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getData('http://localhost:8000/delegationTypes');
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="refresh-icon bi-arrow-counterclockwise"></i>

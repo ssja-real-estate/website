@@ -20,7 +20,7 @@ const OwnerList = (): JSX.Element => {
   }, [token]);
 
   const loadData = async () => {
-    const owners = await userService.current.fetchUsers(Role.OWNER);
+    const owners = await userService.current.getAllUsers(Role.OWNER);
     setOwners(owners);
   };
 

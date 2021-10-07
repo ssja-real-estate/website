@@ -20,7 +20,7 @@ function UsersList() {
   }, [token]);
 
   const loadData = async () => {
-    const users = await userService.current.fetchUsers();
+    const users = await userService.current.getAllUsers();
     setUsers(users);
   };
 

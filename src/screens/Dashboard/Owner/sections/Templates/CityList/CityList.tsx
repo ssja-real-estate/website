@@ -142,9 +142,7 @@ function CityList() {
                 const provinceId = e.currentTarget.value;
                 if (provinceId) {
                   const province = provinces.find((p) => p.id === provinceId);
-                  console.log(province);
                   if (province) {
-                    console.log('set');
                     setSelectedProvince(province);
                     setCities(province.cities);
                   }
