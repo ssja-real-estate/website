@@ -22,7 +22,7 @@ function ProvinceList() {
   const [newProvince, setNewProvince] = useState<Province>({
     id: '',
     name: '',
-    cities: [],
+    cites: [],
   });
   const token = useRecoilValue(tokenAtom);
   const service = useRef(new ProvinceCityService());

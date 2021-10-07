@@ -70,7 +70,7 @@ class ProvinceCityService extends BaseService {
   async createCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.post(
-        `${PROVINCE_URL}/${CITY_URL}/${provinceId}`,
+        `${PROVINCE_URL}${CITY_URL}/${provinceId}`,
         { name: city.name },
         this.config
       );
@@ -82,7 +82,7 @@ class ProvinceCityService extends BaseService {
   async updateCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.post(
-        `${PROVINCE_URL}/${CITY_URL}/${provinceId}`,
+        `${PROVINCE_URL}${CITY_URL}/${provinceId}`,
         { name: city.name },
         this.config
       );
@@ -91,7 +91,19 @@ class ProvinceCityService extends BaseService {
     }
   }
 
-  async deleteCityInProvince(provinceId: string, city: City) {}
+  async deleteCityInProvince(provinceId: string, city: City) {
+    try {
+      await this.Api.delete(`${PROVINCE_URL}${CITY_URL}/${provinceId}`, {
+        ...this.config,
+        data: {
+          id: city.id,
+          name: city.name,
+        },
+      });
+    } catch (error: any) {
+      this.handleError(error);
+    }
+  }
 }
 
 export default ProvinceCityService;

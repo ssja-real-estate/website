@@ -3,7 +3,7 @@ import City from './City';
 interface Province {
   id: string;
   name: string;
-  cities: City[];
+  cites: City[];
 }
 
 export default Province;

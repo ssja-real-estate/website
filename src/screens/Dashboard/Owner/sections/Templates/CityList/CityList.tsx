@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import Strings from 'global/constants/strings';
 import { tokenAtom } from 'global/states/globalStates';
 import City from 'global/types/City';
@@ -33,29 +32,72 @@ function CityList() {
 
   useEffect(() => {
     service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  async function getProvinceData(url: string) {}
-
-  async function getCityData(url: string) {}
-
-  useEffect(() => {
-    setLoading(true);
-    if (selectedProvince && selectedProvince.id !== 'default') {
-      getCityData(`http://localhost:8000/cities/${selectedProvince.id}`);
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
     }
-  }, [selectedProvince]);
+    const provinces = await service.current.getAllProvinces();
+    setProvinces(provinces);
+    if (selectedProvince) {
+      const province = provinces.find((p) => p.id === selectedProvince.id);
+      if (province) {
+        setSelectedProvince(province);
+        setCities(province.cites);
+      }
+    }
+    setLoading((prev) => false);
+  };
+
+  const selectItemAsDeleted = async (city: City) => {
+    setRemovedItems((prev) => {
+      const item = prev.find((e) => e.id === city.id);
+      if (item) {
+        const newRemovedItems = prev.filter((item) => item.id !== city.id);
+        return newRemovedItems;
+      } else {
+        const newRemovedItems = [...prev, city];
+        return newRemovedItems;
+      }
+    });
+  };
+
+  const deleteCities = async (cities: City[]) => {
+    const provinceId = selectedProvince?.id;
+    if (!provinceId) return;
+    for (let i = 0; i < cities.length; i++) {
+      const city = cities[i];
+      await service.current.deleteCityInProvince(provinceId, city);
+    }
+  };
+
+  const createNewCities = async (cities: City[]) => {
+    const provinceId = selectedProvince?.id;
+    if (!provinceId) return;
+    for (let i = 0; i < cities.length; i++) {
+      const city = cities[i];
+      await service.current.createCityInProvince(provinceId, city);
+    }
+  };
+
+  const saveChanges = async () => {
+    setLoading((prev) => true);
+    await deleteCities(removedItems);
+    await createNewCities(newItems);
+    await loadData();
+  };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">شهر ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.cities}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getProvinceData('http://localhost:8000/provinces');
-          getCityData(`http://localhost:8000/cities`);
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
@@ -95,12 +137,16 @@ function CityList() {
             />
             <Form.Select
               defaultValue="default"
-              value={selectedProvince?.name}
+              value={selectedProvince?.id}
               onChange={(e) => {
-                setSelectedProvince({
-                  ...selectedProvince!,
-                  id: e.currentTarget.value,
-                });
+                const provinceId = e.currentTarget.value;
+                if (provinceId) {
+                  const province = provinces.find((p) => p.id === provinceId);
+                  if (province) {
+                    setSelectedProvince(province);
+                    setCities(province.cites);
+                  }
+                }
               }}
             >
               <option value="default" disabled>
@@ -120,7 +166,8 @@ function CityList() {
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
+            onClick={async () => {
+              await saveChanges();
               setNewItems([]);
               setRemovedItems([]);
             }}
@@ -142,26 +189,7 @@ function CityList() {
                       <ListItem
                         title={city.name}
                         onRemove={() => {
-                          setRemovedItems((prev) => {
-                            let exists: boolean = false;
-                            prev.every((item) => {
-                              if (item.id === city.id) {
-                                exists = true;
-                                return false;
-                              } else {
-                                return true;
-                              }
-                            });
-                            if (exists) {
-                              const newRemovedItems = prev.filter(
-                                (item) => item.id !== city.id
-                              );
-                              return newRemovedItems;
-                            } else {
-                              const newRemovedItems = [...prev, city];
-                              return newRemovedItems;
-                            }
-                          });
+                          selectItemAsDeleted(city);
                         }}
                       />
                     </React.Fragment>
