@@ -1,7 +1,6 @@
+import DelegationType from 'global/types/DelegationType';
 import { useEffect, useState } from 'react';
 import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
-import { DelegationType } from '../../../../../../global/types/Estate';
-import { fetchGet } from '../../../../../../services/api/fetch';
 import './DelegationTypesList.css';
 
 function DelegationTypesList() {
@@ -9,14 +8,14 @@ function DelegationTypesList() {
   const [loading, setLoading] = useState<boolean>(true);
 
   async function getData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setDelegationTypes(data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setDelegationTypes(data.data);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {
@@ -48,7 +47,7 @@ function DelegationTypesList() {
             {delegationTypes.map((delegationType, index) => {
               return (
                 <ListGroup.Item key={index}>
-                  {delegationType.value}
+                  {delegationType.name}
                 </ListGroup.Item>
               );
             })}

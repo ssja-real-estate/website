@@ -1,7 +1,6 @@
+import EstateType from 'global/types/EstateType';
 import { useEffect, useState } from 'react';
 import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
-import { EstateType } from '../../../../../../global/types/Estate';
-import { fetchGet } from '../../../../../../services/api/fetch';
 import './EstateTypesList.css';
 
 function EstateTypesList() {
@@ -9,14 +8,14 @@ function EstateTypesList() {
   const [loading, setLoading] = useState<boolean>(true);
 
   async function getData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setEstateTypes(data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setEstateTypes(data.data);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {
@@ -47,7 +46,7 @@ function EstateTypesList() {
           <ListGroup className="mt-3" style={{ minWidth: 300, maxWidth: 400 }}>
             {estateTypes.map((estateType, index) => {
               return (
-                <ListGroup.Item key={index}>{estateType.value}</ListGroup.Item>
+                <ListGroup.Item key={index}>{estateType.name}</ListGroup.Item>
               );
             })}
           </ListGroup>

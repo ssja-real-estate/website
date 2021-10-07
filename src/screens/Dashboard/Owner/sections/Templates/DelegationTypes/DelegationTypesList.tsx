@@ -36,13 +36,15 @@ function DelegationTypesList() {
   }, [token]);
 
   const loadData = async () => {
-    setLoading((prev) => true);
+    if (!loading) {
+      setLoading((prev) => true);
+    }
     const data = await service.current.getAllDelegationTypes();
     setDelegationTypes(data);
     setLoading((prev) => false);
   };
 
-  const selectItemAsRemoved = (delegationType: DelegationType) => {
+  const selectItemAsDeleted = (delegationType: DelegationType) => {
     setRemovedItems((prev) => {
       let type = prev.find((item) => item.id === delegationType.id);
       let newRemovedItems = [];
@@ -76,8 +78,10 @@ function DelegationTypesList() {
     newItems: DelegationType[],
     removedItems: DelegationType[]
   ) => {
+    setLoading((prev) => true);
     await deleteDelegationTypes(removedItems);
     await createNewDelegationTypes(newItems);
+    await loadData();
   };
 
   return (
@@ -116,7 +120,7 @@ function DelegationTypesList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder={Strings.addNewDelegationType}
+              placeholder={Strings.addNewType}
               value={newDelegationType.name}
               onChange={(e) => {
                 setNewDelegationType({
@@ -158,7 +162,7 @@ function DelegationTypesList() {
                       title={delegationType.name}
                       onRemove={() => {
                         console.log('remove');
-                        selectItemAsRemoved(delegationType);
+                        selectItemAsDeleted(delegationType);
                       }}
                     />
                   </React.Fragment>

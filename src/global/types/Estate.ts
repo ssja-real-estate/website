@@ -6,16 +6,6 @@ interface Estate {
   province: string;
 }
 
-interface DelegationType {
-  id: string;
-  value: string;
-}
-
-interface EstateType {
-  id: string;
-  value: string;
-}
-
 interface Province {
   id: string;
   value: string;
@@ -31,4 +21,4 @@ interface Unit {
   value: string;
 }
 
-export type { Estate, DelegationType, EstateType, Province, City, Unit };
+export type { Estate, Province, City, Unit };

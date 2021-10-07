@@ -15,10 +15,6 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
-import {
-  DelegationType,
-  EstateType,
-} from '../../../../../../global/types/Estate';
 import { EstateForm, Section } from '../../../../../../global/types/EstateForm';
 import {
   FieldType,
@@ -29,6 +25,8 @@ import CustomModal from '../../../../../../components/CustomModal/CustomModal';
 import EditSection from './EditSection';
 import { atom, useRecoilState } from 'recoil';
 import toast from 'react-hot-toast';
+import DelegationType from 'global/types/DelegationType';
+import EstateType from 'global/types/EstateType';
 
 interface ModalSection extends Section {
   id: number;
@@ -50,14 +48,14 @@ function Forms() {
   const [loading, setLoading] = useState<boolean>(true);
   const [delegationType, setDelegationType] = useState<DelegationType>({
     id: '',
-    value: 'default',
+    name: 'default',
   });
   const [estateType, setEstateType] = useState<EstateType>({
     id: '',
-    value: 'default',
+    name: 'default',
   });
   const isDefault =
-    delegationType.value === 'default' || estateType.value === 'default'
+    delegationType.name === 'default' || estateType.name === 'default'
       ? true
       : false;
   const [form, setForm] = useState<EstateForm>();
@@ -198,9 +196,9 @@ function Forms() {
     setLoading(true);
     !isDefault &&
       getFormData(
-        `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`
+        `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
       );
-  }, [isDefault, delegationType.value, estateType.value]);
+  }, [isDefault, delegationType.name, estateType.name]);
 
   useEffect(() => {
     if (form) {
@@ -223,7 +221,7 @@ function Forms() {
           getDelegationTypes('http://localhost:8000/delegationTypes');
           getEstateTypes('http://localhost:8000/estateTypes');
           getFormData(
-            `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`
+            `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
           );
         }}
       >
@@ -268,11 +266,11 @@ function Forms() {
               <i className="bi-plus-lg fs-6"></i>
             </Button>
             <Form.Select
-              value={estateType.value}
+              value={estateType.name}
               onChange={(e) => {
                 setEstateType({
                   ...estateType,
-                  value: e.currentTarget.value,
+                  name: e.currentTarget.value,
                 });
               }}
             >
@@ -282,17 +280,17 @@ function Forms() {
               {estateTypes.map((estateType, index) => {
                 return (
                   <option key={index} value={estateType.id}>
-                    {estateType.value}
+                    {estateType.name}
                   </option>
                 );
               })}
             </Form.Select>
             <Form.Select
-              value={delegationType.value}
+              value={delegationType.name}
               onChange={(e) => {
                 setDelegationType({
                   ...delegationType,
-                  value: e.currentTarget.value,
+                  name: e.currentTarget.value,
                 });
               }}
             >
@@ -302,7 +300,7 @@ function Forms() {
               {delegationTypes.map((delegationType, index) => {
                 return (
                   <option key={index} value={delegationType.id}>
-                    {delegationType.value}
+                    {delegationType.name}
                   </option>
                 );
               })}
@@ -318,14 +316,14 @@ function Forms() {
               if (form) {
                 toast.promise(
                   fetchPut(
-                    `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`,
+                    `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`,
                     {
-                      id: `${delegationType.value}-${estateType.value}`,
+                      id: `${delegationType.name}-${estateType.name}`,
                       sections: form?.sections,
                     }
                   ).then(() => {
                     getFormData(
-                      `http://localhost:8000/forms/${delegationType.value}-${estateType.value}`
+                      `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
                     );
                   }),
                   {

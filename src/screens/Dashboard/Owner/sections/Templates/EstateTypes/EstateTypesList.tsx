@@ -1,5 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react';
+import Strings from 'global/constants/strings';
+import { tokenAtom } from 'global/states/globalStates';
+import EstateType from 'global/types/EstateType';
+import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import {
   Row,
@@ -10,10 +12,9 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import toast from 'react-hot-toast';
+import { useRecoilValue } from 'recoil';
+import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
-import { EstateType } from '../../../../../../global/types/Estate';
-import { randomId } from '../../../../../../services/utilities/randomId';
 import './EstateTypesList.css';
 
 function EstateTypesList() {
@@ -21,37 +22,75 @@ function EstateTypesList() {
   const [removedItems, setRemovedItems] = useState<EstateType[]>([]);
   const [newItems, setNewItems] = useState<EstateType[]>([]);
   const [newEstateType, setNewEstateType] = useState<EstateType>({
-    value: '',
-    id: randomId(),
+    id: '',
+    name: '',
   });
+  const token = useRecoilValue(tokenAtom);
   const [loading, setLoading] = useState<boolean>(true);
-
-  async function getData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setEstateTypes(data.data);
-    //     setNewItems([]);
-    //     setRemovedItems([]);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  const service = useRef(new EstateTypeService());
 
   useEffect(() => {
-    getData('http://localhost:8000/estateTypes');
-  }, []);
+    service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+    const data = await service.current.getAllEstateTypes();
+    setEstateTypes(data);
+    setLoading((prev) => false);
+  };
+
+  const selectItemAsDeleted = (estateType: EstateType) => {
+    setRemovedItems((prev) => {
+      const type = prev.find((item) => item.id === estateType.id);
+      if (type) {
+        const newRemovedItems = prev.filter(
+          (item) => item.id !== estateType.id
+        );
+        return newRemovedItems;
+      } else {
+        const newRemovedItems = [...prev, estateType];
+        return newRemovedItems;
+      }
+    });
+  };
+
+  const deleteEstateTypes = async (removedItems: EstateType[]) => {
+    for (let i = 0; i < removedItems.length; i++) {
+      const element = removedItems[i];
+      await service.current.deleteEstateType(element.id);
+    }
+  };
+
+  const createNewEstateTypes = async (newItems: EstateType[]) => {
+    for (let i = 0; i < newItems.length; i++) {
+      const element = newItems[i];
+      await service.current.createEstateType(element);
+    }
+  };
+
+  const saveChanges = async (
+    newItems: EstateType[],
+    removedItems: EstateType[]
+  ) => {
+    setLoading((prev) => true);
+    await deleteEstateTypes(removedItems);
+    await createNewEstateTypes(newItems);
+    await loadData();
+  };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">نوع ملک ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.estateTypes}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getData('http://localhost:8000/estateTypes');
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="refresh-icon bi-arrow-counterclockwise"></i>
@@ -62,17 +101,17 @@ function EstateTypesList() {
             <Button
               variant="dark"
               onClick={() => {
-                newEstateType.value.trim() !== '' &&
+                newEstateType.name.trim() !== '' &&
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      id: randomId(),
-                      value: newEstateType.value.trim(),
+                      ...newEstateType,
+                      name: newEstateType.name.trim(),
                     },
                   ]);
                 setNewEstateType({
                   ...newEstateType,
-                  value: '',
+                  name: '',
                 });
               }}
             >
@@ -80,12 +119,12 @@ function EstateTypesList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder="افزودن نوع جدید"
-              value={newEstateType.value}
+              placeholder={Strings.addNewType}
+              value={newEstateType.name}
               onChange={(e) => {
                 setNewEstateType({
                   ...newEstateType,
-                  value: e.target.value,
+                  name: e.target.value,
                 });
               }}
             />
@@ -95,36 +134,13 @@ function EstateTypesList() {
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
-              setLoading(true);
+            onClick={async () => {
+              await saveChanges(newItems, removedItems);
               setNewItems([]);
               setRemovedItems([]);
-              const allItems = [...newItems, ...estateTypes];
-              const finalItems = allItems.filter(
-                (item) =>
-                  !removedItems
-                    .map((removedItem) => removedItem.id)
-                    .includes(item.id)
-              );
-              // toast.promise(
-              //   fetchPut('http://localhost:8000/estateTypes', {
-              //     id: 1,
-              //     data: finalItems,
-              //   }).then(() => {
-              //     getData('http://localhost:8000/estateTypes');
-              //   }),
-              //   {
-              //     loading: 'در حال ذخیره سازی تغییرات',
-              //     success: 'تغییرات با موفقیت ذخیره شد',
-              //     error: 'خطا در ذخیره سازی تغییرات',
-              //   },
-              //   {
-              //     style: { width: 250 },
-              //   }
-              // );
             }}
           >
-            ذخیره تغییرات
+            {Strings.saveChanges}
           </Button>
         </Col>
       </Row>
@@ -138,28 +154,9 @@ function EstateTypesList() {
                 return (
                   <React.Fragment key={index}>
                     <ListItem
-                      title={estateType.value}
+                      title={estateType.name}
                       onRemove={() => {
-                        setRemovedItems((prev) => {
-                          let exists: boolean = false;
-                          prev.every((item) => {
-                            if (item.id === estateType.id) {
-                              exists = true;
-                              return false;
-                            } else {
-                              return true;
-                            }
-                          });
-                          if (exists) {
-                            const newRemovedItems = prev.filter(
-                              (item) => item.id !== estateType.id
-                            );
-                            return newRemovedItems;
-                          } else {
-                            const newRemovedItems = [...prev, estateType];
-                            return newRemovedItems;
-                          }
-                        });
+                        selectItemAsDeleted(estateType);
                       }}
                     />
                   </React.Fragment>
@@ -178,7 +175,7 @@ function EstateTypesList() {
                   action
                   className="new-item d-flex flex-row justify-content-between align-items-center"
                 >
-                  {newItem.value}
+                  {newItem.name}
                   <i
                     className="remove-icon bi-x-lg"
                     onClick={() => {
