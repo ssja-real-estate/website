@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { elevationEffect } from '../../../animations/motionVariants';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
-import { isLoggedInAtom } from '../../../global/states/globalStates';
+import { atom, useRecoilValue } from 'recoil';
 import UserSidebar from './Sidebar';
 import ProfileSection from './sections/Profile/Profile';
 import EstatesSection from './sections/Estates/Estates';
@@ -13,8 +12,6 @@ export const userSectionAtom = atom({
 
 function UserDashboard() {
   const section = useRecoilValue(userSectionAtom);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
 
   return (
     <div className="dashboard">

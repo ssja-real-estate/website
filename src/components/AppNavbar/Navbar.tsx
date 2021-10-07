@@ -1,11 +1,11 @@
 import './Navbar.css';
 import { useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isLoggedInAtom } from '../../global/states/globalStates';
 import { Container, Nav, Navbar } from 'react-bootstrap';
+import { globalState } from 'global/states/globalStates';
 
 function AppNavbar() {
-  const loggedIn = useRecoilValue(isLoggedInAtom);
+  const state = useRecoilValue(globalState);
   const history = useHistory();
 
   return (
@@ -51,7 +51,7 @@ function AppNavbar() {
             </Nav.Link>
           </Nav>
           <Nav>
-            {!loggedIn ? (
+            {!state.loggedIn ? (
               <Nav.Link
                 className="fs-5"
                 onClick={() => {

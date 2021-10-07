@@ -1,5 +1,5 @@
 import Strings from 'global/constants/strings';
-import { tokenAtom } from 'global/states/globalStates';
+import { globalState } from 'global/states/globalStates';
 import EstateType from 'global/types/EstateType';
 import { useEffect, useRef, useState } from 'react';
 import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
@@ -10,14 +10,14 @@ import './EstateTypesList.css';
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const token = useRecoilValue(tokenAtom);
+  const state = useRecoilValue(globalState);
   const service = useRef(new EstateTypeService());
 
   useEffect(() => {
-    service.current.setToken(token);
+    service.current.setToken(state.token);
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [state.token]);
 
   const loadData = async () => {
     if (!loading) {

@@ -1,7 +1,7 @@
+import { globalState } from 'global/states/globalStates';
 import { Button, Container, Form, Modal } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { atom, useRecoilState } from 'recoil';
-import { isLoggedInAtom } from '../../../../../global/states/globalStates';
 
 const showEditProfileModalAtom = atom({
   key: 'userShowEditProfileState',
@@ -12,7 +12,7 @@ function ProfileSection() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [show, setShow] = useRecoilState(showEditProfileModalAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
+  const [state, setGlobalState] = useRecoilState(globalState);
   const history = useHistory();
 
   return (
@@ -46,7 +46,7 @@ function ProfileSection() {
           name="logout"
           type="button"
           onClick={() => {
-            setLoggedIn(false);
+            setGlobalState({ ...state, loggedIn: false });
             history.push('/');
           }}
         >

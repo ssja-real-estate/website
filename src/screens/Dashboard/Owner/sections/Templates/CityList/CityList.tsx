@@ -1,5 +1,5 @@
 import Strings from 'global/constants/strings';
-import { tokenAtom } from 'global/states/globalStates';
+import { globalState } from 'global/states/globalStates';
 import City from 'global/types/City';
 import Province from 'global/types/Province';
 import React, { useState, useEffect, useRef } from 'react';
@@ -27,14 +27,14 @@ function CityList() {
   });
   const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [loading, setLoading] = useState<boolean>(true);
-  const token = useRecoilValue(tokenAtom);
+  const state = useRecoilValue(globalState);
   const service = useRef(new ProvinceCityService());
 
   useEffect(() => {
-    service.current.setToken(token);
+    service.current.setToken(state.token);
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [state.token]);
 
   const loadData = async () => {
     if (!loading) {

@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { elevationEffect } from '../../animations/motionVariants';
-import { isLoggedInAtom } from '../../global/states/globalStates';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useRecoilState } from 'recoil';
+import { globalState } from 'global/states/globalStates';
 
 function SignupScreen() {
   const [visibility, setVisibility] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
+  const [state, setGlobalState] = useRecoilState(globalState);
   const history = useHistory();
 
   function passwordVisible() {
@@ -64,7 +64,7 @@ function SignupScreen() {
             value="ثبت نام در سامانه ثجـــا"
             onClick={(event) => {
               event.preventDefault();
-              setLoggedIn(true);
+              setGlobalState({ ...state, loggedIn: true });
               history.push('/dashboard');
             }}
           >

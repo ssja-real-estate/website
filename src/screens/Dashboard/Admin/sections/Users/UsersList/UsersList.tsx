@@ -1,4 +1,4 @@
-import { tokenAtom } from 'global/states/globalStates';
+import { globalState } from 'global/states/globalStates';
 import User, { Role } from 'global/types/User';
 import { useEffect, useRef, useState } from 'react';
 import { Card, Col, Form, ListGroup, Row, Tab } from 'react-bootstrap';
@@ -8,16 +8,16 @@ import UserService from 'services/api/UserService/UserService';
 function UsersList() {
   const [searchValue, setSearchValue] = useState<string>('');
 
-  const token = useRecoilValue(tokenAtom);
+  const state = useRecoilValue(globalState);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [users, setUsers] = useState<User[]>([]);
   const userService = useRef(new UserService());
 
   useEffect(() => {
-    userService.current.setToken(token);
+    userService.current.setToken(state.token);
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [state.token]);
 
   const loadData = async () => {
     const users = await userService.current.getAllUsers(Role.USER);

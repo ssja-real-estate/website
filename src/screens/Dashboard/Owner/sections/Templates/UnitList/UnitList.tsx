@@ -1,5 +1,5 @@
 import Strings from 'global/constants/strings';
-import { tokenAtom } from 'global/states/globalStates';
+import { globalState } from 'global/states/globalStates';
 import Unit from 'global/types/Unit';
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -24,14 +24,14 @@ function UnitList() {
     name: '',
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const token = useRecoilValue(tokenAtom);
+  const state = useRecoilValue(globalState);
   const service = useRef(new UnitService());
 
   useEffect(() => {
-    service.current.setToken(token);
+    service.current.setToken(state.token);
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [state.token]);
 
   const loadData = async () => {
     if (!loading) {

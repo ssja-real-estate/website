@@ -1,7 +1,7 @@
 enum Role {
-  OWNER = 0,
-  ADMIN = 1,
-  USER = 2,
+  OWNER = 1,
+  ADMIN = 2,
+  USER = 3,
 }
 
 interface User {

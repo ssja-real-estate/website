@@ -13,16 +13,16 @@ import LoginScreen from './screens/Login/Login';
 import SignupScreen from './screens/Signup/Signup';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import NotFoundScreen from './screens/NotFound/NotFound';
-import { isLoggedInAtom } from './global/states/globalStates';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import LoadingBar from 'react-top-loading-bar';
 import { progressBarAtom } from './global/states/loadingBar';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { globalState } from 'global/states/globalStates';
 
 function App() {
   const [progress, setProgress] = useRecoilState(progressBarAtom);
-  const loggedIn = useRecoilValue(isLoggedInAtom);
+  const state = useRecoilValue(globalState);
 
   useEffect(() => {
     setProgress(100);
@@ -42,22 +42,22 @@ function App() {
         <Switch>
           <Route exact path="/" component={HomeScreen} />
           <Route exact path="/search-estate" component={SearchEstateScreen} />
-          {loggedIn ? (
+          {state.loggedIn ? (
             <Route exact path="/add-estate" component={AddEstateScreen} />
           ) : (
             <Redirect exact from="/add-estate" to="/login" />
           )}
-          {loggedIn ? (
+          {state.loggedIn ? (
             <Redirect exact from="/login" to="/dashboard" />
           ) : (
             <Route exact path="/login" component={LoginScreen} />
           )}
-          {loggedIn ? (
+          {state.loggedIn ? (
             <Redirect exact from="/signup" to="/dashboard" />
           ) : (
             <Route exact path="/signup" component={SignupScreen} />
           )}
-          {loggedIn ? (
+          {state.loggedIn ? (
             <Route exact path="/dashboard" component={DashboardScreen} />
           ) : (
             <Redirect exact from="/dashboard" to="/login" />

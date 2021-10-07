@@ -1,19 +1,19 @@
 import './Dashboard.css';
 import { useRecoilValue } from 'recoil';
-import { userTypeAtom } from '../../global/states/globalStates';
+import { globalState } from '../../global/states/globalStates';
 import OwnerDashboard from './Owner/Owner';
 import AdminDashboard from './Admin/Admin';
 import UserDashboard from './User/User';
 import { Role } from 'global/types/User';
 
 function DashboardScreen() {
-  const userRole = useRecoilValue(userTypeAtom);
+  const state = useRecoilValue(globalState);
 
   return (
     <div className="dashboard-container">
-      {userRole === Role.OWNER ? (
+      {state.role === Role.OWNER ? (
         <OwnerDashboard />
-      ) : userRole === Role.ADMIN ? (
+      ) : state.role === Role.ADMIN ? (
         <AdminDashboard />
       ) : (
         <UserDashboard />

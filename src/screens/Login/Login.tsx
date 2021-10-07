@@ -1,21 +1,47 @@
 import './Login.css';
 import { Link, useHistory } from 'react-router-dom';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { elevationEffect } from '../../animations/motionVariants';
-import { useRecoilState } from 'recoil';
-import { isLoggedInAtom } from '../../global/states/globalStates';
+import { useSetRecoilState } from 'recoil';
+import { globalState } from '../../global/states/globalStates';
 import { Button, Form, InputGroup } from 'react-bootstrap';
+import Strings from 'global/constants/strings';
+import UserService from 'services/api/UserService/UserService';
+import RegexValidator from 'services/utilities/RegexValidator';
+import toast from 'react-hot-toast';
 
 function LoginScreen() {
   const [visibility, setVisibility] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
-  const history = useHistory();
+  // const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
+  const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
+  const setGlobalState = useSetRecoilState(globalState);
 
-  function passwordVisible() {
+  const history = useHistory();
+  const service = useRef(new UserService());
+
+  function togglePasswordVisibility() {
     setVisibility(!visibility);
   }
+
+  const loginUser = async () => {
+    if (!RegexValidator.validatePhone(mobile)) {
+      toast.error(Strings.invalidPhoneNumber);
+      return;
+    }
+    if (!RegexValidator.validatePassword(password)) {
+      toast.error(Strings.invalidPassword);
+      return;
+    }
+    const loginState = await service.current.loginUser(mobile, password);
+
+    if (loginState) {
+      setGlobalState(loginState!);
+      history.push('/dashboard');
+    }
+  };
 
   return (
     <div className="login-container">
@@ -25,37 +51,45 @@ function LoginScreen() {
         animate="second"
         className="login card glass shadow rounded-3 py-4 px-3"
       >
-        <h1 className="login-title text-center">ورود</h1>
+        <h1 className="login-title text-center">{Strings.login}</h1>
         <form className="login-form">
           <Form.Control
             className="form-control rounded-3 py-2 my-3"
             name="phone"
-            placeholder="شماره موبایل"
+            placeholder={Strings.mobile}
             id="phone"
+            value={mobile}
+            onChange={(e) => {
+              setMobile(e.currentTarget.value);
+            }}
           />
           <Form.Control
             className="form-control rounded-3 py-2 my-3"
             type={visibility ? 'text' : 'password'}
             name="password"
-            placeholder="گذرواژه"
+            placeholder={Strings.password}
             id="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.currentTarget.value);
+            }}
           />
           <InputGroup>
             <Form.Check
               name="visCheck"
               id="visCheck"
               checked={visibility}
-              onChange={passwordVisible}
-              label="نمایش گذرواژه"
+              onChange={togglePasswordVisibility}
+              label={Strings.showPassword}
             />
           </InputGroup>
           <div className="text-center my-3">
-            <span className="fw-light">گذرواژه خود را فراموش کردید؟</span>
+            <span className="fw-light">{Strings.forgotPassowrd}</span>
             <a
               className="purple fw-bold text-decoration-none me-2"
               href="/restore-password"
             >
-              بازیابی گذرواژه
+              {Strings.recoverPassword}
             </a>
           </div>
           <Button
@@ -66,19 +100,18 @@ function LoginScreen() {
             id="submit"
             onClick={(event) => {
               event.preventDefault();
-              setLoggedIn(true);
-              history.push('/dashboard');
+              loginUser();
             }}
           >
-            ورود به سامانه ثجـــا
+            {Strings.sajaLogin}
           </Button>
           <div className="text-center my-3">
-            <span className="fw-light">حساب کاربری ندارید؟</span>
+            <span className="fw-light">{Strings.dontHaveAnAccount}</span>
             <Link
               className="purple fw-bold text-decoration-none me-2"
               to="/signup"
             >
-              ثبت نام
+              {Strings.signup}
             </Link>
           </div>
         </form>
