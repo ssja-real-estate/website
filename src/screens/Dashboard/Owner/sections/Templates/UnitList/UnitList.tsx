@@ -11,7 +11,6 @@ import {
 import toast from 'react-hot-toast';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 import { Unit } from '../../../../../../global/types/Estate';
-import { fetchGet, fetchPut } from '../../../../../../services/api/fetch';
 import { randomId } from '../../../../../../services/utilities/randomId';
 
 function UnitList() {
@@ -25,16 +24,16 @@ function UnitList() {
   const [loading, setLoading] = useState<boolean>(true);
 
   async function getData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setUnits(data.data);
-        setNewItems([]);
-        setRemovedItems([]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setUnits(data.data);
+    //     setNewItems([]);
+    //     setRemovedItems([]);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {
@@ -104,22 +103,22 @@ function UnitList() {
                     .map((removedItem) => removedItem.id)
                     .includes(item.id)
               );
-              toast.promise(
-                fetchPut('http://localhost:8000/units', {
-                  id: 1,
-                  data: finalItems,
-                }).then(() => {
-                  getData('http://localhost:8000/units');
-                }),
-                {
-                  loading: 'در حال ذخیره سازی تغییرات',
-                  success: 'تغییرات با موفقیت ذخیره شد',
-                  error: 'خطا در ذخیره سازی تغییرات',
-                },
-                {
-                  style: { width: 250 },
-                }
-              );
+              // toast.promise(
+              //   fetchPut('http://localhost:8000/units', {
+              //     id: 1,
+              //     data: finalItems,
+              //   }).then(() => {
+              //     getData('http://localhost:8000/units');
+              //   }),
+              //   {
+              //     loading: 'در حال ذخیره سازی تغییرات',
+              //     success: 'تغییرات با موفقیت ذخیره شد',
+              //     error: 'خطا در ذخیره سازی تغییرات',
+              //   },
+              //   {
+              //     style: { width: 250 },
+              //   }
+              // );
             }}
           >
             ذخیره تغییرات

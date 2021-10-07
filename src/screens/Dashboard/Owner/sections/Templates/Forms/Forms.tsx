@@ -159,34 +159,34 @@ function Forms() {
   }
 
   async function getDelegationTypes(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setDelegationTypes(data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setDelegationTypes(data.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   async function getEstateTypes(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setEstateTypes(data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setEstateTypes(data.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   async function getFormData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setForm(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setForm(data);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {

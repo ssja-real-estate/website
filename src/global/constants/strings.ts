@@ -1,5 +1,5 @@
 class Strings {
-  static errorFetchData = 'خطا در دریافت اطلاعات';
+  static unknownError = 'خطای ناشناخته در سیستم';
   static delegationTypes = 'نوع واگذاری‌ها';
   static estateTypes = 'نوع ملک‌ها';
   static provinces = 'استان‌ها';
@@ -9,6 +9,10 @@ class Strings {
   static owners = 'مالک‌ها';
   static admins = 'ادمین‌ها';
   static users = 'کاربرها';
+  static addNewDelegationType = 'افزودن نوع جدید';
+  static saveChanges = 'ذخیره تغییرات';
+  static saveChangesSuccess = 'تغییرات با موفقیت ذخیره شد';
+  static saveChangesError = 'خطا در ذخیره سازی تغییرات';
 }
 
 export default Strings;

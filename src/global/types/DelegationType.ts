@@ -1,6 +1,4 @@
-import Base from './Base';
-
-interface DelegationType extends Base {
+interface DelegationType {
   id: string;
   name: string;
 }

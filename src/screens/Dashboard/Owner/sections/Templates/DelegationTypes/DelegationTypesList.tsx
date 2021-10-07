@@ -1,3 +1,4 @@
+import Strings from 'global/constants/strings';
 import { tokenAtom } from 'global/states/globalStates';
 import DelegationType from 'global/types/DelegationType';
 import React, { useRef } from 'react';
@@ -11,7 +12,6 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import toast from 'react-hot-toast';
 import { useRecoilValue } from 'recoil';
 import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
@@ -22,10 +22,8 @@ function DelegationTypesList() {
   const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
   const [newItems, setNewItems] = useState<DelegationType[]>([]);
   const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
-    name: '',
     id: '',
-    createdAt: new Date(),
-    updateAt: new Date(),
+    name: '',
   });
   const token = useRecoilValue(tokenAtom);
   const service = useRef(new DelegationTypeService());
@@ -44,15 +42,47 @@ function DelegationTypesList() {
     setLoading((prev) => false);
   };
 
-  const createNewDelegationType = async (delegationTypes: DelegationType[]) => {
-    delegationTypes.forEach(async (element) => {
-      await service.current.createDelegationType(element);
+  const selectItemAsRemoved = (delegationType: DelegationType) => {
+    setRemovedItems((prev) => {
+      let type = prev.find((item) => item.id === delegationType.id);
+      let newRemovedItems = [];
+      if (type) {
+        newRemovedItems = prev.filter((item) => item.id !== delegationType.id);
+        return newRemovedItems;
+      } else {
+        newRemovedItems = [...prev, delegationType];
+        return newRemovedItems;
+      }
     });
+  };
+
+  const createNewDelegationTypes = async (
+    delegationTypes: DelegationType[]
+  ) => {
+    for (let i = 0; i < delegationTypes.length; i++) {
+      const element = delegationTypes[i];
+      await service.current.createDelegationType(element);
+    }
+  };
+
+  const deleteDelegationTypes = async (delegationTypes: DelegationType[]) => {
+    for (let i = 0; i < delegationTypes.length; i++) {
+      const element = delegationTypes[i];
+      await service.current.deleteDelegationType(element.id);
+    }
+  };
+
+  const saveChanges = async (
+    newItems: DelegationType[],
+    removedItems: DelegationType[]
+  ) => {
+    await deleteDelegationTypes(removedItems);
+    await createNewDelegationTypes(newItems);
   };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">نوع واگذاری ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.delegationTypes}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
@@ -86,7 +116,7 @@ function DelegationTypesList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder="افزودن نوع جدید"
+              placeholder={Strings.addNewDelegationType}
               value={newDelegationType.name}
               onChange={(e) => {
                 setNewDelegationType({
@@ -102,32 +132,16 @@ function DelegationTypesList() {
             variant="purple"
             className="my-4"
             onClick={() => {
-              setLoading(true);
-              setNewItems([]);
-              setRemovedItems([]);
-              const allItems = [...newItems, ...delegationTypes];
-              const finalItems = allItems.filter(
-                (item) =>
-                  !removedItems
-                    .map((removedItem) => removedItem.id)
-                    .includes(item.id)
-              );
-              toast.promise(
-                createNewDelegationType(finalItems).then(() => {
-                  loadData();
-                }),
-                {
-                  loading: 'در حال ذخیره سازی تغییرات',
-                  success: 'تغییرات با موفقیت ذخیره شد',
-                  error: 'خطا در ذخیره سازی تغییرات',
-                },
-                {
-                  style: { width: 250 },
-                }
-              );
+              saveChanges(newItems, removedItems)
+                .then(() => loadData())
+                .then(() => {
+                  setNewItems([]);
+                  setRemovedItems([]);
+                  setLoading((prev) => false);
+                });
             }}
           >
-            ذخیره تغییرات
+            {Strings.saveChanges}
           </Button>
         </Col>
       </Row>
@@ -143,27 +157,8 @@ function DelegationTypesList() {
                     <ListItem
                       title={delegationType.name}
                       onRemove={() => {
-                        setRemovedItems((prev) => {
-                          let exists: boolean = false;
-                          prev.every((item) => {
-                            if (item.id === delegationType.id) {
-                              exists = true;
-
-                              return false;
-                            } else {
-                              return true;
-                            }
-                          });
-                          if (exists) {
-                            const newRemovedItems = prev.filter(
-                              (item) => item.id !== delegationType.id
-                            );
-                            return newRemovedItems;
-                          } else {
-                            const newRemovedItems = [...prev, delegationType];
-                            return newRemovedItems;
-                          }
-                        });
+                        console.log('remove');
+                        selectItemAsRemoved(delegationType);
                       }}
                     />
                   </React.Fragment>

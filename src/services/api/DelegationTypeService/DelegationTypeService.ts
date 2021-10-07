@@ -1,25 +1,21 @@
-import Strings from 'global/constants/strings';
 import DelegationType from 'global/types/DelegationType';
-import ModelUtility from 'global/types/ModelUtility';
-import toast from 'react-hot-toast';
+import { DELEGATION_TYPE_URL } from 'local';
 import BaseService from '../BaseService';
 
 class DelegationTypeService extends BaseService {
-  private getDelegationTypeUrl = '/assignmenttypes';
-  private changeDelegationTypeUrl = '/assignmenttype';
-
   async getAllDelegationTypes(): Promise<DelegationType[]> {
     let delegationTypes: DelegationType[] = [];
 
     try {
-      var data = await this.Api.get(this.getDelegationTypeUrl, this.config);
+      var data = await this.Api.get(DELEGATION_TYPE_URL, this.config);
 
+      if (!data.data) return delegationTypes;
       data.data.forEach((element: any) => {
-        let delegation = ModelUtility.convertToDelegationType(element);
+        let delegation = element;
         delegationTypes.push(delegation);
       });
-    } catch (error) {
-      toast.error(Strings.errorFetchData);
+    } catch (error: any) {
+      this.handleError(error);
     }
 
     return delegationTypes;
@@ -27,17 +23,23 @@ class DelegationTypeService extends BaseService {
 
   async createDelegationType(delegationType: DelegationType) {
     try {
-      const result = await this.Api.post(
-        this.changeDelegationTypeUrl,
+      await this.Api.post(
+        DELEGATION_TYPE_URL,
         {
           name: delegationType.name,
         },
         this.config
       );
-      console.log(result);
-    } catch (error) {
-      toast.error(Strings.errorFetchData);
-      console.log(error);
+    } catch (error: any) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteDelegationType(id: string) {
+    try {
+      await this.Api.delete(`${DELEGATION_TYPE_URL}/${id}`, this.config);
+    } catch (error: any) {
+      this.handleError(error);
     }
   }
 }

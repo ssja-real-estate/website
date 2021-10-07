@@ -1,5 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import Strings from 'global/constants/strings';
 import { BASE_URL } from 'local';
+import toast from 'react-hot-toast';
 
 class BaseService {
   protected Api: AxiosInstance;
@@ -21,6 +23,25 @@ class BaseService {
         Authorization: token,
       },
     };
+  }
+
+  handleError(error: any) {
+    if (!error.isAxiosError) {
+      this.toastUnknownError(error);
+      return;
+    }
+
+    let response = (error as AxiosError).response;
+    if (response && response?.data) {
+      toast.error(response.data.error);
+    } else {
+      this.toastUnknownError(error);
+    }
+  }
+
+  private toastUnknownError(error: any) {
+    toast.error(Strings.unknownError);
+    console.log(error.message);
   }
 }
 

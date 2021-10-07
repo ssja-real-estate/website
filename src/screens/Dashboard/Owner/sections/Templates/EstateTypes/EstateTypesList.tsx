@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { useEffect, useState } from 'react';
 import {
@@ -12,7 +13,6 @@ import {
 import toast from 'react-hot-toast';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 import { EstateType } from '../../../../../../global/types/Estate';
-import { fetchGet, fetchPut } from '../../../../../../services/api/fetch';
 import { randomId } from '../../../../../../services/utilities/randomId';
 import './EstateTypesList.css';
 
@@ -27,16 +27,16 @@ function EstateTypesList() {
   const [loading, setLoading] = useState<boolean>(true);
 
   async function getData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setEstateTypes(data.data);
-        setNewItems([]);
-        setRemovedItems([]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setEstateTypes(data.data);
+    //     setNewItems([]);
+    //     setRemovedItems([]);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {
@@ -106,22 +106,22 @@ function EstateTypesList() {
                     .map((removedItem) => removedItem.id)
                     .includes(item.id)
               );
-              toast.promise(
-                fetchPut('http://localhost:8000/estateTypes', {
-                  id: 1,
-                  data: finalItems,
-                }).then(() => {
-                  getData('http://localhost:8000/estateTypes');
-                }),
-                {
-                  loading: 'در حال ذخیره سازی تغییرات',
-                  success: 'تغییرات با موفقیت ذخیره شد',
-                  error: 'خطا در ذخیره سازی تغییرات',
-                },
-                {
-                  style: { width: 250 },
-                }
-              );
+              // toast.promise(
+              //   fetchPut('http://localhost:8000/estateTypes', {
+              //     id: 1,
+              //     data: finalItems,
+              //   }).then(() => {
+              //     getData('http://localhost:8000/estateTypes');
+              //   }),
+              //   {
+              //     loading: 'در حال ذخیره سازی تغییرات',
+              //     success: 'تغییرات با موفقیت ذخیره شد',
+              //     error: 'خطا در ذخیره سازی تغییرات',
+              //   },
+              //   {
+              //     style: { width: 250 },
+              //   }
+              // );
             }}
           >
             ذخیره تغییرات
