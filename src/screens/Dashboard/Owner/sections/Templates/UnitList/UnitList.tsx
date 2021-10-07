@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import Strings from 'global/constants/strings';
+import { tokenAtom } from 'global/states/globalStates';
+import Unit from 'global/types/Unit';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Row,
@@ -8,37 +11,70 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import toast from 'react-hot-toast';
+import { useRecoilValue } from 'recoil';
+import UnitService from 'services/api/UnitService/UnitService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
-import { Unit } from '../../../../../../global/types/Estate';
-import { randomId } from '../../../../../../services/utilities/randomId';
 
 function UnitList() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [removedItems, setRemovedItems] = useState<Unit[]>([]);
   const [newItems, setNewItems] = useState<Unit[]>([]);
   const [newUnit, setNewUnit] = useState<Unit>({
-    value: '',
-    id: randomId(),
+    id: '',
+    name: '',
   });
   const [loading, setLoading] = useState<boolean>(true);
-
-  async function getData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setUnits(data.data);
-    //     setNewItems([]);
-    //     setRemovedItems([]);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  const token = useRecoilValue(tokenAtom);
+  const service = useRef(new UnitService());
 
   useEffect(() => {
-    getData('http://localhost:8000/units');
-  }, []);
+    service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+    const units = await service.current.getAllUnits();
+    setUnits(units);
+    setLoading((prev) => false);
+  };
+
+  const selectItemAsDeleted = (unit: Unit) => {
+    setRemovedItems((prev) => {
+      const existingItem = prev.find((e) => e.id === unit.id);
+
+      if (existingItem) {
+        const newRemovedItems = prev.filter((item) => item.id !== unit.id);
+        return newRemovedItems;
+      } else {
+        const newRemovedItems = [...prev, unit];
+        return newRemovedItems;
+      }
+    });
+  };
+
+  const deleteUnits = async (units: Unit[]) => {
+    for (let i = 0; i < units.length; i++) {
+      const unit = units[i];
+      await service.current.deleteUnit(unit.id);
+    }
+  };
+
+  const createNewUnits = async (units: Unit[]) => {
+    for (let i = 0; i < units.length; i++) {
+      const unit = units[i];
+      await service.current.createUnit(unit);
+    }
+  };
+
+  const saveChanges = async () => {
+    await deleteUnits(removedItems);
+    await createNewUnits(newItems);
+    await loadData();
+  };
 
   return (
     <>
@@ -46,9 +82,8 @@ function UnitList() {
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getData('http://localhost:8000/units');
+        onClick={async () => {
+          await loadData();
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
@@ -59,17 +94,17 @@ function UnitList() {
             <Button
               variant="dark"
               onClick={() => {
-                newUnit.value.trim() !== '' &&
+                newUnit.name.trim() !== '' &&
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      id: randomId(),
-                      value: newUnit.value.trim(),
+                      ...newUnit,
+                      name: newUnit.name.trim(),
                     },
                   ]);
                 setNewUnit({
                   ...newUnit,
-                  value: '',
+                  name: '',
                 });
               }}
             >
@@ -77,12 +112,12 @@ function UnitList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder="افزودن واحد جدید"
-              value={newUnit.value}
+              placeholder={Strings.addNewUnit}
+              value={newUnit.name}
               onChange={(e) => {
                 setNewUnit({
                   ...newUnit,
-                  value: e.target.value,
+                  name: e.target.value,
                 });
               }}
             />
@@ -92,36 +127,13 @@ function UnitList() {
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
-              setLoading(true);
+            onClick={async () => {
+              await saveChanges();
               setNewItems([]);
               setRemovedItems([]);
-              const allItems = [...newItems, ...units];
-              const finalItems = allItems.filter(
-                (item) =>
-                  !removedItems
-                    .map((removedItem) => removedItem.id)
-                    .includes(item.id)
-              );
-              // toast.promise(
-              //   fetchPut('http://localhost:8000/units', {
-              //     id: 1,
-              //     data: finalItems,
-              //   }).then(() => {
-              //     getData('http://localhost:8000/units');
-              //   }),
-              //   {
-              //     loading: 'در حال ذخیره سازی تغییرات',
-              //     success: 'تغییرات با موفقیت ذخیره شد',
-              //     error: 'خطا در ذخیره سازی تغییرات',
-              //   },
-              //   {
-              //     style: { width: 250 },
-              //   }
-              // );
             }}
           >
-            ذخیره تغییرات
+            {Strings.saveChanges}
           </Button>
         </Col>
       </Row>
@@ -135,28 +147,9 @@ function UnitList() {
                 return (
                   <React.Fragment key={index}>
                     <ListItem
-                      title={unit.value}
+                      title={unit.name}
                       onRemove={() => {
-                        setRemovedItems((prev) => {
-                          let exists: boolean = false;
-                          prev.every((item) => {
-                            if (item.id === unit.id) {
-                              exists = true;
-                              return false;
-                            } else {
-                              return true;
-                            }
-                          });
-                          if (exists) {
-                            const newRemovedItems = prev.filter(
-                              (item) => item.id !== unit.id
-                            );
-                            return newRemovedItems;
-                          } else {
-                            const newRemovedItems = [...prev, unit];
-                            return newRemovedItems;
-                          }
-                        });
+                        selectItemAsDeleted(unit);
                       }}
                     />
                   </React.Fragment>
@@ -175,7 +168,7 @@ function UnitList() {
                   action
                   className="new-item d-flex flex-row justify-content-between align-items-center"
                 >
-                  {newItem.value}
+                  {newItem.name}
                   <i
                     className="remove-icon bi-x-lg"
                     onClick={() => {
