@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import Strings from 'global/constants/strings';
+import { tokenAtom } from 'global/states/globalStates';
+import Province from 'global/types/Province';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
   Row,
@@ -8,47 +11,84 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import toast from 'react-hot-toast';
+import { useRecoilValue } from 'recoil';
+import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
-import { Province } from '../../../../../../global/types/Estate';
-import { randomId } from '../../../../../../services/utilities/randomId';
 
 function ProvinceList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [removedItems, setRemovedItems] = useState<Province[]>([]);
   const [newItems, setNewItems] = useState<Province[]>([]);
   const [newProvince, setNewProvince] = useState<Province>({
-    value: '',
-    id: randomId(),
+    id: '',
+    name: '',
+    cities: [],
   });
+  const token = useRecoilValue(tokenAtom);
+  const service = useRef(new ProvinceCityService());
   const [loading, setLoading] = useState<boolean>(true);
 
-  async function getData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setProvinces(data.data);
-    //     setNewItems([]);
-    //     setRemovedItems([]);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
-
   useEffect(() => {
-    getData('http://localhost:8000/provinces');
-  }, []);
+    service.current.setToken(token);
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+    const data = await service.current.getAllProvinces();
+    setProvinces(data);
+    setLoading((prev) => false);
+  };
+
+  const selectItemAsRemoved = (province: Province) => {
+    setRemovedItems((prev) => {
+      let prov = prev.find((item) => item.id === province.id);
+      if (prov) {
+        const newRemovedItems = prev.filter((item) => item.id !== province.id);
+        return newRemovedItems;
+      } else {
+        const newRemovedItems = [...prev, province];
+        return newRemovedItems;
+      }
+    });
+  };
+
+  const deleteProvinces = async (provinces: Province[]) => {
+    for (let i = 0; i < provinces.length; i++) {
+      const province = provinces[i];
+      await service.current.deleteProvince(province.id);
+    }
+  };
+
+  const createNewProvinces = async (provinces: Province[]) => {
+    for (let i = 0; i < provinces.length; i++) {
+      const province = provinces[i];
+      await service.current.createProvince(province);
+    }
+  };
+
+  const saveChanges = async (
+    newItems: Province[],
+    removedItems: Province[]
+  ) => {
+    setLoading((prev) => true);
+    await deleteProvinces(removedItems);
+    await createNewProvinces(newItems);
+    await loadData();
+  };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">استان ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.provinces}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getData('http://localhost:8000/provinces');
+        onClick={async () => {
+          console.log('reload');
+          await loadData();
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
@@ -59,17 +99,17 @@ function ProvinceList() {
             <Button
               variant="dark"
               onClick={() => {
-                newProvince.value.trim() !== '' &&
+                newProvince.name.trim() !== '' &&
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      id: randomId(),
-                      value: newProvince.value.trim(),
+                      ...newProvince,
+                      name: newProvince.name.trim(),
                     },
                   ]);
                 setNewProvince({
                   ...newProvince,
-                  value: '',
+                  name: '',
                 });
               }}
             >
@@ -77,12 +117,12 @@ function ProvinceList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder="افزودن استان جدید"
-              value={newProvince.value}
+              placeholder={Strings.addNewType}
+              value={newProvince.name}
               onChange={(e) => {
                 setNewProvince({
                   ...newProvince,
-                  value: e.target.value,
+                  name: e.target.value,
                 });
               }}
             />
@@ -92,36 +132,13 @@ function ProvinceList() {
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
-              setLoading(true);
+            onClick={async () => {
+              await saveChanges(newItems, removedItems);
               setNewItems([]);
               setRemovedItems([]);
-              const allItems = [...newItems, ...provinces];
-              const finalItems = allItems.filter(
-                (item) =>
-                  !removedItems
-                    .map((removedItem) => removedItem.id)
-                    .includes(item.id)
-              );
-              // toast.promise(
-              //   fetchPut('http://localhost:8000/provinces', {
-              //     id: 1,
-              //     data: finalItems,
-              //   }).then(() => {
-              //     getData('http://localhost:8000/provinces');
-              //   }),
-              //   {
-              //     loading: 'در حال ذخیره سازی تغییرات',
-              //     success: 'تغییرات با موفقیت ذخیره شد',
-              //     error: 'خطا در ذخیره سازی تغییرات',
-              //   },
-              //   {
-              //     style: { width: 250 },
-              //   }
-              // );
             }}
           >
-            ذخیره تغییرات
+            {Strings.saveChanges}
           </Button>
         </Col>
       </Row>
@@ -135,28 +152,9 @@ function ProvinceList() {
                 return (
                   <React.Fragment key={index}>
                     <ListItem
-                      title={province.value}
+                      title={province.name}
                       onRemove={() => {
-                        setRemovedItems((prev) => {
-                          let exists: boolean = false;
-                          prev.every((item) => {
-                            if (item.id === province.id) {
-                              exists = true;
-                              return false;
-                            } else {
-                              return true;
-                            }
-                          });
-                          if (exists) {
-                            const newRemovedItems = prev.filter(
-                              (item) => item.id !== province.id
-                            );
-                            return newRemovedItems;
-                          } else {
-                            const newRemovedItems = [...prev, province];
-                            return newRemovedItems;
-                          }
-                        });
+                        selectItemAsRemoved(province);
                       }}
                     />
                   </React.Fragment>
@@ -175,7 +173,7 @@ function ProvinceList() {
                   action
                   className="new-item d-flex flex-row justify-content-between align-items-center"
                 >
-                  {newItem.value}
+                  {newItem.name}
                   <i
                     className="remove-icon bi-x-lg"
                     onClick={() => {

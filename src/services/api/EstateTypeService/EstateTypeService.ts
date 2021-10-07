@@ -6,7 +6,7 @@ class EstateTypeService extends BaseService {
   async getAllEstateTypes() {
     let estateTypes: EstateType[] = [];
     try {
-      const response = await this.Api.get(ESTATE_TYPE_URL + 's', this.config);
+      const response = await this.Api.get(ESTATE_TYPE_URL, this.config);
       if (response.data) {
         response.data.forEach((element: EstateType) => {
           estateTypes.push(element);

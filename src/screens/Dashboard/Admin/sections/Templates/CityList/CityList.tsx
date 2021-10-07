@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { tokenAtom } from 'global/states/globalStates';
+import City from 'global/types/City';
+import Province from 'global/types/Province';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Row, Col, ListGroup, Spinner, Form } from 'react-bootstrap';
-import { City, Province } from '../../../../../../global/types/Estate';
-import { fetchGet } from '../../../../../../services/api/fetch';
+import { useRecoilValue } from 'recoil';
+import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
 import './CityList.css';
 
 function CityList() {
@@ -9,39 +12,16 @@ function CityList() {
   const [cities, setCities] = useState<City[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [loading, setLoading] = useState<boolean>(true);
-
-  async function getProvinceData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setProvinces(data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  async function getCityData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setCities(data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  const token = useRecoilValue(tokenAtom);
+  const service = useRef(new ProvinceCityService());
 
   useEffect(() => {
-    getProvinceData('http://localhost:8000/provinces');
-  }, []);
+    service.current.setToken(token);
+  }, [token]);
 
-  useEffect(() => {
-    setLoading(true);
-    if (selectedProvince && selectedProvince.id !== 'default') {
-      getCityData(`http://localhost:8000/cities/${selectedProvince?.id}`);
-    }
-  }, [selectedProvince]);
+  async function getProvinceData(url: string) {}
+
+  async function getCityData(url: string) {}
 
   return (
     <>
@@ -61,7 +41,7 @@ function CityList() {
         <Form.Select
           style={{ maxWidth: 300 }}
           defaultValue="default"
-          value={selectedProvince?.value}
+          value={selectedProvince?.name}
           onChange={(e) => {
             setSelectedProvince({
               ...selectedProvince!,
@@ -75,7 +55,7 @@ function CityList() {
           {provinces.map((province, index) => {
             return (
               <option key={index} value={province.id}>
-                {province.value}
+                {province.name}
               </option>
             );
           })}
@@ -92,9 +72,7 @@ function CityList() {
           <ListGroup className="mt-3" style={{ minWidth: 300, maxWidth: 400 }}>
             {cities &&
               cities.map((city, index) => {
-                return (
-                  <ListGroup.Item key={index}>{city.value}</ListGroup.Item>
-                );
+                return <ListGroup.Item key={index}>{city.name}</ListGroup.Item>;
               })}
           </ListGroup>
         </div>

@@ -13,6 +13,8 @@ class Strings {
   static saveChanges = 'ذخیره تغییرات';
   static saveChangesSuccess = 'تغییرات با موفقیت ذخیره شد';
   static saveChangesError = 'خطا در ذخیره سازی تغییرات';
+  static choose = 'انتخاب کنید';
+  static addNewCity = 'افزودن شهر جدید';
 }
 
 export default Strings;

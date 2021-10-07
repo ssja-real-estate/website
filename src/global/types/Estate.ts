@@ -6,19 +6,9 @@ interface Estate {
   province: string;
 }
 
-interface Province {
-  id: string;
-  value: string;
-}
-
-interface City {
-  id: string;
-  value: string;
-}
-
 interface Unit {
   id: string;
   value: string;
 }
 
-export type { Estate, Province, City, Unit };
+export type { Estate, Unit };
