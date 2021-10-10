@@ -18,16 +18,19 @@ class Strings {
   static addNewUnit = 'افزودن واحد جدید';
   static login = 'ورود';
   static sajaLogin = 'ورود به سامانه ثجا';
+  static sajaSignup = 'ثبت نام در سامانه ثجا';
   static mobile = 'شماره موبایل';
   static password = 'گذرواژه';
+  static repeatPassword = 'تکرار گذرواژه';
   static showPassword = 'نمایش گذرواژه';
   static forgotPassowrd = 'آیا گذرواژه خود را فراموش کرده‌اید؟';
   static recoverPassword = 'بازیابی گذرواژه';
   static dontHaveAnAccount = 'حساب کاربری ندارید؟';
+  static doHaveAnAccount = 'حساب کاربری دارید؟';
   static signup = 'ثبت نام';
   static invalidPhoneNumber = 'شماره موبایل واردشده نامعتبر است';
   static invalidPassword = 'گذرواژه باید بین ۸ تا ۱۶ کاراکتر باشد';
-  static invalidConfirmationPassword = 'گذرواژه‌های واردشده یکسان نیستند';
+  static invalidRepeatPassword = 'گذرواژه‌های واردشده یکسان نیستند';
 }
 
 export default Strings;
