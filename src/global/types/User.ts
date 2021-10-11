@@ -12,5 +12,11 @@ interface User {
   role: Role;
 }
 
+const defaultUser = {
+  id: '',
+  mobile: '',
+  role: Role.USER,
+};
+
 export default User;
-export { Role };
+export { Role, defaultUser };

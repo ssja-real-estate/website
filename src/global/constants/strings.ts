@@ -31,6 +31,15 @@ class Strings {
   static invalidPhoneNumber = 'شماره موبایل واردشده نامعتبر است';
   static invalidPassword = 'گذرواژه باید بین ۸ تا ۱۶ کاراکتر باشد';
   static invalidRepeatPassword = 'گذرواژه‌های واردشده یکسان نیستند';
+  static editProfile = 'ویرایش حساب کاربری';
+  static changePassword = 'تغییر گذرواژه';
+  static logout = 'خروج از حساب کاربری';
+  static fullName = 'نام و نام خانوادگی';
+  static cancel = 'لغو';
+  static save = 'ذخیره';
+  static newPassword = 'گذرواژه جدید';
+  static currentPassword = 'گذرواژه کنونی';
+  static repeatNewPassword = 'تکرار گذرواژه جدید';
 }
 
 export default Strings;
