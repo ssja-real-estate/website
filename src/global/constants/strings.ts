@@ -40,6 +40,16 @@ class Strings {
   static newPassword = 'گذرواژه جدید';
   static currentPassword = 'گذرواژه کنونی';
   static repeatNewPassword = 'تکرار گذرواژه جدید';
+  static userInfo = 'مشخصات کاربر';
+  static adminInfo = 'مشخصات ادمین';
+  static ownerInfo = 'مشخصات مالک';
+  static withoutName = 'بدون نام';
+  static normalUser = 'کاربر عادی';
+  static adminUser = 'کاربر ادمین';
+  static ownerUser = 'کاربر مالک';
+  static searchUsers = 'جستجوی کاربرها';
+  static searchAdmins = 'جستجوی ادمین‌‌ها';
+  static searchOwners = 'جستجوی مالک‌ها';
 }
 
 export default Strings;

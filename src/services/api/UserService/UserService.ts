@@ -119,6 +119,16 @@ class UserService extends BaseService {
 
     return user;
   }
+
+  async changeUserRole(userId: string, role: Role) {
+    if (!userId) return;
+
+    try {
+      await this.Api.put(`${USER_URL}/${userId}`, { role }, this.config);
+    } catch (error: any) {
+      this.handleError(error);
+    }
+  }
 }
 
 export default UserService;
