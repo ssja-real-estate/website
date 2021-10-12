@@ -7,7 +7,6 @@ import {
   estateTypes,
 } from '../../../../../global/constants/estates';
 import { Estate } from '../../../../../global/types/Estate';
-import { fetchGet } from '../../../../../services/api/fetch';
 import './Estates.css';
 
 function EstatesSection() {
@@ -27,16 +26,7 @@ function EstatesSection() {
     setLocation(event.target.value);
   }
 
-  useEffect(() => {
-    fetchGet('http://localhost:8000/estates')
-      .then((data) => {
-        setEstates(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className="estates-section">

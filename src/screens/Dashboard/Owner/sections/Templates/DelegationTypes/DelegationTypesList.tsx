@@ -25,9 +25,11 @@ function DelegationTypesList() {
     id: '',
     name: '',
   });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [editingType, setEditingType] = useState<boolean>(true);
+
   const state = useRecoilValue(globalState);
   const service = useRef(new DelegationTypeService());
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     service.current.setToken(state.token);
@@ -66,6 +68,8 @@ function DelegationTypesList() {
       await service.current.createDelegationType(element);
     }
   };
+
+  const editDelegationType = async () => {};
 
   const deleteDelegationTypes = async (delegationTypes: DelegationType[]) => {
     for (let i = 0; i < delegationTypes.length; i++) {
@@ -161,8 +165,10 @@ function DelegationTypesList() {
                     <ListItem
                       title={delegationType.name}
                       onRemove={() => {
-                        console.log('remove');
                         selectItemAsDeleted(delegationType);
+                      }}
+                      onEdit={() => {
+                        editDelegationType();
                       }}
                     />
                   </React.Fragment>

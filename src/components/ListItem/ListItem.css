@@ -1,6 +1,15 @@
 .remove-icon {
-    opacity: 0%;
+  opacity: 0%;
 }
+
+.bi-pencil-square {
+  opacity: 0%;
+}
+
 .list-item:hover .remove-icon {
-    opacity: 100%;
+  opacity: 100%;
+}
+
+.list-item:hover .bi-pencil-square {
+  opacity: 100%;
 }

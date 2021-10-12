@@ -104,7 +104,7 @@ const AdminList = (): JSX.Element => {
                               className="user-name ms-3"
                               style={{ width: 200 }}
                             >
-                              {!user.name && Strings.withoutName}
+                              {user.name ? user.name : Strings.withoutName}
                             </span>
                             <span className="user-phone" style={{ width: 150 }}>
                               {user.mobile}
@@ -125,7 +125,7 @@ const AdminList = (): JSX.Element => {
                       <Tab.Pane key={index} eventKey={`#user${user.id}`}>
                         <Card className="shadow p-5">
                           <span className="user-name fw-bold fs-4">
-                            {!user.name && Strings.withoutName}
+                            {user.name ? user.name : Strings.withoutName}
                           </span>
                           <span className="user-phone pt-4">
                             {user.mobile}

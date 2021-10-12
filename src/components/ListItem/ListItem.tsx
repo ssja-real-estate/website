@@ -5,10 +5,12 @@ import './ListItem.css';
 interface ListItemProps {
   title: string;
   onRemove?: Function;
+  onEdit?: Function;
 }
 
-function ListItem({ title, onRemove }: ListItemProps) {
+function ListItem({ title, onEdit, onRemove }: ListItemProps) {
   const [redColor, setRedColor] = useState<boolean>(false);
+  const [showEditInput, setShowEditInput] = useState<boolean>(false);
 
   return (
     <ListGroup.Item
@@ -17,13 +19,22 @@ function ListItem({ title, onRemove }: ListItemProps) {
       variant={redColor ? 'danger' : ''}
     >
       {title}
-      <i
-        className="remove-icon bi-x-lg"
-        onClick={() => {
-          setRedColor((prev) => !prev);
-          onRemove && onRemove();
-        }}
-      ></i>
+      <div>
+        <i
+          className="bi-pencil-square mx-3"
+          onClick={() => {
+            setShowEditInput(!showEditInput);
+          }}
+        ></i>
+        <i
+          className="remove-icon bi-x-lg"
+          onClick={() => {
+            setRedColor((prev) => !prev);
+            onRemove && onRemove();
+          }}
+        ></i>
+      </div>
+      {showEditInput ? <div>edit</div> : null}
     </ListGroup.Item>
   );
 }
