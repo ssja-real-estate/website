@@ -1,3 +1,5 @@
+import EditItemModal from 'components/EditItemModal/EditItemModal';
+import editItemModalState from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import DelegationType from 'global/types/DelegationType';
@@ -12,7 +14,7 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 import './DelegationTypesList.css';
@@ -26,7 +28,7 @@ function DelegationTypesList() {
     name: '',
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const [editingType, setEditingType] = useState<boolean>(true);
+  const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
   const service = useRef(new DelegationTypeService());
@@ -36,6 +38,13 @@ function DelegationTypesList() {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
+
+  useEffect(() => {
+    if (modalState.editDelegationType) {
+      editDelegationType();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalState.editDelegationType]);
 
   const loadData = async () => {
     if (!loading) {
@@ -60,36 +69,57 @@ function DelegationTypesList() {
     });
   };
 
-  const createNewDelegationTypes = async (
-    delegationTypes: DelegationType[]
-  ) => {
-    for (let i = 0; i < delegationTypes.length; i++) {
-      const element = delegationTypes[i];
+  const createNewDelegationTypes = async () => {
+    for (let i = 0; i < newItems.length; i++) {
+      const element = newItems[i];
       await service.current.createDelegationType(element);
     }
   };
 
-  const editDelegationType = async () => {};
+  const editDelegationType = async () => {
+    if (modalState.id === '') return;
 
-  const deleteDelegationTypes = async (delegationTypes: DelegationType[]) => {
-    for (let i = 0; i < delegationTypes.length; i++) {
-      const element = delegationTypes[i];
+    console.log('delegation');
+    console.log(modalState);
+    setLoading((prev) => true);
+    let newType = await service.current.editDelegationType({
+      id: modalState.id,
+      name: modalState.value,
+    });
+
+    if (newType) {
+      setDelegationTypes((types) => {
+        let prevType = types.find((t) => t.id === newType!.id);
+        if (prevType) {
+          prevType.name = newType!.name;
+        }
+        return types;
+      });
+    }
+    setLoading((prev) => false);
+  };
+
+  const deleteDelegationTypes = async () => {
+    for (let i = 0; i < removedItems.length; i++) {
+      const element = removedItems[i];
       await service.current.deleteDelegationType(element.id);
     }
   };
 
-  const saveChanges = async (
-    newItems: DelegationType[],
-    removedItems: DelegationType[]
-  ) => {
+  const saveChanges = async () => {
     setLoading((prev) => true);
-    await deleteDelegationTypes(removedItems);
-    await createNewDelegationTypes(newItems);
+    await deleteDelegationTypes();
+    await createNewDelegationTypes();
     await loadData();
   };
 
   return (
     <>
+      <EditItemModal
+        title={Strings.edit}
+        placeholder={Strings.delegationType}
+        editDelegationType
+      />
       <h4 className="mt-4 ms-3 d-inline">{Strings.delegationTypes}</h4>
       <Button
         variant="dark"
@@ -139,14 +169,10 @@ function DelegationTypesList() {
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
-              saveChanges(newItems, removedItems)
-                .then(() => loadData())
-                .then(() => {
-                  setNewItems([]);
-                  setRemovedItems([]);
-                  setLoading((prev) => false);
-                });
+            onClick={async () => {
+              await saveChanges();
+              setNewItems([]);
+              setRemovedItems([]);
             }}
           >
             {Strings.saveChanges}
@@ -168,7 +194,12 @@ function DelegationTypesList() {
                         selectItemAsDeleted(delegationType);
                       }}
                       onEdit={() => {
-                        editDelegationType();
+                        setModalState({
+                          id: delegationType.id,
+                          value: delegationType.name,
+                          displayModal: true,
+                          editDelegationType: false,
+                        });
                       }}
                     />
                   </React.Fragment>

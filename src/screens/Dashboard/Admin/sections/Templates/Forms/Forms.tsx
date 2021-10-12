@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react';
 import {
   DragDropContext,
@@ -20,11 +21,9 @@ import {
   FieldType,
   FieldTypeTitle,
 } from '../../../../../../global/types/Field';
-import { fetchGet, fetchPut } from '../../../../../../services/api/fetch';
 import CustomModal from '../../../../../../components/CustomModal/CustomModal';
 import EditSection from './EditSection';
 import { atom, useRecoilState } from 'recoil';
-import toast from 'react-hot-toast';
 import DelegationType from 'global/types/DelegationType';
 import EstateType from 'global/types/EstateType';
 
@@ -157,34 +156,34 @@ function Forms() {
   }
 
   async function getDelegationTypes(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setDelegationTypes(data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setDelegationTypes(data.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   async function getEstateTypes(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setEstateTypes(data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setEstateTypes(data.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   async function getFormData(url: string) {
-    fetchGet(url)
-      .then((data) => {
-        setForm(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet(url)
+    //   .then((data) => {
+    //     setForm(data);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {
@@ -314,27 +313,27 @@ function Forms() {
             onClick={() => {
               setLoading(true);
               if (form) {
-                toast.promise(
-                  fetchPut(
-                    `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`,
-                    {
-                      id: `${delegationType.name}-${estateType.name}`,
-                      sections: form?.sections,
-                    }
-                  ).then(() => {
-                    getFormData(
-                      `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-                    );
-                  }),
-                  {
-                    loading: 'در حال ذخیره سازی تغییرات',
-                    success: 'تغییرات با موفقیت ذخیره شد',
-                    error: 'خطا در ذخیره سازی تغییرات',
-                  },
-                  {
-                    style: { width: 250 },
-                  }
-                );
+                // toast.promise(
+                //   fetchPut(
+                //     `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`,
+                //     {
+                //       id: `${delegationType.name}-${estateType.name}`,
+                //       sections: form?.sections,
+                //     }
+                //   ).then(() => {
+                //     getFormData(
+                //       `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
+                //     );
+                //   }),
+                //   {
+                //     loading: 'در حال ذخیره سازی تغییرات',
+                //     success: 'تغییرات با موفقیت ذخیره شد',
+                //     error: 'خطا در ذخیره سازی تغییرات',
+                //   },
+                //   {
+                //     style: { width: 250 },
+                //   }
+                // );
               }
             }}
           >

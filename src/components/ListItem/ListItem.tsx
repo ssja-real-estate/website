@@ -10,7 +10,6 @@ interface ListItemProps {
 
 function ListItem({ title, onEdit, onRemove }: ListItemProps) {
   const [redColor, setRedColor] = useState<boolean>(false);
-  const [showEditInput, setShowEditInput] = useState<boolean>(false);
 
   return (
     <ListGroup.Item
@@ -23,7 +22,7 @@ function ListItem({ title, onEdit, onRemove }: ListItemProps) {
         <i
           className="bi-pencil-square mx-3"
           onClick={() => {
-            setShowEditInput(!showEditInput);
+            onEdit && onEdit();
           }}
         ></i>
         <i
@@ -34,7 +33,6 @@ function ListItem({ title, onEdit, onRemove }: ListItemProps) {
           }}
         ></i>
       </div>
-      {showEditInput ? <div>edit</div> : null}
     </ListGroup.Item>
   );
 }

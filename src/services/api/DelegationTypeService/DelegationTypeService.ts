@@ -35,6 +35,26 @@ class DelegationTypeService extends BaseService {
     }
   }
 
+  async editDelegationType(delegationType: DelegationType) {
+    if (delegationType.id === '') return;
+    let newDelegationType = undefined;
+    try {
+      const response = await this.Api.put(
+        DELEGATION_TYPE_URL,
+        delegationType,
+        this.config
+      );
+
+      if (response.data) {
+        newDelegationType = response.data as DelegationType;
+      }
+    } catch (error: any) {
+      this.handleError(error);
+    }
+
+    return newDelegationType;
+  }
+
   async deleteDelegationType(id: string) {
     try {
       await this.Api.delete(`${DELEGATION_TYPE_URL}/${id}`, this.config);

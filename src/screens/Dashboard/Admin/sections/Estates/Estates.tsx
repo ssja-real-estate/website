@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Form, Row } from 'react-bootstrap';
 import Tilt from 'react-parallax-tilt';

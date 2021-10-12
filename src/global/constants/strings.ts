@@ -61,6 +61,12 @@ class Strings {
     'لطفا نوع واگذاری و نوع ملک مورد نظر را انتخاب کنید';
   static imageSelectionFeature = 'قابلیت انتخاب تصاویر';
   static sectionDeleteConfirm = 'آیا از حذف این بخش مطمئن هستید؟';
+  static edit = 'ویرایش';
+  static delegationType = 'نوع واگذاری';
+  static estateType = 'نوع ملک';
+  static province = 'استان';
+  static city = 'شهر';
+  static unit = 'واحد';
 }
 
 export default Strings;

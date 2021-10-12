@@ -31,6 +31,28 @@ class EstateTypeService extends BaseService {
     }
   }
 
+  async editEstateType(estateType: EstateType) {
+    if (estateType.id === '') return;
+
+    let type = undefined;
+
+    try {
+      const response = await this.Api.put(
+        ESTATE_TYPE_URL,
+        estateType,
+        this.config
+      );
+
+      if (response.data) {
+        type = response.data as EstateType;
+      }
+    } catch (error: any) {
+      this.handleError(error);
+    }
+
+    return type;
+  }
+
   async deleteEstateType(id: string) {
     try {
       await this.Api.delete(`${ESTATE_TYPE_URL}/${id}`, this.config);

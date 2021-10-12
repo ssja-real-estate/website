@@ -1,3 +1,5 @@
+import EditItemModal from 'components/EditItemModal/EditItemModal';
+import editItemModalState from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import City from 'global/types/City';
@@ -12,7 +14,7 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 
@@ -27,6 +29,8 @@ function CityList() {
   });
   const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [modalState, setModalState] = useRecoilState(editItemModalState);
+
   const state = useRecoilValue(globalState);
   const service = useRef(new ProvinceCityService());
 
@@ -35,6 +39,14 @@ function CityList() {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
+
+  useEffect(() => {
+    // console.log(modalState.editTypeMap[ItemType.City]);
+    if (modalState.editCity) {
+      editCity();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalState.editCity]);
 
   const loadData = async () => {
     if (!loading) {
@@ -65,33 +77,57 @@ function CityList() {
     });
   };
 
-  const deleteCities = async (cities: City[]) => {
+  const createNewCities = async () => {
     const provinceId = selectedProvince?.id;
     if (!provinceId) return;
-    for (let i = 0; i < cities.length; i++) {
-      const city = cities[i];
-      await service.current.deleteCityInProvince(provinceId, city);
+    for (let i = 0; i < newItems.length; i++) {
+      const city = newItems[i];
+      await service.current.createCityInProvince(provinceId, city);
     }
   };
 
-  const createNewCities = async (cities: City[]) => {
+  const editCity = async () => {
+    if (modalState.id === '') return;
+    setLoading((prev) => true);
+
+    let provinceId = selectedProvince?.id ?? '';
+    let updatedCity = await service.current.editCityInProvince(provinceId, {
+      id: modalState.id,
+      name: modalState.value,
+    });
+
+    if (updatedCity) {
+      setProvinces((prev) => {
+        let prevType = prev.find((t) => t.id === updatedCity!.id);
+        if (prevType) {
+          prevType.name = updatedCity!.name;
+        }
+        return prev;
+      });
+    }
+
+    setLoading((prev) => false);
+  };
+
+  const deleteCities = async () => {
     const provinceId = selectedProvince?.id;
     if (!provinceId) return;
-    for (let i = 0; i < cities.length; i++) {
-      const city = cities[i];
-      await service.current.createCityInProvince(provinceId, city);
+    for (let i = 0; i < removedItems.length; i++) {
+      const city = removedItems[i];
+      await service.current.deleteCityInProvince(provinceId, city);
     }
   };
 
   const saveChanges = async () => {
     setLoading((prev) => true);
-    await deleteCities(removedItems);
-    await createNewCities(newItems);
+    await deleteCities();
+    await createNewCities();
     await loadData();
   };
 
   return (
     <>
+      <EditItemModal title={Strings.edit} placeholder={Strings.city} editCity />
       <h4 className="mt-4 ms-3 d-inline">{Strings.cities}</h4>
       <Button
         variant="dark"
@@ -190,6 +226,14 @@ function CityList() {
                         title={city.name}
                         onRemove={() => {
                           selectItemAsDeleted(city);
+                        }}
+                        onEdit={() => {
+                          setModalState({
+                            id: city.id,
+                            value: city.name,
+                            displayModal: true,
+                            editCity: false,
+                          });
                         }}
                       />
                     </React.Fragment>

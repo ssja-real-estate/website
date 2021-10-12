@@ -29,12 +29,18 @@ class UnitService extends BaseService {
     }
   }
 
-  async updateUnit(unit: Unit) {
+  async editUnit(unit: Unit) {
+    if (unit.id === '') return;
+    let updatedUnit = undefined;
     try {
-      await this.Api.put(UNIT_URL, unit, this.config);
+      const response = await this.Api.put(UNIT_URL, unit, this.config);
+      if (response.data) {
+        updatedUnit = response.data as Unit;
+      }
     } catch (error: any) {
       this.handleError(error);
     }
+    return updatedUnit;
   }
 
   async deleteUnit(id: string) {

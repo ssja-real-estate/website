@@ -1,3 +1,5 @@
+import EditItemModal from 'components/EditItemModal/EditItemModal';
+import editItemModalState from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import EstateType from 'global/types/EstateType';
@@ -12,7 +14,7 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 import './EstateTypesList.css';
@@ -26,6 +28,7 @@ function EstateTypesList() {
     name: '',
   });
   const [loading, setLoading] = useState<boolean>(true);
+  const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
   const service = useRef(new EstateTypeService());
@@ -35,6 +38,13 @@ function EstateTypesList() {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
+
+  useEffect(() => {
+    if (modalState.editEstateType) {
+      editEstateType();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalState.editEstateType]);
 
   const loadData = async () => {
     if (!loading) {
@@ -60,32 +70,56 @@ function EstateTypesList() {
     });
   };
 
-  const deleteEstateTypes = async (removedItems: EstateType[]) => {
-    for (let i = 0; i < removedItems.length; i++) {
-      const element = removedItems[i];
-      await service.current.deleteEstateType(element.id);
-    }
-  };
-
-  const createNewEstateTypes = async (newItems: EstateType[]) => {
+  const createNewEstateTypes = async () => {
     for (let i = 0; i < newItems.length; i++) {
       const element = newItems[i];
       await service.current.createEstateType(element);
     }
   };
 
-  const saveChanges = async (
-    newItems: EstateType[],
-    removedItems: EstateType[]
-  ) => {
+  const editEstateType = async () => {
+    if (modalState.id === '') return;
+
     setLoading((prev) => true);
-    await deleteEstateTypes(removedItems);
-    await createNewEstateTypes(newItems);
+    let newType = await service.current.editEstateType({
+      id: modalState.id,
+      name: modalState.value,
+    });
+
+    if (newType) {
+      setEstateTypes((types) => {
+        let prevType = types.find((t) => t.id === newType!.id);
+        if (prevType) {
+          prevType.name = newType!.name;
+        }
+        return types;
+      });
+    }
+
+    setLoading((prev) => false);
+  };
+
+  const deleteEstateTypes = async () => {
+    for (let i = 0; i < removedItems.length; i++) {
+      const element = removedItems[i];
+      await service.current.deleteEstateType(element.id);
+    }
+  };
+
+  const saveChanges = async () => {
+    setLoading((prev) => true);
+    await deleteEstateTypes();
+    await createNewEstateTypes();
     await loadData();
   };
 
   return (
     <>
+      <EditItemModal
+        title={Strings.edit}
+        placeholder={Strings.estateType}
+        editEstateType
+      />
       <h4 className="mt-4 ms-3 d-inline">{Strings.estateTypes}</h4>
       <Button
         variant="dark"
@@ -136,7 +170,7 @@ function EstateTypesList() {
             variant="purple"
             className="my-4"
             onClick={async () => {
-              await saveChanges(newItems, removedItems);
+              await saveChanges();
               setNewItems([]);
               setRemovedItems([]);
             }}
@@ -158,6 +192,14 @@ function EstateTypesList() {
                       title={estateType.name}
                       onRemove={() => {
                         selectItemAsDeleted(estateType);
+                      }}
+                      onEdit={() => {
+                        setModalState({
+                          id: estateType.id,
+                          value: estateType.name,
+                          displayModal: true,
+                          editEstateType: false,
+                        });
                       }}
                     />
                   </React.Fragment>

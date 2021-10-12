@@ -30,16 +30,18 @@ class ProvinceCityService extends BaseService {
     }
   }
 
-  async updateProvince(province: Province) {
+  async editProvince(province: Province) {
+    if (province.id === '') return;
+    let newProvince = undefined;
     try {
-      await this.Api.put(
-        PROVINCE_URL,
-        { id: province.id, name: province.name },
-        this.config
-      );
+      const response = await this.Api.put(PROVINCE_URL, province, this.config);
+      if (response.data) {
+        newProvince = response.data as Province;
+      }
     } catch (error: any) {
       this.handleError(error);
     }
+    return newProvince;
   }
 
   async deleteProvince(id: string) {
@@ -79,16 +81,24 @@ class ProvinceCityService extends BaseService {
     }
   }
 
-  async updateCityInProvince(provinceId: string, city: City) {
+  async editCityInProvince(provinceId: string, city: City) {
+    if (provinceId === '' || city.id === '') return;
+
+    let updatedCity = undefined;
     try {
-      await this.Api.post(
+      const response = await this.Api.post(
         `${PROVINCE_URL}${CITY_URL}/${provinceId}`,
         { name: city.name },
         this.config
       );
+      if (response.data) {
+        updatedCity = response.data as City;
+      }
     } catch (error: any) {
       this.handleError(error);
     }
+
+    return updatedCity;
   }
 
   async deleteCityInProvince(provinceId: string, city: City) {

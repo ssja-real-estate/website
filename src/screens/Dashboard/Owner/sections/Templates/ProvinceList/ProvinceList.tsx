@@ -1,3 +1,5 @@
+import EditItemModal from 'components/EditItemModal/EditItemModal';
+import editItemModalState from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import Province from 'global/types/Province';
@@ -11,7 +13,7 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 
@@ -24,15 +26,24 @@ function ProvinceList() {
     name: '',
     cities: [],
   });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [modalState, setModalState] = useRecoilState(editItemModalState);
+
   const state = useRecoilValue(globalState);
   const service = useRef(new ProvinceCityService());
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     service.current.setToken(state.token);
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
+
+  useEffect(() => {
+    if (modalState.editProvince) {
+      editProvince();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalState.editProvince]);
 
   const loadData = async () => {
     if (!loading) {
@@ -56,32 +67,58 @@ function ProvinceList() {
     });
   };
 
-  const deleteProvinces = async (provinces: Province[]) => {
-    for (let i = 0; i < provinces.length; i++) {
-      const province = provinces[i];
-      await service.current.deleteProvince(province.id);
-    }
-  };
-
-  const createNewProvinces = async (provinces: Province[]) => {
-    for (let i = 0; i < provinces.length; i++) {
-      const province = provinces[i];
+  const createNewProvinces = async () => {
+    for (let i = 0; i < newItems.length; i++) {
+      const province = newItems[i];
       await service.current.createProvince(province);
     }
   };
 
-  const saveChanges = async (
-    newItems: Province[],
-    removedItems: Province[]
-  ) => {
+  const editProvince = async () => {
+    if (modalState.id === '') return;
     setLoading((prev) => true);
-    await deleteProvinces(removedItems);
-    await createNewProvinces(newItems);
+
+    let province = provinces.find((p) => p.id === modalState.id);
+    let newType = await service.current.editProvince({
+      id: modalState.id,
+      name: modalState.value,
+      cities: province !== undefined ? province.cities : [],
+    });
+
+    if (newType) {
+      setProvinces((prev) => {
+        let prevType = prev.find((t) => t.id === newType!.id);
+        if (prevType) {
+          prevType.name = newType!.name;
+        }
+        return prev;
+      });
+    }
+
+    setLoading((prev) => false);
+  };
+
+  const deleteProvinces = async () => {
+    for (let i = 0; i < removedItems.length; i++) {
+      const province = removedItems[i];
+      await service.current.deleteProvince(province.id);
+    }
+  };
+
+  const saveChanges = async () => {
+    setLoading((prev) => true);
+    await deleteProvinces();
+    await createNewProvinces();
     await loadData();
   };
 
   return (
     <>
+      <EditItemModal
+        title={Strings.edit}
+        placeholder={Strings.province}
+        editProvince
+      />
       <h4 className="mt-4 ms-3 d-inline">{Strings.provinces}</h4>
       <Button
         variant="dark"
@@ -133,7 +170,7 @@ function ProvinceList() {
             variant="purple"
             className="my-4"
             onClick={async () => {
-              await saveChanges(newItems, removedItems);
+              await saveChanges();
               setNewItems([]);
               setRemovedItems([]);
             }}
@@ -155,6 +192,14 @@ function ProvinceList() {
                       title={province.name}
                       onRemove={() => {
                         selectItemAsRemoved(province);
+                      }}
+                      onEdit={() => {
+                        setModalState({
+                          id: province.id,
+                          value: province.name,
+                          displayModal: true,
+                          editProvince: false,
+                        });
                       }}
                     />
                   </React.Fragment>

@@ -1,3 +1,5 @@
+import EditItemModal from 'components/EditItemModal/EditItemModal';
+import editItemModalState from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import Unit from 'global/types/Unit';
@@ -11,7 +13,7 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import UnitService from 'services/api/UnitService/UnitService';
 import ListItem from '../../../../../../components/ListItem/ListItem';
 
@@ -24,6 +26,8 @@ function UnitList() {
     name: '',
   });
   const [loading, setLoading] = useState<boolean>(true);
+  const [modalState, setModalState] = useRecoilState(editItemModalState);
+
   const state = useRecoilValue(globalState);
   const service = useRef(new UnitService());
 
@@ -32,6 +36,13 @@ function UnitList() {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
+
+  useEffect(() => {
+    if (modalState.editUnit) {
+      editUnit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalState.editUnit]);
 
   const loadData = async () => {
     if (!loading) {
@@ -56,28 +67,54 @@ function UnitList() {
     });
   };
 
-  const deleteUnits = async (units: Unit[]) => {
-    for (let i = 0; i < units.length; i++) {
-      const unit = units[i];
-      await service.current.deleteUnit(unit.id);
-    }
-  };
-
-  const createNewUnits = async (units: Unit[]) => {
-    for (let i = 0; i < units.length; i++) {
-      const unit = units[i];
+  const createNewUnits = async () => {
+    for (let i = 0; i < newItems.length; i++) {
+      const unit = newItems[i];
       await service.current.createUnit(unit);
     }
   };
 
+  const editUnit = async () => {
+    if (modalState.id === '') return;
+    console.log('unit');
+    console.log(modalState);
+
+    setLoading((prev) => true);
+
+    let updatedUnit = await service.current.editUnit({
+      id: modalState.id,
+      name: modalState.value,
+    });
+
+    if (updatedUnit) {
+      setUnits((prev) => {
+        let prevType = prev.find((t) => t.id === updatedUnit!.id);
+        if (prevType) {
+          prevType.name = updatedUnit!.name;
+        }
+        return prev;
+      });
+    }
+
+    setLoading((prev) => false);
+  };
+
+  const deleteUnits = async () => {
+    for (let i = 0; i < removedItems.length; i++) {
+      const unit = removedItems[i];
+      await service.current.deleteUnit(unit.id);
+    }
+  };
   const saveChanges = async () => {
-    await deleteUnits(removedItems);
-    await createNewUnits(newItems);
+    await deleteUnits();
+    await createNewUnits();
     await loadData();
   };
 
   return (
     <>
+      <EditItemModal title={Strings.edit} placeholder={Strings.unit} editUnit />
+
       <h4 className="mt-4 ms-3 d-inline">{Strings.units}</h4>
       <Button
         variant="dark"
@@ -150,6 +187,14 @@ function UnitList() {
                       title={unit.name}
                       onRemove={() => {
                         selectItemAsDeleted(unit);
+                      }}
+                      onEdit={() => {
+                        setModalState({
+                          id: unit.id,
+                          value: unit.name,
+                          displayModal: true,
+                          editUnit: false,
+                        });
                       }}
                     />
                   </React.Fragment>

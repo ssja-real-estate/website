@@ -26,8 +26,15 @@ const AdminList = (): JSX.Element => {
   const userService = useRef(new UserService());
 
   useEffect(() => {
+    let mounted = true;
     userService.current.setToken(state.token);
-    loadData();
+    if (mounted) {
+      loadData();
+    }
+
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 

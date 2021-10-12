@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react';
 import './SearchEstate.css';
 import { motion } from 'framer-motion';
@@ -7,7 +8,6 @@ import {
 } from '../../animations/motionVariants';
 import { Container, Form } from 'react-bootstrap';
 import { delegationTypes, estateTypes } from '../../global/constants/estates';
-import { fetchGet } from '../../services/api/fetch';
 import { Estate } from '../../global/types/Estate';
 import Tilt from 'react-parallax-tilt';
 import React from 'react';
@@ -29,14 +29,14 @@ function SearchEstateScreen() {
   }
 
   async function getData() {
-    fetchGet('http://localhost:8000/estates')
-      .then((data) => {
-        setEstates(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchGet('http://localhost:8000/estates')
+    //   .then((data) => {
+    //     setEstates(data);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }
 
   useEffect(() => {
