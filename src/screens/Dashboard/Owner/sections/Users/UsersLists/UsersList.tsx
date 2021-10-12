@@ -70,7 +70,6 @@ function UsersList() {
                 >
                   <i className="bi-arrow-counterclockwise"></i>
                 </Button>
-
                 <Form.Control
                   className="mb-3"
                   placeholder={Strings.searchUsers}
