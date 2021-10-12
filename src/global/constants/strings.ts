@@ -50,6 +50,17 @@ class Strings {
   static searchUsers = 'جستجوی کاربرها';
   static searchAdmins = 'جستجوی ادمین‌‌ها';
   static searchOwners = 'جستجوی مالک‌ها';
+  static images = 'تصاویر';
+  static chooseImages = 'انتخاب تصاویر';
+  static addNewSection = 'افزودن بخش جدید';
+  static chooseNewTitleForTheSection =
+    'لطفا یک عنوان جدید برای بخش انتخاب کنید';
+  static chooseEstateType = 'انتخاب نوع ملک';
+  static chooseDelegationType = 'انتخاب نوع واگذاری';
+  static chooseFormFilters =
+    'لطفا نوع واگذاری و نوع ملک مورد نظر را انتخاب کنید';
+  static imageSelectionFeature = 'قابلیت انتخاب تصاویر';
+  static sectionDeleteConfirm = 'آیا از حذف این بخش مطمئن هستید؟';
 }
 
 export default Strings;

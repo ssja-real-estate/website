@@ -6,7 +6,7 @@ import {
   FieldType,
   FieldTypeTitle,
 } from '../../../../../../../global/types/Field';
-import { modalSectionAtom } from '../Forms';
+import { modalSectionAtom } from '../FormsState';
 import NewConditionalField, { innerFieldsAtom } from './NewConditionalField';
 import NewSelectField, { optionsAtom } from './NewSelectField';
 

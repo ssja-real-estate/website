@@ -14,7 +14,7 @@ import { Section } from '../../../../../../global/types/EstateForm';
 import { Field, FieldType } from '../../../../../../global/types/Field';
 import EditConditionalField from './EditField/EditConditionalField';
 import EditSelectField from './EditField/EditSelectField';
-import { modalSectionAtom } from './Forms';
+import { modalSectionAtom } from './FormsState';
 import NewField from './NewField/NewField';
 
 interface ModalSection extends Section {

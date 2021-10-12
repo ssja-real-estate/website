@@ -18,32 +18,19 @@ import {
 
 import { EstateForm, Section } from '../../../../../../global/types/EstateForm';
 import {
+  Field,
   FieldType,
   FieldTypeTitle,
 } from '../../../../../../global/types/Field';
-import { fetchGet, fetchPut } from '../../../../../../services/api/fetch';
 import CustomModal from '../../../../../../components/CustomModal/CustomModal';
 import EditSection from './EditSection';
-import { atom, useRecoilState } from 'recoil';
-import toast from 'react-hot-toast';
+import { useRecoilState } from 'recoil';
 import DelegationType from 'global/types/DelegationType';
 import EstateType from 'global/types/EstateType';
+import { modalSectionAtom } from './FormsState';
+import Strings from 'global/constants/strings';
 
-interface ModalSection extends Section {
-  id: number;
-}
-
-export const modalSectionAtom = atom<ModalSection>({
-  key: 'ownerModalSectionState',
-  default: {
-    id: 0,
-    title: '',
-    name: '',
-    fields: [],
-  },
-});
-
-function Forms() {
+const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -51,14 +38,17 @@ function Forms() {
     id: '',
     name: 'default',
   });
+
   const [estateType, setEstateType] = useState<EstateType>({
     id: '',
     name: 'default',
   });
+
   const isDefault =
     delegationType.name === 'default' || estateType.name === 'default'
       ? true
       : false;
+
   const [form, setForm] = useState<EstateForm>();
   const [hasImage, setHasImage] = useState<boolean>(false);
   const [showNewSectionModal, setShowNewSectionModal] =
@@ -68,7 +58,7 @@ function Forms() {
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
 
-  function handleSectionDragEnd(result: DropResult) {
+  const handleSectionDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
@@ -78,9 +68,9 @@ function Forms() {
     tempSections.splice(result.destination!.index, 0, reorderedSection);
 
     setForm({ ...form!, sections: tempSections });
-  }
+  };
 
-  function includesImageSection(form: EstateForm): boolean {
+  const includesImageSection = (form: EstateForm): boolean => {
     const imageSections = form.sections.filter((section) => {
       let isImageSection = false;
       section.fields.forEach((field) => {
@@ -97,16 +87,16 @@ function Forms() {
     } else {
       return false;
     }
-  }
+  };
 
-  function formWithImageSection(form: EstateForm): EstateForm {
+  const formWithImageSection = (form: EstateForm): EstateForm => {
     const imageSection: Section = {
-      title: 'تصاویر',
+      title: Strings.images,
       name: 'imageSection',
       fields: [
         {
           type: FieldType.Image,
-          title: 'انتخاب تصاویر',
+          title: Strings.chooseImages,
           value: [],
           name: 'image',
         },
@@ -121,17 +111,17 @@ function Forms() {
     };
 
     return newForm;
-  }
+  };
 
-  function formNoImageSection(form: EstateForm): EstateForm {
+  const formNoImageSection = (form: EstateForm): EstateForm => {
     if (includesImageSection(form)) {
       form.sections.shift();
     }
 
     return form;
-  }
+  };
 
-  function formWithNewSection(form: EstateForm, title: string): EstateForm {
+  const formWithNewSection = (form: EstateForm, title: string): EstateForm => {
     const sections = form.sections;
     const newSection: Section = {
       name: title,
@@ -143,9 +133,9 @@ function Forms() {
     const newForm = { ...form, sections: sections };
 
     return newForm;
-  }
+  };
 
-  function updateChangedSection(form: EstateForm, sectionIndex: number) {
+  const updateChangedSection = (form: EstateForm, sectionIndex: number) => {
     const sections = form.sections;
     const changedSection: Section = {
       title: modalSection.title,
@@ -155,82 +145,79 @@ function Forms() {
     sections.splice(sectionIndex, 1, changedSection);
 
     setForm({ ...form, sections: sections });
-  }
+  };
 
-  async function getDelegationTypes(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setDelegationTypes(data.data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  // const getDelegationTypes = async () => {};
 
-  async function getEstateTypes(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setEstateTypes(data.data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  // const getEstateTypes = async () => {};
 
-  async function getFormData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setForm(data);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
+  // const getFormData = async () => {};
 
-  useEffect(() => {
-    getDelegationTypes('http://localhost:8000/delegationTypes');
-    getEstateTypes('http://localhost:8000/estateTypes');
-  }, []);
+  const getFieldTitle = (field: Field) => {
+    let title = '---';
 
-  useEffect(() => {
-    setLoading(true);
-    !isDefault &&
-      getFormData(
-        `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-      );
-  }, [isDefault, delegationType.name, estateType.name]);
-
-  useEffect(() => {
-    if (form) {
-      if (includesImageSection(form)) {
-        setHasImage(true);
-      } else {
-        setHasImage(false);
-      }
+    switch (field.type) {
+      case FieldType.Text:
+        title = FieldTypeTitle.Text;
+        break;
+      case FieldType.Number:
+        title = FieldTypeTitle.Number;
+        break;
+      case FieldType.Select:
+        title = FieldTypeTitle.Select;
+        break;
+      case FieldType.Bool:
+        title = FieldTypeTitle.Bool;
+        break;
+      case FieldType.Conditional:
+        title = FieldTypeTitle.Conditional;
+        break;
+      case FieldType.Image:
+        title = FieldTypeTitle.Image;
+        break;
+      case FieldType.Range:
+        title = FieldTypeTitle.Range;
+        break;
     }
-  }, [form]);
+
+    return title;
+  };
+
+  // const loadData = async () => {};
+
+  useEffect(() => {}, []);
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   !isDefault &&
+  //     getFormData(
+  //       `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
+  //     );
+  // }, [isDefault, delegationType.name, estateType.name]);
+
+  // useEffect(() => {
+  //   if (form) {
+  //     if (includesImageSection(form)) {
+  //       setHasImage(true);
+  //     } else {
+  //       setHasImage(false);
+  //     }
+  //   }
+  // }, [form]);
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">فرم ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.forms}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          getDelegationTypes('http://localhost:8000/delegationTypes');
-          getEstateTypes('http://localhost:8000/estateTypes');
-          getFormData(
-            `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-          );
-        }}
+        onClick={() => {}}
       >
         <i className="bi-arrow-counterclockwise"></i>
       </Button>
       <CustomModal
-        title="افزودن بخش جدید"
-        cancelTitle="لغو"
+        title={Strings.addNewSection}
+        cancelTitle={Strings.save}
         successTitle="افزودن بخش"
         show={showNewSectionModal}
         handleClose={() => {
@@ -242,7 +229,7 @@ function Forms() {
             setShowNewSectionModal(false);
           } else {
             setNewSectionTitle('');
-            alert('لطفاً یک عنوان برای بخش جدید انتخاب کنید');
+            alert(Strings.chooseNewTitleForTheSection);
           }
         }}
       >
@@ -276,7 +263,7 @@ function Forms() {
               }}
             >
               <option value="default" disabled>
-                انتخاب کنید
+                {Strings.chooseEstateType}
               </option>
               {estateTypes.map((estateType, index) => {
                 return (
@@ -296,7 +283,7 @@ function Forms() {
               }}
             >
               <option value="default" disabled>
-                انتخاب کنید
+                {Strings.chooseDelegationType}
               </option>
               {delegationTypes.map((delegationType, index) => {
                 return (
@@ -315,39 +302,16 @@ function Forms() {
             onClick={() => {
               setLoading(true);
               if (form) {
-                toast.promise(
-                  fetchPut(
-                    `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`,
-                    {
-                      id: `${delegationType.name}-${estateType.name}`,
-                      sections: form?.sections,
-                    }
-                  ).then(() => {
-                    getFormData(
-                      `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-                    );
-                  }),
-                  {
-                    loading: 'در حال ذخیره سازی تغییرات',
-                    success: 'تغییرات با موفقیت ذخیره شد',
-                    error: 'خطا در ذخیره سازی تغییرات',
-                  },
-                  {
-                    style: { width: 250 },
-                  }
-                );
               }
             }}
           >
-            ذخیره تغییرات
+            {Strings.saveChanges}
           </Button>
         </Col>
       </Row>
       <Row>
         {isDefault ? (
-          <h5 className="fw-light py-5">
-            لطفاً نوع واگذاری و نوع ملک را انتخاب کنید
-          </h5>
+          <h5 className="fw-light py-5">{Strings.chooseFormFilters}</h5>
         ) : loading ? (
           <Row>
             <Col>
@@ -357,7 +321,7 @@ function Forms() {
         ) : (
           <Col>
             <Form.Switch
-              label="قابلیت انتخاب تصاویر"
+              label={Strings.imageSelectionFeature}
               style={{ maxWidth: 200 }}
               className="my-3"
               checked={hasImage}
@@ -374,8 +338,8 @@ function Forms() {
               isFullscreen
               show={showEditSectionModal}
               title={modalSection?.title}
-              cancelTitle="لغو"
-              successTitle="ذخیره"
+              cancelTitle={Strings.cancel}
+              successTitle={Strings.save}
               handleClose={() => {
                 setShowEditSectionModal(false);
               }}
@@ -425,20 +389,7 @@ function Forms() {
                                         </Col>
                                         <Col>
                                           <h6 className="d-inline text-muted">
-                                            {field.type === FieldType.Text
-                                              ? 'متن'
-                                              : field.type === FieldType.Number
-                                              ? 'عدد'
-                                              : field.type === FieldType.Select
-                                              ? 'انتخابی'
-                                              : field.type === FieldType.Bool
-                                              ? 'کلید'
-                                              : field.type ===
-                                                FieldType.Conditional
-                                              ? 'شرطی'
-                                              : field.type === FieldType.Image
-                                              ? 'تصویر'
-                                              : '---'}
+                                            {getFieldTitle(field)}
                                           </h6>
                                         </Col>
                                       </Row>
@@ -493,7 +444,7 @@ function Forms() {
                                               });
                                             if (
                                               window.confirm(
-                                                'آیا از حذف این بخش مطمئن هستید؟'
+                                                Strings.sectionDeleteConfirm
                                               )
                                             ) {
                                               setForm({
@@ -521,25 +472,7 @@ function Forms() {
                                                 </Col>
                                                 <Col>
                                                   <h6 className="d-inline text-muted">
-                                                    {field.type ===
-                                                    FieldType.Text
-                                                      ? FieldTypeTitle.Text
-                                                      : field.type ===
-                                                        FieldType.Number
-                                                      ? FieldTypeTitle.Number
-                                                      : field.type ===
-                                                        FieldType.Select
-                                                      ? FieldTypeTitle.Select
-                                                      : field.type ===
-                                                        FieldType.Bool
-                                                      ? FieldTypeTitle.Bool
-                                                      : field.type ===
-                                                        FieldType.Conditional
-                                                      ? FieldTypeTitle.Conditional
-                                                      : field.type ===
-                                                        FieldType.Image
-                                                      ? FieldTypeTitle.Image
-                                                      : '---'}
+                                                    {getFieldTitle(field)}
                                                   </h6>
                                                 </Col>
                                               </Row>
@@ -566,6 +499,6 @@ function Forms() {
       </Row>
     </>
   );
-}
+};
 
 export default Forms;
