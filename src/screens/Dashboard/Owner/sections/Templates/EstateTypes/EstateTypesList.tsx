@@ -32,17 +32,30 @@ function EstateTypesList() {
 
   const state = useRecoilValue(globalState);
   const service = useRef(new EstateTypeService());
+  const mounted = useRef(true);
 
   useEffect(() => {
-    service.current.setToken(state.token);
-    loadData();
+    if (mounted.current) {
+      service.current.setToken(state.token);
+      loadData();
+    }
+
+    return () => {
+      mounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 
   useEffect(() => {
-    if (modalState.editEstateType) {
-      editEstateType();
+    if (mounted.current) {
+      if (modalState.editEstateType) {
+        editEstateType();
+      }
     }
+
+    return () => {
+      mounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.editEstateType]);
 

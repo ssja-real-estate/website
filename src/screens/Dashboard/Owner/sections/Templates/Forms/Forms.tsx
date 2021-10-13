@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -30,6 +30,7 @@ import DelegationType from 'global/types/DelegationType';
 import EstateType from 'global/types/EstateType';
 import { modalSectionAtom } from './FormsState';
 import Strings from 'global/constants/strings';
+import { globalState } from 'global/states/globalStates';
 
 const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -58,6 +59,18 @@ const Forms = () => {
   const [showEditSectionModal, setShowEditSectionModal] =
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
+
+  const [state, setGlobalState] = useRecoilState(globalState);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    if (mounted.current) {
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [state.token]);
 
   const handleSectionDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -185,8 +198,6 @@ const Forms = () => {
   };
 
   // const loadData = async () => {};
-
-  useEffect(() => {}, []);
 
   // useEffect(() => {
   //   setLoading(true);

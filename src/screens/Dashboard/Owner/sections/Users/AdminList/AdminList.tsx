@@ -24,16 +24,16 @@ const AdminList = (): JSX.Element => {
 
   const state = useRecoilValue(globalState);
   const userService = useRef(new UserService());
+  const mounted = useRef(true);
 
   useEffect(() => {
-    let mounted = true;
     userService.current.setToken(state.token);
-    if (mounted) {
+    if (mounted.current) {
       loadData();
     }
 
     return () => {
-      mounted = false;
+      mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);

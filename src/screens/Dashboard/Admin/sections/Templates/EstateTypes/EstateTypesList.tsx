@@ -10,12 +10,20 @@ import './EstateTypesList.css';
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
   const state = useRecoilValue(globalState);
   const service = useRef(new EstateTypeService());
+  const mounted = useRef(true);
 
   useEffect(() => {
-    service.current.setToken(state.token);
-    loadData();
+    if (mounted.current) {
+      service.current.setToken(state.token);
+      loadData();
+    }
+
+    return () => {
+      mounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 

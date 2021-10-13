@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Button,
   CloseButton,
@@ -65,6 +65,18 @@ function EditSection() {
     useState<boolean>(false);
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
     useRecoilState(editSelectFieldModalDataAtom);
+  // const [state, setGlobalState] = useRecoilState(globalState);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    if (mounted.current) {
+      modalSection && setSectionTitle(modalSection.title);
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [modalSection, modalSection?.title]);
 
   function moveItemUp(fieldIndex: number) {
     const tempFields = [...modalSection!.fields];
@@ -115,10 +127,6 @@ function EditSection() {
 
     setModalSection({ ...section, fields: fields });
   }
-
-  useEffect(() => {
-    modalSection && setSectionTitle(modalSection.title);
-  }, [modalSection, modalSection?.title]);
 
   return (
     <>

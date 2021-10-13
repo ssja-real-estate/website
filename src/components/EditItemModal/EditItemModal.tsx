@@ -21,6 +21,7 @@ const EditItemModal: React.FC<Props> = (props) => {
   const [newValue, setNewValue] = useState('');
 
   useEffect(() => {
+    console.log(modalState.value);
     setNewValue(modalState.value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.displayModal]);

@@ -25,10 +25,17 @@ const OwnerList = (): JSX.Element => {
   const [selectedOwner, setSelectedOwner] = useState<User>(defaultUser);
 
   const userService = useRef(new UserService());
+  const mounted = useRef(true);
 
   useEffect(() => {
-    userService.current.setToken(state.token);
-    loadData();
+    if (mounted.current) {
+      userService.current.setToken(state.token);
+      loadData();
+    }
+
+    return () => {
+      mounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 

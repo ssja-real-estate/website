@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import { globalState } from 'global/states/globalStates';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form, Row } from 'react-bootstrap';
 import Tilt from 'react-parallax-tilt';
+import { useRecoilState } from 'recoil';
 import EstateCard from '../../../../../components/EstateCard/EstateCard';
 import {
   delegationTypes,
@@ -17,17 +19,29 @@ function EstatesSection() {
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setDelegationType(event.target.value);
-  }
-  function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setEstateType(event.target.value);
-  }
-  function handleLocationChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setLocation(event.target.value);
-  }
+  const [state, setGlobalState] = useRecoilState(globalState);
+  const mounted = useRef(true);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (mounted.current) {
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [state.token]);
+
+  const handleDelegationChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setDelegationType(event.target.value);
+  };
+  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setEstateType(event.target.value);
+  };
+  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLocation(event.target.value);
+  };
 
   return (
     <div className="estates-section">

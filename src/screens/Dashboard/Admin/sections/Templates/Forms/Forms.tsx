@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -65,6 +65,48 @@ function Forms() {
   const [showEditSectionModal, setShowEditSectionModal] =
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    if (mounted.current) {
+      getDelegationTypes('http://localhost:8000/delegationTypes');
+      getEstateTypes('http://localhost:8000/estateTypes');
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (mounted.current) {
+      setLoading(true);
+      !isDefault &&
+        getFormData(
+          `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
+        );
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [isDefault, delegationType.name, estateType.name]);
+
+  useEffect(() => {
+    if (mounted.current) {
+      if (form) {
+        if (includesImageSection(form)) {
+          setHasImage(true);
+        } else {
+          setHasImage(false);
+        }
+      }
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [form]);
 
   function handleSectionDragEnd(result: DropResult) {
     if (!result.destination) {
@@ -185,29 +227,6 @@ function Forms() {
     //     console.log(error);
     //   });
   }
-
-  useEffect(() => {
-    getDelegationTypes('http://localhost:8000/delegationTypes');
-    getEstateTypes('http://localhost:8000/estateTypes');
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    !isDefault &&
-      getFormData(
-        `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-      );
-  }, [isDefault, delegationType.name, estateType.name]);
-
-  useEffect(() => {
-    if (form) {
-      if (includesImageSection(form)) {
-        setHasImage(true);
-      } else {
-        setHasImage(false);
-      }
-    }
-  }, [form]);
 
   return (
     <>
