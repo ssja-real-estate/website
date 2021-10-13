@@ -25,5 +25,3 @@ yarn-error.log*
 .env-cmdrc.*
 
 .vscode
-
-src/local.ts
