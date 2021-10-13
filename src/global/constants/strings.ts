@@ -1,5 +1,10 @@
 class Strings {
-  static unknownError = 'خطای ناشناخته در سیستم';
+  static sajaSystemCompleteName = 'سامانه ثبت و جستجوی املاک';
+  static sajaSystem = 'سامانه ثجا';
+  static searchEstates = 'جستجوی املاک';
+  static addEstate = 'ثبت ملک';
+  static loginOrSignup = 'ورود یا ثبت نام';
+  static dashboard = 'داشبورد';
   static delegationTypes = 'نوع واگذاری‌ها';
   static estateTypes = 'نوع ملک‌ها';
   static provinces = 'استان‌ها';
@@ -73,6 +78,14 @@ class Strings {
   static client400Error = 'درخواست موردنظر اشتباه است';
   static client404Error = 'منبع درخواستی وجود ندارد';
   static client405Error = 'درخواست موردنظر غیرمجاز است';
+  static unknownError = 'خطای ناشناخته در سیستم';
+  static textField = 'متن';
+  static numberField = 'عدد';
+  static selectField = 'انتخابی';
+  static booleanField = 'کلید';
+  static conditionalField = 'شرطی';
+  static imageField = 'تصویر';
+  static rangeField = 'بازه';
 }
 
 export default Strings;

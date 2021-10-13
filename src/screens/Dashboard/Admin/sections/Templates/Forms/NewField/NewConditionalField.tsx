@@ -124,7 +124,7 @@ function NewConditionalField() {
               variant="dark"
               onClick={() => {
                 let newInnerField: Field = {
-                  name: '',
+                  id: '',
                   title: '',
                   type: 0,
                   value: '',
@@ -132,7 +132,7 @@ function NewConditionalField() {
                 switch (selectedType) {
                   case FieldType.Text:
                     newInnerField = {
-                      name: newInnerFieldTitle,
+                      id: '',
                       title: newInnerFieldTitle,
                       type: FieldType.Text,
                       value: '',
@@ -140,7 +140,7 @@ function NewConditionalField() {
                     break;
                   case FieldType.Number:
                     newInnerField = {
-                      name: newInnerFieldTitle,
+                      id: '',
                       title: newInnerFieldTitle,
                       type: FieldType.Number,
                       value: 0,
@@ -148,7 +148,7 @@ function NewConditionalField() {
                     break;
                   case FieldType.Select:
                     newInnerField = {
-                      name: newInnerFieldTitle,
+                      id: '',
                       title: newInnerFieldTitle,
                       type: FieldType.Select,
                       value: '',
@@ -157,7 +157,7 @@ function NewConditionalField() {
                     break;
                   case FieldType.Bool:
                     newInnerField = {
-                      name: newInnerFieldTitle,
+                      id: '',
                       title: newInnerFieldTitle,
                       type: FieldType.Bool,
                       value: false,

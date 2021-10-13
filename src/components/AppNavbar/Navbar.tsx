@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { globalState } from 'global/states/globalStates';
+import Strings from 'global/constants/strings';
 
 function AppNavbar() {
   const state = useRecoilValue(globalState);
@@ -25,7 +26,7 @@ function AppNavbar() {
               history.push('/');
             }}
           >
-            سامانه ثجـــا
+            {Strings.sajaSystem}
           </Nav.Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar" />
@@ -37,7 +38,7 @@ function AppNavbar() {
                 history.push('/search-estate');
               }}
             >
-              جستجوی املاک
+              {Strings.searchEstates}
               <i className="bi-search pe-2" />
             </Nav.Link>
             <Nav.Link
@@ -46,7 +47,7 @@ function AppNavbar() {
                 history.push('/add-estate');
               }}
             >
-              ثبت ملک
+              {Strings.addEstate}
               <i className="bi-building pe-2" />
             </Nav.Link>
           </Nav>
@@ -58,7 +59,7 @@ function AppNavbar() {
                   history.push('/login');
                 }}
               >
-                ورود / ثبت نام
+                {Strings.loginOrSignup}
                 <i className="bi-box-arrow-in-left pe-2" />
               </Nav.Link>
             ) : (
@@ -68,7 +69,7 @@ function AppNavbar() {
                   history.push('/dashboard');
                 }}
               >
-                حساب کاربری
+                {Strings.dashboard}
                 <i className="bi-person-fill pe-2" />
               </Nav.Link>
             )}

@@ -1,3 +1,4 @@
+import Section from 'global/types/Section';
 import { useEffect, useRef, useState } from 'react';
 import {
   Button,
@@ -10,7 +11,6 @@ import {
 } from 'react-bootstrap';
 import { atom, useRecoilState } from 'recoil';
 import CustomModal from '../../../../../../components/CustomModal/CustomModal';
-import { Section } from '../../../../../../global/types/EstateForm';
 import { Field, FieldType } from '../../../../../../global/types/Field';
 import EditConditionalField from './EditField/EditConditionalField';
 import EditSelectField from './EditField/EditSelectField';
@@ -18,34 +18,32 @@ import { modalSectionAtom } from './FormsState';
 import NewField from './NewField/NewField';
 
 interface ModalSection extends Section {
-  id: number;
+  id: string;
 }
 
 interface ModalField extends Field {
-  id: number;
+  id: string;
 }
 
 export const innerFieldModalDataAtom = atom<ModalField>({
   key: 'ownerEditInnerFieldsModalDataState',
   default: {
+    id: '',
     title: '',
-    name: '',
     type: FieldType.Conditional,
     value: false,
     fields: [],
-    id: 0,
   },
 });
 
 export const editSelectFieldModalDataAtom = atom<ModalField>({
   key: 'ownerEditSelectFieldModalState',
   default: {
+    id: '',
     title: '',
-    name: '',
     type: FieldType.Select,
     value: '',
     options: [],
-    id: 0,
   },
 });
 
@@ -99,31 +97,31 @@ function EditSection() {
 
   function updateChangedConditionalField(
     section: ModalSection,
-    fieldIndex: number
+    fieldIndex: string
   ) {
-    const fields = Object.assign([], section.fields);
-    const changedField: Field = {
-      title: innerFieldModalData.title,
-      name: innerFieldModalData.name,
-      type: innerFieldModalData.type,
-      value: innerFieldModalData.value,
-      fields: innerFieldModalData.fields,
-    };
-    fields.splice(fieldIndex, 1, changedField);
+    const fields: Field[] = Object.assign([], section.fields);
+    // const changedField: Field = {
+    //   id: innerFieldModalData.id,
+    //   title: innerFieldModalData.title,
+    //   type: innerFieldModalData.type,
+    //   value: innerFieldModalData.value,
+    //   fields: innerFieldModalData.fields,
+    // };
+    // fields.splice(fieldIndex, 1, changedField);
 
     setModalSection({ ...section, fields: fields });
   }
 
-  function updateChangedSelectField(section: ModalSection, fieldIndex: number) {
-    const fields = Object.assign([], section.fields);
-    const changedField: Field = {
-      title: editSelectFieldModalData!.title,
-      name: editSelectFieldModalData!.name,
-      type: editSelectFieldModalData!.type,
-      value: editSelectFieldModalData!.value,
-      options: editSelectFieldModalData!.options,
-    };
-    fields.splice(fieldIndex, 1, changedField);
+  function updateChangedSelectField(section: ModalSection, fieldIndex: string) {
+    const fields: Field[] = Object.assign([], section.fields);
+    // const changedField: Field = {
+    //   id: editSelectFieldModalData!.id,
+    //   title: editSelectFieldModalData!.title,
+    //   type: editSelectFieldModalData!.type,
+    //   value: editSelectFieldModalData!.value,
+    //   options: editSelectFieldModalData!.options,
+    // };
+    // fields.splice(fieldIndex, 1, changedField);
 
     setModalSection({ ...section, fields: fields });
   }
@@ -189,7 +187,7 @@ function EditSection() {
                     onClick={() => {
                       setRenameFieldModalData({
                         ...field,
-                        id: fieldIndex,
+                        id: fieldIndex.toString(),
                       });
                       setShowRenameFieldModal(true);
                     }}
@@ -218,7 +216,7 @@ function EditSection() {
                       onClick={() => {
                         setInnerFieldModalData({
                           ...field,
-                          id: fieldIndex,
+                          id: fieldIndex.toString(),
                         });
                         setShowEditInnerFieldsModal(true);
                       }}
@@ -231,7 +229,7 @@ function EditSection() {
                         onClick={() => {
                           setEditSelectFieldModalData({
                             ...field,
-                            id: fieldIndex,
+                            id: fieldIndex.toString(),
                           });
                           setShowEditSelectFieldModal(true);
                         }}
@@ -268,11 +266,11 @@ function EditSection() {
           setShowRenameFieldModal(false);
         }}
         handleSuccess={() => {
-          const changedField: Field = {
-            ...renameFieldModalData!,
-          };
+          // const changedField: Field = {
+          //   ...renameFieldModalData!,
+          // };
           const fields = Object.assign([], modalSection.fields);
-          fields.splice(renameFieldModalData!.id, 1, changedField);
+          // fields.splice(renameFieldModalData!.id, 1, changedField);
 
           setModalSection({ ...modalSection, fields: fields });
           setShowRenameFieldModal(false);

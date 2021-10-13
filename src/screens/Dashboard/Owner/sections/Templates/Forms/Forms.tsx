@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useState } from 'react';
 import {
   DragDropContext,
@@ -17,7 +16,7 @@ import {
   Spinner,
 } from 'react-bootstrap';
 
-import { EstateForm, Section } from '../../../../../../global/types/EstateForm';
+import { EstateForm } from '../../../../../../global/types/EstateForm';
 import {
   Field,
   FieldType,
@@ -25,12 +24,16 @@ import {
 } from '../../../../../../global/types/Field';
 import CustomModal from '../../../../../../components/CustomModal/CustomModal';
 import EditSection from './EditSection';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import DelegationType from 'global/types/DelegationType';
 import EstateType from 'global/types/EstateType';
 import { modalSectionAtom } from './FormsState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
+import FormService from 'services/api/FormService/FormService';
+import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
+import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
+import Section from 'global/types/Section';
 
 const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -60,17 +63,44 @@ const Forms = () => {
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
 
-  const [state, setGlobalState] = useRecoilState(globalState);
+  const state = useRecoilValue(globalState);
+  const formService = useRef(new FormService());
+  const delegationTypeService = useRef(new DelegationTypeService());
+  const estateTypeService = useRef(new EstateTypeService());
   const mounted = useRef(true);
 
   useEffect(() => {
     if (mounted.current) {
+      formService.current.setToken(state.token);
+      delegationTypeService.current.setToken(state.token);
+      estateTypeService.current.setToken(state.token);
+      loadData();
     }
 
     return () => {
       mounted.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
+
+  useEffect(() => {
+    !isDefault && loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDefault, delegationType.name, estateType.name]);
+
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+
+    const delegationTypes =
+      await delegationTypeService.current.getAllDelegationTypes();
+    setDelegationTypes(delegationTypes);
+    const estateTypes = await estateTypeService.current.getAllEstateTypes();
+    setEstateTypes(estateTypes);
+
+    setLoading((prev) => false);
+  };
 
   const handleSectionDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -105,14 +135,14 @@ const Forms = () => {
 
   const formWithImageSection = (form: EstateForm): EstateForm => {
     const imageSection: Section = {
+      id: '',
       title: Strings.images,
-      name: 'imageSection',
       fields: [
         {
+          id: '',
           type: FieldType.Image,
           title: Strings.chooseImages,
           value: [],
-          name: 'image',
         },
       ],
     };
@@ -138,7 +168,7 @@ const Forms = () => {
   const formWithNewSection = (form: EstateForm, title: string): EstateForm => {
     const sections = form.sections;
     const newSection: Section = {
-      name: title,
+      id: '',
       title: title,
       fields: [],
     };
@@ -149,14 +179,14 @@ const Forms = () => {
     return newForm;
   };
 
-  const updateChangedSection = (form: EstateForm, sectionIndex: number) => {
+  const updateChangedSection = (form: EstateForm, sectionIndex: string) => {
     const sections = form.sections;
-    const changedSection: Section = {
-      title: modalSection.title,
-      name: modalSection.name,
-      fields: modalSection.fields,
-    };
-    sections.splice(sectionIndex, 1, changedSection);
+    // const changedSection: Section = {
+    //   id: '',
+    //   title: modalSection.title,
+    //   fields: modalSection.fields,
+    // };
+    // sections.splice(sectionIndex, 1, changedSection);
 
     setForm({ ...form, sections: sections });
   };
@@ -197,16 +227,6 @@ const Forms = () => {
     return title;
   };
 
-  // const loadData = async () => {};
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   !isDefault &&
-  //     getFormData(
-  //       `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-  //     );
-  // }, [isDefault, delegationType.name, estateType.name]);
-
   // useEffect(() => {
   //   if (form) {
   //     if (includesImageSection(form)) {
@@ -223,7 +243,9 @@ const Forms = () => {
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {}}
+        onClick={async () => {
+          await loadData();
+        }}
       >
         <i className="bi-arrow-counterclockwise"></i>
       </Button>
@@ -438,7 +460,7 @@ const Forms = () => {
                                           onClick={() => {
                                             setModalSection({
                                               ...section,
-                                              id: sectionIndex,
+                                              id: sectionIndex.toString(),
                                             });
                                             setShowEditSectionModal(true);
                                           }}

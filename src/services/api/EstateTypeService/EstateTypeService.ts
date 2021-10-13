@@ -1,12 +1,13 @@
 import EstateType from 'global/types/EstateType';
-import { ESTATE_TYPE_URL } from 'local';
 import BaseService from '../BaseService';
 
 class EstateTypeService extends BaseService {
+  private estateTypeUrl = process.env.REACT_APP_ESTATE_TYPE_URL ?? '';
+
   async getAllEstateTypes() {
     let estateTypes: EstateType[] = [];
     try {
-      const response = await this.Api.get(ESTATE_TYPE_URL, this.config);
+      const response = await this.Api.get(this.estateTypeUrl, this.config);
       if (response.data) {
         response.data.forEach((element: EstateType) => {
           estateTypes.push(element);
@@ -22,7 +23,7 @@ class EstateTypeService extends BaseService {
   async createEstateType(estateType: EstateType) {
     try {
       await this.Api.post(
-        ESTATE_TYPE_URL,
+        this.estateTypeUrl,
         { name: estateType.name },
         this.config
       );
@@ -38,7 +39,7 @@ class EstateTypeService extends BaseService {
 
     try {
       const response = await this.Api.put(
-        ESTATE_TYPE_URL,
+        this.estateTypeUrl,
         estateType,
         this.config
       );
@@ -55,7 +56,7 @@ class EstateTypeService extends BaseService {
 
   async deleteEstateType(id: string) {
     try {
-      await this.Api.delete(`${ESTATE_TYPE_URL}/${id}`, this.config);
+      await this.Api.delete(`${this.estateTypeUrl}/${id}`, this.config);
     } catch (error: any) {
       this.handleError(error);
     }

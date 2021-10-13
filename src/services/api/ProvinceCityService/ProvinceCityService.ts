@@ -1,14 +1,16 @@
 import City from 'global/types/City';
 import Province from 'global/types/Province';
-import { CITY_URL, PROVINCE_URL } from 'local';
 import BaseService from '../BaseService';
 
 class ProvinceCityService extends BaseService {
+  private provinceUrl = process.env.REACT_APP_PROVINCE_URL ?? '';
+  private cityUrl = process.env.REACT_APP_CITY_URL ?? '';
+
   async getAllProvinces() {
     let provinces: Province[] = [];
 
     try {
-      const response = await this.Api.get(PROVINCE_URL, this.config);
+      const response = await this.Api.get(this.provinceUrl, this.config);
 
       if (response.data) {
         response.data.forEach((element: Province) => {
@@ -24,7 +26,11 @@ class ProvinceCityService extends BaseService {
 
   async createProvince(province: Province) {
     try {
-      await this.Api.post(PROVINCE_URL, { name: province.name }, this.config);
+      await this.Api.post(
+        this.provinceUrl,
+        { name: province.name },
+        this.config
+      );
     } catch (error: any) {
       this.handleError(error);
     }
@@ -34,7 +40,11 @@ class ProvinceCityService extends BaseService {
     if (province.id === '') return;
     let newProvince = undefined;
     try {
-      const response = await this.Api.put(PROVINCE_URL, province, this.config);
+      const response = await this.Api.put(
+        this.provinceUrl,
+        province,
+        this.config
+      );
       if (response.data) {
         newProvince = response.data as Province;
       }
@@ -46,7 +56,7 @@ class ProvinceCityService extends BaseService {
 
   async deleteProvince(id: string) {
     try {
-      await this.Api.delete(`${PROVINCE_URL}/${id}`, this.config);
+      await this.Api.delete(`${this.provinceUrl}/${id}`, this.config);
     } catch (error: any) {
       this.handleError(error);
     }
@@ -56,7 +66,7 @@ class ProvinceCityService extends BaseService {
     let cities: City[] = [];
 
     try {
-      const response = await this.Api.get(PROVINCE_URL, this.config);
+      const response = await this.Api.get(this.provinceUrl, this.config);
       if (response.data) {
         if (response.data.cities) {
           cities = response.data.cities as City[];
@@ -72,7 +82,7 @@ class ProvinceCityService extends BaseService {
   async createCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.post(
-        `${PROVINCE_URL}${CITY_URL}/${provinceId}`,
+        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
         { name: city.name },
         this.config
       );
@@ -88,7 +98,7 @@ class ProvinceCityService extends BaseService {
     try {
       console.log('city service 0');
       const response = await this.Api.put(
-        `${PROVINCE_URL}${CITY_URL}/${provinceId}`,
+        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
         city,
         this.config
       );
@@ -106,13 +116,16 @@ class ProvinceCityService extends BaseService {
 
   async deleteCityInProvince(provinceId: string, city: City) {
     try {
-      await this.Api.delete(`${PROVINCE_URL}${CITY_URL}/${provinceId}`, {
-        ...this.config,
-        data: {
-          id: city.id,
-          name: city.name,
-        },
-      });
+      await this.Api.delete(
+        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        {
+          ...this.config,
+          data: {
+            id: city.id,
+            name: city.name,
+          },
+        }
+      );
     } catch (error: any) {
       this.handleError(error);
     }

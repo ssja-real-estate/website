@@ -13,8 +13,6 @@ import toast from 'react-hot-toast';
 
 function LoginScreen() {
   const [visibility, setVisibility] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [loggedIn, setLoggedIn] = useRecoilState(isLoggedInAtom);
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const setGlobalState = useSetRecoilState(globalState);

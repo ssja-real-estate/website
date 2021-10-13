@@ -1,13 +1,14 @@
 import Unit from 'global/types/Unit';
-import { UNIT_URL } from 'local';
 import BaseService from '../BaseService';
 
 class UnitService extends BaseService {
+  private unitUrl = process.env.REACT_APP_UNIT_URL ?? '';
+
   async getAllUnits() {
     let units: Unit[] = [];
 
     try {
-      const response = await this.Api.get(UNIT_URL, this.config);
+      const response = await this.Api.get(this.unitUrl, this.config);
 
       if (response.data) {
         response.data.forEach((element: Unit) => {
@@ -23,7 +24,7 @@ class UnitService extends BaseService {
 
   async createUnit(unit: Unit) {
     try {
-      await this.Api.post(UNIT_URL, { name: unit.name }, this.config);
+      await this.Api.post(this.unitUrl, { name: unit.name }, this.config);
     } catch (error: any) {
       this.handleError(error);
     }
@@ -33,7 +34,7 @@ class UnitService extends BaseService {
     if (unit.id === '') return;
     let updatedUnit = undefined;
     try {
-      const response = await this.Api.put(UNIT_URL, unit, this.config);
+      const response = await this.Api.put(this.unitUrl, unit, this.config);
       if (response.data) {
         updatedUnit = response.data as Unit;
       }
@@ -45,7 +46,7 @@ class UnitService extends BaseService {
 
   async deleteUnit(id: string) {
     try {
-      await this.Api.delete(`${UNIT_URL}/${id}`, this.config);
+      await this.Api.delete(`${this.unitUrl}/${id}`, this.config);
     } catch (error: any) {
       this.handleError(error);
     }

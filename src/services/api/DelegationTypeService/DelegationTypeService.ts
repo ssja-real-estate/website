@@ -1,16 +1,18 @@
 import DelegationType from 'global/types/DelegationType';
-import { DELEGATION_TYPE_URL } from 'local';
 import BaseService from '../BaseService';
 
 class DelegationTypeService extends BaseService {
+  private delegationTypeUrl = process.env.REACT_APP_DELEGATION_TYPE_URL ?? '';
+
   async getAllDelegationTypes(): Promise<DelegationType[]> {
     let delegationTypes: DelegationType[] = [];
 
     try {
-      var data = await this.Api.get(DELEGATION_TYPE_URL, this.config);
+      var response = await this.Api.get(this.delegationTypeUrl, this.config);
 
-      if (!data.data) return delegationTypes;
-      data.data.forEach((element: any) => {
+      if (!response.data) return delegationTypes;
+
+      response.data.forEach((element: any) => {
         let delegation = element;
         delegationTypes.push(delegation);
       });
@@ -24,7 +26,7 @@ class DelegationTypeService extends BaseService {
   async createDelegationType(delegationType: DelegationType) {
     try {
       await this.Api.post(
-        DELEGATION_TYPE_URL,
+        this.delegationTypeUrl,
         {
           name: delegationType.name,
         },
@@ -40,7 +42,7 @@ class DelegationTypeService extends BaseService {
     let newDelegationType = undefined;
     try {
       const response = await this.Api.put(
-        DELEGATION_TYPE_URL,
+        this.delegationTypeUrl,
         delegationType,
         this.config
       );
@@ -57,7 +59,7 @@ class DelegationTypeService extends BaseService {
 
   async deleteDelegationType(id: string) {
     try {
-      await this.Api.delete(`${DELEGATION_TYPE_URL}/${id}`, this.config);
+      await this.Api.delete(`${this.delegationTypeUrl}/${id}`, this.config);
     } catch (error: any) {
       this.handleError(error);
     }

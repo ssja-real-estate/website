@@ -16,7 +16,7 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
-import { EstateForm, Section } from '../../../../../../global/types/EstateForm';
+import { EstateForm } from '../../../../../../global/types/EstateForm';
 import {
   FieldType,
   FieldTypeTitle,
@@ -26,17 +26,17 @@ import EditSection from './EditSection';
 import { atom, useRecoilState } from 'recoil';
 import DelegationType from 'global/types/DelegationType';
 import EstateType from 'global/types/EstateType';
+import Section from 'global/types/Section';
 
 interface ModalSection extends Section {
-  id: number;
+  id: string;
 }
 
 export const modalSectionAtom = atom<ModalSection>({
   key: 'adminModalSectionState',
   default: {
-    id: 0,
+    id: '',
     title: '',
-    name: '',
     fields: [],
   },
 });
@@ -141,14 +141,14 @@ function Forms() {
 
   function formWithImageSection(form: EstateForm): EstateForm {
     const imageSection: Section = {
+      id: '',
       title: 'تصاویر',
-      name: 'imageSection',
       fields: [
         {
+          id: '',
           type: FieldType.Image,
           title: 'انتخاب تصاویر',
           value: [],
-          name: 'image',
         },
       ],
     };
@@ -174,7 +174,7 @@ function Forms() {
   function formWithNewSection(form: EstateForm, title: string): EstateForm {
     const sections = form.sections;
     const newSection: Section = {
-      name: title,
+      id: '',
       title: title,
       fields: [],
     };
@@ -185,14 +185,14 @@ function Forms() {
     return newForm;
   }
 
-  function updateChangedSection(form: EstateForm, sectionIndex: number) {
+  function updateChangedSection(form: EstateForm, sectionIndex: string) {
     const sections = form.sections;
     const changedSection: Section = {
+      id: modalSection.id,
       title: modalSection.title,
-      name: modalSection.name,
       fields: modalSection.fields,
     };
-    sections.splice(sectionIndex, 1, changedSection);
+    // sections.splice(sectionIndex, 1, changedSection);
 
     setForm({ ...form, sections: sections });
   }
@@ -492,7 +492,7 @@ function Forms() {
                                           onClick={() => {
                                             setModalSection({
                                               ...section,
-                                              id: sectionIndex,
+                                              id: sectionIndex.toString(),
                                             });
                                             setShowEditSectionModal(true);
                                           }}

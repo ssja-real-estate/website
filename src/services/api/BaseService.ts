@@ -1,15 +1,16 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import Strings from 'global/constants/strings';
-import { BASE_URL } from 'local';
 import toast from 'react-hot-toast';
 
 class BaseService {
   protected Api: AxiosInstance;
   protected config: AxiosRequestConfig | undefined;
 
+  private baseUrl = process.env.REACT_APP_BASE_URL ?? '';
+
   constructor() {
     this.Api = axios.create({
-      baseURL: BASE_URL,
+      baseURL: this.baseUrl,
       timeout: 5000,
       headers: {
         'content-type': 'application/json',

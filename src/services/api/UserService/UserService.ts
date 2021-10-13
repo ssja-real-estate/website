@@ -1,14 +1,17 @@
 import GlobalState from 'global/states/GlobalState';
 import User, { defaultUser, Role } from 'global/types/User';
-import { LOGIN_URL, SIGNUP_URL, USER_URL } from 'local';
 import BaseService from '../BaseService';
 
 class UserService extends BaseService {
+  private userUrl = process.env.REACT_APP_USER_URL ?? '';
+  private signupUrl = process.env.REACT_APP_SIGNUP_URL ?? '';
+  private loginUrl = process.env.REACT_APP_LOGIN_URL ?? '';
+
   async getAllUsers(role: Role = Role.USER): Promise<User[]> {
     let users: User[] = [];
 
     try {
-      var response = await this.Api.get(USER_URL, this.config);
+      var response = await this.Api.get(this.userUrl, this.config);
       if (response.data) {
         response.data.forEach((element: User) => {
           const user = element;
@@ -28,7 +31,10 @@ class UserService extends BaseService {
     let user: User = defaultUser;
 
     try {
-      const response = await this.Api.get(`${USER_URL}/${userId}`, this.config);
+      const response = await this.Api.get(
+        `${this.userUrl}/${userId}`,
+        this.config
+      );
 
       if (response.data) {
         const data = response.data as User;
@@ -53,7 +59,7 @@ class UserService extends BaseService {
   ): Promise<GlobalState | undefined> {
     let globalState: GlobalState | undefined = undefined;
     try {
-      const response = await this.Api.post(LOGIN_URL, { mobile, password });
+      const response = await this.Api.post(this.loginUrl, { mobile, password });
 
       if (response.data) {
         const token = response.data.token as string;
@@ -78,7 +84,10 @@ class UserService extends BaseService {
   ): Promise<GlobalState | undefined> {
     let globalState: GlobalState | undefined = undefined;
     try {
-      const response = await this.Api.post(SIGNUP_URL, { mobile, password });
+      const response = await this.Api.post(this.signupUrl, {
+        mobile,
+        password,
+      });
 
       if (response.data) {
         const token = response.data.token as string;
@@ -104,7 +113,7 @@ class UserService extends BaseService {
 
     try {
       const response = await this.Api.put(
-        `${USER_URL}/${userId}`,
+        `${this.userUrl}/${userId}`,
         {
           name,
         },
@@ -124,7 +133,7 @@ class UserService extends BaseService {
     if (!userId) return;
 
     try {
-      await this.Api.put(`${USER_URL}/${userId}`, { role }, this.config);
+      await this.Api.put(`${this.userUrl}/${userId}`, { role }, this.config);
     } catch (error: any) {
       this.handleError(error);
     }

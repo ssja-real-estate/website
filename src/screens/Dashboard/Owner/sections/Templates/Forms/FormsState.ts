@@ -1,16 +1,15 @@
-import { Section } from 'global/types/EstateForm';
+import Section from 'global/types/Section';
 import { atom } from 'recoil';
 
 interface ModalSection extends Section {
-  id: number;
+  id: string;
 }
 
 const modalSectionAtom = atom<ModalSection>({
   key: 'ownerModalSectionState',
   default: {
-    id: 0,
+    id: '',
     title: '',
-    name: '',
     fields: [],
   },
 });

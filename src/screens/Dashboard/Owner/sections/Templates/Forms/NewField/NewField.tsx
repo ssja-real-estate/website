@@ -34,7 +34,7 @@ function NewField() {
               variant="dark"
               onClick={() => {
                 let newField: Field = {
-                  name: '',
+                  id: '',
                   title: '',
                   type: 0,
                   value: '',
@@ -42,7 +42,7 @@ function NewField() {
                 switch (selectedType) {
                   case FieldType.Text:
                     newField = {
-                      name: newFieldTitle,
+                      id: '',
                       title: newFieldTitle,
                       type: FieldType.Text,
                       value: '',
@@ -50,7 +50,7 @@ function NewField() {
                     break;
                   case FieldType.Number:
                     newField = {
-                      name: newFieldTitle,
+                      id: '',
                       title: newFieldTitle,
                       type: FieldType.Number,
                       value: 0,
@@ -58,7 +58,7 @@ function NewField() {
                     break;
                   case FieldType.Select:
                     newField = {
-                      name: newFieldTitle,
+                      id: '',
                       title: newFieldTitle,
                       type: FieldType.Select,
                       value: '',
@@ -67,7 +67,7 @@ function NewField() {
                     break;
                   case FieldType.Bool:
                     newField = {
-                      name: newFieldTitle,
+                      id: '',
                       title: newFieldTitle,
                       type: FieldType.Bool,
                       value: false,
@@ -75,7 +75,7 @@ function NewField() {
                     break;
                   case FieldType.Conditional:
                     newField = {
-                      name: newFieldTitle,
+                      id: '',
                       title: newFieldTitle,
                       type: FieldType.Conditional,
                       value: false,

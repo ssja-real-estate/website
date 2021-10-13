@@ -1,13 +1,14 @@
 import { EstateForm } from 'global/types/EstateForm';
-import { FORM_URL } from 'local';
 import BaseService from '../BaseService';
 
 class FormService extends BaseService {
+  private formUrl = process.env.REACT_APP_FORM_URL ?? '';
+
   getForms = async () => {
     let forms: EstateForm[] = [];
 
     try {
-      const response = await this.Api.get(FORM_URL, this.config);
+      const response = await this.Api.get(this.formUrl, this.config);
       if (response.data) {
         forms = response.data as EstateForm[];
       }
@@ -22,7 +23,7 @@ class FormService extends BaseService {
 
   createForm = async (form: EstateForm) => {
     try {
-      await this.Api.post(FORM_URL, form, this.config);
+      await this.Api.post(this.formUrl, form, this.config);
     } catch (error: any) {
       this.handleError(error);
     }
@@ -30,7 +31,7 @@ class FormService extends BaseService {
 
   updateForm = async (formId: string, form: EstateForm) => {
     try {
-      await this.Api.put(`${FORM_URL}/${formId}`, form, this.config);
+      await this.Api.put(`${this.formUrl}/${formId}`, form, this.config);
     } catch (error: any) {
       this.handleError(error);
     }
@@ -38,9 +39,11 @@ class FormService extends BaseService {
 
   deleteForm = async (formId: string) => {
     try {
-      await this.Api.delete(`${FORM_URL}/${formId}`, this.config);
+      await this.Api.delete(`${this.formUrl}/${formId}`, this.config);
     } catch (error: any) {
       this.handleError(error);
     }
   };
 }
+
+export default FormService;

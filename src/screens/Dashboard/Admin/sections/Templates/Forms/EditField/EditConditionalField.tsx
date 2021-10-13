@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import {
   Button,
@@ -18,7 +19,7 @@ import {
 import { innerFieldModalDataAtom } from '../EditSection';
 
 interface ModalField extends Field {
-  id: number;
+  id: string;
 }
 
 function EditConditionalField() {
@@ -52,8 +53,8 @@ function EditConditionalField() {
   ) {
     const innerFields = Object.assign([], field.fields);
     const changedField: Field = {
+      id: editSelectFieldModalData!.id,
       title: editSelectFieldModalData!.title,
-      name: editSelectFieldModalData!.name,
       type: editSelectFieldModalData!.type,
       value: editSelectFieldModalData!.value,
       options: editSelectFieldModalData!.options,
@@ -113,7 +114,7 @@ function EditConditionalField() {
                     onClick={() => {
                       setRenameInnerFieldModalData({
                         ...innerField,
-                        id: innerFieldIndex,
+                        id: innerFieldIndex.toString(),
                       });
                       setShowRenameInnerFieldModal(true);
                     }}
@@ -142,7 +143,7 @@ function EditConditionalField() {
                       onClick={() => {
                         setEditSelectFieldModalData({
                           ...innerField,
-                          id: innerFieldIndex,
+                          id: innerFieldIndex.toString(),
                         });
                         setShowEditSelectFieldModal(true);
                       }}
@@ -174,7 +175,7 @@ function EditConditionalField() {
           variant="dark"
           onClick={() => {
             let newInnerField: Field = {
-              name: '',
+              id: '',
               title: '',
               type: 0,
               value: '',
@@ -182,7 +183,7 @@ function EditConditionalField() {
             switch (selectedType) {
               case FieldType.Text:
                 newInnerField = {
-                  name: newInnerFieldTitle,
+                  id: '',
                   title: newInnerFieldTitle,
                   type: FieldType.Text,
                   value: '',
@@ -190,7 +191,7 @@ function EditConditionalField() {
                 break;
               case FieldType.Number:
                 newInnerField = {
-                  name: newInnerFieldTitle,
+                  id: '',
                   title: newInnerFieldTitle,
                   type: FieldType.Number,
                   value: 0,
@@ -198,7 +199,7 @@ function EditConditionalField() {
                 break;
               case FieldType.Select:
                 newInnerField = {
-                  name: newInnerFieldTitle,
+                  id: '',
                   title: newInnerFieldTitle,
                   type: FieldType.Select,
                   value: '',
@@ -207,7 +208,7 @@ function EditConditionalField() {
                 break;
               case FieldType.Bool:
                 newInnerField = {
-                  name: newInnerFieldTitle,
+                  id: '',
                   title: newInnerFieldTitle,
                   type: FieldType.Bool,
                   value: false,
@@ -327,15 +328,15 @@ function EditConditionalField() {
           setShowRenameInnerFieldModal(false);
         }}
         handleSuccess={() => {
-          const changedInnerField: Field = {
-            ...renameInnerFieldModalData!,
-          };
+          // const changedInnerField: Field = {
+          //   ...renameInnerFieldModalData!,
+          // };
           const innerFields = Object.assign([], innerFieldModalData.fields);
-          innerFields.splice(
-            renameInnerFieldModalData!.id,
-            1,
-            changedInnerField
-          );
+          // innerFields.splice(
+          //   renameInnerFieldModalData!.id,
+          //   1,
+          //   changedInnerField
+          // );
 
           setInnerFieldModalData({
             ...innerFieldModalData,
@@ -366,10 +367,10 @@ function EditConditionalField() {
         }}
         handleSuccess={() => {
           if (editSelectFieldModalData!.options!.length > 1) {
-            updateChangedSelectField(
-              innerFieldModalData,
-              editSelectFieldModalData!.id
-            );
+            // updateChangedSelectField(
+            //   innerFieldModalData,
+            //   editSelectFieldModalData!.id
+            // );
             setShowEditSelectFieldModal(false);
           } else {
             alert('لطفاً حداقل دو گزینه برای ورودی جدید انتخاب کنید');

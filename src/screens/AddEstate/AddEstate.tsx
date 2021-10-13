@@ -114,12 +114,10 @@ function AddEstateScreen() {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
-          <label htmlFor={field.name}>{field.title}</label>
+          <label>{field.title}</label>
           {field.type === FieldType.Text ? (
             <Form.Control
               type="text"
-              name={field.name}
-              id={field.name}
               value={field.value ? String(field.value) : ''}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
@@ -130,8 +128,6 @@ function AddEstateScreen() {
           ) : field.type === FieldType.Number ? (
             <Form.Control
               type="number"
-              name={field.name}
-              id={field.name}
               value={field.value ? Number(field.value) : ''}
               onChange={(e) => {
                 const numberValue = Number(e.target.value);
@@ -159,8 +155,6 @@ function AddEstateScreen() {
             <Form.Check
               className="d-inline mx-3"
               type="switch"
-              name={field.name}
-              id={field.name}
               checked={field.value ? true : false}
               onChange={(e) => {
                 const booleanValue = e.target.checked;
@@ -216,8 +210,6 @@ function AddEstateScreen() {
           ) : (
             <Form.Control
               type="text"
-              name={field.name}
-              id={field.name}
               value={field.value ? String(field.value) : ''}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
@@ -240,12 +232,10 @@ function AddEstateScreen() {
     return fields.map((innerField, innerFieldIndex) => {
       return (
         <div key={innerFieldIndex} className="input-item py-3">
-          <label htmlFor={innerField.name}>{innerField.title}</label>
+          <label>{innerField.title}</label>
           {innerField.type === FieldType.Text ? (
             <Form.Control
               type="text"
-              name={innerField.name}
-              id={innerField.name}
               value={innerField.value ? String(innerField.value) : ''}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
@@ -262,8 +252,6 @@ function AddEstateScreen() {
           ) : innerField.type === FieldType.Number ? (
             <Form.Control
               type="number"
-              name={innerField.name}
-              id={innerField.name}
               value={innerField.value ? Number(innerField.value) : ''}
               onChange={(e) => {
                 const numberValue = Number(e.target.value);
@@ -303,8 +291,6 @@ function AddEstateScreen() {
             <Form.Check
               className="d-inline mx-3"
               type="switch"
-              name={innerField.name}
-              id={innerField.name}
               checked={innerField.value ? true : false}
               onChange={(e) => {
                 const booleanValue = e.target.checked;
@@ -372,8 +358,6 @@ function AddEstateScreen() {
           ) : (
             <Form.Control
               type="text"
-              name={innerField.name}
-              id={innerField.name}
               value={innerField.value ? String(innerField.value) : ''}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
