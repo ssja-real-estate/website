@@ -1,5 +1,9 @@
 import EditItemModal from 'components/EditItemModal/EditItemModal';
-import editItemModalState from 'components/EditItemModal/EditItemModalState';
+import editItemModalState, {
+  buildMap,
+  defaultEditItemModalState,
+  EditItemType,
+} from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import Province from 'global/types/Province';
@@ -46,17 +50,15 @@ function ProvinceList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (mounted.current) {
-      if (modalState.editProvince) {
-        editProvince();
-      }
+    if (modalState.editMap[EditItemType.Province]) {
+      editProvince();
     }
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editProvince]);
+  }, [modalState.editMap[EditItemType.Province]]);
 
   const loadData = async () => {
     if (!loading) {
@@ -107,7 +109,7 @@ function ProvinceList() {
         return prev;
       });
     }
-
+    setModalState(defaultEditItemModalState);
     setLoading((prev) => false);
   };
 
@@ -130,14 +132,13 @@ function ProvinceList() {
       <EditItemModal
         title={Strings.edit}
         placeholder={Strings.province}
-        editProvince
+        editItemType={EditItemType.Province}
       />
       <h4 className="mt-4 ms-3 d-inline">{Strings.provinces}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
         onClick={async () => {
-          console.log('reload');
           await loadData();
         }}
       >
@@ -207,11 +208,12 @@ function ProvinceList() {
                         selectItemAsRemoved(province);
                       }}
                       onEdit={() => {
+                        const newMap = buildMap(EditItemType.Province);
                         setModalState({
+                          ...defaultEditItemModalState,
                           id: province.id,
                           value: province.name,
-                          displayModal: true,
-                          editProvince: false,
+                          displayMap: [...newMap],
                         });
                       }}
                     />

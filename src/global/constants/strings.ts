@@ -14,6 +14,7 @@ class Strings {
   static saveChangesSuccess = 'تغییرات با موفقیت ذخیره شد';
   static saveChangesError = 'خطا در ذخیره سازی تغییرات';
   static choose = 'انتخاب کنید';
+  static chooseProvince = 'انتخاب استان';
   static addNewCity = 'افزودن شهر جدید';
   static addNewUnit = 'افزودن واحد جدید';
   static login = 'ورود';
@@ -67,6 +68,11 @@ class Strings {
   static province = 'استان';
   static city = 'شهر';
   static unit = 'واحد';
+  static clientUnknownError = 'خطای سمت کاربر';
+  static unknownServerError = 'خطای سمت سرور';
+  static client400Error = 'درخواست موردنظر اشتباه است';
+  static client404Error = 'منبع درخواستی وجود ندارد';
+  static client405Error = 'درخواست موردنظر غیرمجاز است';
 }
 
 export default Strings;

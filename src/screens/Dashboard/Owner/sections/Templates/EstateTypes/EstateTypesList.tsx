@@ -1,5 +1,9 @@
 import EditItemModal from 'components/EditItemModal/EditItemModal';
-import editItemModalState from 'components/EditItemModal/EditItemModalState';
+import editItemModalState, {
+  buildMap,
+  defaultEditItemModalState,
+  EditItemType,
+} from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import EstateType from 'global/types/EstateType';
@@ -47,17 +51,15 @@ function EstateTypesList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (mounted.current) {
-      if (modalState.editEstateType) {
-        editEstateType();
-      }
+    if (modalState.editMap[EditItemType.EstateType]) {
+      editEstateType();
     }
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editEstateType]);
+  }, [modalState.editMap[EditItemType.EstateType]]);
 
   const loadData = async () => {
     if (!loading) {
@@ -108,7 +110,7 @@ function EstateTypesList() {
         return types;
       });
     }
-
+    setModalState(defaultEditItemModalState);
     setLoading((prev) => false);
   };
 
@@ -131,7 +133,7 @@ function EstateTypesList() {
       <EditItemModal
         title={Strings.edit}
         placeholder={Strings.estateType}
-        editEstateType
+        editItemType={EditItemType.EstateType}
       />
       <h4 className="mt-4 ms-3 d-inline">{Strings.estateTypes}</h4>
       <Button
@@ -207,11 +209,12 @@ function EstateTypesList() {
                         selectItemAsDeleted(estateType);
                       }}
                       onEdit={() => {
+                        const newMap = buildMap(EditItemType.EstateType);
                         setModalState({
+                          ...defaultEditItemModalState,
                           id: estateType.id,
                           value: estateType.name,
-                          displayModal: true,
-                          editEstateType: false,
+                          displayMap: [...newMap],
                         });
                       }}
                     />

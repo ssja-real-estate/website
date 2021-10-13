@@ -1,5 +1,9 @@
 import EditItemModal from 'components/EditItemModal/EditItemModal';
-import editItemModalState from 'components/EditItemModal/EditItemModalState';
+import editItemModalState, {
+  buildMap,
+  defaultEditItemModalState,
+  EditItemType,
+} from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import Unit from 'global/types/Unit';
@@ -45,17 +49,15 @@ function UnitList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (mounted.current) {
-      if (modalState.editUnit) {
-        editUnit();
-      }
+    if (modalState.editMap[EditItemType.Unit]) {
+      editUnit();
     }
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editUnit]);
+  }, [modalState.editMap[EditItemType.Unit]]);
 
   const loadData = async () => {
     if (!loading) {
@@ -89,9 +91,6 @@ function UnitList() {
 
   const editUnit = async () => {
     if (modalState.id === '') return;
-    console.log('unit');
-    console.log(modalState);
-
     setLoading((prev) => true);
 
     let updatedUnit = await service.current.editUnit({
@@ -108,7 +107,7 @@ function UnitList() {
         return prev;
       });
     }
-
+    setModalState(defaultEditItemModalState);
     setLoading((prev) => false);
   };
 
@@ -126,7 +125,11 @@ function UnitList() {
 
   return (
     <>
-      <EditItemModal title={Strings.edit} placeholder={Strings.unit} editUnit />
+      <EditItemModal
+        title={Strings.edit}
+        placeholder={Strings.unit}
+        editItemType={EditItemType.Unit}
+      />
 
       <h4 className="mt-4 ms-3 d-inline">{Strings.units}</h4>
       <Button
@@ -202,11 +205,12 @@ function UnitList() {
                         selectItemAsDeleted(unit);
                       }}
                       onEdit={() => {
+                        const newMap = buildMap(EditItemType.Unit);
                         setModalState({
+                          ...defaultEditItemModalState,
                           id: unit.id,
                           value: unit.name,
-                          displayModal: true,
-                          editUnit: false,
+                          displayMap: [...newMap],
                         });
                       }}
                     />

@@ -74,7 +74,7 @@ function CityList() {
           }}
         >
           <option value="default" disabled>
-            {Strings.choose}
+            {Strings.chooseProvince}
           </option>
           {provinces.map((province, index) => {
             return (

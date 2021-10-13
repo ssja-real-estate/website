@@ -86,12 +86,15 @@ class ProvinceCityService extends BaseService {
 
     let updatedCity = undefined;
     try {
-      const response = await this.Api.post(
+      console.log('city service 0');
+      const response = await this.Api.put(
         `${PROVINCE_URL}${CITY_URL}/${provinceId}`,
-        { name: city.name },
+        city,
         this.config
       );
+      console.log('city service 1');
       if (response.data) {
+        console.log('city service 2');
         updatedCity = response.data as City;
       }
     } catch (error: any) {

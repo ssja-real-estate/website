@@ -3,17 +3,15 @@ import { useEffect, useState } from 'react';
 import { Button, Container, Form, Modal } from 'react-bootstrap';
 import { useRecoilState } from 'recoil';
 import editItemModalState, {
+  buildMap,
   defaultEditItemModalState,
+  EditItemType,
 } from './EditItemModalState';
 
 interface Props {
   title: string;
   placeholder: string;
-  editDelegationType?: boolean;
-  editEstateType?: boolean;
-  editProvince?: boolean;
-  editCity?: boolean;
-  editUnit?: boolean;
+  editItemType: EditItemType;
 }
 
 const EditItemModal: React.FC<Props> = (props) => {
@@ -21,10 +19,9 @@ const EditItemModal: React.FC<Props> = (props) => {
   const [newValue, setNewValue] = useState('');
 
   useEffect(() => {
-    console.log(modalState.value);
     setNewValue(modalState.value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.displayModal]);
+  }, [modalState.displayMap[props.editItemType]]);
 
   const cancel = () => {
     setModalState(defaultEditItemModalState);
@@ -34,15 +31,14 @@ const EditItemModal: React.FC<Props> = (props) => {
   const submit = () => {
     if (newValue.trim() === modalState.value.trim()) return;
 
+    const displayMap = buildMap(props.editItemType, false);
+    const editMap = buildMap(props.editItemType);
+
     setModalState({
       ...modalState,
       value: newValue.trim(),
-      displayModal: false,
-      editDelegationType: props.editDelegationType,
-      editEstateType: props.editEstateType,
-      editProvince: props.editProvince,
-      editCity: props.editCity,
-      editUnit: props.editUnit,
+      displayMap: displayMap,
+      editMap: editMap,
     });
     setNewValue('');
   };
@@ -50,7 +46,7 @@ const EditItemModal: React.FC<Props> = (props) => {
   return (
     <Modal
       centered
-      show={modalState.displayModal}
+      show={modalState.displayMap[props.editItemType]}
       onHide={() => {
         cancel();
       }}

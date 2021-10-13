@@ -1,25 +1,39 @@
 import { atom } from 'recoil';
 
+enum EditItemType {
+  DelegationType = 0,
+  EstateType = 1,
+  Province = 2,
+  City = 3,
+  Unit = 4,
+}
+
 interface EditItemModalState {
   id: string;
   value: string;
-  displayModal: boolean;
-  editDelegationType?: boolean;
-  editEstateType?: boolean;
-  editProvince?: boolean;
-  editCity?: boolean;
-  editUnit?: boolean;
+  displayMap: boolean[];
+  editMap: boolean[];
 }
+
+const defaultMap = [false, false, false, false, false];
 
 const defaultEditItemModalState: EditItemModalState = {
   id: '',
   value: '',
-  displayModal: false,
-  editDelegationType: false,
-  editEstateType: false,
-  editProvince: false,
-  editCity: false,
-  editUnit: false,
+  displayMap: [...defaultMap],
+  editMap: [...defaultMap],
+};
+
+const buildMap = (type: EditItemType, flag: boolean = true) => {
+  const length = defaultMap.length;
+  let map = [...defaultMap];
+
+  for (let i = 0; i < length; i++) {
+    const value = type === i ? flag : false;
+    map[i] = value;
+  }
+
+  return map;
 };
 
 const editItemModalState = atom<EditItemModalState>({
@@ -29,4 +43,4 @@ const editItemModalState = atom<EditItemModalState>({
 
 export default editItemModalState;
 export type { EditItemModalState };
-export { defaultEditItemModalState };
+export { EditItemType, defaultEditItemModalState, buildMap };

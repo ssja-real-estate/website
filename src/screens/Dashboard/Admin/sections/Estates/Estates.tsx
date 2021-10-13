@@ -19,17 +19,17 @@ function EstatesSection() {
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const state = useRecoilValue(globalState);
-  const mounted = useRef(true);
+  // const state = useRecoilValue(globalState);
+  // const mounted = useRef(true);
 
-  useEffect(() => {
-    if (mounted.current) {
-    }
+  // useEffect(() => {
+  //   if (mounted.current) {
+  //   }
 
-    return () => {
-      mounted.current = false;
-    };
-  }, [state.token]);
+  //   return () => {
+  //     mounted.current = false;
+  //   };
+  // }, [state.token]);
 
   function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setDelegationType(event.target.value);

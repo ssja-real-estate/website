@@ -1,5 +1,9 @@
 import EditItemModal from 'components/EditItemModal/EditItemModal';
-import editItemModalState from 'components/EditItemModal/EditItemModalState';
+import editItemModalState, {
+  buildMap,
+  defaultEditItemModalState,
+  EditItemType,
+} from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import DelegationType from 'global/types/DelegationType';
@@ -47,17 +51,15 @@ function DelegationTypesList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (mounted.current) {
-      if (modalState.editDelegationType) {
-        editDelegationType();
-      }
+    if (modalState.editMap[EditItemType.DelegationType]) {
+      editDelegationType();
     }
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editDelegationType]);
+  }, [modalState.editMap[EditItemType.DelegationType]]);
 
   const loadData = async () => {
     if (!loading) {
@@ -92,8 +94,6 @@ function DelegationTypesList() {
   const editDelegationType = async () => {
     if (modalState.id === '') return;
 
-    console.log('delegation');
-    console.log(modalState);
     setLoading((prev) => true);
     let newType = await service.current.editDelegationType({
       id: modalState.id,
@@ -109,6 +109,7 @@ function DelegationTypesList() {
         return types;
       });
     }
+    setModalState(defaultEditItemModalState);
     setLoading((prev) => false);
   };
 
@@ -131,7 +132,7 @@ function DelegationTypesList() {
       <EditItemModal
         title={Strings.edit}
         placeholder={Strings.delegationType}
-        editDelegationType
+        editItemType={EditItemType.DelegationType}
       />
       <h4 className="mt-4 ms-3 d-inline">{Strings.delegationTypes}</h4>
       <Button
@@ -207,11 +208,12 @@ function DelegationTypesList() {
                         selectItemAsDeleted(delegationType);
                       }}
                       onEdit={() => {
+                        const newMap = buildMap(EditItemType.DelegationType);
                         setModalState({
+                          ...defaultEditItemModalState,
                           id: delegationType.id,
                           value: delegationType.name,
-                          displayModal: true,
-                          editDelegationType: false,
+                          displayMap: [...newMap],
                         });
                       }}
                     />

@@ -33,10 +33,53 @@ class BaseService {
 
     let response = (error as AxiosError).response;
     if (response && response?.data) {
-      toast.error(response.data.error);
+      if (!response.data.error) {
+        this.toastStatusError(error);
+        return;
+      } else {
+        toast.error(response.data.error);
+      }
     } else {
-      this.toastUnknownError(error);
+      this.toastStatusError(error);
+      return;
     }
+  }
+
+  private toastStatusError(error: AxiosError) {
+    if (!error.response) {
+      this.toastUnknownError(error);
+      return;
+    }
+
+    const status = error.response.status;
+    let message = this.buildErrorMessage(status);
+    toast.error(message);
+  }
+
+  private buildErrorMessage(status: number) {
+    let result = `کد خطا: ${status.toString()} - `;
+    if (status >= 400 && status <= 499) {
+      switch (status) {
+        case 400:
+          result += Strings.client400Error;
+          break;
+        case 404:
+          result += Strings.client404Error;
+          break;
+        case 405:
+          result += Strings.client405Error;
+          break;
+        default:
+          result += Strings.clientUnknownError;
+          break;
+      }
+    } else if (status >= 500 && status <= 599) {
+      result += Strings.unknownServerError;
+    } else {
+      result += Strings.unknownError;
+    }
+
+    return result;
   }
 
   private toastUnknownError(error: any) {

@@ -1,5 +1,9 @@
 import EditItemModal from 'components/EditItemModal/EditItemModal';
-import editItemModalState from 'components/EditItemModal/EditItemModalState';
+import editItemModalState, {
+  buildMap,
+  defaultEditItemModalState,
+  EditItemType,
+} from 'components/EditItemModal/EditItemModalState';
 import Strings from 'global/constants/strings';
 import { globalState } from 'global/states/globalStates';
 import City from 'global/types/City';
@@ -48,17 +52,15 @@ function CityList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (mounted.current) {
-      if (modalState.editCity) {
-        editCity();
-      }
+    if (modalState.editMap[EditItemType.City]) {
+      editCity();
     }
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editCity]);
+  }, [modalState.editMap[EditItemType.City]]);
 
   const loadData = async () => {
     if (!loading) {
@@ -103,21 +105,27 @@ function CityList() {
     setLoading((prev) => true);
 
     let provinceId = selectedProvince?.id ?? '';
+    console.log('owner city list');
     let updatedCity = await service.current.editCityInProvince(provinceId, {
       id: modalState.id,
       name: modalState.value,
     });
-
+    console.log(updatedCity);
     if (updatedCity) {
       setProvinces((prev) => {
-        let prevType = prev.find((t) => t.id === updatedCity!.id);
-        if (prevType) {
-          prevType.name = updatedCity!.name;
+        let prevProvince = prev.find((t) => t.id === provinceId);
+        if (prevProvince) {
+          let prevCity = prevProvince.cities.find(
+            (c) => c.id === updatedCity!.id
+          );
+          if (prevCity) {
+            prevCity.name = updatedCity!.name;
+          }
         }
         return prev;
       });
     }
-
+    setModalState(defaultEditItemModalState);
     setLoading((prev) => false);
   };
 
@@ -139,7 +147,11 @@ function CityList() {
 
   return (
     <>
-      <EditItemModal title={Strings.edit} placeholder={Strings.city} editCity />
+      <EditItemModal
+        title={Strings.edit}
+        placeholder={Strings.city}
+        editItemType={EditItemType.City}
+      />
       <h4 className="mt-4 ms-3 d-inline">{Strings.cities}</h4>
       <Button
         variant="dark"
@@ -198,7 +210,7 @@ function CityList() {
               }}
             >
               <option value="default" disabled>
-                {Strings.choose}
+                {Strings.chooseProvince}
               </option>
               {provinces.map((province, index) => {
                 return (
@@ -240,11 +252,12 @@ function CityList() {
                           selectItemAsDeleted(city);
                         }}
                         onEdit={() => {
+                          const newMap = buildMap(EditItemType.City);
                           setModalState({
+                            ...defaultEditItemModalState,
                             id: city.id,
                             value: city.name,
-                            displayModal: true,
-                            editCity: false,
+                            displayMap: [...newMap],
                           });
                         }}
                       />
