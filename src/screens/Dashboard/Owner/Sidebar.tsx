@@ -25,7 +25,7 @@ function OwnerSidebar() {
             setSection('profile');
           }}
         >
-          <i className="edit-icon bi-grid-1x2-fill"></i>
+          <i className="bi-grid-1x2-fill"></i>
         </Button>
       </OverlayTrigger>
       <OverlayTrigger
@@ -39,7 +39,7 @@ function OwnerSidebar() {
             setSection('users');
           }}
         >
-          <i className="edit-icon bi-people-fill"></i>
+          <i className="bi-people-fill"></i>
         </Button>
       </OverlayTrigger>
       <OverlayTrigger
@@ -53,7 +53,7 @@ function OwnerSidebar() {
             setSection('estates');
           }}
         >
-          <i className="edit-icon bi-grid-3x3-gap-fill"></i>
+          <i className="bi-grid-3x3-gap-fill"></i>
         </Button>
       </OverlayTrigger>
       <OverlayTrigger
@@ -67,7 +67,7 @@ function OwnerSidebar() {
             setSection('templates');
           }}
         >
-          <i className="edit-icon bi-diagram-3-fill"></i>
+          <i className="bi-diagram-3-fill"></i>
         </Button>
       </OverlayTrigger>
     </motion.div>

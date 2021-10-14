@@ -59,8 +59,7 @@ class Strings {
   static images = 'تصاویر';
   static chooseImages = 'انتخاب تصاویر';
   static addNewSection = 'افزودن بخش جدید';
-  static chooseNewTitleForTheSection =
-    'لطفا یک عنوان جدید برای بخش انتخاب کنید';
+  static sectionTitleCantBeEmpty = 'عنوان بخش نمی‌تواند خالی باشد';
   static chooseEstateType = 'انتخاب نوع ملک';
   static chooseDelegationType = 'انتخاب نوع واگذاری';
   static chooseFormFilters =
@@ -86,6 +85,10 @@ class Strings {
   static conditionalField = 'شرطی';
   static imageField = 'تصویر';
   static rangeField = 'بازه';
+  static loadingOptions = 'در حال به‌روزرسانی گزینه‌ها';
+  static loadingOptionsSuccess = 'گزینه‌ها با موفقیت به‌روزرسانی شدند';
+  static loadingOptionsFailed = 'به‌روزرسانی گزینه‌ها با خطا مواجه شد';
+  static confirm = 'ثبت';
 }
 
 export default Strings;

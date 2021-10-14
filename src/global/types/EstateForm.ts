@@ -1,8 +1,14 @@
 import Section from './Section';
 
 interface EstateForm {
-  id: number;
+  id?: string;
   sections: Section[];
 }
 
+const defaultForm: EstateForm = {
+  id: '',
+  sections: [],
+};
+
 export type { EstateForm };
+export { defaultForm };

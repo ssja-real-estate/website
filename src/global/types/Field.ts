@@ -19,7 +19,7 @@ enum FieldTypeTitle {
 }
 
 interface Field {
-  id: string;
+  id?: string;
   type: FieldType;
   title: string;
   value: string | number | boolean | string[] | [number, number];
@@ -29,5 +29,41 @@ interface Field {
   max?: number;
 }
 
+const defaultField: Field = {
+  type: FieldType.Text,
+  title: '',
+  value: '',
+};
+
+const getFieldTitle = (field: Field) => {
+  let title = '';
+
+  switch (field.type) {
+    case FieldType.Text:
+      title = FieldTypeTitle.Text;
+      break;
+    case FieldType.Number:
+      title = FieldTypeTitle.Number;
+      break;
+    case FieldType.Select:
+      title = FieldTypeTitle.Select;
+      break;
+    case FieldType.Bool:
+      title = FieldTypeTitle.Bool;
+      break;
+    case FieldType.Conditional:
+      title = FieldTypeTitle.Conditional;
+      break;
+    case FieldType.Image:
+      title = FieldTypeTitle.Image;
+      break;
+    case FieldType.Range:
+      title = FieldTypeTitle.Range;
+      break;
+  }
+
+  return title;
+};
+
 export type { Field };
-export { FieldType, FieldTypeTitle };
+export { FieldType, FieldTypeTitle, defaultField, getFieldTitle };

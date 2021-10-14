@@ -16,11 +16,14 @@ import {
   Spinner,
 } from 'react-bootstrap';
 
-import { EstateForm } from '../../../../../../global/types/EstateForm';
 import {
-  Field,
+  defaultForm,
+  EstateForm,
+} from '../../../../../../global/types/EstateForm';
+import {
+  defaultField,
   FieldType,
-  FieldTypeTitle,
+  getFieldTitle,
 } from '../../../../../../global/types/Field';
 import CustomModal from '../../../../../../components/CustomModal/CustomModal';
 import EditSection from './EditSection';
@@ -33,7 +36,8 @@ import { globalState } from 'global/states/globalStates';
 import FormService from 'services/api/FormService/FormService';
 import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
 import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
-import Section from 'global/types/Section';
+import Section, { defaultSection } from 'global/types/Section';
+import toast from 'react-hot-toast';
 
 const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -54,7 +58,7 @@ const Forms = () => {
       ? true
       : false;
 
-  const [form, setForm] = useState<EstateForm>();
+  const [form, setForm] = useState<EstateForm>(defaultForm);
   const [hasImage, setHasImage] = useState<boolean>(false);
   const [showNewSectionModal, setShowNewSectionModal] =
     useState<boolean>(false);
@@ -88,18 +92,56 @@ const Forms = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDefault, delegationType.name, estateType.name]);
 
+  // useEffect(() => {
+  //   if (form) {
+  //     if (includesImageSection()) {
+  //       setHasImage(true);
+  //     } else {
+  //       setHasImage(false);
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [form.sections]);
+
+  const loadOptions = async () => {
+    toast.promise(
+      delegationTypeService.current
+        .getAllDelegationTypes()
+        .then((delegationTypes) => {
+          setDelegationTypes(delegationTypes);
+        })
+        .then(() => {
+          return estateTypeService.current.getAllEstateTypes();
+        })
+        .then((estateTypes) => {
+          setEstateTypes(estateTypes);
+        })
+        .catch((error) => {
+          console.log(error);
+        }),
+      {
+        success: Strings.loadingOptionsSuccess,
+        loading: Strings.loadingOptions,
+        error: Strings.loadingOptionsFailed,
+      }
+    );
+  };
+
   const loadData = async () => {
     if (!loading) {
       setLoading((prev) => true);
     }
 
-    const delegationTypes =
-      await delegationTypeService.current.getAllDelegationTypes();
-    setDelegationTypes(delegationTypes);
-    const estateTypes = await estateTypeService.current.getAllEstateTypes();
-    setEstateTypes(estateTypes);
-
     setLoading((prev) => false);
+  };
+
+  const addNewSectionToForm = () => {
+    const newSection: Section = {
+      ...defaultSection,
+      title: newSectionTitle,
+    };
+    setForm({ ...form, sections: [...form.sections, newSection] });
+    setShowNewSectionModal((prev) => false);
   };
 
   const handleSectionDragEnd = (result: DropResult) => {
@@ -114,69 +156,36 @@ const Forms = () => {
     setForm({ ...form!, sections: tempSections });
   };
 
-  const includesImageSection = (form: EstateForm): boolean => {
-    const imageSections = form.sections.filter((section) => {
-      let isImageSection = false;
-      section.fields.forEach((field) => {
-        if (field.type === FieldType.Image) {
-          isImageSection = true;
-        } else {
-          isImageSection = false;
-        }
-      });
-      return isImageSection;
-    });
-    if (imageSections.length > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const handleImagesSection = () => {
+    if (!form) return;
 
-  const formWithImageSection = (form: EstateForm): EstateForm => {
-    const imageSection: Section = {
-      id: '',
-      title: Strings.images,
-      fields: [
-        {
-          id: '',
-          type: FieldType.Image,
-          title: Strings.chooseImages,
-          value: [],
-        },
-      ],
-    };
-
-    const sections = form.sections;
-    sections.unshift(imageSection);
-    const newForm: EstateForm = {
-      ...form,
-      sections: sections,
-    };
-
-    return newForm;
-  };
-
-  const formNoImageSection = (form: EstateForm): EstateForm => {
-    if (includesImageSection(form)) {
+    const hasImageSection = includesImageSection();
+    if (hasImageSection) {
       form.sections.shift();
+    } else {
+      const newSection: Section = {
+        title: Strings.images,
+        fields: [
+          {
+            ...defaultField,
+            type: FieldType.Image,
+            title: Strings.chooseImages,
+            value: [],
+          },
+        ],
+      };
+      form.sections.unshift(newSection);
     }
-
-    return form;
   };
 
-  const formWithNewSection = (form: EstateForm, title: string): EstateForm => {
-    const sections = form.sections;
-    const newSection: Section = {
-      id: '',
-      title: title,
-      fields: [],
-    };
-    sections.push(newSection);
+  const includesImageSection = () => {
+    if (!form.sections.length) return false;
 
-    const newForm = { ...form, sections: sections };
+    const imageField = form.sections[0].fields.find((field) => {
+      return field.type === FieldType.Image;
+    });
 
-    return newForm;
+    return imageField !== undefined;
   };
 
   const updateChangedSection = (form: EstateForm, sectionIndex: string) => {
@@ -191,51 +200,12 @@ const Forms = () => {
     setForm({ ...form, sections: sections });
   };
 
-  // const getDelegationTypes = async () => {};
-
-  // const getEstateTypes = async () => {};
-
-  // const getFormData = async () => {};
-
-  const getFieldTitle = (field: Field) => {
-    let title = '---';
-
-    switch (field.type) {
-      case FieldType.Text:
-        title = FieldTypeTitle.Text;
-        break;
-      case FieldType.Number:
-        title = FieldTypeTitle.Number;
-        break;
-      case FieldType.Select:
-        title = FieldTypeTitle.Select;
-        break;
-      case FieldType.Bool:
-        title = FieldTypeTitle.Bool;
-        break;
-      case FieldType.Conditional:
-        title = FieldTypeTitle.Conditional;
-        break;
-      case FieldType.Image:
-        title = FieldTypeTitle.Image;
-        break;
-      case FieldType.Range:
-        title = FieldTypeTitle.Range;
-        break;
+  const saveChanges = async () => {
+    setLoading((prev) => true);
+    if (form) {
     }
-
-    return title;
+    await loadData();
   };
-
-  // useEffect(() => {
-  //   if (form) {
-  //     if (includesImageSection(form)) {
-  //       setHasImage(true);
-  //     } else {
-  //       setHasImage(false);
-  //     }
-  //   }
-  // }, [form]);
 
   return (
     <>
@@ -244,6 +214,10 @@ const Forms = () => {
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
         onClick={async () => {
+          if (isDefault) {
+            await loadOptions();
+            return;
+          }
           await loadData();
         }}
       >
@@ -251,19 +225,18 @@ const Forms = () => {
       </Button>
       <CustomModal
         title={Strings.addNewSection}
-        cancelTitle={Strings.save}
-        successTitle="افزودن بخش"
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.confirm}
         show={showNewSectionModal}
         handleClose={() => {
           setShowNewSectionModal(false);
         }}
         handleSuccess={() => {
           if (newSectionTitle.trim() !== '') {
-            setForm(formWithNewSection(form!, newSectionTitle));
-            setShowNewSectionModal(false);
+            addNewSectionToForm();
           } else {
+            toast.error(Strings.sectionTitleCantBeEmpty);
             setNewSectionTitle('');
-            alert(Strings.chooseNewTitleForTheSection);
           }
         }}
       >
@@ -333,10 +306,8 @@ const Forms = () => {
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
-              setLoading(true);
-              if (form) {
-              }
+            onClick={async () => {
+              await saveChanges();
             }}
           >
             {Strings.saveChanges}
@@ -360,11 +331,7 @@ const Forms = () => {
               className="my-3"
               checked={hasImage}
               onChange={(e) => {
-                if (form) {
-                  includesImageSection(form)
-                    ? setForm(formNoImageSection(form))
-                    : setForm(formWithImageSection(form));
-                }
+                handleImagesSection();
                 setHasImage(e.target.checked);
               }}
             />
@@ -378,10 +345,8 @@ const Forms = () => {
                 setShowEditSectionModal(false);
               }}
               handleSuccess={() => {
-                if (form) {
-                  updateChangedSection(form, modalSection.id);
-                  setShowEditSectionModal(false);
-                }
+                updateChangedSection(form, modalSection.id);
+                setShowEditSectionModal(false);
               }}
             >
               <EditSection />
@@ -454,9 +419,11 @@ const Forms = () => {
                                         <h5 className="d-inline ps-4">
                                           {section.title}
                                         </h5>
-                                        <Button
-                                          variant="outline-secondary"
-                                          className="section-edit-btn"
+                                      </div>
+                                      <div>
+                                        <i
+                                          className="bi-pencil-square edit-section-icon text-muted px-4 fs-5"
+                                          style={{ cursor: 'pointer' }}
                                           onClick={() => {
                                             setModalSection({
                                               ...section,
@@ -464,11 +431,7 @@ const Forms = () => {
                                             });
                                             setShowEditSectionModal(true);
                                           }}
-                                        >
-                                          <i className="bi-pencil-square"></i>
-                                        </Button>
-                                      </div>
-                                      <div>
+                                        ></i>
                                         <CloseButton
                                           onClick={() => {
                                             const sections = form.sections;

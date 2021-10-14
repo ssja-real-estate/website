@@ -2,7 +2,7 @@
   opacity: 0%;
 }
 
-.bi-pencil-square {
+.edit-icon {
   opacity: 0%;
 }
 
@@ -10,6 +10,6 @@
   opacity: 100%;
 }
 
-.list-item:hover .bi-pencil-square {
+.list-item:hover .edit-icon {
   opacity: 100%;
 }
