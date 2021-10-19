@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import EstateType from 'global/types/EstateType';
 import BaseService from '../BaseService';
 
@@ -7,7 +8,10 @@ class EstateTypeService extends BaseService {
   async getAllEstateTypes() {
     let estateTypes: EstateType[] = [];
     try {
-      const response = await this.Api.get(this.estateTypeUrl, this.config);
+      const response: AxiosResponse<any> = await this.Api.get(
+        this.estateTypeUrl,
+        this.config
+      );
       if (response.data) {
         response.data.forEach((element: EstateType) => {
           estateTypes.push(element);

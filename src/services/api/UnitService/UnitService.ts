@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import Unit from 'global/types/Unit';
 import BaseService from '../BaseService';
 
@@ -8,7 +9,10 @@ class UnitService extends BaseService {
     let units: Unit[] = [];
 
     try {
-      const response = await this.Api.get(this.unitUrl, this.config);
+      const response: AxiosResponse<any> = await this.Api.get(
+        this.unitUrl,
+        this.config
+      );
 
       if (response.data) {
         response.data.forEach((element: Unit) => {

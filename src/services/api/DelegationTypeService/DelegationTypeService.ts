@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import DelegationType from 'global/types/DelegationType';
 import BaseService from '../BaseService';
 
@@ -8,7 +9,10 @@ class DelegationTypeService extends BaseService {
     let delegationTypes: DelegationType[] = [];
 
     try {
-      var response = await this.Api.get(this.delegationTypeUrl, this.config);
+      var response: AxiosResponse<any> = await this.Api.get(
+        this.delegationTypeUrl,
+        this.config
+      );
 
       if (!response.data) return delegationTypes;
 

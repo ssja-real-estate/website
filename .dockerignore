@@ -1,0 +1,10 @@
+.vscode
+data
+node_modules
+.dockerignore
+.git
+.env
+.gitignore
+.prettierignore
+.prettierrc.json
+Dockerfile

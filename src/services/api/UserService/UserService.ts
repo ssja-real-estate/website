@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import GlobalState from 'global/states/GlobalState';
 import User, { defaultUser, Role } from 'global/types/User';
 import BaseService from '../BaseService';
@@ -11,7 +12,10 @@ class UserService extends BaseService {
     let users: User[] = [];
 
     try {
-      var response = await this.Api.get(this.userUrl, this.config);
+      var response: AxiosResponse<any> = await this.Api.get(
+        this.userUrl,
+        this.config
+      );
       if (response.data) {
         response.data.forEach((element: User) => {
           const user = element;
@@ -59,7 +63,10 @@ class UserService extends BaseService {
   ): Promise<GlobalState | undefined> {
     let globalState: GlobalState | undefined = undefined;
     try {
-      const response = await this.Api.post(this.loginUrl, { mobile, password });
+      const response: AxiosResponse<any> = await this.Api.post(this.loginUrl, {
+        mobile,
+        password,
+      });
 
       if (response.data) {
         const token = response.data.token as string;
@@ -84,7 +91,7 @@ class UserService extends BaseService {
   ): Promise<GlobalState | undefined> {
     let globalState: GlobalState | undefined = undefined;
     try {
-      const response = await this.Api.post(this.signupUrl, {
+      const response: AxiosResponse<any> = await this.Api.post(this.signupUrl, {
         mobile,
         password,
       });

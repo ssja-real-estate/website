@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { EstateForm } from 'global/types/EstateForm';
 import BaseService from '../BaseService';
 
@@ -8,7 +9,10 @@ class FormService extends BaseService {
     let forms: EstateForm[] = [];
 
     try {
-      const response = await this.Api.get(this.formUrl, this.config);
+      const response: AxiosResponse<any> = await this.Api.get(
+        this.formUrl,
+        this.config
+      );
       if (response.data) {
         forms = response.data as EstateForm[];
       }

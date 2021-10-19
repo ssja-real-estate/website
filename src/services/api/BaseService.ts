@@ -32,7 +32,7 @@ class BaseService {
       return;
     }
 
-    let response = (error as AxiosError).response;
+    let response = (error as AxiosError<any>).response;
     if (response && response?.data) {
       if (!response.data.error) {
         this.toastStatusError(error);

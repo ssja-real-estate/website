@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import City from 'global/types/City';
 import Province from 'global/types/Province';
 import BaseService from '../BaseService';
@@ -10,7 +11,10 @@ class ProvinceCityService extends BaseService {
     let provinces: Province[] = [];
 
     try {
-      const response = await this.Api.get(this.provinceUrl, this.config);
+      const response: AxiosResponse<any> = await this.Api.get(
+        this.provinceUrl,
+        this.config
+      );
 
       if (response.data) {
         response.data.forEach((element: Province) => {
@@ -66,7 +70,10 @@ class ProvinceCityService extends BaseService {
     let cities: City[] = [];
 
     try {
-      const response = await this.Api.get(this.provinceUrl, this.config);
+      const response: AxiosResponse<any> = await this.Api.get(
+        this.provinceUrl,
+        this.config
+      );
       if (response.data) {
         if (response.data.cities) {
           cities = response.data.cities as City[];
