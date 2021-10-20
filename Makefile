@@ -12,6 +12,9 @@ CONTAINER_NAME=$(shell $(cnf) name)
 # port to run the docker container
 PORT=$(shell $(cnf) port)
 
+# working directory
+WORKDIR=$(shell pwd)
+
 # Dockerfile stage to build(default is set to dev)
 stage?=dev
 
@@ -30,10 +33,16 @@ help: ## help
 build: ## build-image 
 	sudo docker build --target $(stage) -t $(IMAGE_TAG) .
 
-
+# Run docker container
 run: ## run-container 
-	sudo docker run --rm --env-file ./.env -idp $(PORT):$(PORT) \
-		--name $(CONTAINER_NAME) $(IMAGE_TAG)	
+	sudo docker run --rm -it --name $(CONTAINER_NAME) \
+		-p $(PORT):$(PORT) -v $(WORKDIR)/src:/app/src \
+		--env-file ./.env $(IMAGE_TAG) \
 	
+# Execute docker container shell
 exec: ## execute-container
 	sudo docker exec -it $(CONTAINER_NAME) bash
+
+# Stop docker container
+stop: ## stop-container
+	sudo docker stop $(CONTAINER_NAME)
