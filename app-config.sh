@@ -12,13 +12,13 @@ PORT=3000
 
 
 
-case ${1:-'tag'} in
-	tag)
-		echo "$DOCKER_USERNAME$APP_NAME:$VERSION"
+case ${1:-'name'} in
+	version)
+		echo $VERSION
 		break
 		;;
 	name)
-		echo $APP_NAME
+		echo "$DOCKER_USERNAME$APP_NAME"
 		break
 		;;
 	port)
