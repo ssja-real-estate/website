@@ -1,7 +1,7 @@
-import './Home.css';
-import { motion } from 'framer-motion';
-import { crossfadeAnimation } from '../../animations/motionVariants';
-import Strings from 'global/constants/strings';
+import "./Home.css";
+import { motion } from "framer-motion";
+import { crossfadeAnimation } from "../../animations/motionVariants";
+import Strings from "global/constants/strings";
 
 function HomeScreen() {
   return (
@@ -12,7 +12,7 @@ function HomeScreen() {
         animate="second"
         className="content"
       >
-        <h1 className="fw-light">{Strings.sajaSystem}</h1>
+        <h1 className="fw-light">{Strings.sajaSystemCompleteName}</h1>
         <p className="app-description py-3">
           لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با
           استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در
