@@ -11,3 +11,8 @@ services:
     container_name: ${CONTAINER_NAME}
     build:
       context: .
+    deploy:
+      restart_policy:
+        delay: 3s
+        max_attempts: 5
+        window: 120s
