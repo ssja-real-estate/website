@@ -2,8 +2,9 @@
 # you can change the default config with `make cnf="config_special.env" build`
 cnf=./app-config.sh
 
-# image name 
 username?= 
+
+# image name 
 APP_NAME=$(shell $(cnf) name $(username))
 
 # image version
@@ -68,7 +69,7 @@ rm-image: ## remove-image
 
 
 # Docker compose up 
-up: set-env ## docker-compose-up
+up: down ## docker-compose-up
 	sudo docker-compose -f docker-compose.yaml \
 		-f docker-compose-$(stage).yaml \
 	        --env-file ./.env.docker up -d --build 
@@ -84,3 +85,11 @@ set-env: ## set-docker-compose-env-variables
 	echo "IMAGE_NAME=$(IMAGE_TAG)\nCONTAINER_NAME=$(APP_NAME)"\
 	       	> .env.docker
 
+login: ## login-to-docker-hub
+	sudo docker login
+
+logout: remove-credentials ## logout-from-docker-hub
+	sudo docker logout hub.docker.com
+	
+remove-credentials: ## remove-docker-registry-credentials
+	sudo rm -f /root/.docker/config.json
