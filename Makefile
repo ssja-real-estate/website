@@ -5,7 +5,7 @@
 cnf=./app-config.sh
 
 username?= 
-password?=
+pass?=
 
 # image name 
 IMAGE_NAME=$(shell $(cnf) name $(username))
@@ -92,7 +92,7 @@ login: set-pass ## login-to-docker-hub
 
 set-pass: ## set-password
 	touch pass
-	echo $(password) > pass
+	echo $(pass) > pass
 
 logout: ## logout-from-docker-hub
 	docker logout

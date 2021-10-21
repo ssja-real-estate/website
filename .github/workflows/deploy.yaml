@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: make username=$DOCKER_USERNAME stage=prod build
-      - run: make username=$DOCKER_USERNAME password=$DOCKER_PASSWORD login
+      - run: make username=$DOCKER_USERNAME pass=$DOCKER_PASSWORD login
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -27,6 +27,6 @@ jobs:
           envs: DOCKER_PASSWORD
           script: |
             cd saja-web/
-            make password=$DOCKER_PASSWORD login
+            make pass=$DOCKER_PASSWORD login
             make pull
             make up
