@@ -4,7 +4,7 @@
 # you can change the default config with `make cnf="config_special.env" build`
 cnf=./app-config.sh
 
-username?= 
+username?=
 pass?=
 
 # image name 
@@ -98,8 +98,6 @@ logout: ## logout-from-docker-hub
 	docker logout
 	
 push: ## push-docker-image-to-registry
-	echo $(username)
-	echo $(IMAGE_TAG)
 	docker push $(IMAGE_TAG)
 
 pull: ## pull-docker-image-from-registry
