@@ -87,7 +87,7 @@ set-env: ## set-docker-compose-env-variables
 	       	> .env.docker
 
 login: set-pass ## login-to-docker-hub
-	docker login -u $(username) --password-stdin
+	cat pass | docker login -u $(username) --password-stdin
 	rm -f pass
 
 set-pass: ## set-password
