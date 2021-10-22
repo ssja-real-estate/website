@@ -4,8 +4,8 @@
 # you can change the default config with `make cnf="config_special.env" build`
 cnf=./app-config.sh
 
-username?=sajaweb
-pass?=
+username?=
+password?=
 
 # image name 
 IMAGE_NAME=$(shell $(cnf) name $(username))
@@ -68,31 +68,13 @@ stop: ## stop-container
 rm-image: ## remove-image
 	docker rmi $(IMAGE_TAG)
 
-
-# Docker compose up 
-up: down ## docker-compose-up
-	docker-compose -f docker-compose.yaml \
-		-f docker-compose-$(stage).yaml \
-	        --env-file ./.env.docker up -d --build
-
-# Docker compose down
-down: set-env ## docker-compose-down
-	docker-compose -f docker-compose.yaml \
-		-f docker-compose-$(stage).yaml \
-		--env-file ./.env.docker down
-
-# Set environment variables for docker-compose
-set-env: ## set-docker-compose-env-variables
-	echo "IMAGE_NAME=$(IMAGE_TAG)\nCONTAINER_NAME=$(CONTAINER_NAME)"\
-	       	> .env.docker
-
-login: set-pass ## login-to-docker-hub
+login: set-password ## login-to-docker-hub
 	cat pass | docker login -u $(username) --password-stdin
 	rm -f pass
 
-set-pass: ## set-password
+set-password: ## set-password
 	touch pass
-	echo $(pass) > pass
+	echo $(password) > pass
 
 logout: ## logout-from-docker-hub
 	docker logout

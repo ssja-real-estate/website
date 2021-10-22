@@ -11,11 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: make stage=prod build
-      - run: make pass=$DOCKER_PASSWORD login
+      - run: make username=$DOCKER_USERNAME stage=prod build
+      - run: make username=$DOCKER_USERNAME password=$DOCKER_PASSWORD login
         env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - run: make stage=prod push
+      - run: make username=$DOCKER_USERNAME stage=prod push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       - run: make logout
       - uses: appleboy/ssh-action@master
         env:
@@ -28,6 +31,7 @@ jobs:
           envs: DOCKER_PASSWORD
           script: |
             cd saja-web/
-            make pass=$DOCKER_PASSWORD login
+            make password=$DOCKER_PASSWORD login
             make pull
-            make up
+            make
+            make logout
