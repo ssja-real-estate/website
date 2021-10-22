@@ -51,19 +51,19 @@ build: ## build-image
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
 # Run docker container
-run: ## run-container 
+run: stop ## run-container 
 	docker run --rm -it --name $(CONTAINER_NAME) \
 		-p $(PORT):$(PORT) -v $(WORKDIR)/src:/app/src:ro \
 		--env-file ./.env $(IMAGE_TAG) \
-	
+
 # Execute docker container shell
 exec: ## execute-container
 	docker exec -it $(CONTAINER_NAME) bash
 
-# Stop docker container
+# Stop the docker container
 stop: ## stop-container
 	docker rm $(CONTAINER_NAME) -f
-	
+
 # Remove docker image
 rm-image: ## remove-image
 	docker rmi $(IMAGE_TAG)
@@ -78,7 +78,7 @@ set-password: ## set-password
 
 logout: ## logout-from-docker-hub
 	docker logout
-	
+
 push: ## push-docker-image-to-registry
 	docker push $(IMAGE_TAG)
 
