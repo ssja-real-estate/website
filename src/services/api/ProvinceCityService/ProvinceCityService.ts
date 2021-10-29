@@ -1,11 +1,11 @@
-import { AxiosResponse } from 'axios';
-import City from 'global/types/City';
-import Province from 'global/types/Province';
-import BaseService from '../BaseService';
+import { AxiosResponse } from "axios";
+import City from "global/types/City";
+import Province from "global/types/Province";
+import BaseService from "../BaseService";
 
 class ProvinceCityService extends BaseService {
-  private provinceUrl = process.env.REACT_APP_PROVINCE_URL ?? '';
-  private cityUrl = process.env.REACT_APP_CITY_URL ?? '';
+  private provinceUrl = "/province";
+  private cityUrl = "/city";
 
   async getAllProvinces() {
     let provinces: Province[] = [];
@@ -41,7 +41,7 @@ class ProvinceCityService extends BaseService {
   }
 
   async editProvince(province: Province) {
-    if (province.id === '') return;
+    if (province.id === "") return;
     let newProvince = undefined;
     try {
       const response = await this.Api.put(
@@ -99,19 +99,19 @@ class ProvinceCityService extends BaseService {
   }
 
   async editCityInProvince(provinceId: string, city: City) {
-    if (provinceId === '' || city.id === '') return;
+    if (provinceId === "" || city.id === "") return;
 
     let updatedCity = undefined;
     try {
-      console.log('city service 0');
+      console.log("city service 0");
       const response = await this.Api.put(
         `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
         city,
         this.config
       );
-      console.log('city service 1');
+      console.log("city service 1");
       if (response.data) {
-        console.log('city service 2');
+        console.log("city service 2");
         updatedCity = response.data as City;
       }
     } catch (error: any) {

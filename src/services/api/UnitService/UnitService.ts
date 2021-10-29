@@ -1,9 +1,9 @@
-import { AxiosResponse } from 'axios';
-import Unit from 'global/types/Unit';
-import BaseService from '../BaseService';
+import { AxiosResponse } from "axios";
+import Unit from "global/types/Unit";
+import BaseService from "../BaseService";
 
 class UnitService extends BaseService {
-  private unitUrl = process.env.REACT_APP_UNIT_URL ?? '';
+  private unitUrl = "/unit";
 
   async getAllUnits() {
     let units: Unit[] = [];
@@ -35,7 +35,7 @@ class UnitService extends BaseService {
   }
 
   async editUnit(unit: Unit) {
-    if (unit.id === '') return;
+    if (unit.id === "") return;
     let updatedUnit = undefined;
     try {
       const response = await this.Api.put(this.unitUrl, unit, this.config);

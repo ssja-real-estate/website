@@ -1,9 +1,9 @@
-import { AxiosResponse } from 'axios';
-import DelegationType from 'global/types/DelegationType';
-import BaseService from '../BaseService';
+import { AxiosResponse } from "axios";
+import DelegationType from "global/types/DelegationType";
+import BaseService from "../BaseService";
 
 class DelegationTypeService extends BaseService {
-  private delegationTypeUrl = process.env.REACT_APP_DELEGATION_TYPE_URL ?? '';
+  private delegationTypeUrl = "/assignmenttype";
 
   async getAllDelegationTypes(): Promise<DelegationType[]> {
     let delegationTypes: DelegationType[] = [];
@@ -42,7 +42,7 @@ class DelegationTypeService extends BaseService {
   }
 
   async editDelegationType(delegationType: DelegationType) {
-    if (delegationType.id === '') return;
+    if (delegationType.id === "") return;
     let newDelegationType = undefined;
     try {
       const response = await this.Api.put(

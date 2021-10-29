@@ -13,6 +13,7 @@ CONTAINER_NAME=$(shell $(cnf) name)
 
 # port to run the docker container
 PORT=$(shell $(cnf) port)
+CONTAINER_PORT=80
 
 # working directory
 WORKDIR=$(shell pwd)
@@ -27,7 +28,7 @@ stage?=dev
 IMAGE_TAG="$(IMAGE_NAME)-$(stage)"
 
 .DEFAULT_GOAL := help
-.PHONY: help
+.PHONY: help build
 
 # Default target
 help: ## help(default)  
@@ -50,11 +51,12 @@ help: ## help(default)
 build: ## build-image 
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
+
 # Run docker container
 run: stop ## run-container 
 	docker run --rm -it --name $(CONTAINER_NAME) \
-		-p $(PORT):$(PORT) -v $(WORKDIR)/src:/app/src:ro \
-		--env-file ./.env $(IMAGE_TAG) \
+		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
+		$(IMAGE_TAG) \
 
 # Execute docker container shell
 exec: ## execute-container

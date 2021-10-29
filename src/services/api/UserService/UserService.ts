@@ -1,12 +1,12 @@
-import { AxiosResponse } from 'axios';
-import GlobalState from 'global/states/GlobalState';
-import User, { defaultUser, Role } from 'global/types/User';
-import BaseService from '../BaseService';
+import { AxiosResponse } from "axios";
+import GlobalState from "global/states/GlobalState";
+import User, { defaultUser, Role } from "global/types/User";
+import BaseService from "../BaseService";
 
 class UserService extends BaseService {
-  private userUrl = process.env.REACT_APP_USER_URL ?? '';
-  private signupUrl = process.env.REACT_APP_SIGNUP_URL ?? '';
-  private loginUrl = process.env.REACT_APP_LOGIN_URL ?? '';
+  private userUrl = "/user";
+  private signupUrl = "/signup";
+  private loginUrl = "/signin";
 
   async getAllUsers(role: Role = Role.USER): Promise<User[]> {
     let users: User[] = [];
@@ -116,7 +116,7 @@ class UserService extends BaseService {
   async editProfile(userId: string, name: string) {
     let user: User = defaultUser;
 
-    if (userId === '') return;
+    if (userId === "") return;
 
     try {
       const response = await this.Api.put(

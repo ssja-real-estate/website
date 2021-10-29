@@ -1,19 +1,19 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import Strings from 'global/constants/strings';
-import toast from 'react-hot-toast';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import Strings from "global/constants/strings";
+import toast from "react-hot-toast";
 
 class BaseService {
   protected Api: AxiosInstance;
   protected config: AxiosRequestConfig | undefined;
 
-  private baseUrl = process.env.REACT_APP_BASE_URL ?? '';
+  private baseUrl = "https://ssja.ir/api";
 
   constructor() {
     this.Api = axios.create({
       baseURL: this.baseUrl,
       timeout: 5000,
       headers: {
-        'content-type': 'application/json',
+        "content-type": "application/json",
       },
     });
   }

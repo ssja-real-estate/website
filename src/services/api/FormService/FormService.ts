@@ -1,9 +1,9 @@
-import { AxiosResponse } from 'axios';
-import { EstateForm } from 'global/types/EstateForm';
-import BaseService from '../BaseService';
+import { AxiosResponse } from "axios";
+import { EstateForm } from "global/types/EstateForm";
+import BaseService from "../BaseService";
 
 class FormService extends BaseService {
-  private formUrl = process.env.REACT_APP_FORM_URL ?? '';
+  private formUrl = "/form";
 
   getForms = async () => {
     let forms: EstateForm[] = [];

@@ -1,9 +1,9 @@
-import { AxiosResponse } from 'axios';
-import EstateType from 'global/types/EstateType';
-import BaseService from '../BaseService';
+import { AxiosResponse } from "axios";
+import EstateType from "global/types/EstateType";
+import BaseService from "../BaseService";
 
 class EstateTypeService extends BaseService {
-  private estateTypeUrl = process.env.REACT_APP_ESTATE_TYPE_URL ?? '';
+  private estateTypeUrl = "/estatetype";
 
   async getAllEstateTypes() {
     let estateTypes: EstateType[] = [];
@@ -37,7 +37,7 @@ class EstateTypeService extends BaseService {
   }
 
   async editEstateType(estateType: EstateType) {
-    if (estateType.id === '') return;
+    if (estateType.id === "") return;
 
     let type = undefined;
 
