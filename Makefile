@@ -51,6 +51,10 @@ help: ## help(default)
 build: ## build-image 
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
+# Build docker image on local machine
+build-local: ## build-local-image
+	docker build -f Dockerfile.$(stage) -t $(CONTAINER_NAME) .
+
 
 # Run docker container
 run: stop ## run-container 
@@ -58,9 +62,23 @@ run: stop ## run-container
 		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
 		$(IMAGE_TAG) \
 
+# Run docker container locally
+run-local: stop-local ## run-container-locally
+	docker run --rm -it --name $(CONTAINER_NAME) \
+		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
+		$(CONTAINER_NAME)
+
+# Execute local docker container shell
+exec-local: ## execute-local-container
+	docker exec -it $(CONTAINER_NAME) bash
+
 # Execute docker container shell
 exec: ## execute-container
 	docker exec -it $(CONTAINER_NAME) bash
+
+# Stop the local docker container
+stop-local: ## stop-local-container
+	docker rm $(CONTAINER_NAME) -f
 
 # Stop the docker container
 stop: ## stop-container
@@ -69,6 +87,10 @@ stop: ## stop-container
 # Remove docker image
 rm-image: ## remove-image
 	docker rmi $(IMAGE_TAG)
+
+# Remove local docker image
+rm-local-image: ## remove-local-image
+	docker rmi $(CONTAINER_NAME)
 
 login: set-password ## login-to-docker-hub
 	cat pass | docker login -u $(username) --password-stdin
