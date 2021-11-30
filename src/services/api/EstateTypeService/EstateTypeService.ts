@@ -14,6 +14,8 @@ class EstateTypeService extends BaseService {
       );
       if (response.data) {
         response.data.forEach((element: EstateType) => {
+          console.log("element estate type ");
+          console.log(element);
           estateTypes.push(element);
         });
       }

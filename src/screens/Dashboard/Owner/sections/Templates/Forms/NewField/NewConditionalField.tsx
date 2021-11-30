@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import Strings from "global/constants/strings";
+import { useState } from "react";
 import {
   Accordion,
   Button,
@@ -8,24 +9,21 @@ import {
   InputGroup,
   ListGroup,
   Row,
-} from 'react-bootstrap';
-import { atom, useRecoilState } from 'recoil';
+} from "react-bootstrap";
+import { useRecoilState } from "recoil";
 import {
+  defaultField,
   Field,
   FieldType,
   FieldTypeTitle,
-} from '../../../../../../../global/types/Field';
-
-export const innerFieldsAtom = atom<Field[]>({
-  key: 'ownerInnerFieldsState',
-  default: [],
-});
+} from "../../../../../../../global/types/Field";
+import { innerFieldsAtom } from "./NewFieldStates";
 
 function NewConditionalField() {
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
-  const [newInnerFieldTitle, setNewInnerFieldTitle] = useState<string>('');
+  const [newInnerFieldTitle, setNewInnerFieldTitle] = useState<string>("");
   const [selectedType, setSelectedType] = useState<number>(0);
-  const [newOptionTitle, setNewOptionTitle] = useState<string>('');
+  const [newOptionTitle, setNewOptionTitle] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
 
   function addNewInnerField(newField: Field) {
@@ -56,7 +54,7 @@ function NewConditionalField() {
     <Accordion className="mt-3">
       <Accordion.Item eventKey="0">
         <Accordion.Header>
-          <span className="ms-3">ورودی شرطی جدید</span>
+          <span className="ms-3">{Strings.newConditionalField}</span>
         </Accordion.Header>
         <Accordion.Body>
           <ListGroup>
@@ -67,14 +65,14 @@ function NewConditionalField() {
                     <Col xs="auto">
                       <i
                         className="bi-chevron-up d-block"
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() => {
                           moveItemUp(fieldIndex);
                         }}
                       ></i>
                       <i
                         className="bi-chevron-down d-block"
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() => {
                           moveItemDown(fieldIndex);
                         }}
@@ -86,18 +84,18 @@ function NewConditionalField() {
                     <Col>
                       <h6 className="d-inline text-muted">
                         {field.type === FieldType.Text
-                          ? 'متن'
+                          ? FieldTypeTitle.Text
                           : field.type === FieldType.Number
-                          ? 'عدد'
+                          ? FieldTypeTitle.Number
                           : field.type === FieldType.Select
-                          ? 'انتخابی'
+                          ? FieldTypeTitle.Select
                           : field.type === FieldType.Bool
-                          ? 'کلید'
+                          ? FieldTypeTitle.Bool
                           : field.type === FieldType.Conditional
-                          ? 'شرطی'
+                          ? FieldTypeTitle.Conditional
                           : field.type === FieldType.Image
-                          ? 'تصویر'
-                          : '---'}
+                          ? FieldTypeTitle.Image
+                          : "---"}
                       </h6>
                     </Col>
                     <CloseButton
@@ -107,9 +105,7 @@ function NewConditionalField() {
                         const filteredFields = fields.filter((_, index) => {
                           return fieldIndex !== index;
                         });
-                        if (
-                          window.confirm('آیا از حذف این ورودی مطمئن هستید؟')
-                        ) {
+                        if (window.confirm(Strings.confirmDeleteInput)) {
                           setInnerFields(filteredFields);
                         }
                       }}
@@ -119,81 +115,35 @@ function NewConditionalField() {
               );
             })}
           </ListGroup>
-          <InputGroup className="mt-3" style={{ direction: 'ltr' }}>
+          <InputGroup className="mt-3" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
                 let newInnerField: Field = {
-                  id: '',
-                  title: '',
-                  type: 0,
-                  value: '',
+                  ...defaultField,
+                  title: newInnerFieldTitle,
+                  type: selectedType,
                 };
-                switch (selectedType) {
-                  case FieldType.Text:
-                    newInnerField = {
-                      id: '',
-                      title: newInnerFieldTitle,
-                      type: FieldType.Text,
-                      value: '',
-                    };
-                    break;
-                  case FieldType.Number:
-                    newInnerField = {
-                      id: '',
-                      title: newInnerFieldTitle,
-                      type: FieldType.Number,
-                      value: 0,
-                    };
-                    break;
-                  case FieldType.Select:
-                    newInnerField = {
-                      id: '',
-                      title: newInnerFieldTitle,
-                      type: FieldType.Select,
-                      value: '',
-                      options: options,
-                    };
-                    break;
-                  case FieldType.Bool:
-                    newInnerField = {
-                      id: '',
-                      title: newInnerFieldTitle,
-                      type: FieldType.Bool,
-                      value: false,
-                    };
-                    break;
-                  case FieldType.Conditional:
-                    break;
-                  default:
-                    break;
-                }
-                if (newInnerFieldTitle.trim() !== '') {
+                if (newInnerFieldTitle.trim() !== "") {
                   if (selectedType === FieldType.Select) {
-                    if (options.length > 1) {
-                      addNewInnerField(newInnerField);
-                      setNewInnerFieldTitle('');
-                      setOptions([]);
-                    } else {
-                      alert(
-                        'لطفاً حدأقل دو گزینه برای ورودی داخلی جدید اضافه کنید'
-                      );
+                    if (options.length < 2) {
+                      alert(Strings.chooseAtLeastTwoOptionsForSelect);
+                      return;
                     }
-                  } else {
-                    addNewInnerField(newInnerField);
-                    setNewInnerFieldTitle('');
-                    setOptions([]);
                   }
+                  addNewInnerField(newInnerField);
+                  setNewInnerFieldTitle("");
+                  setOptions([]);
                 } else {
-                  setNewInnerFieldTitle('');
-                  alert('لطفاً یک عنوان برای ورودی داخلی جدید انتخاب کنید');
+                  setNewInnerFieldTitle("");
+                  alert(Strings.enterValidTitleForInput);
                 }
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
             <Form.Select
-              style={{ minWidth: 100, maxWidth: '15vw' }}
+              style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}
               onChange={(e) => {
                 setSelectedType(Number(e.currentTarget.value));
@@ -206,7 +156,7 @@ function NewConditionalField() {
             </Form.Select>
             <Form.Control
               type="text"
-              placeholder="عنوان ورودی داخلی جدید"
+              placeholder={Strings.newInnerInputTitle}
               maxLength={30}
               value={newInnerFieldTitle}
               onChange={(e) => {
@@ -217,18 +167,16 @@ function NewConditionalField() {
           {selectedType === FieldType.Select && (
             <div className="w-100 d-flex flex-row justify-content-center">
               <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-                <InputGroup style={{ direction: 'ltr' }}>
+                <InputGroup style={{ direction: "ltr" }}>
                   <Button
                     variant="dark"
                     onClick={() => {
-                      if (newOptionTitle.trim() !== '') {
+                      if (newOptionTitle.trim() !== "") {
                         setOptions([...options, newOptionTitle]);
-                        setNewOptionTitle('');
+                        setNewOptionTitle("");
                       } else {
-                        setNewOptionTitle('');
-                        alert(
-                          'لطفاً یک عنوان معتبر برای گزینه جدید انتخاب کنید'
-                        );
+                        setNewOptionTitle("");
+                        alert(Strings.enterValidInputForNewOption);
                       }
                     }}
                   >
@@ -236,7 +184,7 @@ function NewConditionalField() {
                   </Button>
                   <Form.Control
                     type="text"
-                    placeholder="گزینه جدید"
+                    placeholder={Strings.newOption}
                     value={newOptionTitle}
                     onChange={(e) => {
                       setNewOptionTitle(e.target.value);

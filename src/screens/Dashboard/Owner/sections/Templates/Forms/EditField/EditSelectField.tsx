@@ -1,37 +1,38 @@
-import { useState } from 'react';
+import Strings from "global/constants/strings";
+import { useState } from "react";
 import {
   InputGroup,
   Button,
   Form,
   ListGroup,
   CloseButton,
-} from 'react-bootstrap';
-import { useRecoilState } from 'recoil';
-import { editSelectFieldModalDataAtom } from '../EditSection';
+} from "react-bootstrap";
+import { useRecoilState } from "recoil";
+import { editSelectFieldModalDataAtom } from "../FormsState";
 
 function EditSelectField() {
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
     useRecoilState(editSelectFieldModalDataAtom);
-  const [newOptionTitle, setNewOptionTitle] = useState<string>('');
+  const [newOptionTitle, setNewOptionTitle] = useState<string>("");
 
   return (
     <div className="w-100 d-flex flex-row justify-content-center">
       <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-        <InputGroup style={{ direction: 'ltr' }}>
+        <InputGroup style={{ direction: "ltr" }}>
           <Button
             variant="dark"
             onClick={() => {
-              if (newOptionTitle.trim() !== '') {
+              if (newOptionTitle.trim() !== "") {
                 const options = editSelectFieldModalData?.options!;
                 const newOptions = [...options, newOptionTitle];
                 setEditSelectFieldModalData({
                   ...editSelectFieldModalData!,
                   options: newOptions,
                 });
-                setNewOptionTitle('');
+                setNewOptionTitle("");
               } else {
-                setNewOptionTitle('');
-                alert('لطفاً یک عنوان معتبر برای گزینه جدید انتخاب کنید');
+                setNewOptionTitle("");
+                alert(Strings.enterValidInputForNewOption);
               }
             }}
           >
@@ -39,7 +40,7 @@ function EditSelectField() {
           </Button>
           <Form.Control
             type="text"
-            placeholder="گزینه جدید"
+            placeholder={Strings.newOption}
             value={newOptionTitle}
             onChange={(e) => {
               setNewOptionTitle(e.target.value);

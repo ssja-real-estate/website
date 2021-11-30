@@ -18,6 +18,11 @@ class RegexValidator {
     if (name.length === 0) return false;
     return name.length >= 3;
   }
+
+  static validateCode(code: string) {
+    if (code.length === 0) return false;
+    return code.length === 5;
+  }
 }
 
 class Paterns {

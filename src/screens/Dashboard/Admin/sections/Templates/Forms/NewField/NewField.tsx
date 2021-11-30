@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { InputGroup, Button, Form, Col, Row } from 'react-bootstrap';
-import { useRecoilState } from 'recoil';
+import { useState } from "react";
+import { InputGroup, Button, Form, Col, Row } from "react-bootstrap";
+import { useRecoilState } from "recoil";
 import {
   Field,
   FieldType,
   FieldTypeTitle,
-} from '../../../../../../../global/types/Field';
-import { modalSectionAtom } from '../Forms';
-import NewConditionalField, { innerFieldsAtom } from './NewConditionalField';
-import NewSelectField, { optionsAtom } from './NewSelectField';
+} from "../../../../../../../global/types/Field";
+import { modalSectionAtom } from "../Forms";
+import NewConditionalField, { innerFieldsAtom } from "./NewConditionalField";
+import NewSelectField, { optionsAtom } from "./NewSelectField";
 
 function NewField() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
   const [selectedType, setSelectedType] = useState<number>(FieldType.Text);
-  const [newFieldTitle, setNewFieldTitle] = useState<string>('');
+  const [newFieldTitle, setNewFieldTitle] = useState<string>("");
   const [options, setOptions] = useRecoilState(optionsAtom);
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
 
@@ -29,28 +29,28 @@ function NewField() {
           <Form.Label>ورودی جدید</Form.Label>
         </Col>
         <Col>
-          <InputGroup style={{ direction: 'ltr' }}>
+          <InputGroup style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
                 let newField: Field = {
-                  id: '',
-                  title: '',
+                  id: "",
+                  title: "",
                   type: 0,
-                  value: '',
+                  value: "",
                 };
                 switch (selectedType) {
                   case FieldType.Text:
                     newField = {
-                      id: '',
+                      id: "",
                       title: newFieldTitle,
                       type: FieldType.Text,
-                      value: '',
+                      value: "",
                     };
                     break;
                   case FieldType.Number:
                     newField = {
-                      id: '',
+                      id: "",
                       title: newFieldTitle,
                       type: FieldType.Number,
                       value: 0,
@@ -58,16 +58,16 @@ function NewField() {
                     break;
                   case FieldType.Select:
                     newField = {
-                      id: '',
+                      id: "",
                       title: newFieldTitle,
                       type: FieldType.Select,
-                      value: '',
+                      value: "",
                       options: options,
                     };
                     break;
                   case FieldType.Bool:
                     newField = {
-                      id: '',
+                      id: "",
                       title: newFieldTitle,
                       type: FieldType.Bool,
                       value: false,
@@ -75,7 +75,7 @@ function NewField() {
                     break;
                   case FieldType.Conditional:
                     newField = {
-                      id: '',
+                      id: "",
                       title: newFieldTitle,
                       type: FieldType.Conditional,
                       value: false,
@@ -85,42 +85,41 @@ function NewField() {
                   default:
                     break;
                 }
-                console.log(newField);
-                if (newFieldTitle.trim() !== '') {
+                if (newFieldTitle.trim() !== "") {
                   if (selectedType === FieldType.Select) {
                     if (options.length > 1) {
                       addNewField(newField);
-                      setNewFieldTitle('');
+                      setNewFieldTitle("");
                       setOptions([]);
                     } else {
-                      alert('لطفاً حدأقل دو گزینه برای ورودی جدید اضافه کنید');
+                      alert("لطفاً حدأقل دو گزینه برای ورودی جدید اضافه کنید");
                     }
                   } else if (selectedType === FieldType.Conditional) {
                     if (innerFields.length > 0) {
                       addNewField(newField);
-                      setNewFieldTitle('');
+                      setNewFieldTitle("");
                       setInnerFields([]);
                       setOptions([]);
                     } else {
                       alert(
-                        'لطفاً حداقل یک ورودی داخلی برای ورودی شرطی اضافه کنید'
+                        "لطفاً حداقل یک ورودی داخلی برای ورودی شرطی اضافه کنید"
                       );
                     }
                   } else {
                     addNewField(newField);
-                    setNewFieldTitle('');
+                    setNewFieldTitle("");
                     setOptions([]);
                   }
                 } else {
-                  setNewFieldTitle('');
-                  alert('لطفاً یک عنوان برای ورودی جدید انتخاب کنید');
+                  setNewFieldTitle("");
+                  alert("لطفاً یک عنوان برای ورودی جدید انتخاب کنید");
                 }
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
             <Form.Select
-              style={{ minWidth: 100, maxWidth: '15vw' }}
+              style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}
               onChange={(e) => {
                 setSelectedType(Number(e.currentTarget.value));

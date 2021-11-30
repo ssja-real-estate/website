@@ -1,126 +1,80 @@
-import { useState } from 'react';
-import { InputGroup, Button, Form, Col, Row } from 'react-bootstrap';
-import { useRecoilState } from 'recoil';
+import Strings from "global/constants/strings";
+import { useState } from "react";
+import { InputGroup, Button, Form, Col, Row } from "react-bootstrap";
+import { useRecoilState } from "recoil";
 import {
+  defaultField,
   Field,
   FieldType,
   FieldTypeTitle,
-} from '../../../../../../../global/types/Field';
-import { modalSectionAtom } from '../FormsState';
-import NewConditionalField, { innerFieldsAtom } from './NewConditionalField';
-import NewSelectField, { optionsAtom } from './NewSelectField';
+} from "../../../../../../../global/types/Field";
+import { modalSectionAtom } from "../FormsState";
+import NewConditionalField from "./NewConditionalField";
+import { optionsAtom, innerFieldsAtom } from "./NewFieldStates";
+import NewSelectField from "./NewSelectField";
 
 function NewField() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
   const [selectedType, setSelectedType] = useState<number>(FieldType.Text);
-  const [newFieldTitle, setNewFieldTitle] = useState<string>('');
+  const [newFieldTitle, setNewFieldTitle] = useState<string>("");
   const [options, setOptions] = useRecoilState(optionsAtom);
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
 
   function addNewField(newField: Field) {
-    const newFields = [newField, ...modalSection.fields];
-    setModalSection({ ...modalSection, fields: newFields });
+    const newFields = [...modalSection.section.fields, newField];
+    setModalSection({
+      ...modalSection,
+      section: { ...modalSection.section, fields: newFields },
+    });
   }
 
   return (
     <>
       <Row className="align-items-center">
         <Col sm="auto">
-          <Form.Label>ورودی جدید</Form.Label>
+          <Form.Label>{Strings.newInput}</Form.Label>
         </Col>
         <Col>
-          <InputGroup style={{ direction: 'ltr' }}>
+          <InputGroup style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
                 let newField: Field = {
-                  id: '',
-                  title: '',
-                  type: 0,
-                  value: '',
+                  ...defaultField,
+                  title: newFieldTitle,
+                  type: selectedType,
                 };
-                switch (selectedType) {
-                  case FieldType.Text:
-                    newField = {
-                      id: '',
-                      title: newFieldTitle,
-                      type: FieldType.Text,
-                      value: '',
-                    };
-                    break;
-                  case FieldType.Number:
-                    newField = {
-                      id: '',
-                      title: newFieldTitle,
-                      type: FieldType.Number,
-                      value: 0,
-                    };
-                    break;
-                  case FieldType.Select:
-                    newField = {
-                      id: '',
-                      title: newFieldTitle,
-                      type: FieldType.Select,
-                      value: '',
-                      options: options,
-                    };
-                    break;
-                  case FieldType.Bool:
-                    newField = {
-                      id: '',
-                      title: newFieldTitle,
-                      type: FieldType.Bool,
-                      value: false,
-                    };
-                    break;
-                  case FieldType.Conditional:
-                    newField = {
-                      id: '',
-                      title: newFieldTitle,
-                      type: FieldType.Conditional,
-                      value: false,
-                      fields: innerFields,
-                    };
-                    break;
-                  default:
-                    break;
-                }
-                console.log(newField);
-                if (newFieldTitle.trim() !== '') {
+
+                if (newFieldTitle.trim() !== "") {
                   if (selectedType === FieldType.Select) {
-                    if (options.length > 1) {
-                      addNewField(newField);
-                      setNewFieldTitle('');
-                      setOptions([]);
-                    } else {
-                      alert('لطفاً حدأقل دو گزینه برای ورودی جدید اضافه کنید');
+                    if (options.length < 2) {
+                      alert(Strings.chooseAtLeastTwoOptionsForSelect);
+                      return;
                     }
+                    newField.options = options;
+                    setOptions(options);
                   } else if (selectedType === FieldType.Conditional) {
-                    if (innerFields.length > 0) {
-                      addNewField(newField);
-                      setNewFieldTitle('');
-                      setInnerFields([]);
-                      setOptions([]);
-                    } else {
-                      alert(
-                        'لطفاً حداقل یک ورودی داخلی برای ورودی شرطی اضافه کنید'
-                      );
+                    if (innerFields.length === 0) {
+                      alert(Strings.conditionalShouldHaveAtLeastOneField);
+                      return;
                     }
-                  } else {
-                    addNewField(newField);
-                    setNewFieldTitle('');
-                    setOptions([]);
+                    newField.fields = innerFields;
+                    setInnerFields(innerFields);
                   }
+                  addNewField(newField);
+                  setNewFieldTitle("");
+                  setOptions([]);
+                  setInnerFields([]);
                 } else {
-                  setNewFieldTitle('');
-                  alert('لطفاً یک عنوان برای ورودی جدید انتخاب کنید');
+                  setNewFieldTitle("");
+                  alert(Strings.enterValidTitleForInput);
                 }
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
             <Form.Select
-              style={{ minWidth: 100, maxWidth: '15vw' }}
+              style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}
               onChange={(e) => {
                 setSelectedType(Number(e.currentTarget.value));
@@ -136,7 +90,7 @@ function NewField() {
             </Form.Select>
             <Form.Control
               type="text"
-              placeholder="عنوان ورودی جدید"
+              placeholder={Strings.newInputTitle}
               maxLength={30}
               value={newFieldTitle}
               onChange={(e) => {

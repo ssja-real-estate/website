@@ -23,12 +23,28 @@ class FormService extends BaseService {
     return forms;
   };
 
-  getForm = async () => {};
+  getForm = async (assignmentTypeId: string, estateTypeId: string) => {
+    await this.Api.get("asldkjf", {
+      params: {
+        assignmentTypeId,
+        estateTypeId,
+      },
+    });
+  };
 
   createForm = async (form: EstateForm) => {
     try {
-      await this.Api.post(this.formUrl, form, this.config);
+      await this.Api.post(
+        this.formUrl,
+        {
+          ...form,
+          assignment_type_id: form.assignmentTypeId,
+          estate_type_id: form.estateTypeId,
+        },
+        this.config
+      );
     } catch (error: any) {
+      console.log("error in create form");
       this.handleError(error);
     }
   };

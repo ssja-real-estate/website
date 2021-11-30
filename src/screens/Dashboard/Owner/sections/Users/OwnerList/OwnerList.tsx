@@ -1,7 +1,7 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import User, { defaultUser, Role, roleMap } from 'global/types/User';
-import React, { useEffect, useRef, useState } from 'react';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import User, { defaultUser, Role, roleMap } from "global/types/User";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -12,12 +12,12 @@ import {
   Row,
   Spinner,
   Tab,
-} from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import UserService from 'services/api/UserService/UserService';
+} from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import UserService from "services/api/UserService/UserService";
 
 const OwnerList = (): JSX.Element => {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const state = useRecoilValue(globalState);
   const [owners, setOwners] = useState<User[]>([]);
@@ -49,7 +49,7 @@ const OwnerList = (): JSX.Element => {
   };
 
   const changeRole = async () => {
-    if (selectedOwner.id === '') return;
+    if (selectedOwner.id === "") return;
     const userId = selectedOwner.id;
     const role = selectedOwner.role;
     setLoading(true);
@@ -90,7 +90,7 @@ const OwnerList = (): JSX.Element => {
                   {owners
                     .filter((user) => {
                       const value = searchValue.trim();
-                      if (value === '') return true;
+                      if (value === "") return true;
 
                       let result = false;
                       if (user.name) {
@@ -149,7 +149,7 @@ const OwnerList = (): JSX.Element => {
                           </span>
                           <InputGroup
                             className="my-3"
-                            style={{ direction: 'ltr' }}
+                            style={{ direction: "ltr" }}
                           >
                             <Button
                               variant="purple"

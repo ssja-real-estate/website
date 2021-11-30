@@ -1,36 +1,33 @@
-import React from 'react';
-import { useState } from 'react';
+import Strings from "global/constants/strings";
+import React from "react";
+import { useState } from "react";
 import {
   InputGroup,
   Button,
   Form,
   ListGroup,
   CloseButton,
-} from 'react-bootstrap';
-import { atom, useRecoilState } from 'recoil';
-
-export const optionsAtom = atom<string[]>({
-  key: 'ownerModalOptionsState',
-  default: [],
-});
+} from "react-bootstrap";
+import { useRecoilState } from "recoil";
+import { optionsAtom } from "./NewFieldStates";
 
 function NewSelectField() {
-  const [newOptionTitle, setNewOptionTitle] = useState<string>('');
+  const [newOptionTitle, setNewOptionTitle] = useState<string>("");
   const [options, setOptions] = useRecoilState(optionsAtom);
 
   return (
     <div className="w-100 d-flex flex-row justify-content-center">
       <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-        <InputGroup style={{ direction: 'ltr' }}>
+        <InputGroup style={{ direction: "ltr" }}>
           <Button
             variant="dark"
             onClick={() => {
-              if (newOptionTitle.trim() !== '') {
+              if (newOptionTitle.trim() !== "") {
                 setOptions([...options, newOptionTitle]);
-                setNewOptionTitle('');
+                setNewOptionTitle("");
               } else {
-                setNewOptionTitle('');
-                alert('لطفاً یک عنوان معتبر برای گزینه جدید انتخاب کنید');
+                setNewOptionTitle("");
+                alert(Strings.enterValidInputForNewOption);
               }
             }}
           >
@@ -38,7 +35,7 @@ function NewSelectField() {
           </Button>
           <Form.Control
             type="text"
-            placeholder="گزینه جدید"
+            placeholder={Strings.newOption}
             value={newOptionTitle}
             onChange={(e) => {
               setNewOptionTitle(e.target.value);

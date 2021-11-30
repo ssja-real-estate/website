@@ -1,4 +1,4 @@
-import { Field } from './Field';
+import { Field } from "./Field";
 
 interface Section {
   id?: string;
@@ -7,7 +7,7 @@ interface Section {
 }
 
 const defaultSection: Section = {
-  title: '',
+  title: "",
   fields: [],
 };
 
