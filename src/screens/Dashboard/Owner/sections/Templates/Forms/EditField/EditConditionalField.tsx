@@ -17,7 +17,7 @@ import {
   FieldType,
   FieldTypeTitle,
 } from "../../../../../../../global/types/Field";
-import { innerFieldModalDataAtom } from "../FormsState";
+import { innerFieldModalDataAtom, Modal } from "../FormsState";
 
 interface ModalField extends Field {
   id: string;
@@ -41,15 +41,21 @@ function EditConditionalField() {
     useState<ModalField>();
 
   function addNewInnerField(newField: Field) {
-    const newInnerFields = [newField, ...innerFieldModalData.fields!];
+    const newInnerFields = [newField, ...innerFieldModalData.data.fields!];
     setInnerFieldModalData({
       ...innerFieldModalData,
-      fields: newInnerFields,
+      data: {
+        ...innerFieldModalData.data,
+        fields: newInnerFields,
+      },
     });
   }
 
-  function updateChangedSelectField(field: Field, innerFieldIndex: string) {
-    const innerFields = Object.assign([], field.fields);
+  function updateChangedSelectField(
+    modal: Modal<Field>,
+    innerFieldIndex: string
+  ) {
+    const innerFields = Object.assign([], modal.data.fields!);
     // const changedField: Field = {
     //   id: editSelectFieldModalData!.id,
     //   title: editSelectFieldModalData!.title,
@@ -59,32 +65,47 @@ function EditConditionalField() {
     // };
     // innerFields.splice(innerFieldIndex, 1, changedField);
 
-    setInnerFieldModalData({ ...innerFieldModalData, fields: innerFields });
+    setInnerFieldModalData({
+      ...innerFieldModalData,
+      data: { ...innerFieldModalData.data, fields: innerFields },
+    });
   }
 
   function moveItemUp(fieldIndex: number) {
-    const tempFields = [...innerFieldModalData!.fields!];
+    const tempFields = [...innerFieldModalData.data.fields!];
     const indexToMoveTo = fieldIndex === 0 ? 0 : fieldIndex - 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
-    setInnerFieldModalData({ ...innerFieldModalData!, fields: tempFields });
+    setInnerFieldModalData({
+      ...innerFieldModalData,
+      data: {
+        ...innerFieldModalData.data,
+        fields: tempFields,
+      },
+    });
   }
 
   function moveItemDown(fieldIndex: number) {
-    const tempFields = [...innerFieldModalData!.fields!];
+    const tempFields = [...innerFieldModalData.data.fields!];
     const indexToMoveTo =
       fieldIndex === tempFields.length - 1
         ? tempFields.length - 1
         : fieldIndex + 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
-    setInnerFieldModalData({ ...innerFieldModalData!, fields: tempFields });
+    setInnerFieldModalData({
+      ...innerFieldModalData,
+      data: {
+        ...innerFieldModalData.data,
+        fields: tempFields,
+      },
+    });
   }
 
   return (
     <>
       <ListGroup>
-        {innerFieldModalData.fields?.map((innerField, innerFieldIndex) => {
+        {innerFieldModalData.data.fields!.map((innerField, innerFieldIndex) => {
           return (
             <ListGroup.Item key={innerFieldIndex} variant="warning">
               <Row className="align-items-center">
@@ -151,14 +172,17 @@ function EditConditionalField() {
                 <CloseButton
                   className="m-3"
                   onClick={() => {
-                    const fields = innerFieldModalData.fields;
+                    const fields = innerFieldModalData.data.fields!;
                     const filteredFields = fields!.filter((_, index) => {
                       return innerFieldIndex !== index;
                     });
                     if (window.confirm(Strings.confirmDeleteInput)) {
                       setInnerFieldModalData({
                         ...innerFieldModalData,
-                        fields: filteredFields,
+                        data: {
+                          ...innerFieldModalData.data,
+                          fields: filteredFields,
+                        },
                       });
                     }
                   }}
@@ -283,7 +307,10 @@ function EditConditionalField() {
           // const changedInnerField: Field = {
           //   ...renameInnerFieldModalData!,
           // };
-          const innerFields = Object.assign([], innerFieldModalData.fields);
+          const innerFields = Object.assign(
+            [],
+            innerFieldModalData.data.fields!
+          );
           // innerFields.splice(
           //   renameInnerFieldModalData!.id,
           //   1,
@@ -292,7 +319,10 @@ function EditConditionalField() {
 
           setInnerFieldModalData({
             ...innerFieldModalData,
-            fields: innerFields,
+            data: {
+              ...innerFieldModalData.data,
+              fields: innerFields,
+            },
           });
           setShowRenameInnerFieldModal(false);
         }}

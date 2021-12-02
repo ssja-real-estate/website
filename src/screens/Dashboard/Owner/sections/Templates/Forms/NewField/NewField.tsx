@@ -21,10 +21,10 @@ function NewField() {
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
 
   function addNewField(newField: Field) {
-    const newFields = [...modalSection.section.fields, newField];
+    const newFields = [...modalSection.data.fields, newField];
     setModalSection({
       ...modalSection,
-      section: { ...modalSection.section, fields: newFields },
+      data: { ...modalSection.data, fields: newFields },
     });
   }
 

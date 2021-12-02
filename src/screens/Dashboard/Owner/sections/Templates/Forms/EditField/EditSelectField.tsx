@@ -23,17 +23,19 @@ function EditSelectField() {
             variant="dark"
             onClick={() => {
               if (newOptionTitle.trim() !== "") {
-                const options = editSelectFieldModalData?.options!;
+                const options = editSelectFieldModalData.data.options!;
                 const newOptions = [...options, newOptionTitle];
                 setEditSelectFieldModalData({
-                  ...editSelectFieldModalData!,
-                  options: newOptions,
+                  ...editSelectFieldModalData,
+                  data: {
+                    ...editSelectFieldModalData.data,
+                    options: newOptions,
+                  },
                 });
-                setNewOptionTitle("");
               } else {
-                setNewOptionTitle("");
                 alert(Strings.enterValidInputForNewOption);
               }
+              setNewOptionTitle("");
             }}
           >
             <i className="bi-plus-lg fs-6"></i>
@@ -48,7 +50,7 @@ function EditSelectField() {
           />
         </InputGroup>
         <ListGroup>
-          {editSelectFieldModalData?.options?.map((option, optionIndex) => {
+          {editSelectFieldModalData.data.options!.map((option, optionIndex) => {
             return (
               <ListGroup.Item
                 key={optionIndex}
@@ -57,13 +59,16 @@ function EditSelectField() {
                 {option}
                 <CloseButton
                   onClick={() => {
-                    const newOptions = editSelectFieldModalData.options!;
+                    const newOptions = editSelectFieldModalData.data.options!;
                     const filteredOptions = newOptions.filter((_, index) => {
                       return optionIndex !== index;
                     });
                     setEditSelectFieldModalData({
                       ...editSelectFieldModalData,
-                      options: filteredOptions,
+                      data: {
+                        ...editSelectFieldModalData.data,
+                        options: filteredOptions,
+                      },
                     });
                   }}
                 />

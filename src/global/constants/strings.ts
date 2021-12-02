@@ -115,6 +115,8 @@ class Strings {
   static editOptions = "ویرایش گزینه های ورودی انتخابی";
   static editInnerInputs = "ویرایش ورودی های داخلی";
   static editInnerInputTitle = "تغییر عنوان ورودی داخلی";
+  static chooseDelegationAndEstateTypes =
+    "هر دو نوع واگذاری و نوع ملک را وارد کنید";
 }
 
 export default Strings;

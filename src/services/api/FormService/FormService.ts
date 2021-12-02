@@ -34,17 +34,9 @@ class FormService extends BaseService {
 
   createForm = async (form: EstateForm) => {
     try {
-      await this.Api.post(
-        this.formUrl,
-        {
-          ...form,
-          assignment_type_id: form.assignmentTypeId,
-          estate_type_id: form.estateTypeId,
-        },
-        this.config
-      );
+      console.log(form);
+      await this.Api.post(this.formUrl, form, this.config);
     } catch (error: any) {
-      console.log("error in create form");
       this.handleError(error);
     }
   };

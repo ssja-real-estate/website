@@ -20,6 +20,7 @@ import {
 import EditConditionalField from "./EditField/EditConditionalField";
 import EditSelectField from "./EditField/EditSelectField";
 import {
+  defaultEditSelectFieldModalData,
   editSelectFieldModalDataAtom,
   innerFieldModalDataAtom,
   modalSectionAtom,
@@ -52,27 +53,27 @@ function EditSection() {
 
   useEffect(() => {
     if (mounted.current) {
-      modalSection && setSectionTitle(modalSection.section.title);
+      modalSection && setSectionTitle(modalSection.data.title);
     }
 
     return () => {
       mounted.current = false;
     };
-  }, [modalSection, modalSection.section.title]);
+  }, [modalSection, modalSection.data.title]);
 
   function moveItemUp(fieldIndex: number) {
-    const tempFields = [...modalSection.section.fields];
+    const tempFields = [...modalSection.data.fields];
     const indexToMoveTo = fieldIndex === 0 ? 0 : fieldIndex - 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
     setModalSection({
       ...modalSection,
-      section: { ...modalSection.section, fields: tempFields },
+      data: { ...modalSection.data, fields: tempFields },
     });
   }
 
   function moveItemDown(fieldIndex: number) {
-    const tempFields = [...modalSection.section.fields];
+    const tempFields = [...modalSection.data.fields];
     const indexToMoveTo =
       fieldIndex === tempFields.length - 1
         ? tempFields.length - 1
@@ -81,44 +82,49 @@ function EditSection() {
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
     setModalSection({
       ...modalSection!,
-      section: { ...modalSection.section, fields: tempFields },
+      data: { ...modalSection.data, fields: tempFields },
     });
   }
 
-  function updateChangedConditionalField(fieldIndex: string) {
-    const section: Section = { ...modalSection.section };
+  function updateChangedConditionalField() {
+    const section: Section = { ...modalSection.data };
     const fields: Field[] = section.fields.slice();
-    // const changedField: Field = {
-    //   id: innerFieldModalData.id,
-    //   title: innerFieldModalData.title,
-    //   type: innerFieldModalData.type,
-    //   value: innerFieldModalData.value,
-    //   fields: innerFieldModalData.fields,
-    // };
-    // fields.splice(fieldIndex, 1, changedField);
+    const fieldIndex = innerFieldModalData.index;
+    const data = innerFieldModalData.data;
+
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      fields: data.fields!,
+    };
+    fields.splice(fieldIndex, 1, changedField);
 
     setModalSection({
       ...modalSection,
-      section: { ...section, fields: fields },
+      data: { ...modalSection.data, fields: fields },
     });
   }
 
   function updateChangedSelectField() {
-    const section: Section = { ...modalSection.section };
+    const section: Section = { ...modalSection.data };
     const fields: Field[] = section.fields.slice();
+    const fieldIndex = editSelectFieldModalData.index;
+    const data = editSelectFieldModalData.data;
 
-    // const changedField: Field = {
-    //   id: editSelectFieldModalData!.id,
-    //   title: editSelectFieldModalData!.title,
-    //   type: editSelectFieldModalData!.type,
-    //   value: editSelectFieldModalData!.value,
-    //   options: editSelectFieldModalData!.options,
-    // };
-    // fields.splice(fieldIndex, 1, changedField);
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      options: data.options!,
+    };
+    fields.splice(fieldIndex, 1, changedField);
 
     setModalSection({
       ...modalSection,
-      section: { ...section, fields: fields },
+      data: { ...modalSection.data, fields: fields },
     });
   }
 
@@ -138,7 +144,7 @@ function EditSection() {
               } else {
                 setModalSection({
                   ...modalSection,
-                  section: { ...modalSection.section, title: sectionTitle },
+                  data: { ...modalSection.data, title: sectionTitle },
                 });
               }
             }}
@@ -147,7 +153,7 @@ function EditSection() {
           </Button>
           <Form.Control
             type="text"
-            defaultValue={modalSection.section.title}
+            defaultValue={modalSection.data.title}
             onChange={(e) => {
               setSectionTitle(e.target.value);
             }}
@@ -155,7 +161,7 @@ function EditSection() {
         </InputGroup>
       </Row>
       <ListGroup>
-        {modalSection.section.fields.map((field, fieldIndex) => {
+        {modalSection.data.fields.map((field, fieldIndex) => {
           return (
             <ListGroup.Item key={fieldIndex} variant="info">
               <Row className="align-items-center">
@@ -212,8 +218,8 @@ function EditSection() {
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                         setInnerFieldModalData({
-                          ...field,
-                          id: fieldIndex.toString(),
+                          index: fieldIndex,
+                          data: { ...field },
                         });
                         setShowEditInnerFieldsModal(true);
                       }}
@@ -225,7 +231,8 @@ function EditSection() {
                         style={{ cursor: "pointer" }}
                         onClick={() => {
                           setEditSelectFieldModalData({
-                            ...field,
+                            index: fieldIndex,
+                            data: { ...field },
                           });
                           setShowEditSelectFieldModal(true);
                         }}
@@ -236,15 +243,15 @@ function EditSection() {
                 <CloseButton
                   className="m-3"
                   onClick={() => {
-                    const fields = modalSection.section.fields;
+                    const fields = modalSection.data.fields;
                     const filteredFields = fields.filter((_, index) => {
                       return fieldIndex !== index;
                     });
                     if (window.confirm(Strings.confirmDeleteInput)) {
                       setModalSection({
                         ...modalSection,
-                        section: {
-                          ...modalSection.section,
+                        data: {
+                          ...modalSection.data,
                           fields: filteredFields,
                         },
                       });
@@ -265,7 +272,7 @@ function EditSection() {
           setShowRenameFieldModal(false);
         }}
         handleSuccess={() => {
-          let fields = modalSection.section.fields.slice();
+          let fields = modalSection.data.fields.slice();
           let index = renameFieldModalData.index;
 
           if (index !== -1) {
@@ -278,7 +285,7 @@ function EditSection() {
 
           setModalSection({
             ...modalSection,
-            section: { ...modalSection.section, fields: fields },
+            data: { ...modalSection.data, fields: fields },
           });
           setShowRenameFieldModal(false);
           setRenameFieldModalData({ index: -1, newTitle: "", newType: 0 });
@@ -295,23 +302,6 @@ function EditSection() {
             });
           }}
         />
-        <Form.Select
-          value={renameFieldModalData.newType}
-          onChange={(e) => {
-            setRenameFieldModalData({
-              ...renameFieldModalData,
-              newType: Number(e.currentTarget.value),
-            });
-          }}
-        >
-          <option value={FieldType.Text}>{FieldTypeTitle.Text}</option>
-          <option value={FieldType.Number}>{FieldTypeTitle.Number}</option>
-          <option value={FieldType.Select}>{FieldTypeTitle.Select}</option>
-          <option value={FieldType.Bool}>{FieldTypeTitle.Bool}</option>
-          <option value={FieldType.Conditional}>
-            {FieldTypeTitle.Conditional}
-          </option>
-        </Form.Select>
       </CustomModal>
       <CustomModal
         isFullscreen
@@ -323,7 +313,7 @@ function EditSection() {
           setShowEditInnerFieldsModal(false);
         }}
         handleSuccess={() => {
-          updateChangedConditionalField(innerFieldModalData.id ?? "");
+          updateChangedConditionalField();
           setShowEditInnerFieldsModal(false);
         }}
       >
@@ -336,9 +326,10 @@ function EditSection() {
         successTitle={Strings.save}
         handleClose={() => {
           setShowEditSelectFieldModal(false);
+          setEditSelectFieldModalData(defaultEditSelectFieldModalData);
         }}
         handleSuccess={() => {
-          if (editSelectFieldModalData.options!.length > 1) {
+          if (editSelectFieldModalData.data.options!.length > 1) {
             updateChangedSelectField();
             setShowEditSelectFieldModal(false);
           } else {

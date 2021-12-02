@@ -193,13 +193,12 @@ const Forms = () => {
   };
 
   const updateChangedSection = () => {
-    console.log("update section");
     const sectionIndex = modalSection.index;
     const section = form.sections[sectionIndex];
     const changedSection: Section = {
       ...section,
-      title: modalSection.section.title,
-      fields: modalSection.section.fields,
+      title: modalSection.data.title,
+      fields: modalSection.data.fields,
     };
     let sections = form.sections.slice();
     sections.splice(sectionIndex, 1, changedSection);
@@ -211,7 +210,20 @@ const Forms = () => {
   const saveChanges = async () => {
     setLoading((prev) => true);
     if (form) {
-      // await formService.current.createForm(newForm);
+      const formDelegationType = delegationTypes.find(
+        (d) => d.id === delegationType.id
+      );
+      const formEstateType = estateTypes.find((e) => e.id === estateType.id);
+      if (!formDelegationType || !formEstateType) {
+        toast.error(Strings.chooseDelegationAndEstateTypes);
+      }
+      const newForm: EstateForm = {
+        ...form,
+        title: `${formDelegationType!.name} ${formEstateType!.name}`,
+        assignmentTypeId: delegationType.id,
+        estateTypeId: estateType.id,
+      };
+      await formService.current.createForm(newForm);
     }
     await loadData();
   };
@@ -355,7 +367,7 @@ const Forms = () => {
             <CustomModal
               isFullscreen
               show={showEditSectionModal}
-              title={modalSection.section.title}
+              title={modalSection.data.title}
               cancelTitle={Strings.cancel}
               successTitle={Strings.saveChanges}
               handleClose={() => {
@@ -444,7 +456,7 @@ const Forms = () => {
                                           onClick={() => {
                                             setModalSection({
                                               index: sectionIndex,
-                                              section: {
+                                              data: {
                                                 ...section,
                                                 id: section.id,
                                                 title: section.title,
@@ -456,19 +468,12 @@ const Forms = () => {
                                         ></i>
                                         <CloseButton
                                           onClick={() => {
-                                            console.log(sectionIndex);
                                             const sections = [...form.sections];
-                                            // console.log("sections");
-                                            // sections.forEach((s) => {
-                                            //   console.log(s);
-                                            // });
                                             const filteredSections =
                                               sections.splice(
                                                 sectionIndex - 1,
                                                 1
                                               );
-                                            // console.log("filtered");
-                                            // console.log(filteredSections);
                                             if (
                                               window.confirm(
                                                 Strings.sectionDeleteConfirm
