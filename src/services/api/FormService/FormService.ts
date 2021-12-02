@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { EstateForm } from "global/types/EstateForm";
+import { defaultForm, EstateForm } from "global/types/EstateForm";
 import BaseService from "../BaseService";
 
 class FormService extends BaseService {
@@ -23,18 +23,30 @@ class FormService extends BaseService {
     return forms;
   };
 
-  getForm = async (assignmentTypeId: string, estateTypeId: string) => {
-    await this.Api.get("asldkjf", {
-      params: {
-        assignmentTypeId,
-        estateTypeId,
-      },
-    });
+  getForm = async (
+    assignmentTypeId: string,
+    estateTypeId: string
+  ): Promise<EstateForm> => {
+    let form: EstateForm = defaultForm;
+    try {
+      const response = await this.Api.get("/form", {
+        ...this.config,
+        params: {
+          assignmentTypeId,
+          estateTypeId,
+        },
+      });
+      if (response.data) {
+        form = response.data as EstateForm;
+      }
+    } catch (error: any) {
+      this.handleError(error);
+    }
+    return form;
   };
 
   createForm = async (form: EstateForm) => {
     try {
-      console.log(form);
       await this.Api.post(this.formUrl, form, this.config);
     } catch (error: any) {
       this.handleError(error);
@@ -43,6 +55,7 @@ class FormService extends BaseService {
 
   updateForm = async (formId: string, form: EstateForm) => {
     try {
+      // console.log(form);
       await this.Api.put(`${this.formUrl}/${formId}`, form, this.config);
     } catch (error: any) {
       this.handleError(error);

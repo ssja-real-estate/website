@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
   Draggable,
   Droppable,
   DropResult,
-} from 'react-beautiful-dnd';
+} from "react-beautiful-dnd";
 import {
   Button,
   CloseButton,
@@ -15,28 +15,28 @@ import {
   ListGroup,
   Row,
   Spinner,
-} from 'react-bootstrap';
-import { EstateForm } from '../../../../../../global/types/EstateForm';
+} from "react-bootstrap";
+import { EstateForm } from "../../../../../../global/types/EstateForm";
 import {
   FieldType,
   FieldTypeTitle,
-} from '../../../../../../global/types/Field';
-import CustomModal from '../../../../../../components/CustomModal/CustomModal';
-import EditSection from './EditSection';
-import { atom, useRecoilState } from 'recoil';
-import DelegationType from 'global/types/DelegationType';
-import EstateType from 'global/types/EstateType';
-import Section from 'global/types/Section';
+} from "../../../../../../global/types/Field";
+import CustomModal from "../../../../../../components/CustomModal/CustomModal";
+import EditSection from "./EditSection";
+import { atom, useRecoilState } from "recoil";
+import DelegationType from "global/types/DelegationType";
+import EstateType from "global/types/EstateType";
+import Section from "global/types/Section";
 
 interface ModalSection extends Section {
   id: string;
 }
 
 export const modalSectionAtom = atom<ModalSection>({
-  key: 'adminModalSectionState',
+  key: "adminModalSectionState",
   default: {
-    id: '',
-    title: '',
+    id: "",
+    title: "",
     fields: [],
   },
 });
@@ -46,22 +46,22 @@ function Forms() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [delegationType, setDelegationType] = useState<DelegationType>({
-    id: '',
-    name: 'default',
+    id: "",
+    name: "default",
   });
   const [estateType, setEstateType] = useState<EstateType>({
-    id: '',
-    name: 'default',
+    id: "",
+    name: "default",
   });
   const isDefault =
-    delegationType.name === 'default' || estateType.name === 'default'
+    delegationType.name === "default" || estateType.name === "default"
       ? true
       : false;
   const [form, setForm] = useState<EstateForm>();
   const [hasImage, setHasImage] = useState<boolean>(false);
   const [showNewSectionModal, setShowNewSectionModal] =
     useState<boolean>(false);
-  const [newSectionTitle, setNewSectionTitle] = useState<string>('');
+  const [newSectionTitle, setNewSectionTitle] = useState<string>("");
   const [showEditSectionModal, setShowEditSectionModal] =
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -69,8 +69,8 @@ function Forms() {
 
   useEffect(() => {
     if (mounted.current) {
-      getDelegationTypes('http://localhost:8000/delegationTypes');
-      getEstateTypes('http://localhost:8000/estateTypes');
+      // getDelegationTypes("http://localhost:8000/delegationTypes");
+      // getEstateTypes("http://localhost:8000/estateTypes");
     }
 
     return () => {
@@ -80,11 +80,11 @@ function Forms() {
 
   useEffect(() => {
     if (mounted.current) {
-      setLoading(true);
-      !isDefault &&
-        getFormData(
-          `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-        );
+      // setLoading(true);
+      // !isDefault &&
+      // getFormData(
+      //   `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
+      // );
     }
 
     return () => {
@@ -141,13 +141,13 @@ function Forms() {
 
   function formWithImageSection(form: EstateForm): EstateForm {
     const imageSection: Section = {
-      id: '',
-      title: 'تصاویر',
+      id: "",
+      title: "تصاویر",
       fields: [
         {
-          id: '',
+          id: "",
           type: FieldType.Image,
-          title: 'انتخاب تصاویر',
+          title: "انتخاب تصاویر",
           value: [],
         },
       ],
@@ -174,7 +174,7 @@ function Forms() {
   function formWithNewSection(form: EstateForm, title: string): EstateForm {
     const sections = form.sections;
     const newSection: Section = {
-      id: '',
+      id: "",
       title: title,
       fields: [],
     };
@@ -197,37 +197,6 @@ function Forms() {
     setForm({ ...form, sections: sections });
   }
 
-  async function getDelegationTypes(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setDelegationTypes(data.data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
-
-  async function getEstateTypes(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setEstateTypes(data.data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
-
-  async function getFormData(url: string) {
-    // fetchGet(url)
-    //   .then((data) => {
-    //     setForm(data);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
-
   return (
     <>
       <h4 className="mt-4 ms-3 d-inline">فرم ها</h4>
@@ -236,11 +205,11 @@ function Forms() {
         className="refresh-btn d-inline rounded-circle"
         onClick={() => {
           setLoading(true);
-          getDelegationTypes('http://localhost:8000/delegationTypes');
-          getEstateTypes('http://localhost:8000/estateTypes');
-          getFormData(
-            `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-          );
+          // getDelegationTypes("http://localhost:8000/delegationTypes");
+          // getEstateTypes("http://localhost:8000/estateTypes");
+          // getFormData(
+          //   `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
+          // );
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
@@ -254,12 +223,12 @@ function Forms() {
           setShowNewSectionModal(false);
         }}
         handleSuccess={() => {
-          if (newSectionTitle.trim() !== '') {
+          if (newSectionTitle.trim() !== "") {
             setForm(formWithNewSection(form!, newSectionTitle));
             setShowNewSectionModal(false);
           } else {
-            setNewSectionTitle('');
-            alert('لطفاً یک عنوان برای بخش جدید انتخاب کنید');
+            setNewSectionTitle("");
+            alert("لطفاً یک عنوان برای بخش جدید انتخاب کنید");
           }
         }}
       >
@@ -273,7 +242,7 @@ function Forms() {
       </CustomModal>
       <Row>
         <Col>
-          <InputGroup className="my-4" style={{ direction: 'ltr' }}>
+          <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
@@ -325,7 +294,7 @@ function Forms() {
             </Form.Select>
           </InputGroup>
         </Col>
-        <Col sm={'auto'}>
+        <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"
@@ -412,7 +381,7 @@ function Forms() {
                     <ListGroup
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      style={{ userSelect: 'none' }}
+                      style={{ userSelect: "none" }}
                     >
                       {form?.sections.map((section, sectionIndex) => {
                         let isImageSection = false;
@@ -443,19 +412,19 @@ function Forms() {
                                         <Col>
                                           <h6 className="d-inline text-muted">
                                             {field.type === FieldType.Text
-                                              ? 'متن'
+                                              ? "متن"
                                               : field.type === FieldType.Number
-                                              ? 'عدد'
+                                              ? "عدد"
                                               : field.type === FieldType.Select
-                                              ? 'انتخابی'
+                                              ? "انتخابی"
                                               : field.type === FieldType.Bool
-                                              ? 'کلید'
+                                              ? "کلید"
                                               : field.type ===
                                                 FieldType.Conditional
-                                              ? 'شرطی'
+                                              ? "شرطی"
                                               : field.type === FieldType.Image
-                                              ? 'تصویر'
-                                              : '---'}
+                                              ? "تصویر"
+                                              : "---"}
                                           </h6>
                                         </Col>
                                       </Row>
@@ -510,7 +479,7 @@ function Forms() {
                                               });
                                             if (
                                               window.confirm(
-                                                'آیا از حذف این بخش مطمئن هستید؟'
+                                                "آیا از حذف این بخش مطمئن هستید؟"
                                               )
                                             ) {
                                               setForm({
@@ -556,7 +525,7 @@ function Forms() {
                                                       : field.type ===
                                                         FieldType.Image
                                                       ? FieldTypeTitle.Image
-                                                      : '---'}
+                                                      : "---"}
                                                   </h6>
                                                 </Col>
                                               </Row>

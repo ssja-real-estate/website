@@ -18,8 +18,6 @@ class DelegationTypeService extends BaseService {
 
       response.data.forEach((element: any) => {
         let delegation = element;
-        console.log("element delegation type");
-        console.log(element);
         delegationTypes.push(delegation);
       });
     } catch (error: any) {

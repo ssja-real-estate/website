@@ -1,14 +1,14 @@
-import EditItemModal from 'components/EditItemModal/EditItemModal';
+import EditItemModal from "components/EditItemModal/EditItemModal";
 import editItemModalState, {
   buildMap,
   defaultEditItemModalState,
   EditItemType,
-} from 'components/EditItemModal/EditItemModalState';
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import City from 'global/types/City';
-import Province from 'global/types/Province';
-import React, { useState, useEffect, useRef } from 'react';
+} from "components/EditItemModal/EditItemModalState";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import City from "global/types/City";
+import Province from "global/types/Province";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Row,
@@ -17,10 +17,10 @@ import {
   Form,
   ListGroup,
   Spinner,
-} from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
-import ListItem from '../../../../../../components/ListItem/ListItem';
+} from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function CityList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -28,8 +28,8 @@ function CityList() {
   const [removedItems, setRemovedItems] = useState<City[]>([]);
   const [newItems, setNewItems] = useState<City[]>([]);
   const [newCity, setNewCity] = useState<City>({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
   });
   const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -101,16 +101,14 @@ function CityList() {
   };
 
   const editCity = async () => {
-    if (modalState.id === '') return;
+    if (modalState.id === "") return;
     setLoading((prev) => true);
 
-    let provinceId = selectedProvince?.id ?? '';
-    console.log('owner city list');
+    let provinceId = selectedProvince?.id ?? "";
     let updatedCity = await service.current.editCityInProvince(provinceId, {
       id: modalState.id,
       name: modalState.value,
     });
-    console.log(updatedCity);
     if (updatedCity) {
       setProvinces((prev) => {
         let prevProvince = prev.find((t) => t.id === provinceId);
@@ -164,11 +162,11 @@ function CityList() {
       </Button>
       <Row>
         <Col>
-          <InputGroup className="my-4" style={{ direction: 'ltr' }}>
+          <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
-                newCity.name.trim() !== '' &&
+                newCity.name.trim() !== "" &&
                   setNewItems((prev) => [
                     ...prev,
                     {
@@ -178,7 +176,7 @@ function CityList() {
                   ]);
                 setNewCity({
                   ...newCity,
-                  name: '',
+                  name: "",
                 });
               }}
             >
@@ -222,7 +220,7 @@ function CityList() {
             </Form.Select>
           </InputGroup>
         </Col>
-        <Col sm={'auto'}>
+        <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"

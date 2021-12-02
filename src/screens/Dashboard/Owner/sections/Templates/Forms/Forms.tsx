@@ -131,7 +131,21 @@ const Forms = () => {
     if (!loading) {
       setLoading((prev) => true);
     }
-    // await loadOptions();
+
+    if (!delegationType.id || !estateType.id) {
+      return;
+    }
+    const loadedForm = await formService.current.getForm(
+      delegationType.id,
+      estateType.id
+    );
+
+    if (includesImageSection(loadedForm)) {
+      setHasImage(true);
+    }
+    setForm(loadedForm);
+
+    await loadOptions();
 
     setLoading((prev) => false);
   };
@@ -162,7 +176,7 @@ const Forms = () => {
     if (!form) return;
 
     let newSections = form.sections.slice();
-    const hasImageSection = includesImageSection();
+    const hasImageSection = includesImageSection(form);
     if (hasImageSection) {
       newSections.shift();
     } else {
@@ -182,10 +196,10 @@ const Forms = () => {
     setForm({ ...form, sections: newSections });
   };
 
-  const includesImageSection = () => {
-    if (!form.sections.length) return false;
+  const includesImageSection = (estateForm: EstateForm) => {
+    if (!estateForm.sections.length) return false;
 
-    const imageField = form.sections[0].fields.find((field) => {
+    const imageField = estateForm.sections[0].fields.find((field) => {
       return field.type === FieldType.Image;
     });
 
@@ -217,13 +231,17 @@ const Forms = () => {
       if (!formDelegationType || !formEstateType) {
         toast.error(Strings.chooseDelegationAndEstateTypes);
       }
-      const newForm: EstateForm = {
+      const targetForm: EstateForm = {
         ...form,
         title: `${formDelegationType!.name} ${formEstateType!.name}`,
         assignmentTypeId: delegationType.id,
         estateTypeId: estateType.id,
       };
-      await formService.current.createForm(newForm);
+      if (targetForm.id) {
+        await formService.current.updateForm(targetForm.id, targetForm);
+      } else {
+        await formService.current.createForm(targetForm);
+      }
     }
     await loadData();
   };
