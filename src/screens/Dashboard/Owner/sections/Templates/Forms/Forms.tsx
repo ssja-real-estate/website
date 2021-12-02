@@ -93,18 +93,6 @@ const Forms = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDefault, delegationType.name, estateType.name]);
 
-  // useEffect(() => {
-  //   // if (form) {
-  //   //   if (includesImageSection()) {
-  //   //     setHasImage(true);
-  //   //   } else {
-  //   //     setHasImage(false);
-  //   //   }
-  //   // }
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [form]);
-
   const loadOptions = async () => {
     toast.promise(
       delegationTypeService.current
@@ -488,9 +476,9 @@ const Forms = () => {
                                           onClick={() => {
                                             const sections = [...form.sections];
                                             const filteredSections =
-                                              sections.splice(
-                                                sectionIndex - 1,
-                                                1
+                                              sections.filter(
+                                                (s, index) =>
+                                                  index !== sectionIndex
                                               );
                                             if (
                                               window.confirm(

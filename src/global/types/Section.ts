@@ -7,6 +7,7 @@ interface Section {
 }
 
 const defaultSection: Section = {
+  id: "",
   title: "",
   fields: [],
 };
