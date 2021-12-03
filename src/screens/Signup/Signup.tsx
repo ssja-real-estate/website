@@ -4,20 +4,22 @@ import { Link, useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { elevationEffect } from "../../animations/motionVariants";
 import { Button, Form, InputGroup } from "react-bootstrap";
-// import { useSetRecoilState } from "recoil";
-// import { globalState } from "global/states/globalStates";
 import Strings from "global/constants/strings";
 import RegexValidator from "services/utilities/RegexValidator";
 import toast from "react-hot-toast";
 import UserService from "services/api/UserService/UserService";
+import { useSetRecoilState } from "recoil";
+import {
+  PreviousScreen,
+  verificationState,
+} from "global/states/VerificationState";
 
 function SignupScreen() {
   const [visibility, setVisibility] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassowrd, setRepeatPassword] = useState("");
-  // const setGlobalState = useSetRecoilState(globalState);
+  const setVerificationState = useSetRecoilState(verificationState);
   const history = useHistory();
   const service = useRef(new UserService());
 
@@ -28,6 +30,7 @@ function SignupScreen() {
   const signupUser = async () => {
     if (password !== repeatPassowrd) {
       toast.error(Strings.invalidRepeatPassword);
+      return;
     }
     if (!RegexValidator.validatePhone(mobile)) {
       toast.error(Strings.invalidPhoneNumber);
@@ -39,12 +42,12 @@ function SignupScreen() {
     }
 
     await service.current.signupUser(mobile, password);
-    history.push("/code");
-
-    // if (signupState) {
-    //   setGlobalState(signupState!);
-    //   history.push("/dashboard");
-    // }
+    setVerificationState({
+      mobile: mobile,
+      password: "",
+      previousScreen: PreviousScreen.Signup,
+    });
+    history.push("/code", {});
   };
 
   return (

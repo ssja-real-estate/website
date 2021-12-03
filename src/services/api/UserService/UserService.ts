@@ -1,12 +1,14 @@
 import { AxiosResponse } from "axios";
 import GlobalState from "global/states/GlobalState";
 import User, { defaultUser, Role } from "global/types/User";
+import toast from "react-hot-toast";
 import BaseService from "../BaseService";
 
 class UserService extends BaseService {
   private userUrl = "/user";
   private signupUrl = "/signup";
   private loginUrl = "/signin";
+  private verifyUrl = "/verify";
 
   async getAllUsers(role: Role = Role.USER): Promise<User[]> {
     let users: User[] = [];
@@ -85,36 +87,19 @@ class UserService extends BaseService {
     return globalState;
   }
 
-  async signupUser(
-    mobile: string,
-    password: string
-  ): Promise<GlobalState | undefined> {
-    let globalState: GlobalState | undefined = undefined;
+  async signupUser(mobile: string, password: string): Promise<void> {
     try {
-      // const response: AxiosResponse<any> = await this.Api.post(this.signupUrl, {
-      //   mobile,
-      //   password,
-      // });
-      await this.Api.post(this.signupUrl, {
+      const response = await this.Api.post(this.signupUrl, {
         mobile,
         password,
       });
 
-      // if (response.data) {
-      //   const token = response.data.token as string;
-      //   const user = response.data.user as User;
-      //   globalState = {
-      //     userId: user.id,
-      //     token: token,
-      //     role: user.role,
-      //     loggedIn: token.length !== 0,
-      //   };
-      // }
+      if (response.data) {
+        toast.success(response.data as string);
+      }
     } catch (error: any) {
       this.handleError(error);
     }
-
-    return globalState;
   }
 
   async editProfile(userId: string, name: string) {
@@ -148,6 +133,37 @@ class UserService extends BaseService {
     } catch (error: any) {
       this.handleError(error);
     }
+  }
+
+  async verifyUser(
+    mobile: string,
+    code: string
+  ): Promise<GlobalState | undefined> {
+    let globalState: GlobalState | undefined = undefined;
+    try {
+      const response: AxiosResponse<any> = await this.Api.get(this.verifyUrl, {
+        ...this.config,
+        params: {
+          mobile,
+          code,
+        },
+      });
+      const data = response.data;
+      if (data) {
+        const token = data.token as string;
+        const user = data.user as User;
+        globalState = {
+          token: token,
+          userId: user.id,
+          role: user.role,
+          loggedIn: true,
+        };
+      }
+    } catch (error) {
+      this.handleError(error);
+    }
+
+    return globalState;
   }
 }
 
