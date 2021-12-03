@@ -1,7 +1,7 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import User from 'global/types/User';
-import { useEffect, useRef, useState } from 'react';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import User from "global/types/User";
+import { useEffect, useRef, useState } from "react";
 import {
   Card,
   Col,
@@ -11,12 +11,12 @@ import {
   Tab,
   Spinner,
   Button,
-} from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import UserService from 'services/api/UserService/UserService';
+} from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import UserService from "services/api/UserService/UserService";
 
 function UsersList() {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -25,10 +25,8 @@ function UsersList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      userService.current.setToken(state.token);
-      loadData();
-    }
+    userService.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -41,8 +39,10 @@ function UsersList() {
       setLoading(true);
     }
     const users = await userService.current.getAllUsers();
-    setUsers(users);
-    setLoading(false);
+    if (mounted.current) {
+      setUsers(users);
+      setLoading(false);
+    }
   };
 
   return (
@@ -78,7 +78,7 @@ function UsersList() {
                   {users
                     .filter((user) => {
                       const value = searchValue.trim();
-                      if (value === '') return true;
+                      if (value === "") return true;
 
                       let result = false;
                       if (user.name) {

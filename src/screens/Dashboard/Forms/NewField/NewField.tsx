@@ -1,13 +1,14 @@
-import Strings from "global/constants/strings";
 import { useState } from "react";
 import { InputGroup, Button, Form, Col, Row } from "react-bootstrap";
 import { useRecoilState } from "recoil";
+
+import Strings from "global/constants/strings";
 import {
   defaultField,
   Field,
   FieldType,
   FieldTypeTitle,
-} from "../../../../../../../global/types/Field";
+} from "global/types/Field";
 import { modalSectionAtom } from "../FormsState";
 import NewConditionalField from "./NewConditionalField";
 import { optionsAtom, innerFieldsAtom } from "./NewFieldStates";

@@ -1,5 +1,4 @@
-import Section from 'global/types/Section';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   CloseButton,
@@ -8,52 +7,31 @@ import {
   InputGroup,
   ListGroup,
   Row,
-} from 'react-bootstrap';
-import { atom, useRecoilState } from 'recoil';
-import CustomModal from '../../../../../../components/CustomModal/CustomModal';
-import { Field, FieldType } from '../../../../../../global/types/Field';
-import EditConditionalField from './EditField/EditConditionalField';
-import EditSelectField from './EditField/EditSelectField';
-import { modalSectionAtom } from './Forms';
-import NewField from './NewField/NewField';
+} from "react-bootstrap";
+import { useRecoilState } from "recoil";
 
-interface ModalSection extends Section {
-  id: string;
-}
-
-interface ModalField extends Field {
-  id: string;
-}
-
-export const innerFieldModalDataAtom = atom<ModalField>({
-  key: 'adminEditInnerFieldsModalDataState',
-  default: {
-    id: '',
-    title: '',
-    type: FieldType.Conditional,
-    value: false,
-    fields: [],
-  },
-});
-
-export const editSelectFieldModalDataAtom = atom<ModalField>({
-  key: 'adminEditSelectFieldModalState',
-  default: {
-    id: '',
-    title: '',
-    type: FieldType.Select,
-    value: '',
-    options: [],
-  },
-});
+import CustomModal from "components/CustomModal/CustomModal";
+import Strings from "global/constants/strings";
+import { Field, FieldType, FieldTypeTitle } from "global/types/Field";
+import Section from "global/types/Section";
+import EditConditionalField from "./EditField/EditConditionalField";
+import EditSelectField from "./EditField/EditSelectField";
+import {
+  defaultEditSelectFieldModalData,
+  EditFieldModalData,
+  editSelectFieldModalDataAtom,
+  innerFieldModalDataAtom,
+  modalSectionAtom,
+} from "./FormsState";
+import NewField from "./NewField/NewField";
 
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
-  const [sectionTitle, setSectionTitle] = useState<string>('');
+  const [sectionTitle, setSectionTitle] = useState<string>("");
   const [showRenameFieldModal, setShowRenameFieldModal] =
     useState<boolean>(false);
   const [renameFieldModalData, setRenameFieldModalData] =
-    useState<ModalField>();
+    useState<EditFieldModalData>({ index: -1, newTitle: "", newType: 0 });
   const [showEditInnerFieldsModal, setShowEditInnerFieldsModal] =
     useState<boolean>(false);
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
@@ -63,95 +41,111 @@ function EditSection() {
     useState<boolean>(false);
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
     useRecoilState(editSelectFieldModalDataAtom);
-
   const mounted = useRef(true);
 
   useEffect(() => {
     if (mounted.current) {
-      modalSection && setSectionTitle(modalSection.title);
+      modalSection && setSectionTitle(modalSection.data.title);
     }
 
     return () => {
       mounted.current = false;
     };
-  }, [modalSection, modalSection?.title]);
+  }, [modalSection, modalSection.data.title]);
 
   function moveItemUp(fieldIndex: number) {
-    const tempFields = [...modalSection!.fields];
+    const tempFields = [...modalSection.data.fields];
     const indexToMoveTo = fieldIndex === 0 ? 0 : fieldIndex - 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
-    setModalSection({ ...modalSection!, fields: tempFields });
+    setModalSection({
+      ...modalSection,
+      data: { ...modalSection.data, fields: tempFields },
+    });
   }
 
   function moveItemDown(fieldIndex: number) {
-    const tempFields = [...modalSection!.fields];
+    const tempFields = [...modalSection.data.fields];
     const indexToMoveTo =
       fieldIndex === tempFields.length - 1
         ? tempFields.length - 1
         : fieldIndex + 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
-    setModalSection({ ...modalSection!, fields: tempFields });
+    setModalSection({
+      ...modalSection!,
+      data: { ...modalSection.data, fields: tempFields },
+    });
   }
 
-  function updateChangedConditionalField(
-    section: ModalSection,
-    fieldIndex: string
-  ) {
-    const fields = Object.assign([], section.fields);
-    // const changedField: Field = {
-    //   id: innerFieldModalData.id,
-    //   title: innerFieldModalData.title,
-    //   type: innerFieldModalData.type,
-    //   value: innerFieldModalData.value,
-    //   fields: innerFieldModalData.fields,
-    // };
-    // fields.splice(fieldIndex, 1, changedField);
+  function updateChangedConditionalField() {
+    const section: Section = { ...modalSection.data };
+    const fields: Field[] = section.fields.slice();
+    const fieldIndex = innerFieldModalData.index;
+    const data = innerFieldModalData.data;
 
-    setModalSection({ ...section, fields: fields });
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      fields: data.fields!,
+    };
+    fields.splice(fieldIndex, 1, changedField);
+
+    setModalSection({
+      ...modalSection,
+      data: { ...modalSection.data, fields: fields },
+    });
   }
 
-  function updateChangedSelectField(section: ModalSection, fieldIndex: string) {
-    const fields = Object.assign([], section.fields);
-    // const changedField: Field = {
-    //   id: editSelectFieldModalData!.id,
-    //   title: editSelectFieldModalData!.title,
-    //   type: editSelectFieldModalData!.type,
-    //   value: editSelectFieldModalData!.value,
-    //   options: editSelectFieldModalData!.options,
-    // };
-    // fields.splice(fieldIndex, 1, changedField);
+  function updateChangedSelectField() {
+    const section: Section = { ...modalSection.data };
+    const fields: Field[] = section.fields.slice();
+    const fieldIndex = editSelectFieldModalData.index;
+    const data = editSelectFieldModalData.data;
 
-    setModalSection({ ...section, fields: fields });
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      options: data.options!,
+    };
+    fields.splice(fieldIndex, 1, changedField);
+
+    setModalSection({
+      ...modalSection,
+      data: { ...modalSection.data, fields: fields },
+    });
   }
 
   return (
     <>
       <Row className="align-items-center my-3">
         <Col sm="auto">
-          <Form.Label>عنوان بخش</Form.Label>
+          <Form.Label>{Strings.sectionTitle}</Form.Label>
         </Col>
-        <InputGroup style={{ direction: 'ltr' }}>
+        <InputGroup style={{ direction: "ltr" }}>
           <Button
             variant="dark"
             onClick={() => {
-              if (sectionTitle.trim() === '') {
-                alert('لطفاً یک عنوان معتبر برای بخش انتخاب کنید');
-                setSectionTitle('');
+              if (sectionTitle.trim() === "") {
+                alert(Strings.enterValidTitleForSection);
+                setSectionTitle("");
               } else {
                 setModalSection({
-                  ...modalSection!,
-                  title: sectionTitle!,
+                  ...modalSection,
+                  data: { ...modalSection.data, title: sectionTitle },
                 });
               }
             }}
           >
-            ذخیره
+            {Strings.save}
           </Button>
           <Form.Control
             type="text"
-            value={sectionTitle}
+            defaultValue={modalSection.data.title}
             onChange={(e) => {
               setSectionTitle(e.target.value);
             }}
@@ -159,21 +153,21 @@ function EditSection() {
         </InputGroup>
       </Row>
       <ListGroup>
-        {modalSection?.fields.map((field, fieldIndex) => {
+        {modalSection.data.fields.map((field, fieldIndex) => {
           return (
             <ListGroup.Item key={fieldIndex} variant="info">
               <Row className="align-items-center">
                 <Col xs="auto">
                   <i
                     className="bi-chevron-up d-block"
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       moveItemUp(fieldIndex);
                     }}
                   ></i>
                   <i
                     className="bi-chevron-down d-block"
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       moveItemDown(fieldIndex);
                     }}
@@ -183,11 +177,12 @@ function EditSection() {
                   <h6 className="d-inline">{field.title}</h6>
                   <i
                     className="bi-pencil-fill me-2"
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       setRenameFieldModalData({
-                        ...field,
-                        id: fieldIndex.toString(),
+                        index: fieldIndex,
+                        newTitle: field.title,
+                        newType: field.type,
                       });
                       setShowRenameFieldModal(true);
                     }}
@@ -196,27 +191,27 @@ function EditSection() {
                 <Col>
                   <h6 className="d-inline text-muted">
                     {field.type === FieldType.Text
-                      ? 'متن'
+                      ? FieldTypeTitle.Text
                       : field.type === FieldType.Number
-                      ? 'عدد'
+                      ? FieldTypeTitle.Number
                       : field.type === FieldType.Select
-                      ? 'انتخابی'
+                      ? FieldTypeTitle.Select
                       : field.type === FieldType.Bool
-                      ? 'کلید'
+                      ? FieldTypeTitle.Bool
                       : field.type === FieldType.Conditional
-                      ? 'شرطی'
+                      ? FieldTypeTitle.Conditional
                       : field.type === FieldType.Image
-                      ? 'تصویر'
-                      : '---'}
+                      ? FieldTypeTitle.Image
+                      : "---"}
                   </h6>
                   {field.type === FieldType.Conditional ? (
                     <i
                       className="bi-list-ul fs-4 me-3"
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
                         setInnerFieldModalData({
-                          ...field,
-                          id: fieldIndex.toString(),
+                          index: fieldIndex,
+                          data: { ...field },
                         });
                         setShowEditInnerFieldsModal(true);
                       }}
@@ -225,11 +220,11 @@ function EditSection() {
                     field.type === FieldType.Select && (
                       <i
                         className="bi-list fs-4 me-3"
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() => {
                           setEditSelectFieldModalData({
-                            ...field,
-                            id: fieldIndex.toString(),
+                            index: fieldIndex,
+                            data: { ...field },
                           });
                           setShowEditSelectFieldModal(true);
                         }}
@@ -240,14 +235,17 @@ function EditSection() {
                 <CloseButton
                   className="m-3"
                   onClick={() => {
-                    const fields = modalSection.fields;
+                    const fields = modalSection.data.fields;
                     const filteredFields = fields.filter((_, index) => {
                       return fieldIndex !== index;
                     });
-                    if (window.confirm('آیا از حذف این ورودی مطمئن هستید؟')) {
+                    if (window.confirm(Strings.confirmDeleteInput)) {
                       setModalSection({
                         ...modalSection,
-                        fields: filteredFields,
+                        data: {
+                          ...modalSection.data,
+                          fields: filteredFields,
+                        },
                       });
                     }
                   }}
@@ -259,31 +257,40 @@ function EditSection() {
       </ListGroup>
       <CustomModal
         show={showRenameFieldModal}
-        title="تغییر عنوان ورودی"
-        cancelTitle="لغو"
-        successTitle="ذخیره"
+        title={Strings.changeInputTitle}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
         handleClose={() => {
           setShowRenameFieldModal(false);
         }}
         handleSuccess={() => {
-          // const changedField: Field = {
-          //   ...renameFieldModalData!,
-          // };
-          const fields = Object.assign([], modalSection.fields);
-          // fields.splice(renameFieldModalData!.id, 1, changedField);
+          let fields = modalSection.data.fields.slice();
+          let index = renameFieldModalData.index;
 
-          setModalSection({ ...modalSection, fields: fields });
+          if (index !== -1) {
+            fields[index] = {
+              ...fields[index],
+              title: renameFieldModalData.newTitle,
+              type: renameFieldModalData.newType,
+            };
+          }
+
+          setModalSection({
+            ...modalSection,
+            data: { ...modalSection.data, fields: fields },
+          });
           setShowRenameFieldModal(false);
+          setRenameFieldModalData({ index: -1, newTitle: "", newType: 0 });
         }}
       >
         <Form.Control
           type="text"
-          placeholder="عنوان جدید"
-          value={renameFieldModalData?.title}
+          placeholder={Strings.newTitle}
+          value={renameFieldModalData.newTitle}
           onChange={(e) => {
             setRenameFieldModalData({
               ...renameFieldModalData!,
-              title: e.target.value,
+              newTitle: e.target.value,
             });
           }}
         />
@@ -291,14 +298,14 @@ function EditSection() {
       <CustomModal
         isFullscreen
         show={showEditInnerFieldsModal}
-        title="ویرایش ورودی های داخلی"
-        cancelTitle="لغو"
-        successTitle="ذخیره"
+        title={Strings.editInnerInputs}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
         handleClose={() => {
           setShowEditInnerFieldsModal(false);
         }}
         handleSuccess={() => {
-          updateChangedConditionalField(modalSection, innerFieldModalData.id);
+          updateChangedConditionalField();
           setShowEditInnerFieldsModal(false);
         }}
       >
@@ -306,28 +313,26 @@ function EditSection() {
       </CustomModal>
       <CustomModal
         show={showEditSelectFieldModal}
-        title="ویرایش گزینه های ورودی انتخابی"
-        cancelTitle="لغو"
-        successTitle="ذخیره"
+        title={Strings.editOptions}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
         handleClose={() => {
           setShowEditSelectFieldModal(false);
+          setEditSelectFieldModalData(defaultEditSelectFieldModalData);
         }}
         handleSuccess={() => {
-          if (editSelectFieldModalData!.options!.length > 1) {
-            updateChangedSelectField(
-              modalSection,
-              editSelectFieldModalData!.id
-            );
+          if (editSelectFieldModalData.data.options!.length > 1) {
+            updateChangedSelectField();
             setShowEditSelectFieldModal(false);
           } else {
-            alert('لطفاً حداقل دو گزینه برای ورودی جدید انتخاب کنید');
+            alert(Strings.chooseAtLeastTwoOptionsForSelect);
           }
         }}
       >
         <EditSelectField />
       </CustomModal>
       <div className="d-flex flex-column justify-content-center align-items-stretch my-3">
-        <h5>ورودی ها</h5>
+        <h5>{Strings.inputs}</h5>
         <NewField />
       </div>
     </>

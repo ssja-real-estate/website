@@ -1,6 +1,13 @@
+import { atom } from "recoil";
+
 import { defaultField, Field, FieldType } from "global/types/Field";
 import Section, { defaultSection } from "global/types/Section";
-import { atom } from "recoil";
+
+export interface EditFieldModalData {
+  index: number;
+  newTitle: string;
+  newType: number;
+}
 
 export type Modal<T> = {
   index: number;

@@ -1,4 +1,3 @@
-import Strings from "global/constants/strings";
 import { useState } from "react";
 import {
   Accordion,
@@ -11,12 +10,14 @@ import {
   Row,
 } from "react-bootstrap";
 import { useRecoilState } from "recoil";
+
+import Strings from "global/constants/strings";
 import {
   defaultField,
   Field,
   FieldType,
   FieldTypeTitle,
-} from "../../../../../../../global/types/Field";
+} from "global/types/Field";
 import { innerFieldsAtom } from "./NewFieldStates";
 
 function NewConditionalField() {

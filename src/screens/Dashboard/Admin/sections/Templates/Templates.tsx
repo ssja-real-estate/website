@@ -1,11 +1,11 @@
-import { Col, Row, Tab } from 'react-bootstrap';
-import ProvinceList from './ProvinceList/ProvinceList';
-import CityList from './CityList/CityList';
-import DelegationTypesList from './DelegationTypes/DelegationTypesList';
-import EstateTypesList from './EstateTypes/EstateTypesList';
-import Forms from './Forms/Forms';
-import TemplatesList from './TemplatesList';
-import UnitList from './UnitList/UnitList';
+import { Col, Row, Tab } from "react-bootstrap";
+import ProvinceList from "./ProvinceList/ProvinceList";
+import CityList from "./CityList/CityList";
+import DelegationTypesList from "./DelegationTypes/DelegationTypesList";
+import EstateTypesList from "./EstateTypes/EstateTypesList";
+import TemplatesList from "./TemplatesList";
+import UnitList from "./UnitList/UnitList";
+import Forms from "screens/Dashboard/Forms/Forms";
 
 function TemplatesSection() {
   return (

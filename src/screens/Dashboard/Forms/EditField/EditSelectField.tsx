@@ -1,4 +1,3 @@
-import Strings from "global/constants/strings";
 import { useState } from "react";
 import {
   InputGroup,
@@ -8,6 +7,8 @@ import {
   CloseButton,
 } from "react-bootstrap";
 import { useRecoilState } from "recoil";
+
+import Strings from "global/constants/strings";
 import { editSelectFieldModalDataAtom } from "../FormsState";
 
 function EditSelectField() {

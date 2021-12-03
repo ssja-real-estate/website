@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
@@ -16,32 +15,24 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
-import { EstateForm } from "../../../../../../global/types/EstateForm";
-import {
-  FieldType,
-  FieldTypeTitle,
-} from "../../../../../../global/types/Field";
-import CustomModal from "../../../../../../components/CustomModal/CustomModal";
+import { useRecoilState, useRecoilValue } from "recoil";
+import toast from "react-hot-toast";
+
 import EditSection from "./EditSection";
-import { atom, useRecoilState } from "recoil";
 import DelegationType from "global/types/DelegationType";
 import EstateType from "global/types/EstateType";
-import Section from "global/types/Section";
+import { defaultModalSection, modalSectionAtom } from "./FormsState";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import FormService from "services/api/FormService/FormService";
+import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
+import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import Section, { defaultSection } from "global/types/Section";
+import { defaultForm, EstateForm } from "global/types/EstateForm";
+import { defaultField, FieldType, getFieldTitle } from "global/types/Field";
+import CustomModal from "components/CustomModal/CustomModal";
 
-interface ModalSection extends Section {
-  id: string;
-}
-
-export const modalSectionAtom = atom<ModalSection>({
-  key: "adminModalSectionState",
-  default: {
-    id: "",
-    title: "",
-    fields: [],
-  },
-});
-
-function Forms() {
+const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,15 +40,18 @@ function Forms() {
     id: "",
     name: "default",
   });
+
   const [estateType, setEstateType] = useState<EstateType>({
     id: "",
     name: "default",
   });
+
   const isDefault =
     delegationType.name === "default" || estateType.name === "default"
       ? true
       : false;
-  const [form, setForm] = useState<EstateForm>();
+
+  const [form, setForm] = useState<EstateForm>(defaultForm);
   const [hasImage, setHasImage] = useState<boolean>(false);
   const [showNewSectionModal, setShowNewSectionModal] =
     useState<boolean>(false);
@@ -65,50 +59,90 @@ function Forms() {
   const [showEditSectionModal, setShowEditSectionModal] =
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
+
+  const state = useRecoilValue(globalState);
+  const formService = useRef(new FormService());
+  const delegationTypeService = useRef(new DelegationTypeService());
+  const estateTypeService = useRef(new EstateTypeService());
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      // getDelegationTypes("http://localhost:8000/delegationTypes");
-      // getEstateTypes("http://localhost:8000/estateTypes");
-    }
+    formService.current.setToken(state.token);
+    delegationTypeService.current.setToken(state.token);
+    estateTypeService.current.setToken(state.token);
+    loadOptions();
+    loadData();
 
     return () => {
       mounted.current = false;
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.token]);
 
   useEffect(() => {
-    if (mounted.current) {
-      // setLoading(true);
-      // !isDefault &&
-      // getFormData(
-      //   `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-      // );
-    }
+    !isDefault && loadData();
 
     return () => {
       mounted.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDefault, delegationType.name, estateType.name]);
 
-  useEffect(() => {
-    if (mounted.current) {
-      if (form) {
-        if (includesImageSection(form)) {
-          setHasImage(true);
-        } else {
-          setHasImage(false);
-        }
+  const loadOptions = async () => {
+    toast.promise(
+      delegationTypeService.current
+        .getAllDelegationTypes()
+        .then((delegationTypes) => {
+          setDelegationTypes(delegationTypes);
+        })
+        .then(() => estateTypeService.current.getAllEstateTypes())
+        .then((estateTypes) => {
+          setEstateTypes(estateTypes);
+        })
+        .catch((error) => {
+          console.log(error);
+        }),
+      {
+        success: Strings.loadingOptionsSuccess,
+        loading: Strings.loadingOptions,
+        error: Strings.loadingOptionsFailed,
       }
+    );
+  };
+
+  const loadData = async () => {
+    if (!loading) {
+      setLoading((prev) => true);
     }
 
-    return () => {
-      mounted.current = false;
-    };
-  }, [form]);
+    if (!delegationType.id || !estateType.id) {
+      return;
+    }
+    const loadedForm = await formService.current.getForm(
+      delegationType.id,
+      estateType.id
+    );
 
-  function handleSectionDragEnd(result: DropResult) {
+    if (includesImageSection(loadedForm)) {
+      setHasImage(true);
+    }
+    setForm(loadedForm);
+
+    await loadOptions();
+    setLoading((prev) => false);
+  };
+
+  const addNewSectionToForm = () => {
+    const newSection: Section = {
+      ...defaultSection,
+      title: newSectionTitle,
+    };
+    setForm({ ...form, sections: [...form.sections, newSection] });
+    setShowNewSectionModal((prev) => false);
+    setNewSectionTitle("");
+  };
+
+  const handleSectionDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
@@ -118,117 +152,112 @@ function Forms() {
     tempSections.splice(result.destination!.index, 0, reorderedSection);
 
     setForm({ ...form!, sections: tempSections });
-  }
+  };
 
-  function includesImageSection(form: EstateForm): boolean {
-    const imageSections = form.sections.filter((section) => {
-      let isImageSection = false;
-      section.fields.forEach((field) => {
-        if (field.type === FieldType.Image) {
-          isImageSection = true;
-        } else {
-          isImageSection = false;
-        }
-      });
-      return isImageSection;
-    });
-    if (imageSections.length > 0) {
-      return true;
+  const handleImagesSection = () => {
+    if (!form) return;
+
+    let newSections = form.sections.slice();
+    const hasImageSection = includesImageSection(form);
+    if (hasImageSection) {
+      newSections.shift();
     } else {
-      return false;
+      const newSection: Section = {
+        title: Strings.images,
+        fields: [
+          {
+            ...defaultField,
+            type: FieldType.Image,
+            title: Strings.chooseImages,
+            value: [],
+          },
+        ],
+      };
+      newSections.unshift(newSection);
     }
-  }
+    setForm({ ...form, sections: newSections });
+  };
 
-  function formWithImageSection(form: EstateForm): EstateForm {
-    const imageSection: Section = {
-      id: "",
-      title: "تصاویر",
-      fields: [
-        {
-          id: "",
-          type: FieldType.Image,
-          title: "انتخاب تصاویر",
-          value: [],
-        },
-      ],
-    };
+  const includesImageSection = (estateForm: EstateForm) => {
+    if (!estateForm.sections.length) return false;
 
-    const sections = form.sections;
-    sections.unshift(imageSection);
-    const newForm: EstateForm = {
-      ...form,
-      sections: sections,
-    };
+    const imageField = estateForm.sections[0].fields.find((field) => {
+      return field.type === FieldType.Image;
+    });
 
-    return newForm;
-  }
+    return imageField !== undefined;
+  };
 
-  function formNoImageSection(form: EstateForm): EstateForm {
-    if (includesImageSection(form)) {
-      form.sections.shift();
-    }
-
-    return form;
-  }
-
-  function formWithNewSection(form: EstateForm, title: string): EstateForm {
-    const sections = form.sections;
-    const newSection: Section = {
-      id: "",
-      title: title,
-      fields: [],
-    };
-    sections.push(newSection);
-
-    const newForm = { ...form, sections: sections };
-
-    return newForm;
-  }
-
-  function updateChangedSection(form: EstateForm, sectionIndex: string) {
-    const sections = form.sections;
+  const updateChangedSection = () => {
+    const sectionIndex = modalSection.index;
+    const section = form.sections[sectionIndex];
     const changedSection: Section = {
-      id: modalSection.id,
-      title: modalSection.title,
-      fields: modalSection.fields,
+      ...section,
+      title: modalSection.data.title,
+      fields: modalSection.data.fields,
     };
-    // sections.splice(sectionIndex, 1, changedSection);
+    let sections = form.sections.slice();
+    sections.splice(sectionIndex, 1, changedSection);
 
     setForm({ ...form, sections: sections });
-  }
+    setModalSection(defaultModalSection);
+  };
+
+  const saveChanges = async () => {
+    setLoading((prev) => true);
+    if (form) {
+      const formDelegationType = delegationTypes.find(
+        (d) => d.id === delegationType.id
+      );
+      const formEstateType = estateTypes.find((e) => e.id === estateType.id);
+      if (!formDelegationType || !formEstateType) {
+        toast.error(Strings.chooseDelegationAndEstateTypes);
+      }
+      const targetForm: EstateForm = {
+        ...form,
+        title: `${formDelegationType!.name} ${formEstateType!.name}`,
+        assignmentTypeId: delegationType.id,
+        estateTypeId: estateType.id,
+      };
+      if (targetForm.id) {
+        await formService.current.updateForm(targetForm.id, targetForm);
+      } else {
+        await formService.current.createForm(targetForm);
+      }
+    }
+    await loadData();
+  };
 
   return (
     <>
-      <h4 className="mt-4 ms-3 d-inline">فرم ها</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.forms}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
-        onClick={() => {
-          setLoading(true);
-          // getDelegationTypes("http://localhost:8000/delegationTypes");
-          // getEstateTypes("http://localhost:8000/estateTypes");
-          // getFormData(
-          //   `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-          // );
+        onClick={async () => {
+          if (isDefault) {
+            await loadOptions();
+            return;
+          }
+          await loadData();
         }}
       >
         <i className="bi-arrow-counterclockwise"></i>
       </Button>
       <CustomModal
-        title="افزودن بخش جدید"
-        cancelTitle="لغو"
-        successTitle="افزودن بخش"
+        title={Strings.addNewSection}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.confirm}
         show={showNewSectionModal}
         handleClose={() => {
           setShowNewSectionModal(false);
         }}
         handleSuccess={() => {
           if (newSectionTitle.trim() !== "") {
-            setForm(formWithNewSection(form!, newSectionTitle));
-            setShowNewSectionModal(false);
+            addNewSectionToForm();
           } else {
+            toast.error(Strings.sectionTitleCantBeEmpty);
             setNewSectionTitle("");
-            alert("لطفاً یک عنوان برای بخش جدید انتخاب کنید");
           }
         }}
       >
@@ -256,13 +285,13 @@ function Forms() {
               value={estateType.name}
               onChange={(e) => {
                 setEstateType({
-                  ...estateType,
+                  id: e.currentTarget.value,
                   name: e.currentTarget.value,
                 });
               }}
             >
               <option value="default" disabled>
-                انتخاب کنید
+                {Strings.chooseEstateType}
               </option>
               {estateTypes.map((estateType, index) => {
                 return (
@@ -276,13 +305,13 @@ function Forms() {
               value={delegationType.name}
               onChange={(e) => {
                 setDelegationType({
-                  ...delegationType,
+                  id: e.currentTarget.value,
                   name: e.currentTarget.value,
                 });
               }}
             >
               <option value="default" disabled>
-                انتخاب کنید
+                {Strings.chooseDelegationType}
               </option>
               {delegationTypes.map((delegationType, index) => {
                 return (
@@ -292,48 +321,31 @@ function Forms() {
                 );
               })}
             </Form.Select>
+            <Button
+              variant="dark"
+              onClick={async () => {
+                await loadOptions();
+              }}
+            >
+              <i className="bi-arrow-counterclockwise"></i>
+            </Button>
           </InputGroup>
         </Col>
         <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"
-            onClick={() => {
-              setLoading(true);
-              if (form) {
-                // toast.promise(
-                //   fetchPut(
-                //     `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`,
-                //     {
-                //       id: `${delegationType.name}-${estateType.name}`,
-                //       sections: form?.sections,
-                //     }
-                //   ).then(() => {
-                //     getFormData(
-                //       `http://localhost:8000/forms/${delegationType.name}-${estateType.name}`
-                //     );
-                //   }),
-                //   {
-                //     loading: 'در حال ذخیره سازی تغییرات',
-                //     success: 'تغییرات با موفقیت ذخیره شد',
-                //     error: 'خطا در ذخیره سازی تغییرات',
-                //   },
-                //   {
-                //     style: { width: 250 },
-                //   }
-                // );
-              }
+            onClick={async () => {
+              await saveChanges();
             }}
           >
-            ذخیره تغییرات
+            {Strings.saveChanges}
           </Button>
         </Col>
       </Row>
       <Row>
         {isDefault ? (
-          <h5 className="fw-light py-5">
-            لطفاً نوع واگذاری و نوع ملک را انتخاب کنید
-          </h5>
+          <h5 className="fw-light py-5">{Strings.chooseFormFilters}</h5>
         ) : loading ? (
           <Row>
             <Col>
@@ -343,33 +355,27 @@ function Forms() {
         ) : (
           <Col>
             <Form.Switch
-              label="قابلیت انتخاب تصاویر"
+              label={Strings.imageSelectionFeature}
               style={{ maxWidth: 200 }}
               className="my-3"
               checked={hasImage}
               onChange={(e) => {
-                if (form) {
-                  includesImageSection(form)
-                    ? setForm(formNoImageSection(form))
-                    : setForm(formWithImageSection(form));
-                }
+                handleImagesSection();
                 setHasImage(e.target.checked);
               }}
             />
             <CustomModal
               isFullscreen
               show={showEditSectionModal}
-              title={modalSection?.title}
-              cancelTitle="لغو"
-              successTitle="ذخیره"
+              title={modalSection.data.title}
+              cancelTitle={Strings.cancel}
+              successTitle={Strings.saveChanges}
               handleClose={() => {
                 setShowEditSectionModal(false);
               }}
               handleSuccess={() => {
-                if (form) {
-                  updateChangedSection(form, modalSection.id);
-                  setShowEditSectionModal(false);
-                }
+                updateChangedSection();
+                setShowEditSectionModal(false);
               }}
             >
               <EditSection />
@@ -383,7 +389,7 @@ function Forms() {
                       ref={provided.innerRef}
                       style={{ userSelect: "none" }}
                     >
-                      {form?.sections.map((section, sectionIndex) => {
+                      {form.sections.map((section, sectionIndex) => {
                         let isImageSection = false;
                         section.fields.forEach((field) => {
                           if (field.type === FieldType.Image) {
@@ -411,20 +417,7 @@ function Forms() {
                                         </Col>
                                         <Col>
                                           <h6 className="d-inline text-muted">
-                                            {field.type === FieldType.Text
-                                              ? "متن"
-                                              : field.type === FieldType.Number
-                                              ? "عدد"
-                                              : field.type === FieldType.Select
-                                              ? "انتخابی"
-                                              : field.type === FieldType.Bool
-                                              ? "کلید"
-                                              : field.type ===
-                                                FieldType.Conditional
-                                              ? "شرطی"
-                                              : field.type === FieldType.Image
-                                              ? "تصویر"
-                                              : "---"}
+                                            {getFieldTitle(field)}
                                           </h6>
                                         </Col>
                                       </Row>
@@ -455,36 +448,40 @@ function Forms() {
                                         <h5 className="d-inline ps-4">
                                           {section.title}
                                         </h5>
-                                        <Button
-                                          variant="outline-secondary"
-                                          className="section-edit-btn"
+                                      </div>
+                                      <div>
+                                        <i
+                                          className="bi-pencil-square edit-section-icon text-muted px-4 fs-5"
+                                          style={{ cursor: "pointer" }}
                                           onClick={() => {
                                             setModalSection({
-                                              ...section,
-                                              id: sectionIndex.toString(),
+                                              index: sectionIndex,
+                                              data: {
+                                                ...section,
+                                                id: section.id,
+                                                title: section.title,
+                                                fields: section.fields,
+                                              },
                                             });
                                             setShowEditSectionModal(true);
                                           }}
-                                        >
-                                          <i className="bi-pencil-square"></i>
-                                        </Button>
-                                      </div>
-                                      <div>
+                                        ></i>
                                         <CloseButton
                                           onClick={() => {
-                                            const sections = form.sections;
-                                            const filterdSections =
-                                              sections.filter((_, id) => {
-                                                return sectionIndex !== id;
-                                              });
+                                            const sections = [...form.sections];
+                                            const filteredSections =
+                                              sections.filter(
+                                                (s, index) =>
+                                                  index !== sectionIndex
+                                              );
                                             if (
                                               window.confirm(
-                                                "آیا از حذف این بخش مطمئن هستید؟"
+                                                Strings.sectionDeleteConfirm
                                               )
                                             ) {
                                               setForm({
                                                 ...form,
-                                                sections: filterdSections,
+                                                sections: filteredSections,
                                               });
                                             }
                                           }}
@@ -507,25 +504,7 @@ function Forms() {
                                                 </Col>
                                                 <Col>
                                                   <h6 className="d-inline text-muted">
-                                                    {field.type ===
-                                                    FieldType.Text
-                                                      ? FieldTypeTitle.Text
-                                                      : field.type ===
-                                                        FieldType.Number
-                                                      ? FieldTypeTitle.Number
-                                                      : field.type ===
-                                                        FieldType.Select
-                                                      ? FieldTypeTitle.Select
-                                                      : field.type ===
-                                                        FieldType.Bool
-                                                      ? FieldTypeTitle.Bool
-                                                      : field.type ===
-                                                        FieldType.Conditional
-                                                      ? FieldTypeTitle.Conditional
-                                                      : field.type ===
-                                                        FieldType.Image
-                                                      ? FieldTypeTitle.Image
-                                                      : "---"}
+                                                    {getFieldTitle(field)}
                                                   </h6>
                                                 </Col>
                                               </Row>
@@ -552,6 +531,6 @@ function Forms() {
       </Row>
     </>
   );
-}
+};
 
 export default Forms;
