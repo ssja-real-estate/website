@@ -12,6 +12,7 @@ import { Button, Form } from "react-bootstrap";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import UserService from "services/api/UserService/UserService";
 import "./CodeVerification.css";
+import Timer from "components/Timer/Timer";
 
 const CodeVerification = () => {
   const [code, setCode] = useState("");
@@ -63,6 +64,12 @@ const CodeVerification = () => {
               setCode(e.currentTarget.value);
             }}
           ></Form.Control>
+          <Timer
+            seconds={120}
+            onExpire={() => {
+              service.current.signupUser(state.mobile, state.password);
+            }}
+          ></Timer>
           <Button
             variant="purple"
             className="w-100 rounded-3 my-3"

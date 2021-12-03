@@ -117,6 +117,7 @@ class Strings {
   static editInnerInputTitle = "تغییر عنوان ورودی داخلی";
   static chooseDelegationAndEstateTypes =
     "هر دو نوع واگذاری و نوع ملک را وارد کنید";
+  static resendCode = "ارسال مجدد";
 }
 
 export default Strings;

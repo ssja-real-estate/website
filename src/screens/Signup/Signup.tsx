@@ -44,7 +44,7 @@ function SignupScreen() {
     await service.current.signupUser(mobile, password);
     setVerificationState({
       mobile: mobile,
-      password: "",
+      password: password,
       previousScreen: PreviousScreen.Signup,
     });
     history.push("/code", {});
