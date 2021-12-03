@@ -1,4 +1,4 @@
-import { Role } from 'global/types/User';
+import { Role } from "global/types/User";
 
 interface GlobalState {
   userId: string;
@@ -8,8 +8,8 @@ interface GlobalState {
 }
 
 const defaultGlobalState: GlobalState = {
-  userId: '',
-  token: '',
+  userId: "",
+  token: "",
   role: Role.USER,
   loggedIn: false,
 };

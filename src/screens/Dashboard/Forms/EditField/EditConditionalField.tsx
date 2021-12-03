@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Button,
   CloseButton,
@@ -7,19 +7,23 @@ import {
   InputGroup,
   ListGroup,
   Row,
-} from 'react-bootstrap';
-import { useRecoilState } from 'recoil';
-import CustomModal from '../../../../../../../components/CustomModal/CustomModal';
+} from "react-bootstrap";
+import { useRecoilState } from "recoil";
+
+import CustomModal from "components/CustomModal/CustomModal";
+import Strings from "global/constants/strings";
 import {
+  defaultField,
   Field,
   FieldType,
   FieldTypeTitle,
-} from '../../../../../../../global/types/Field';
-import { innerFieldModalDataAtom } from '../EditSection';
-
-interface ModalField extends Field {
-  id: string;
-}
+} from "global/types/Field";
+import {
+  defaultEditSelectFieldModalData,
+  EditFieldModalData,
+  editSelectFieldModalDataAtom,
+  innerFieldModalDataAtom,
+} from "../FormsState";
 
 function EditConditionalField() {
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
@@ -28,78 +32,99 @@ function EditConditionalField() {
   const [showRenameInnerFieldModal, setShowRenameInnerFieldModal] =
     useState<boolean>(false);
   const [renameInnerFieldModalData, setRenameInnerFieldModalData] =
-    useState<ModalField>();
-  const [newInnerFieldTitle, setNewInnerFieldTitle] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<number>(0);
+    useState<EditFieldModalData>({ index: -1, newTitle: "", newType: 0 });
+  const [newInnerFieldTitle, setNewInnerFieldTitle] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<FieldType>(0);
   const [options, setOptions] = useState<string[]>([]);
-  const [newOptionTitle, setNewOptionTitle] = useState<string>('');
+  const [newOptionTitle, setNewOptionTitle] = useState<string>("");
   const [showEditSelectFieldModal, setShowEditSelectFieldModal] =
     useState<boolean>(false);
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
-    useState<ModalField>();
+    useRecoilState(editSelectFieldModalDataAtom);
 
-  function addNewInnerField(newField: Field) {
-    const newInnerFields = [newField, ...innerFieldModalData.fields!];
+  function addNewInnerField(field: Field) {
+    const newField = { ...field, options };
+    console.log(newField);
+    const newInnerFields = [newField, ...innerFieldModalData.data.fields!];
     setInnerFieldModalData({
       ...innerFieldModalData,
-      fields: newInnerFields,
+      data: {
+        ...innerFieldModalData.data,
+        fields: newInnerFields,
+      },
     });
   }
 
-  function updateChangedSelectField(
-    field: ModalField,
-    innerFieldIndex: string
-  ) {
-    const innerFields = Object.assign([], field.fields);
-    // const changedField: Field = {
-    //   id: editSelectFieldModalData!.id,
-    //   title: editSelectFieldModalData!.title,
-    //   type: editSelectFieldModalData!.type,
-    //   value: editSelectFieldModalData!.value,
-    //   options: editSelectFieldModalData!.options,
-    // };
-    // innerFields.splice(innerFieldIndex, 1, changedField);
+  function updateChangedSelectField() {
+    console.log("here");
+    const innerFieldIndex = editSelectFieldModalData.index;
+    const data = editSelectFieldModalData.data;
+    const innerFields = innerFieldModalData.data.fields!.slice();
 
-    setInnerFieldModalData({ ...innerFieldModalData, fields: innerFields });
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      options: data.options!,
+    };
+    innerFields.splice(innerFieldIndex, 1, changedField);
+
+    setInnerFieldModalData({
+      ...innerFieldModalData,
+      data: { ...innerFieldModalData.data, fields: innerFields },
+    });
   }
 
   function moveItemUp(fieldIndex: number) {
-    const tempFields = [...innerFieldModalData!.fields!];
+    const tempFields = [...innerFieldModalData.data.fields!];
     const indexToMoveTo = fieldIndex === 0 ? 0 : fieldIndex - 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
-    setInnerFieldModalData({ ...innerFieldModalData!, fields: tempFields });
+    setInnerFieldModalData({
+      ...innerFieldModalData,
+      data: {
+        ...innerFieldModalData.data,
+        fields: tempFields,
+      },
+    });
   }
 
   function moveItemDown(fieldIndex: number) {
-    const tempFields = [...innerFieldModalData!.fields!];
+    const tempFields = [...innerFieldModalData.data.fields!];
     const indexToMoveTo =
       fieldIndex === tempFields.length - 1
         ? tempFields.length - 1
         : fieldIndex + 1;
     const [reorderedItem] = tempFields.splice(fieldIndex, 1);
     tempFields.splice(indexToMoveTo, 0, reorderedItem);
-    setInnerFieldModalData({ ...innerFieldModalData!, fields: tempFields });
+    setInnerFieldModalData({
+      ...innerFieldModalData,
+      data: {
+        ...innerFieldModalData.data,
+        fields: tempFields,
+      },
+    });
   }
 
   return (
     <>
       <ListGroup>
-        {innerFieldModalData.fields?.map((innerField, innerFieldIndex) => {
+        {innerFieldModalData.data.fields!.map((innerField, innerFieldIndex) => {
           return (
             <ListGroup.Item key={innerFieldIndex} variant="warning">
               <Row className="align-items-center">
                 <Col xs="auto">
                   <i
                     className="bi-chevron-up d-block"
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       moveItemUp(innerFieldIndex);
                     }}
                   ></i>
                   <i
                     className="bi-chevron-down d-block"
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       moveItemDown(innerFieldIndex);
                     }}
@@ -109,11 +134,12 @@ function EditConditionalField() {
                   <h6 className="d-inline">{innerField.title}</h6>
                   <i
                     className="bi-pencil-fill me-2"
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       setRenameInnerFieldModalData({
-                        ...innerField,
-                        id: innerFieldIndex.toString(),
+                        index: innerFieldIndex,
+                        newTitle: innerField.title,
+                        newType: innerField.type,
                       });
                       setShowRenameInnerFieldModal(true);
                     }}
@@ -122,27 +148,27 @@ function EditConditionalField() {
                 <Col>
                   <h6 className="d-inline text-muted">
                     {innerField.type === FieldType.Text
-                      ? 'متن'
+                      ? FieldTypeTitle.Text
                       : innerField.type === FieldType.Number
-                      ? 'عدد'
+                      ? FieldTypeTitle.Number
                       : innerField.type === FieldType.Select
-                      ? 'انتخابی'
+                      ? FieldTypeTitle.Select
                       : innerField.type === FieldType.Bool
-                      ? 'کلید'
+                      ? FieldTypeTitle.Bool
                       : innerField.type === FieldType.Conditional
-                      ? 'شرطی'
+                      ? FieldTypeTitle.Conditional
                       : innerField.type === FieldType.Image
-                      ? 'تصویر'
-                      : '---'}
+                      ? FieldTypeTitle.Image
+                      : "---"}
                   </h6>
                   {innerField.type === FieldType.Select && (
                     <i
                       className="bi-list fs-4 me-3"
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
                         setEditSelectFieldModalData({
-                          ...innerField,
-                          id: innerFieldIndex.toString(),
+                          index: innerFieldIndex,
+                          data: { ...innerField },
                         });
                         setShowEditSelectFieldModal(true);
                       }}
@@ -152,14 +178,17 @@ function EditConditionalField() {
                 <CloseButton
                   className="m-3"
                   onClick={() => {
-                    const fields = innerFieldModalData.fields;
+                    const fields = innerFieldModalData.data.fields!;
                     const filteredFields = fields!.filter((_, index) => {
                       return innerFieldIndex !== index;
                     });
-                    if (window.confirm('آیا از حذف این ورودی مطمئن هستید؟')) {
+                    if (window.confirm(Strings.confirmDeleteInput)) {
                       setInnerFieldModalData({
                         ...innerFieldModalData,
-                        fields: filteredFields,
+                        data: {
+                          ...innerFieldModalData.data,
+                          fields: filteredFields,
+                        },
                       });
                     }
                   }}
@@ -169,81 +198,36 @@ function EditConditionalField() {
           );
         })}
       </ListGroup>
-      <InputGroup className="mt-3" style={{ direction: 'ltr' }}>
+      <InputGroup className="mt-3" style={{ direction: "ltr" }}>
         <Button
           variant="dark"
           onClick={() => {
             let newInnerField: Field = {
-              id: '',
-              title: '',
-              type: 0,
-              value: '',
+              ...defaultField,
+              title: newInnerFieldTitle,
+              type: selectedType,
             };
-            switch (selectedType) {
-              case FieldType.Text:
-                newInnerField = {
-                  id: '',
-                  title: newInnerFieldTitle,
-                  type: FieldType.Text,
-                  value: '',
-                };
-                break;
-              case FieldType.Number:
-                newInnerField = {
-                  id: '',
-                  title: newInnerFieldTitle,
-                  type: FieldType.Number,
-                  value: 0,
-                };
-                break;
-              case FieldType.Select:
-                newInnerField = {
-                  id: '',
-                  title: newInnerFieldTitle,
-                  type: FieldType.Select,
-                  value: '',
-                  options: options,
-                };
-                break;
-              case FieldType.Bool:
-                newInnerField = {
-                  id: '',
-                  title: newInnerFieldTitle,
-                  type: FieldType.Bool,
-                  value: false,
-                };
-                break;
-              case FieldType.Conditional:
-                break;
-              default:
-                break;
+            if (newInnerFieldTitle.trim() === "") {
+              alert(Strings.enterValidTitleForInnerInput);
+              return;
             }
-            if (newInnerFieldTitle.trim() !== '') {
-              if (selectedType === FieldType.Select) {
-                if (options.length > 1) {
-                  addNewInnerField(newInnerField);
-                  setNewInnerFieldTitle('');
-                  setOptions([]);
-                } else {
-                  alert(
-                    'لطفاً حدأقل دو گزینه برای ورودی داخلی جدید اضافه کنید'
-                  );
-                }
-              } else {
-                addNewInnerField(newInnerField);
-                setNewInnerFieldTitle('');
-                setOptions([]);
+
+            if (selectedType === FieldType.Select) {
+              if (options.length < 2) {
+                alert(Strings.chooseAtLeastTwoOptionsForSelect);
+                return;
               }
-            } else {
-              setNewInnerFieldTitle('');
-              alert('لطفاً یک عنوان برای ورودی داخلی جدید انتخاب کنید');
+              newInnerField.options = options;
             }
+            addNewInnerField(newInnerField);
+            setNewInnerFieldTitle("");
+            setOptions([]);
           }}
         >
           <i className="bi-plus-lg fs-6"></i>
         </Button>
         <Form.Select
-          style={{ minWidth: 100, maxWidth: '15vw' }}
+          style={{ minWidth: 100, maxWidth: "15vw" }}
           value={selectedType}
           onChange={(e) => {
             setSelectedType(Number(e.currentTarget.value));
@@ -256,7 +240,7 @@ function EditConditionalField() {
         </Form.Select>
         <Form.Control
           type="text"
-          placeholder="عنوان ورودی داخلی جدید"
+          placeholder={Strings.newInnerInputTitle}
           maxLength={30}
           value={newInnerFieldTitle}
           onChange={(e) => {
@@ -267,24 +251,23 @@ function EditConditionalField() {
       {selectedType === FieldType.Select && (
         <div className="w-100 d-flex flex-row justify-content-center">
           <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-            <InputGroup style={{ direction: 'ltr' }}>
+            <InputGroup style={{ direction: "ltr" }}>
               <Button
                 variant="dark"
                 onClick={() => {
-                  if (newOptionTitle.trim() !== '') {
+                  if (newOptionTitle.trim() !== "") {
                     setOptions([...options, newOptionTitle]);
-                    setNewOptionTitle('');
                   } else {
-                    setNewOptionTitle('');
-                    alert('لطفاً یک عنوان معتبر برای گزینه جدید انتخاب کنید');
+                    alert(Strings.enterValidInputForNewOption);
                   }
+                  setNewOptionTitle("");
                 }}
               >
                 <i className="bi-plus-lg fs-6"></i>
               </Button>
               <Form.Control
                 type="text"
-                placeholder="گزینه جدید"
+                placeholder={Strings.newOption}
                 value={newOptionTitle}
                 onChange={(e) => {
                   setNewOptionTitle(e.target.value);
@@ -320,87 +303,92 @@ function EditConditionalField() {
 
       <CustomModal
         show={showRenameInnerFieldModal}
-        title="تغییر عنوان ورودی داخلی"
-        cancelTitle="لغو"
-        successTitle="ذخیره"
+        title={Strings.editInnerInputTitle}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
         handleClose={() => {
           setShowRenameInnerFieldModal(false);
         }}
         handleSuccess={() => {
-          // const changedInnerField: Field = {
-          //   ...renameInnerFieldModalData!,
-          // };
-          const innerFields = Object.assign([], innerFieldModalData.fields);
-          // innerFields.splice(
-          //   renameInnerFieldModalData!.id,
-          //   1,
-          //   changedInnerField
-          // );
+          let innerFields = innerFieldModalData.data.fields!.slice();
+          const index = renameInnerFieldModalData.index;
+
+          if (index === -1) return;
+
+          innerFields[index] = {
+            ...innerFields[index],
+            title: renameInnerFieldModalData.newTitle,
+            type: renameInnerFieldModalData.newType,
+          };
 
           setInnerFieldModalData({
             ...innerFieldModalData,
-            fields: innerFields,
+            data: {
+              ...innerFieldModalData.data,
+              fields: innerFields,
+            },
           });
           setShowRenameInnerFieldModal(false);
+          setRenameInnerFieldModalData({ index: -1, newTitle: "", newType: 0 });
         }}
       >
         <Form.Control
           type="text"
-          placeholder="عنوان جدید"
-          value={renameInnerFieldModalData?.title}
+          placeholder={Strings.newTitle}
+          value={renameInnerFieldModalData.newTitle}
           onChange={(e) => {
             setRenameInnerFieldModalData({
               ...renameInnerFieldModalData!,
-              title: e.target.value,
+              newTitle: e.target.value,
             });
           }}
         />
       </CustomModal>
       <CustomModal
         show={showEditSelectFieldModal}
-        title="ویرایش گزینه های ورودی انتخابی"
-        cancelTitle="لغو"
-        successTitle="ذخیره"
+        title={Strings.editOptions}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
         handleClose={() => {
           setShowEditSelectFieldModal(false);
+          setEditSelectFieldModalData(defaultEditSelectFieldModalData);
         }}
         handleSuccess={() => {
-          if (editSelectFieldModalData!.options!.length > 1) {
-            updateChangedSelectField(
-              innerFieldModalData,
-              editSelectFieldModalData!.id
-            );
+          if (editSelectFieldModalData.data.options!.length > 1) {
+            updateChangedSelectField();
             setShowEditSelectFieldModal(false);
           } else {
-            alert('لطفاً حداقل دو گزینه برای ورودی جدید انتخاب کنید');
+            alert(Strings.chooseAtLeastTwoOptionsForSelect);
           }
         }}
       >
         <div className="w-100 d-flex flex-row justify-content-center">
           <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-            <InputGroup style={{ direction: 'ltr' }}>
+            <InputGroup style={{ direction: "ltr" }}>
               <Button
                 variant="dark"
                 onClick={() => {
-                  if (newOptionTitle.trim() !== '') {
-                    const options = editSelectFieldModalData?.options!;
+                  if (newOptionTitle.trim() !== "") {
+                    const options = editSelectFieldModalData.data.options!;
                     const newOptions = [...options, newOptionTitle];
                     setEditSelectFieldModalData({
-                      ...editSelectFieldModalData!,
-                      options: newOptions,
+                      ...editSelectFieldModalData,
+                      data: {
+                        ...editSelectFieldModalData.data,
+                        options: newOptions,
+                      },
                     });
-                    setNewOptionTitle('');
                   } else {
-                    setNewOptionTitle('');
-                    alert('لطفاً یک عنوان معتبر برای گزینه جدید انتخاب کنید');
+                    alert(Strings.enterValidInputForNewOption);
                   }
+                  setNewOptionTitle("");
                 }}
               >
                 <i className="bi-plus-lg fs-6"></i>
               </Button>
               <Form.Control
                 type="text"
-                placeholder="گزینه جدید"
+                placeholder={Strings.newOption}
                 value={newOptionTitle}
                 onChange={(e) => {
                   setNewOptionTitle(e.target.value);
@@ -408,30 +396,36 @@ function EditConditionalField() {
               />
             </InputGroup>
             <ListGroup>
-              {editSelectFieldModalData?.options?.map((option, optionIndex) => {
-                return (
-                  <ListGroup.Item
-                    key={optionIndex}
-                    className="d-flex flex-row justify-content-between align-items-center"
-                  >
-                    {option}
-                    <CloseButton
-                      onClick={() => {
-                        const newOptions = editSelectFieldModalData.options!;
-                        const filteredOptions = newOptions.filter(
-                          (_, index) => {
-                            return optionIndex !== index;
-                          }
-                        );
-                        setEditSelectFieldModalData({
-                          ...editSelectFieldModalData,
-                          options: filteredOptions,
-                        });
-                      }}
-                    />
-                  </ListGroup.Item>
-                );
-              })}
+              {editSelectFieldModalData.data.options?.map(
+                (option, optionIndex) => {
+                  return (
+                    <ListGroup.Item
+                      key={optionIndex}
+                      className="d-flex flex-row justify-content-between align-items-center"
+                    >
+                      {option}
+                      <CloseButton
+                        onClick={() => {
+                          const newOptions =
+                            editSelectFieldModalData.data.options!;
+                          const filteredOptions = newOptions.filter(
+                            (_, index) => {
+                              return optionIndex !== index;
+                            }
+                          );
+                          setEditSelectFieldModalData({
+                            ...editSelectFieldModalData,
+                            data: {
+                              ...editSelectFieldModalData.data,
+                              options: filteredOptions,
+                            },
+                          });
+                        }}
+                      />
+                    </ListGroup.Item>
+                  );
+                }
+              )}
             </ListGroup>
           </div>
         </div>

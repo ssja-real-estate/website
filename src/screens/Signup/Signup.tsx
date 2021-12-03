@@ -1,23 +1,23 @@
-import './Signup.css';
-import { useRef, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { elevationEffect } from '../../animations/motionVariants';
-import { Button, Form, InputGroup } from 'react-bootstrap';
-import { useSetRecoilState } from 'recoil';
-import { globalState } from 'global/states/globalStates';
-import Strings from 'global/constants/strings';
-import RegexValidator from 'services/utilities/RegexValidator';
-import toast from 'react-hot-toast';
-import UserService from 'services/api/UserService/UserService';
+import "./Signup.css";
+import { useRef, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { motion } from "framer-motion";
+import { elevationEffect } from "../../animations/motionVariants";
+import { Button, Form, InputGroup } from "react-bootstrap";
+// import { useSetRecoilState } from "recoil";
+// import { globalState } from "global/states/globalStates";
+import Strings from "global/constants/strings";
+import RegexValidator from "services/utilities/RegexValidator";
+import toast from "react-hot-toast";
+import UserService from "services/api/UserService/UserService";
 
 function SignupScreen() {
   const [visibility, setVisibility] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [mobile, setMobile] = useState('');
-  const [password, setPassword] = useState('');
-  const [repeatPassowrd, setRepeatPassword] = useState('');
-  const setGlobalState = useSetRecoilState(globalState);
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPassowrd, setRepeatPassword] = useState("");
+  // const setGlobalState = useSetRecoilState(globalState);
   const history = useHistory();
   const service = useRef(new UserService());
 
@@ -37,12 +37,14 @@ function SignupScreen() {
       toast.error(Strings.invalidPassword);
       return;
     }
-    const signupState = await service.current.signupUser(mobile, password);
 
-    if (signupState) {
-      setGlobalState(signupState!);
-      history.push('/dashboard');
-    }
+    await service.current.signupUser(mobile, password);
+    history.push("/code");
+
+    // if (signupState) {
+    //   setGlobalState(signupState!);
+    //   history.push("/dashboard");
+    // }
   };
 
   return (
@@ -67,7 +69,7 @@ function SignupScreen() {
           />
           <Form.Control
             className="form-control rounded-3 py-2 my-3"
-            type={visibility ? 'text' : 'password'}
+            type={visibility ? "text" : "password"}
             name="password"
             placeholder={Strings.password}
             value={password}
@@ -78,7 +80,7 @@ function SignupScreen() {
           />
           <Form.Control
             className="form-control rounded-3 py-2 my-3"
-            type={visibility ? 'text' : 'password'}
+            type={visibility ? "text" : "password"}
             name="repeatPassword"
             placeholder={Strings.repeatPassword}
             value={repeatPassowrd}

@@ -1,12 +1,18 @@
-import Section from './Section';
+import Section from "./Section";
 
 interface EstateForm {
   id?: string;
+  title: string;
+  assignmentTypeId: string;
+  estateTypeId: string;
   sections: Section[];
 }
 
 const defaultForm: EstateForm = {
-  id: '',
+  id: "",
+  title: "",
+  assignmentTypeId: "",
+  estateTypeId: "",
   sections: [],
 };
 

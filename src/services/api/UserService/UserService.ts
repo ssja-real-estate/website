@@ -91,21 +91,25 @@ class UserService extends BaseService {
   ): Promise<GlobalState | undefined> {
     let globalState: GlobalState | undefined = undefined;
     try {
-      const response: AxiosResponse<any> = await this.Api.post(this.signupUrl, {
+      // const response: AxiosResponse<any> = await this.Api.post(this.signupUrl, {
+      //   mobile,
+      //   password,
+      // });
+      await this.Api.post(this.signupUrl, {
         mobile,
         password,
       });
 
-      if (response.data) {
-        const token = response.data.token as string;
-        const user = response.data.user as User;
-        globalState = {
-          userId: user.id,
-          token: token,
-          role: user.role,
-          loggedIn: token.length !== 0,
-        };
-      }
+      // if (response.data) {
+      //   const token = response.data.token as string;
+      //   const user = response.data.user as User;
+      //   globalState = {
+      //     userId: user.id,
+      //     token: token,
+      //     role: user.role,
+      //     loggedIn: token.length !== 0,
+      //   };
+      // }
     } catch (error: any) {
       this.handleError(error);
     }

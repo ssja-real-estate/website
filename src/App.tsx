@@ -1,24 +1,25 @@
-import './App.css';
+import "./App.css";
 import {
   BrowserRouter as Router,
   Redirect,
   Route,
   Switch,
-} from 'react-router-dom';
-import AppNavbar from './components/AppNavbar/Navbar';
-import HomeScreen from './screens/Home/Home';
-import SearchEstateScreen from './screens/SearchEstate/SearchEstate';
-import AddEstateScreen from './screens/AddEstate/AddEstate';
-import LoginScreen from './screens/Login/Login';
-import SignupScreen from './screens/Signup/Signup';
-import DashboardScreen from './screens/Dashboard/Dashboard';
-import NotFoundScreen from './screens/NotFound/NotFound';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import LoadingBar from 'react-top-loading-bar';
-import { progressBarAtom } from './global/states/loadingBar';
-import { useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
-import { globalState } from 'global/states/globalStates';
+} from "react-router-dom";
+import AppNavbar from "./components/AppNavbar/Navbar";
+import HomeScreen from "./screens/Home/Home";
+import SearchEstateScreen from "./screens/SearchEstate/SearchEstate";
+import AddEstateScreen from "./screens/AddEstate/AddEstate";
+import LoginScreen from "./screens/Login/Login";
+import SignupScreen from "./screens/Signup/Signup";
+import DashboardScreen from "./screens/Dashboard/Dashboard";
+import NotFoundScreen from "./screens/NotFound/NotFound";
+import { useRecoilState, useRecoilValue } from "recoil";
+import LoadingBar from "react-top-loading-bar";
+import { progressBarAtom } from "./global/states/loadingBar";
+import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import { globalState } from "global/states/globalStates";
+import CodeVerification from "screens/CodeVerification/CodeVerification";
 
 function App() {
   const [progress, setProgress] = useRecoilState(progressBarAtom);
@@ -63,7 +64,7 @@ function App() {
             <Redirect exact from="/dashboard" to="/login" />
           )}
           <Redirect exact from="/home" to="/" />
-
+          <Route exact path="/code" component={CodeVerification} />
           <Route path="/" component={NotFoundScreen} />
         </Switch>
       </Router>

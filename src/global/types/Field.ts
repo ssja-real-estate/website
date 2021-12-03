@@ -9,13 +9,13 @@ enum FieldType {
 }
 
 enum FieldTypeTitle {
-  Text = 'متن',
-  Number = 'عدد',
-  Select = 'انتخابی',
-  Bool = 'کلید',
-  Conditional = 'شرطی',
-  Image = 'تصویر',
-  Range = 'بازه',
+  Text = "متن",
+  Number = "عدد",
+  Select = "انتخابی",
+  Bool = "کلید",
+  Conditional = "شرطی",
+  Image = "تصویر",
+  Range = "بازه",
 }
 
 interface Field {
@@ -31,12 +31,12 @@ interface Field {
 
 const defaultField: Field = {
   type: FieldType.Text,
-  title: '',
-  value: '',
+  title: "",
+  value: "",
 };
 
 const getFieldTitle = (field: Field) => {
-  let title = '';
+  let title = "";
 
   switch (field.type) {
     case FieldType.Text:

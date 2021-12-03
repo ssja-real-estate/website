@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
-import './SearchEstate.css';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from "react";
+import "./SearchEstate.css";
+import { motion } from "framer-motion";
 import {
   crossfadeAnimation,
   elevationEffect,
-} from '../../animations/motionVariants';
-import { Container, Form } from 'react-bootstrap';
-import { delegationTypes, estateTypes } from '../../global/constants/estates';
-import { Estate } from '../../global/types/Estate';
-import Tilt from 'react-parallax-tilt';
-import React from 'react';
-import EstateCard from '../../components/EstateCard/EstateCard';
+} from "../../animations/motionVariants";
+import { Container, Form } from "react-bootstrap";
+import { delegationTypes, estateTypes } from "../../global/constants/estates";
+import { Estate } from "../../global/types/Estate";
+import Tilt from "react-parallax-tilt";
+import React from "react";
+import EstateCard from "../../components/EstateCard/EstateCard";
 
 function SearchEstateScreen() {
-  const [delegationType, setDelegationType] = useState<string>('default');
-  const [estateType, setEstateType] = useState<string>('default');
+  const [delegationType, setDelegationType] = useState<string>("default");
+  const [estateType, setEstateType] = useState<string>("default");
   // const isDefault: boolean =
   //     delegationType !== "default" && estateType !== "default" ? true : false;
   const [estates, setEstates] = useState<Estate[]>([]);
@@ -28,20 +28,9 @@ function SearchEstateScreen() {
     setEstateType(event.target.value);
   }
 
-  async function getData() {
-    // fetchGet('http://localhost:8000/estates')
-    //   .then((data) => {
-    //     setEstates(data);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  }
-
   useEffect(() => {
     setLoading(true);
-    getData();
+    // getData();
   }, [delegationType, estateType]);
 
   return (

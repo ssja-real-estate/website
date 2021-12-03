@@ -1,14 +1,14 @@
-import EditItemModal from 'components/EditItemModal/EditItemModal';
+import EditItemModal from "components/EditItemModal/EditItemModal";
 import editItemModalState, {
   buildMap,
   defaultEditItemModalState,
   EditItemType,
-} from 'components/EditItemModal/EditItemModalState';
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import DelegationType from 'global/types/DelegationType';
-import React, { useRef } from 'react';
-import { useEffect, useState } from 'react';
+} from "components/EditItemModal/EditItemModalState";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import DelegationType from "global/types/DelegationType";
+import React, { useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -17,19 +17,19 @@ import {
   Form,
   ListGroup,
   Spinner,
-} from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
-import ListItem from '../../../../../../components/ListItem/ListItem';
-import './DelegationTypesList.css';
+} from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
+import ListItem from "../../../../../../components/ListItem/ListItem";
+import "./DelegationTypesList.css";
 
 function DelegationTypesList() {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
   const [newItems, setNewItems] = useState<DelegationType[]>([]);
   const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -92,7 +92,7 @@ function DelegationTypesList() {
   };
 
   const editDelegationType = async () => {
-    if (modalState.id === '') return;
+    if (modalState.id === "") return;
 
     setLoading((prev) => true);
     let newType = await service.current.editDelegationType({
@@ -146,11 +146,11 @@ function DelegationTypesList() {
       </Button>
       <Row>
         <Col>
-          <InputGroup className="my-4" style={{ direction: 'ltr' }}>
+          <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
-                newDelegationType.name.trim() !== '' &&
+                newDelegationType.name.trim() !== "" &&
                   setNewItems((prev) => [
                     ...prev,
                     {
@@ -160,7 +160,7 @@ function DelegationTypesList() {
                   ]);
                 setNewDelegationType({
                   ...newDelegationType,
-                  name: '',
+                  name: "",
                 });
               }}
             >
@@ -179,7 +179,7 @@ function DelegationTypesList() {
             />
           </InputGroup>
         </Col>
-        <Col sm={'auto'}>
+        <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"

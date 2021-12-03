@@ -1,7 +1,7 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import User, { defaultUser, Role, roleMap } from 'global/types/User';
-import { useEffect, useRef, useState } from 'react';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import User, { defaultUser, Role, roleMap } from "global/types/User";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -12,12 +12,12 @@ import {
   Row,
   Spinner,
   Tab,
-} from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import UserService from 'services/api/UserService/UserService';
+} from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import UserService from "services/api/UserService/UserService";
 
 function UsersList() {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User>(defaultUser);
@@ -48,7 +48,7 @@ function UsersList() {
   };
 
   const changeRole = async () => {
-    if (selectedUser.id === '') return;
+    if (selectedUser.id === "") return;
     const userId = selectedUser.id;
     const role = selectedUser.role;
     setLoading(true);
@@ -89,7 +89,7 @@ function UsersList() {
                   {users
                     .filter((user) => {
                       const value = searchValue.trim();
-                      if (value === '') return true;
+                      if (value === "") return true;
                       let result = false;
                       if (user.name) {
                         result = result || user.name.includes(value);
@@ -147,7 +147,7 @@ function UsersList() {
                           </span>
                           <InputGroup
                             className="my-3"
-                            style={{ direction: 'ltr' }}
+                            style={{ direction: "ltr" }}
                           >
                             <Button
                               variant="purple"

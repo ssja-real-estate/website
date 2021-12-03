@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { ListGroup } from 'react-bootstrap';
-import './ListItem.css';
+import { useState } from "react";
+import { ListGroup } from "react-bootstrap";
+import "./ListItem.css";
 
 interface ListItemProps {
   title: string;
@@ -15,7 +15,7 @@ function ListItem({ title, onEdit, onRemove }: ListItemProps) {
     <ListGroup.Item
       action
       className="list-item d-flex flex-row justify-content-between align-items-center"
-      variant={redColor ? 'danger' : ''}
+      variant={redColor ? "danger" : ""}
     >
       {title}
       <div>

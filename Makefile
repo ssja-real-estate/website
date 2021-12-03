@@ -58,15 +58,15 @@ build-local: ## build-local-image
 
 # Run docker container
 run: stop ## run-container 
-	docker run --rm -it --name $(CONTAINER_NAME) \
+	docker run --rm -itd --name $(CONTAINER_NAME) \
 		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
 		$(IMAGE_TAG) \
 
 # Run docker container locally
 run-local: stop-local ## run-container-locally
 	docker run --rm -it --name $(CONTAINER_NAME) \
-		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
-		$(CONTAINER_NAME)
+		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src \
+		$(CONTAINER_NAME):latest
 
 # Execute local docker container shell
 exec-local: ## execute-local-container
