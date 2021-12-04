@@ -11,7 +11,7 @@ interface VerificationState {
   previousScreen: PreviousScreen;
 }
 
-const verificationState = atom<VerificationState>({
+const verificationStateAtom = atom<VerificationState>({
   key: "verificationState",
   default: {
     mobile: "",
@@ -21,4 +21,4 @@ const verificationState = atom<VerificationState>({
 });
 
 export default VerificationState;
-export { verificationState, PreviousScreen };
+export { verificationStateAtom as verificationState, PreviousScreen };

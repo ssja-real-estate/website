@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
-import Strings from 'global/constants/strings';
-import { Modal, Form, Container, Button } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { globalState } from 'global/states/globalStates';
-import UserService from 'services/api/UserService/UserService';
-import { profileModalState } from './ProfileState';
+import React, { useEffect, useRef, useState } from "react";
+import Strings from "global/constants/strings";
+import { Modal, Form, Container, Button } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { globalState } from "global/states/globalStates";
+import UserService from "services/api/UserService/UserService";
+import { profileModalState } from "./ProfileState";
 
 interface Props {
   userId?: string;
@@ -13,23 +13,32 @@ interface Props {
 }
 
 const EditProfileModal: React.FC<Props> = ({ userId, name, reloadScreen }) => {
-  const [newName, setNewName] = useState(name ?? '');
+  const [newName, setNewName] = useState(name ?? "");
   const [modalState, setModalState] = useRecoilState(profileModalState);
 
   const state = useRecoilValue(globalState);
   const service = useRef(new UserService());
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      mounted.current = false;
+    };
+  });
 
   const toggleModalDisplay = (flag: boolean) => {
     setModalState({
       ...modalState,
       showEditProfile: flag,
     });
-    setNewName('');
+    if (mounted.current) {
+      setNewName("");
+    }
   };
 
   const editProfile = async () => {
     service.current.setToken(state.token);
-    const user = await service.current.editProfile(userId ?? '', newName);
+    const user = await service.current.editProfile(userId ?? "", newName);
     if (user) {
       if (reloadScreen) {
         reloadScreen();
@@ -43,7 +52,9 @@ const EditProfileModal: React.FC<Props> = ({ userId, name, reloadScreen }) => {
     if (reloadScreen) {
       reloadScreen();
     }
-    setNewName('');
+    if (mounted.current) {
+      setNewName("");
+    }
   };
 
   return (

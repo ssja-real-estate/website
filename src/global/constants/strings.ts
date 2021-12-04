@@ -117,6 +117,11 @@ class Strings {
   static editInnerInputTitle = "تغییر عنوان ورودی داخلی";
   static chooseDelegationAndEstateTypes =
     "هر دو نوع واگذاری و نوع ملک را وارد کنید";
+  static resendCode = "ارسال مجدد";
+  static profileTooltip = "پروفایل";
+  static usersTooltip = "کاربران";
+  static estatesTooltip = "املاک";
+  static templatesTooltip = "قالب‌ها";
 }
 
 export default Strings;
