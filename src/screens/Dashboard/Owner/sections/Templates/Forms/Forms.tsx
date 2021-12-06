@@ -125,6 +125,8 @@ const Forms = () => {
 
     if (includesImageSection(loadedForm)) {
       setHasImage(true);
+    } else {
+      setHasImage(false);
     }
     setForm(loadedForm);
 
