@@ -1,14 +1,14 @@
-import EditItemModal from 'components/EditItemModal/EditItemModal';
+import EditItemModal from "components/EditItemModal/EditItemModal";
 import editItemModalState, {
   buildMap,
   defaultEditItemModalState,
   EditItemType,
-} from 'components/EditItemModal/EditItemModalState';
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import EstateType from 'global/types/EstateType';
-import React, { useRef } from 'react';
-import { useEffect, useState } from 'react';
+} from "components/EditItemModal/EditItemModalState";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import EstateType from "global/types/EstateType";
+import React, { useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -17,19 +17,19 @@ import {
   Form,
   ListGroup,
   Spinner,
-} from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
-import ListItem from '../../../../../../components/ListItem/ListItem';
-import './EstateTypesList.css';
+} from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import ListItem from "../../../../../../components/ListItem/ListItem";
+import "./EstateTypesList.css";
 
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [removedItems, setRemovedItems] = useState<EstateType[]>([]);
   const [newItems, setNewItems] = useState<EstateType[]>([]);
   const [newEstateType, setNewEstateType] = useState<EstateType>({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -39,10 +39,8 @@ function EstateTypesList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -66,8 +64,10 @@ function EstateTypesList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllEstateTypes();
-    setEstateTypes(data);
-    setLoading((prev) => false);
+    if (mounted.current) {
+      setEstateTypes(data);
+      setLoading((prev) => false);
+    }
   };
 
   const selectItemAsDeleted = (estateType: EstateType) => {
@@ -93,7 +93,7 @@ function EstateTypesList() {
   };
 
   const editEstateType = async () => {
-    if (modalState.id === '') return;
+    if (modalState.id === "") return;
 
     setLoading((prev) => true);
     let newType = await service.current.editEstateType({
@@ -147,11 +147,11 @@ function EstateTypesList() {
       </Button>
       <Row>
         <Col>
-          <InputGroup className="my-4" style={{ direction: 'ltr' }}>
+          <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
-                newEstateType.name.trim() !== '' &&
+                newEstateType.name.trim() !== "" &&
                   setNewItems((prev) => [
                     ...prev,
                     {
@@ -161,7 +161,7 @@ function EstateTypesList() {
                   ]);
                 setNewEstateType({
                   ...newEstateType,
-                  name: '',
+                  name: "",
                 });
               }}
             >
@@ -180,7 +180,7 @@ function EstateTypesList() {
             />
           </InputGroup>
         </Col>
-        <Col sm={'auto'}>
+        <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"

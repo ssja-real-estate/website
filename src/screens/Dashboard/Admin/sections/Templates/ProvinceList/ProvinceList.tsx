@@ -1,11 +1,11 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import Province from 'global/types/Province';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Row, Col, ListGroup, Spinner } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
-import './ProvinceList.css';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import Province from "global/types/Province";
+import { useEffect, useRef, useState } from "react";
+import { Button, Row, Col, ListGroup, Spinner } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import "./ProvinceList.css";
 
 function ProvinceList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -16,10 +16,8 @@ function ProvinceList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -29,6 +27,7 @@ function ProvinceList() {
 
   const loadData = async () => {
     const data = await service.current.getAllProvinces();
+    if (!mounted.current) return;
     setProvinces(data);
     setLoading((prev) => false);
   };

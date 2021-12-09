@@ -1,9 +1,9 @@
-import './Navbar.css';
-import { useHistory } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { Container, Nav, Navbar } from 'react-bootstrap';
-import { globalState } from 'global/states/globalStates';
-import Strings from 'global/constants/strings';
+import "./Navbar.css";
+import { useHistory } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { globalState } from "global/states/globalStates";
+import Strings from "global/constants/strings";
 
 function AppNavbar() {
   const state = useRecoilValue(globalState);
@@ -23,7 +23,7 @@ function AppNavbar() {
           <Nav.Link
             className="fs-3 fw-bold purple"
             onClick={() => {
-              history.push('/');
+              history.push("/");
             }}
           >
             {Strings.sajaSystem}
@@ -33,22 +33,22 @@ function AppNavbar() {
         <Navbar.Collapse id="responsive-navbar">
           <Nav className="ms-auto">
             <Nav.Link
+              className="fs-5"
+              onClick={() => {
+                history.push("/add-estate");
+              }}
+            >
+              {Strings.addEstates}
+              <i className="bi-building pe-2" />
+            </Nav.Link>
+            <Nav.Link
               className="ms-4 fs-5"
               onClick={() => {
-                history.push('/search-estate');
+                history.push("/search-estate");
               }}
             >
               {Strings.searchEstates}
               <i className="bi-search pe-2" />
-            </Nav.Link>
-            <Nav.Link
-              className="fs-5"
-              onClick={() => {
-                history.push('/add-estate');
-              }}
-            >
-              {Strings.addEstate}
-              <i className="bi-building pe-2" />
             </Nav.Link>
           </Nav>
           <Nav>
@@ -56,7 +56,7 @@ function AppNavbar() {
               <Nav.Link
                 className="fs-5"
                 onClick={() => {
-                  history.push('/login');
+                  history.push("/login");
                 }}
               >
                 {Strings.loginOrSignup}
@@ -66,7 +66,7 @@ function AppNavbar() {
               <Nav.Link
                 className="fs-5"
                 onClick={() => {
-                  history.push('/dashboard');
+                  history.push("/dashboard");
                 }}
               >
                 {Strings.dashboard}

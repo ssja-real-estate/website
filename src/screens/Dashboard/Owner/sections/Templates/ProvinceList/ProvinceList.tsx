@@ -1,13 +1,13 @@
-import EditItemModal from 'components/EditItemModal/EditItemModal';
+import EditItemModal from "components/EditItemModal/EditItemModal";
 import editItemModalState, {
   buildMap,
   defaultEditItemModalState,
   EditItemType,
-} from 'components/EditItemModal/EditItemModalState';
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import Province from 'global/types/Province';
-import React, { useEffect, useRef, useState } from 'react';
+} from "components/EditItemModal/EditItemModalState";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import Province from "global/types/Province";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Row,
@@ -16,18 +16,18 @@ import {
   Form,
   ListGroup,
   Spinner,
-} from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
-import ListItem from '../../../../../../components/ListItem/ListItem';
+} from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function ProvinceList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [removedItems, setRemovedItems] = useState<Province[]>([]);
   const [newItems, setNewItems] = useState<Province[]>([]);
   const [newProvince, setNewProvince] = useState<Province>({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     cities: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
@@ -38,10 +38,8 @@ function ProvinceList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -65,6 +63,8 @@ function ProvinceList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllProvinces();
+
+    if (!mounted.current) return;
     setProvinces(data);
     setLoading((prev) => false);
   };
@@ -90,7 +90,7 @@ function ProvinceList() {
   };
 
   const editProvince = async () => {
-    if (modalState.id === '') return;
+    if (modalState.id === "") return;
     setLoading((prev) => true);
 
     let province = provinces.find((p) => p.id === modalState.id);
@@ -146,11 +146,11 @@ function ProvinceList() {
       </Button>
       <Row>
         <Col>
-          <InputGroup className="my-4" style={{ direction: 'ltr' }}>
+          <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
-                newProvince.name.trim() !== '' &&
+                newProvince.name.trim() !== "" &&
                   setNewItems((prev) => [
                     ...prev,
                     {
@@ -160,7 +160,7 @@ function ProvinceList() {
                   ]);
                 setNewProvince({
                   ...newProvince,
-                  name: '',
+                  name: "",
                 });
               }}
             >
@@ -179,7 +179,7 @@ function ProvinceList() {
             />
           </InputGroup>
         </Col>
-        <Col sm={'auto'}>
+        <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"

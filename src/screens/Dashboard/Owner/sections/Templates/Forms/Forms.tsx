@@ -125,9 +125,10 @@ const Forms = () => {
 
     if (includesImageSection(loadedForm)) {
       setHasImage(true);
+    } else {
+      setHasImage(false);
     }
     setForm(loadedForm);
-
     await loadOptions();
     setLoading((prev) => false);
   };

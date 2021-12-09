@@ -2,7 +2,7 @@ class Strings {
   static sajaSystemCompleteName = "سامانه ثبت و جستجوی املاک";
   static sajaSystem = "سامانه ثجا";
   static searchEstates = "جستجوی املاک";
-  static addEstate = "ثبت ملک";
+  static addEstates = "ثبت املاک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
   static delegationTypes = "نوع واگذاری‌ها";

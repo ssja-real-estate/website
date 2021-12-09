@@ -2,6 +2,22 @@
 @import "./fonts/Inter.css";
 
 * {
-    font-family: "IRANSans", "Inter";
-    direction: rtl;
+  font-family: "IRANSans", "Inter";
+  direction: rtl;
+}
+
+.remove-icon {
+  opacity: 0%;
+}
+
+.edit-icon {
+  opacity: 0%;
+}
+
+.list-item:hover .remove-icon {
+  opacity: 100%;
+}
+
+.list-item:hover .edit-icon {
+  opacity: 100%;
 }

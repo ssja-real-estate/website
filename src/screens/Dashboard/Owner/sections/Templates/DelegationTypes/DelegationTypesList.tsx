@@ -40,9 +40,7 @@ function DelegationTypesList() {
 
   useEffect(() => {
     service.current.setToken(state.token);
-    if (mounted.current) {
-      loadData();
-    }
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -66,6 +64,9 @@ function DelegationTypesList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllDelegationTypes();
+
+    if (!mounted.current) return;
+
     setDelegationTypes(data);
     setLoading((prev) => false);
   };

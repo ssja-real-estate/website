@@ -1,13 +1,13 @@
-import EditItemModal from 'components/EditItemModal/EditItemModal';
+import EditItemModal from "components/EditItemModal/EditItemModal";
 import editItemModalState, {
   buildMap,
   defaultEditItemModalState,
   EditItemType,
-} from 'components/EditItemModal/EditItemModalState';
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import Unit from 'global/types/Unit';
-import React, { useState, useEffect, useRef } from 'react';
+} from "components/EditItemModal/EditItemModalState";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import Unit from "global/types/Unit";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Row,
@@ -16,18 +16,18 @@ import {
   Form,
   ListGroup,
   Spinner,
-} from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import UnitService from 'services/api/UnitService/UnitService';
-import ListItem from '../../../../../../components/ListItem/ListItem';
+} from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import UnitService from "services/api/UnitService/UnitService";
+import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function UnitList() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [removedItems, setRemovedItems] = useState<Unit[]>([]);
   const [newItems, setNewItems] = useState<Unit[]>([]);
   const [newUnit, setNewUnit] = useState<Unit>({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -37,10 +37,8 @@ function UnitList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -64,6 +62,8 @@ function UnitList() {
       setLoading((prev) => true);
     }
     const units = await service.current.getAllUnits();
+
+    if (!mounted.current) return;
     setUnits(units);
     setLoading((prev) => false);
   };
@@ -90,7 +90,7 @@ function UnitList() {
   };
 
   const editUnit = async () => {
-    if (modalState.id === '') return;
+    if (modalState.id === "") return;
     setLoading((prev) => true);
 
     let updatedUnit = await service.current.editUnit({
@@ -143,11 +143,11 @@ function UnitList() {
       </Button>
       <Row>
         <Col>
-          <InputGroup className="my-4" style={{ direction: 'ltr' }}>
+          <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Button
               variant="dark"
               onClick={() => {
-                newUnit.name.trim() !== '' &&
+                newUnit.name.trim() !== "" &&
                   setNewItems((prev) => [
                     ...prev,
                     {
@@ -157,7 +157,7 @@ function UnitList() {
                   ]);
                 setNewUnit({
                   ...newUnit,
-                  name: '',
+                  name: "",
                 });
               }}
             >
@@ -176,7 +176,7 @@ function UnitList() {
             />
           </InputGroup>
         </Col>
-        <Col sm={'auto'}>
+        <Col sm={"auto"}>
           <Button
             variant="purple"
             className="my-4"

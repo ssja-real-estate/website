@@ -27,10 +27,8 @@ function UsersList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      userService.current.setToken(state.token);
-      loadData();
-    }
+    userService.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -43,8 +41,10 @@ function UsersList() {
       setLoading(true);
     }
     const users = await userService.current.getAllUsers();
-    setUsers(users);
-    setLoading(false);
+    if (mounted.current) {
+      setUsers(users);
+      setLoading(false);
+    }
   };
 
   const changeRole = async () => {
@@ -90,11 +90,8 @@ function UsersList() {
                     .filter((user) => {
                       const value = searchValue.trim();
                       if (value === "") return true;
-                      let result = false;
-                      if (user.name) {
-                        result = result || user.name.includes(value);
-                      }
-                      result = result || user.mobile.includes(value);
+
+                      let result = user.mobile.includes(value);
 
                       return result;
                     })
@@ -113,13 +110,7 @@ function UsersList() {
                             });
                           }}
                         >
-                          <div className="d-flex">
-                            <span
-                              className="user-name ms-3"
-                              style={{ width: 200 }}
-                            >
-                              {user.name ? user.name : Strings.withoutName}
-                            </span>
+                          <div className="d-flex justify-content-center">
                             <span className="user-phone" style={{ width: 150 }}>
                               {user.mobile}
                             </span>
@@ -137,11 +128,11 @@ function UsersList() {
                   {users.map((user, index) => {
                     return (
                       <Tab.Pane key={index} eventKey={`#user${user.id}`}>
-                        <Card className="shadow p-5">
-                          <span className="user-name fw-bold fs-4">
-                            {user.name ? user.name : Strings.withoutName}
-                          </span>
-                          <span className="user-phone pt-4">
+                        <Card className="shadow p-3">
+                          <span
+                            className="user-phone pt-4"
+                            style={{ fontSize: 20 }}
+                          >
                             {user.mobile}
                             <i className="bi-telephone-fill me-2"></i>
                           </span>

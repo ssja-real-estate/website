@@ -80,11 +80,7 @@ function UsersList() {
                       const value = searchValue.trim();
                       if (value === "") return true;
 
-                      let result = false;
-                      if (user.name) {
-                        result = result || user.name.includes(value);
-                      }
-                      result = result || user.mobile.includes(value);
+                      let result = user.mobile.includes(value);
 
                       return result;
                     })
@@ -95,13 +91,7 @@ function UsersList() {
                           action
                           href={`#user${user.id}`}
                         >
-                          <div className="d-flex">
-                            <span
-                              className="user-name ms-3"
-                              style={{ width: 200 }}
-                            >
-                              {!user.name && Strings.withoutName}
-                            </span>
+                          <div className="d-flex justify-content-center">
                             <span className="user-phone" style={{ width: 150 }}>
                               {user.mobile}
                             </span>
@@ -119,11 +109,11 @@ function UsersList() {
                   {users.map((user, index) => {
                     return (
                       <Tab.Pane key={index} eventKey={`#user${user.id}`}>
-                        <Card className="shadow p-5">
-                          <span className="user-name fw-bold fs-4">
-                            {user.name ? user.name : Strings.withoutName}
-                          </span>
-                          <span className="user-phone pt-4">
+                        <Card className="shadow p-3">
+                          <span
+                            className="user-phone pt-4"
+                            style={{ fontSize: 20 }}
+                          >
                             {user.mobile}
                             <i className="bi-telephone-fill me-2"></i>
                           </span>

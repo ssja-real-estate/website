@@ -40,10 +40,8 @@ function CityList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -67,6 +65,9 @@ function CityList() {
       setLoading((prev) => true);
     }
     const provinces = await service.current.getAllProvinces();
+
+    if (!mounted.current) return;
+
     setProvinces(provinces);
     if (selectedProvince) {
       const province = provinces.find((p) => p.id === selectedProvince.id);

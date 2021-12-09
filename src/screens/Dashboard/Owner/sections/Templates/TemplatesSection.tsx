@@ -5,7 +5,7 @@ import DelegationTypesList from "./DelegationTypes/DelegationTypesList";
 import EstateTypesList from "./EstateTypes/EstateTypesList";
 import TemplatesList from "./TemplatesList";
 import UnitList from "./UnitList/UnitList";
-import Forms from "screens/Dashboard/Forms/Forms";
+import Forms from "screens/Dashboard/Owner/sections/Templates/Forms/Forms";
 
 function TemplatesSection() {
   return (
