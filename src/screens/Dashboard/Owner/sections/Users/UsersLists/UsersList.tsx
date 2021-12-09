@@ -27,10 +27,8 @@ function UsersList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      userService.current.setToken(state.token);
-      loadData();
-    }
+    userService.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -43,8 +41,10 @@ function UsersList() {
       setLoading(true);
     }
     const users = await userService.current.getAllUsers();
-    setUsers(users);
-    setLoading(false);
+    if (mounted.current) {
+      setUsers(users);
+      setLoading(false);
+    }
   };
 
   const changeRole = async () => {

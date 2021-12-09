@@ -1,11 +1,11 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import EstateType from 'global/types/EstateType';
-import { useEffect, useRef, useState } from 'react';
-import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import EstateTypeService from 'services/api/EstateTypeService/EstateTypeService';
-import './EstateTypesList.css';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import EstateType from "global/types/EstateType";
+import { useEffect, useRef, useState } from "react";
+import { Row, Col, Button, ListGroup, Spinner } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import "./EstateTypesList.css";
 
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
@@ -16,10 +16,8 @@ function EstateTypesList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -32,6 +30,9 @@ function EstateTypesList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllEstateTypes();
+
+    if (!mounted.current) return;
+
     setEstateTypes(data);
     setLoading((prev) => false);
   };

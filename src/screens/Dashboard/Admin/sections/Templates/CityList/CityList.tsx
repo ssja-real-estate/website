@@ -1,12 +1,12 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import City from 'global/types/City';
-import Province from 'global/types/Province';
-import { useState, useEffect, useRef } from 'react';
-import { Button, Row, Col, ListGroup, Spinner, Form } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import ProvinceCityService from 'services/api/ProvinceCityService/ProvinceCityService';
-import './CityList.css';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import City from "global/types/City";
+import Province from "global/types/Province";
+import { useState, useEffect, useRef } from "react";
+import { Button, Row, Col, ListGroup, Spinner, Form } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import "./CityList.css";
 
 function CityList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -19,10 +19,8 @@ function CityList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -35,6 +33,9 @@ function CityList() {
       setLoading((prev) => true);
     }
     const provinces = await service.current.getAllProvinces();
+
+    if (!mounted.current) return;
+
     setProvinces(provinces);
     if (selectedProvince) {
       const province = provinces.find((p) => p.id === selectedProvince.id);

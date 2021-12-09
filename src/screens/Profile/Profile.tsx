@@ -21,10 +21,8 @@ const Profile = () => {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -45,8 +43,10 @@ const Profile = () => {
       setLoading(true);
     }
     const fetchedUser = await service.current.getUser(state.userId);
-    setUser(fetchedUser);
-    setLoading(false);
+    if (mounted.current) {
+      setUser(fetchedUser);
+      setLoading(false);
+    }
   };
 
   const logout = () => {

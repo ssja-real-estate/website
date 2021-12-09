@@ -129,7 +129,6 @@ const Forms = () => {
       setHasImage(false);
     }
     setForm(loadedForm);
-
     await loadOptions();
     setLoading((prev) => false);
   };

@@ -28,10 +28,8 @@ const OwnerList = (): JSX.Element => {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      userService.current.setToken(state.token);
-      loadData();
-    }
+    userService.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -44,8 +42,10 @@ const OwnerList = (): JSX.Element => {
       setLoading(true);
     }
     const owners = await userService.current.getAllUsers(Role.OWNER);
-    setOwners(owners);
-    setLoading(false);
+    if (mounted.current) {
+      setOwners(owners);
+      setLoading(false);
+    }
   };
 
   const changeRole = async () => {

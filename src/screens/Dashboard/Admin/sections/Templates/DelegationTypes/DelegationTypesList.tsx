@@ -1,11 +1,11 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import DelegationType from 'global/types/DelegationType';
-import { useEffect, useRef, useState } from 'react';
-import { Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import DelegationTypeService from 'services/api/DelegationTypeService/DelegationTypeService';
-import './DelegationTypesList.css';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import DelegationType from "global/types/DelegationType";
+import { useEffect, useRef, useState } from "react";
+import { Row, Col, Button, ListGroup, Spinner } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
+import "./DelegationTypesList.css";
 
 function DelegationTypesList() {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -16,10 +16,8 @@ function DelegationTypesList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -32,6 +30,9 @@ function DelegationTypesList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllDelegationTypes();
+
+    if (!mounted.current) return;
+
     setDelegationTypes(data);
     setLoading((prev) => false);
   };

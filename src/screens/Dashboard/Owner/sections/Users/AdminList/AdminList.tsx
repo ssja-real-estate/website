@@ -28,9 +28,7 @@ const AdminList = (): JSX.Element => {
 
   useEffect(() => {
     userService.current.setToken(state.token);
-    if (mounted.current) {
-      loadData();
-    }
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -43,8 +41,10 @@ const AdminList = (): JSX.Element => {
       setLoading(true);
     }
     const admins = await userService.current.getAllUsers(Role.ADMIN);
-    setUsers(admins);
-    setLoading(false);
+    if (mounted.current) {
+      setUsers(admins);
+      setLoading(false);
+    }
   };
 
   const changeRole = async () => {

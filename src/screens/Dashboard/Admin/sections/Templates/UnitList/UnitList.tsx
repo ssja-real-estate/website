@@ -1,11 +1,11 @@
-import Strings from 'global/constants/strings';
-import { globalState } from 'global/states/globalStates';
-import Unit from 'global/types/Unit';
-import { useState, useEffect, useRef } from 'react';
-import { Button, Row, Col, ListGroup, Spinner } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import UnitService from 'services/api/UnitService/UnitService';
-import './UnitList.css';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import Unit from "global/types/Unit";
+import { useState, useEffect, useRef } from "react";
+import { Button, Row, Col, ListGroup, Spinner } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import UnitService from "services/api/UnitService/UnitService";
+import "./UnitList.css";
 
 function UnitList() {
   const [units, setUnits] = useState<Unit[]>([]);
@@ -16,10 +16,8 @@ function UnitList() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      service.current.setToken(state.token);
-      loadData();
-    }
+    service.current.setToken(state.token);
+    loadData();
 
     return () => {
       mounted.current = false;
@@ -32,6 +30,8 @@ function UnitList() {
       setLoading((prev) => true);
     }
     const units = await service.current.getAllUnits();
+
+    if (!mounted.current) return;
     setUnits(units);
     setLoading((prev) => false);
   };
