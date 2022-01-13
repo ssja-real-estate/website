@@ -1,7 +1,15 @@
 .pencil-icon {
-  opacity: 0%;
+  opacity: 0;
 }
 
-.pencil-icon:hover {
-  opacity: 100%;
+.list-group-item:hover .pencil-icon {
+  opacity: 1;
+}
+
+.remove-icon {
+  opacity: 0;
+}
+
+.list-group-item:hover .remove-icon {
+  opacity: 1;
 }
