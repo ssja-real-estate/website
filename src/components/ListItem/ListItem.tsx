@@ -20,7 +20,7 @@ function ListItem({ title, onEdit, onRemove }: ListItemProps) {
       {title}
       <div>
         <i
-          className="bi-pencil-fill edit-icon mx-3"
+          className="bi-pencil-fill pencil-icon mx-3"
           onClick={() => {
             onEdit && onEdit();
           }}

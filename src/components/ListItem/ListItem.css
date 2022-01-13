@@ -1,0 +1,7 @@
+.pencil-icon {
+  opacity: 0%;
+}
+
+.list-item:hover .pencil-icon {
+  opacity: 100%;
+}
