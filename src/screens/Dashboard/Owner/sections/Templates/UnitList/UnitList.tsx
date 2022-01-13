@@ -35,6 +35,7 @@ function UnitList() {
   const state = useRecoilValue(globalState);
   const service = useRef(new UnitService());
   const mounted = useRef(true);
+  const modalMounted = useRef(true);
 
   useEffect(() => {
     service.current.setToken(state.token);
@@ -52,7 +53,7 @@ function UnitList() {
     }
 
     return () => {
-      mounted.current = false;
+      modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.editMap[EditItemType.Unit]]);
@@ -107,7 +108,9 @@ function UnitList() {
         return prev;
       });
     }
-    setModalState(defaultEditItemModalState);
+    if (modalMounted.current) {
+      setModalState(defaultEditItemModalState);
+    }
     setLoading((prev) => false);
   };
 
@@ -206,6 +209,7 @@ function UnitList() {
                       }}
                       onEdit={() => {
                         const newMap = buildMap(EditItemType.Unit);
+                        if (!modalMounted.current) return;
                         setModalState({
                           ...defaultEditItemModalState,
                           id: unit.id,

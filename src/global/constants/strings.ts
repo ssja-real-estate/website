@@ -122,6 +122,7 @@ class Strings {
   static usersTooltip = "کاربران";
   static estatesTooltip = "املاک";
   static templatesTooltip = "قالب‌ها";
+  static optionalField = "اختیاری";
 }
 
 export default Strings;

@@ -37,6 +37,7 @@ function EstateTypesList() {
   const state = useRecoilValue(globalState);
   const service = useRef(new EstateTypeService());
   const mounted = useRef(true);
+  const modalMounted = useRef(true);
 
   useEffect(() => {
     service.current.setToken(state.token);
@@ -54,7 +55,7 @@ function EstateTypesList() {
     }
 
     return () => {
-      mounted.current = false;
+      modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.editMap[EditItemType.EstateType]]);
@@ -110,7 +111,9 @@ function EstateTypesList() {
         return types;
       });
     }
-    setModalState(defaultEditItemModalState);
+    if (modalMounted.current) {
+      setModalState(defaultEditItemModalState);
+    }
     setLoading((prev) => false);
   };
 
@@ -210,6 +213,7 @@ function EstateTypesList() {
                       }}
                       onEdit={() => {
                         const newMap = buildMap(EditItemType.EstateType);
+                        if (!modalMounted.current) return;
                         setModalState({
                           ...defaultEditItemModalState,
                           id: estateType.id,

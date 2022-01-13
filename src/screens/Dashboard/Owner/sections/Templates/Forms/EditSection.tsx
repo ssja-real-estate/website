@@ -12,7 +12,12 @@ import { useRecoilState } from "recoil";
 
 import CustomModal from "components/CustomModal/CustomModal";
 import Strings from "global/constants/strings";
-import { Field, FieldType, FieldTypeTitle } from "global/types/Field";
+import {
+  Field,
+  FieldInputNecessity,
+  FieldInputNecessityLabel,
+  FieldType,
+} from "global/types/Field";
 import Section from "global/types/Section";
 import EditConditionalField from "./EditField/EditConditionalField";
 import EditSelectField from "./EditField/EditSelectField";
@@ -24,6 +29,7 @@ import {
   modalSectionAtom,
 } from "./FormsState";
 import NewField from "./NewField/NewField";
+import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -31,7 +37,12 @@ function EditSection() {
   const [showRenameFieldModal, setShowRenameFieldModal] =
     useState<boolean>(false);
   const [renameFieldModalData, setRenameFieldModalData] =
-    useState<EditFieldModalData>({ index: -1, newTitle: "", newType: 0 });
+    useState<EditFieldModalData>({
+      index: -1,
+      newTitle: "",
+      newType: 0,
+      newFieldInputNecessity: FieldInputNecessity.Obligatory,
+    });
   const [showEditInnerFieldsModal, setShowEditInnerFieldsModal] =
     useState<boolean>(false);
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
@@ -183,6 +194,9 @@ function EditSection() {
                         index: fieldIndex,
                         newTitle: field.title,
                         newType: field.type,
+                        newFieldInputNecessity: field.optional
+                          ? FieldInputNecessity.Optional
+                          : FieldInputNecessity.Obligatory,
                       });
                       setShowRenameFieldModal(true);
                     }}
@@ -190,19 +204,7 @@ function EditSection() {
                 </Col>
                 <Col>
                   <h6 className="d-inline text-muted">
-                    {field.type === FieldType.Text
-                      ? FieldTypeTitle.Text
-                      : field.type === FieldType.Number
-                      ? FieldTypeTitle.Number
-                      : field.type === FieldType.Select
-                      ? FieldTypeTitle.Select
-                      : field.type === FieldType.Bool
-                      ? FieldTypeTitle.Bool
-                      : field.type === FieldType.Conditional
-                      ? FieldTypeTitle.Conditional
-                      : field.type === FieldType.Image
-                      ? FieldTypeTitle.Image
-                      : "---"}
+                    {getFieldTypeAndNecessity(field)}
                   </h6>
                   {field.type === FieldType.Conditional ? (
                     <i
@@ -272,6 +274,9 @@ function EditSection() {
               ...fields[index],
               title: renameFieldModalData.newTitle,
               type: renameFieldModalData.newType,
+              optional:
+                renameFieldModalData.newFieldInputNecessity ===
+                FieldInputNecessity.Optional,
             };
           }
 
@@ -283,17 +288,36 @@ function EditSection() {
           setRenameFieldModalData({ index: -1, newTitle: "", newType: 0 });
         }}
       >
-        <Form.Control
-          type="text"
-          placeholder={Strings.newTitle}
-          value={renameFieldModalData.newTitle}
-          onChange={(e) => {
-            setRenameFieldModalData({
-              ...renameFieldModalData!,
-              newTitle: e.target.value,
-            });
-          }}
-        />
+        <InputGroup style={{ direction: "rtl" }}>
+          <Form.Control
+            type="text"
+            placeholder={Strings.newTitle}
+            value={renameFieldModalData.newTitle}
+            onChange={(e) => {
+              setRenameFieldModalData({
+                ...renameFieldModalData!,
+                newTitle: e.target.value,
+              });
+            }}
+          />
+          <Form.Select
+            style={{ minWidth: 50, maxWidth: "10vw" }}
+            value={renameFieldModalData.newFieldInputNecessity}
+            onChange={(e) => {
+              setRenameFieldModalData({
+                ...renameFieldModalData!,
+                newFieldInputNecessity: Number(e.currentTarget.value),
+              });
+            }}
+          >
+            <option value={FieldInputNecessity.Obligatory}>
+              {FieldInputNecessityLabel.Obligatory}
+            </option>
+            <option value={FieldInputNecessity.Optional}>
+              {FieldInputNecessityLabel.Optional}
+            </option>
+          </Form.Select>
+        </InputGroup>
       </CustomModal>
       <CustomModal
         isFullscreen

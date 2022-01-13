@@ -38,6 +38,7 @@ function CityList() {
   const state = useRecoilValue(globalState);
   const service = useRef(new ProvinceCityService());
   const mounted = useRef(true);
+  const modalMounted = useRef(true);
 
   useEffect(() => {
     service.current.setToken(state.token);
@@ -55,7 +56,7 @@ function CityList() {
     }
 
     return () => {
-      mounted.current = false;
+      modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.editMap[EditItemType.City]]);
@@ -124,7 +125,9 @@ function CityList() {
         return prev;
       });
     }
-    setModalState(defaultEditItemModalState);
+    if (modalMounted.current) {
+      setModalState(defaultEditItemModalState);
+    }
     setLoading((prev) => false);
   };
 
@@ -252,6 +255,7 @@ function CityList() {
                         }}
                         onEdit={() => {
                           const newMap = buildMap(EditItemType.City);
+                          if (!modalMounted.current) return;
                           setModalState({
                             ...defaultEditItemModalState,
                             id: city.id,
