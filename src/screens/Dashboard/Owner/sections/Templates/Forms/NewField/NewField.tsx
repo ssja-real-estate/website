@@ -6,6 +6,8 @@ import Strings from "global/constants/strings";
 import {
   defaultField,
   Field,
+  FieldInputNecessity,
+  FieldInputNecessityLabel,
   FieldType,
   FieldTypeTitle,
 } from "global/types/Field";
@@ -18,6 +20,9 @@ function NewField() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
   const [selectedType, setSelectedType] = useState<number>(FieldType.Text);
   const [newFieldTitle, setNewFieldTitle] = useState<string>("");
+  const [fieldInputNecessity, setFieldInputNecessity] = useState<number>(
+    FieldInputNecessity.Obligatory
+  );
   const [options, setOptions] = useRecoilState(optionsAtom);
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
 
@@ -44,6 +49,8 @@ function NewField() {
                   ...defaultField,
                   title: newFieldTitle,
                   type: selectedType,
+                  optional:
+                    fieldInputNecessity === FieldInputNecessity.Optional,
                 };
 
                 if (newFieldTitle.trim() !== "") {
@@ -63,17 +70,31 @@ function NewField() {
                     setInnerFields(innerFields);
                   }
                   addNewField(newField);
-                  setNewFieldTitle("");
                   setOptions([]);
                   setInnerFields([]);
                 } else {
-                  setNewFieldTitle("");
                   alert(Strings.enterValidTitleForInput);
                 }
+                setNewFieldTitle("");
+                setFieldInputNecessity(FieldInputNecessity.Obligatory);
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
+            <Form.Select
+              style={{ minWidth: 100, maxWidth: "15vw" }}
+              value={fieldInputNecessity}
+              onChange={(e) => {
+                setFieldInputNecessity(Number(e.currentTarget.value));
+              }}
+            >
+              <option value={FieldInputNecessity.Obligatory}>
+                {FieldInputNecessityLabel.Obligatory}
+              </option>
+              <option value={FieldInputNecessity.Optional}>
+                {FieldInputNecessityLabel.Optional}
+              </option>
+            </Form.Select>
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}

@@ -18,6 +18,16 @@ enum FieldTypeTitle {
   Range = "بازه",
 }
 
+enum FieldInputNecessity {
+  Obligatory = 1,
+  Optional = 2,
+}
+
+enum FieldInputNecessityLabel {
+  Obligatory = "اجباری",
+  Optional = "اختیاری",
+}
+
 interface Field {
   id?: string;
   type: FieldType;
@@ -27,6 +37,7 @@ interface Field {
   fields?: Field[];
   min?: number;
   max?: number;
+  optional?: boolean;
 }
 
 const defaultField: Field = {
@@ -35,35 +46,11 @@ const defaultField: Field = {
   value: "",
 };
 
-const getFieldTitle = (field: Field) => {
-  let title = "";
-
-  switch (field.type) {
-    case FieldType.Text:
-      title = FieldTypeTitle.Text;
-      break;
-    case FieldType.Number:
-      title = FieldTypeTitle.Number;
-      break;
-    case FieldType.Select:
-      title = FieldTypeTitle.Select;
-      break;
-    case FieldType.Bool:
-      title = FieldTypeTitle.Bool;
-      break;
-    case FieldType.Conditional:
-      title = FieldTypeTitle.Conditional;
-      break;
-    case FieldType.Image:
-      title = FieldTypeTitle.Image;
-      break;
-    case FieldType.Range:
-      title = FieldTypeTitle.Range;
-      break;
-  }
-
-  return title;
-};
-
 export type { Field };
-export { FieldType, FieldTypeTitle, defaultField, getFieldTitle };
+export {
+  FieldType,
+  FieldTypeTitle,
+  FieldInputNecessity,
+  FieldInputNecessityLabel,
+  defaultField,
+};

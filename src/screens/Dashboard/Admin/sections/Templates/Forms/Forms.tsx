@@ -19,7 +19,8 @@ import FormService from "services/api/FormService/FormService";
 import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
 import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
 import { defaultForm, EstateForm } from "global/types/EstateForm";
-import { FieldType, getFieldTitle } from "global/types/Field";
+import { FieldType } from "global/types/Field";
+import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -219,7 +220,7 @@ const Forms = () => {
                                 </Col>
                                 <Col>
                                   <h6 className="d-inline text-muted">
-                                    {getFieldTitle(field)}
+                                    {getFieldTypeAndNecessity(field)}
                                   </h6>
                                 </Col>
                               </Row>
@@ -250,7 +251,7 @@ const Forms = () => {
                                 </Col>
                                 <Col>
                                   <h6 className="d-inline text-muted">
-                                    {getFieldTitle(field)}
+                                    {getFieldTypeAndNecessity(field)}
                                   </h6>
                                 </Col>
                               </Row>
