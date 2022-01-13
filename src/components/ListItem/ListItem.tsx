@@ -26,7 +26,7 @@ function ListItem({ title, onEdit, onRemove }: ListItemProps) {
           }}
         ></i>
         <i
-          className="remove-icon bi-x-lg"
+          className="bi-x-lg remove-icon "
           onClick={() => {
             setRedColor((prev) => !prev);
             onRemove && onRemove();
