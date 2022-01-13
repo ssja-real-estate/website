@@ -2,6 +2,14 @@
   opacity: 0%;
 }
 
-.list-item:hover .pencil-icon {
+.pencil-icon:hover {
+  opacity: 100%;
+}
+
+.remove-icon {
+  opacity: 0%;
+}
+
+.remove-icon:hover {
   opacity: 100%;
 }

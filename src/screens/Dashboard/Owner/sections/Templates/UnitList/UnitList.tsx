@@ -232,7 +232,7 @@ function UnitList() {
                 >
                   {newItem.name}
                   <i
-                    className="remove-icon bi-x-lg"
+                    className="bi-x-lg remove-icon"
                     onClick={() => {
                       setNewItems((prev) =>
                         prev.filter((_, id) => id !== index)
