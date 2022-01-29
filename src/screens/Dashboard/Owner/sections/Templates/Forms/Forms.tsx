@@ -221,6 +221,8 @@ const Forms = () => {
         assignmentTypeId: delegationType.id,
         estateTypeId: estateType.id,
       };
+      console.log("title: " + targetForm.title);
+
       if (targetForm.id) {
         await formService.current.updateForm(targetForm.id, targetForm);
       } else {

@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { globalState } from 'global/states/globalStates';
-import React, { useEffect, useRef, useState } from 'react';
-import { Form, Row } from 'react-bootstrap';
-import Tilt from 'react-parallax-tilt';
-import { useRecoilState } from 'recoil';
-import EstateCard from '../../../../../components/EstateCard/EstateCard';
-import {
-  delegationTypes,
-  estateTypes,
-} from '../../../../../global/constants/estates';
-import { Estate } from '../../../../../global/types/Estate';
-import './Estates.css';
+import { globalState } from "global/states/globalStates";
+import React, { useEffect, useRef, useState } from "react";
+import { Form, Row } from "react-bootstrap";
+import Tilt from "react-parallax-tilt";
+import { useRecoilState } from "recoil";
+import EstateCard from "../../../../../components/EstateCard/EstateCard";
+import { Estate } from "../../../../../global/types/Estate";
+import DelegationType from "global/types/DelegationType";
+import EstateType from "global/types/EstateType";
+import "./Estates.css";
 
 function EstatesSection() {
-  const [delegationType, setDelegationType] = useState<string>('default');
-  const [estateType, setEstateType] = useState<string>('default');
-  const [location, setLocation] = useState<string>('');
+  const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
+  const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
+  const [delegationType, setDelegationType] = useState<string>("default");
+  const [estateType, setEstateType] = useState<string>("default");
+  const [location, setLocation] = useState<string>("");
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -56,8 +56,8 @@ function EstatesSection() {
               <option value="default">همه</option>
               {delegationTypes.map((option, index) => {
                 return (
-                  <option key={index} value={option.value}>
-                    {option.value}
+                  <option key={index} value={option.name}>
+                    {option.name}
                   </option>
                 );
               })}
@@ -68,8 +68,8 @@ function EstatesSection() {
               <option value="default">همه</option>
               {estateTypes.map((option, index) => {
                 return (
-                  <option key={index} value={option.value}>
-                    {option.value}
+                  <option key={index} value={option.name}>
+                    {option.name}
                   </option>
                 );
               })}
