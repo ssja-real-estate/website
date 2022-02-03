@@ -9,6 +9,7 @@ class Strings {
   static estateTypes = "نوع ملک‌ها";
   static provinces = "استان‌ها";
   static cities = "شهر‌ها";
+  static neighborhoods = "منطقه‌ها";
   static units = "واحدها";
   static forms = "فرم‌ها";
   static owners = "مالک‌ها";
@@ -20,7 +21,9 @@ class Strings {
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
   static choose = "انتخاب کنید";
   static chooseProvince = "انتخاب استان";
+  static chooseCity = "انتخاب شهر";
   static addNewCity = "افزودن شهر جدید";
+  static addNewNeighborhood = "افزودن محله جدید";
   static addNewUnit = "افزودن واحد جدید";
   static login = "ورود";
   static sajaLogin = "ورود به سامانه ثجا";
@@ -73,6 +76,7 @@ class Strings {
   static estateType = "نوع ملک";
   static province = "استان";
   static city = "شهر";
+  static neighborhood = "منطقه";
   static unit = "واحد";
   static clientUnknownError = "خطای سمت کاربر";
   static unknownServerError = "خطای سمت سرور";
