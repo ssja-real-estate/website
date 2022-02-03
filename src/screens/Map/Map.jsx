@@ -2,10 +2,12 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import NeshanMap from "react-neshan-map-leaflet";
-// import MapService from "services/api/MapService/MapService";
 
+// latLang : {lat: 212, lng: 322}
+// position: [654564, 54654]
+// readOnly : true
 const MapScreen = ({ latLang, position, readOnly }) => {
-  const [defaultZoom, setDefaultZoom] = useState(15);
+  const [defaultZoom, setDefaultZoom] = useState(16);
   const [defaultOptions, setDefaultOptions] = useState({
     key: process.env.REACT_APP_MAP_WEB_API_KEY,
     maptype: "neshan",
@@ -24,7 +26,6 @@ const MapScreen = ({ latLang, position, readOnly }) => {
     width: "100vw",
     height: "100vh",
   });
-  // const mapService = useRef(new MapService());
   const mounted = useRef(true);
 
   useEffect(() => {
