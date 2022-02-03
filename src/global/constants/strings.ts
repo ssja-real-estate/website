@@ -3,6 +3,8 @@ class Strings {
   static sajaSystem = "سامانه ثجا";
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
+  static addEstate = "ثبت ملک";
+  static searchEstate = "جستجوی ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
   static delegationTypes = "نوع واگذاری‌ها";
@@ -123,6 +125,9 @@ class Strings {
   static estatesTooltip = "املاک";
   static templatesTooltip = "قالب‌ها";
   static optionalField = "اختیاری";
+  static imagesLimit = "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!";
+  static formDoesNotExist = "این فرم وجود ندارد";
+  static noEstateWithThisFilterAvailable = "هیچ ملکی با این مشخصات وجود ندارد";
 }
 
 export default Strings;
