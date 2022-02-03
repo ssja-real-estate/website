@@ -1,9 +1,9 @@
 import MapInfo from "./MapInfo";
 
-interface City {
+interface Neighborhood {
   id: string;
   name: string;
   mapInfo?: MapInfo;
 }
 
-export default City;
+export default Neighborhood;

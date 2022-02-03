@@ -5,9 +5,11 @@ import NeshanMap from "react-neshan-map-leaflet";
 
 // latLang : {lat: 212, lng: 322}
 // position: [654564, 54654]
+// zoom : 10
 // readOnly : true
-const MapScreen = ({ latLang, position, readOnly }) => {
-  const [defaultZoom, setDefaultZoom] = useState(16);
+const MapScreen = ({ latLang, zoom }) => {
+  const position = [latLang.lat, latLang.lng];
+  const [defaultZoom, setDefaultZoom] = useState(zoom);
   const [defaultOptions, setDefaultOptions] = useState({
     key: process.env.REACT_APP_MAP_WEB_API_KEY,
     maptype: "neshan",
@@ -43,14 +45,12 @@ const MapScreen = ({ latLang, position, readOnly }) => {
         let marker = L.marker(position).addTo(myMap).bindPopup("hello");
         marker.setLatLng(latLang);
 
-        if (!readOnly) {
-          myMap.on("click", function (e) {
-            marker.setLatLng(e.latlng);
-            console.log(e.latlng);
-          });
-        }
+        // myMap.on("click", function (e) {
+        //   marker.setLatLng(e.latlng);
+        //   console.log(e.latlng);
+        // });
 
-        L.circle(position, defaultCircle).addTo(myMap);
+        // L.circle(position, defaultCircle).addTo(myMap);
       }}
     />
   );
