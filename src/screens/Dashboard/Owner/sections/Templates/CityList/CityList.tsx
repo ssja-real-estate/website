@@ -30,6 +30,7 @@ function CityList() {
   const [newCity, setNewCity] = useState<City>({
     id: "",
     name: "",
+    neighborhoods: [],
   });
   const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -110,6 +111,7 @@ function CityList() {
     let updatedCity = await service.current.editCityInProvince(provinceId, {
       id: modalState.id,
       name: modalState.value,
+      neighborhoods: [],
     });
     if (updatedCity) {
       setProvinces((prev) => {
