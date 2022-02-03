@@ -101,14 +101,12 @@ function AddEstateScreen() {
 
   function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setDelegationType({
-      ...delegationType,
       id: event.target.value,
       name: event.target.value,
     });
   }
   function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setEstateType({
-      ...estateType,
       id: event.target.value,
       name: event.target.value,
     });
