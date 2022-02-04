@@ -19,8 +19,9 @@ import {
   ListGroup,
   Spinner,
 } from "react-bootstrap";
+import toast from "react-hot-toast";
 import { useRecoilState, useRecoilValue } from "recoil";
-import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import LocationService from "services/api/LocationService/LocationService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function NeighborhoodList() {
@@ -29,16 +30,8 @@ function NeighborhoodList() {
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const [removedItems, setRemovedItems] = useState<Neighborhood[]>([]);
   const [newItems, setNewItems] = useState<Neighborhood[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<Province>({
-    id: "",
-    name: "default",
-    cities: [],
-  });
-  const [selectedCity, setSelectedCity] = useState<City>({
-    id: "",
-    name: "default",
-    neighborhoods: [],
-  });
+  const [selectedProvince, setSelectedProvince] = useState<Province>();
+  const [selectedCity, setSelectedCity] = useState<City>();
   const [newNeighborhood, setNewNeighborhood] = useState<Neighborhood>({
     id: "",
     name: "",
@@ -48,12 +41,13 @@ function NeighborhoodList() {
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const geoLocationService = useRef(new ProvinceCityService());
+  const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 
   useEffect(() => {
-    geoLocationService.current.setToken(state.token);
+    locationService.current.setToken(state.token);
+    loadLocations();
     loadData();
 
     return () => {
@@ -73,41 +67,52 @@ function NeighborhoodList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.editMap[EditItemType.Neighborhood]]);
 
+  const loadLocations = async () => {
+    toast.promise(
+      locationService.current
+        .getAllProvinces()
+        .then((fetchedProvinces) => {
+          setProvinces(fetchedProvinces);
+          if (selectedProvince?.id) {
+            const province = fetchedProvinces.find(
+              (p) => p.id === selectedProvince.id
+            );
+            if (province) {
+              setSelectedProvince(province);
+              setCities((prev) => province.cities);
+              if (selectedCity?.id) {
+                const city = province.cities.find(
+                  (c) => c.id === selectedCity.id
+                );
+                if (city) {
+                  setSelectedCity(city);
+                  setNeighborhoods(city.neighborhoods);
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        }),
+      {
+        success: Strings.loadingLocationsSuccess,
+        loading: Strings.loadingLocations,
+        error: Strings.loadingLocationsFailed,
+      }
+    );
+  };
+
   const loadData = async () => {
     if (!loading) {
       setLoading((prev) => true);
     }
-    const fetchedProvinces = await geoLocationService.current.getAllProvinces();
-
-    if (!mounted.current) return;
-
-    setProvinces((prev) => fetchedProvinces);
-
-    if (selectedProvince.id) {
-      const province = fetchedProvinces.find(
-        (p) => p.id === selectedProvince.id
-      );
-      if (province) {
-        setSelectedProvince(province);
-        setCities((prev) => province.cities);
-
-        if (selectedCity.id) {
-          const city = province.cities.find((c) => c.id === selectedCity.id);
-          if (city) {
-            setSelectedCity(city);
-            setNeighborhoods(city.neighborhoods);
-          }
-        }
-      }
-    } else {
-      if (fetchedProvinces.length > 0) {
-        const firstProvince = fetchedProvinces[0];
-        setSelectedProvince(firstProvince);
-        if (firstProvince.cities.length > 0) {
-          setSelectedCity(firstProvince.cities[0]);
-        }
-      }
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
     }
+
+    await loadLocations();
     setLoading((prev) => false);
   };
 
@@ -127,8 +132,8 @@ function NeighborhoodList() {
   };
 
   const createNewNeighborhoods = async () => {
-    const provinceId = selectedProvince.id;
-    const cityId = selectedCity.id;
+    const provinceId = selectedProvince?.id;
+    const cityId = selectedCity?.id;
     if (!provinceId || !cityId) return;
     // for (let i = 0; i < newItems.length; i++) {
     //   const neighborhood = newItems[i];
@@ -138,27 +143,22 @@ function NeighborhoodList() {
     //     neighborhood
     //   );
     // }
-    // setNeighborhoods((prev) => {
-    //   prev.push(...newItems);
-    //   return neighborhoods;
-    // });
   };
 
   const editNeighborhood = async () => {
     if (modalState.id === "") return;
     setLoading((prev) => true);
 
-    let provinceId = selectedProvince.id;
-    let cityId = selectedCity.id;
+    let provinceId = selectedProvince?.id;
+    let cityId = selectedCity?.id;
+
+    if (!provinceId || !cityId) return;
+
     let updatedNeighborhood =
-      await geoLocationService.current.editNeighborhoodInCity(
-        provinceId,
-        cityId,
-        {
-          id: modalState.id,
-          name: modalState.value,
-        }
-      );
+      await locationService.current.editNeighborhoodInCity(provinceId, cityId, {
+        id: modalState.id,
+        name: modalState.value,
+      });
     if (updatedNeighborhood) {
       setCities((prev) => {
         let prevCity = prev.find((t) => t.id === provinceId);
@@ -180,8 +180,8 @@ function NeighborhoodList() {
   };
 
   const deleteNeighborhoods = async () => {
-    const provinceId = selectedProvince.id;
-    const cityId = selectedCity.id;
+    const provinceId = selectedProvince?.id;
+    const cityId = selectedCity?.id;
     if (!provinceId || !cityId) return;
     for (let i = 0; i < removedItems.length; i++) {
       // const neighborhood = removedItems[i];
@@ -252,7 +252,7 @@ function NeighborhoodList() {
             />
             <Form.Select
               defaultValue="default"
-              value={selectedCity.id}
+              value={selectedCity?.id}
               onChange={(e) => {
                 const cityId = e.currentTarget.value;
                 if (cityId) {
@@ -277,7 +277,7 @@ function NeighborhoodList() {
             </Form.Select>
             <Form.Select
               defaultValue="default"
-              value={selectedProvince.id}
+              value={selectedProvince?.id}
               onChange={(e) => {
                 const provinceId = e.currentTarget.value;
                 if (provinceId) {
@@ -303,6 +303,15 @@ function NeighborhoodList() {
                 );
               })}
             </Form.Select>
+            <Button
+              variant="dark"
+              className="align-items-center pt-lg-2"
+              onClick={async () => {
+                await loadLocations();
+              }}
+            >
+              <i className="bi-arrow-counterclockwise"></i>
+            </Button>
           </InputGroup>
         </Col>
         <Col sm={"auto"}>

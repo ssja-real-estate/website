@@ -18,7 +18,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import LocationService from "services/api/LocationService/LocationService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function ProvinceList() {
@@ -34,7 +34,7 @@ function ProvinceList() {
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new ProvinceCityService());
+  const service = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 

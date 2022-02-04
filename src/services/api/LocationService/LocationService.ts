@@ -4,7 +4,7 @@ import Neighborhood from "global/types/Neighborhood";
 import Province from "global/types/Province";
 import BaseService from "../BaseService";
 
-class ProvinceCityService extends BaseService {
+class LocationService extends BaseService {
   private provinceUrl = "/province";
   private cityUrl = "/city";
   private neighborhoodUrl = "/neighborhood";
@@ -189,4 +189,4 @@ class ProvinceCityService extends BaseService {
   }
 }
 
-export default ProvinceCityService;
+export default LocationService;

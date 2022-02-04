@@ -23,7 +23,7 @@ class Strings {
   static chooseProvince = "انتخاب استان";
   static chooseCity = "انتخاب شهر";
   static addNewCity = "افزودن شهر جدید";
-  static addNewNeighborhood = "افزودن محله جدید";
+  static addNewNeighborhood = "افزودن منطقه جدید";
   static addNewUnit = "افزودن واحد جدید";
   static login = "ورود";
   static sajaLogin = "ورود به سامانه ثجا";
@@ -92,8 +92,11 @@ class Strings {
   static imageField = "تصویر";
   static rangeField = "بازه";
   static loadingOptions = "در حال به‌روزرسانی گزینه‌ها";
+  static loadingLocations = "در حال به‌روزرسانی مناطق جغرافیایی";
   static loadingOptionsSuccess = "گزینه‌ها با موفقیت به‌روزرسانی شدند";
+  static loadingLocationsSuccess = "مناطق جغرافیایی با موفقیت به‌روزرسانی شدند";
   static loadingOptionsFailed = "به‌روزرسانی گزینه‌ها با خطا مواجه شد";
+  static loadingLocationsFailed = "به‌روزرسانی مناطق جغرافیایی با خطا مواجه شد";
   static confirm = "ثبت";
   static sectionTitle = "عنوان بخش";
   static newTitle = "عنوان جدید";

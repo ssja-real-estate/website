@@ -5,7 +5,7 @@ import Province from "global/types/Province";
 import { useState, useEffect, useRef } from "react";
 import { Button, Row, Col, ListGroup, Spinner, Form } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
-import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import LocationService from "services/api/LocationService/LocationService";
 import "./CityList.css";
 
 function CityList() {
@@ -15,7 +15,7 @@ function CityList() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new ProvinceCityService());
+  const service = useRef(new LocationService());
   const mounted = useRef(true);
 
   useEffect(() => {
