@@ -130,6 +130,10 @@ class Strings {
   static estatesTooltip = "املاک";
   static templatesTooltip = "قالب‌ها";
   static optionalField = "اختیاری";
+  static latitude = "عرض جغرافیایی";
+  static longitude = "طول جغرافیایی";
+  static zoom = "درجه زوم";
+  static invalidZoomRange = "درجه زوم باید بین ۵ تا ۱۵ باشد";
 }
 
 export default Strings;

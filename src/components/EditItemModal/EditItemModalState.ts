@@ -1,3 +1,4 @@
+import MapInfo from "global/types/MapInfo";
 import { atom } from "recoil";
 
 enum EditItemType {
@@ -14,6 +15,7 @@ interface EditItemModalState {
   value: string;
   displayMap: boolean[];
   editMap: boolean[];
+  mapInfo?: MapInfo;
 }
 
 const defaultMap = [false, false, false, false, false];
