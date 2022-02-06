@@ -134,6 +134,7 @@ class Strings {
   static longitude = "طول جغرافیایی";
   static zoom = "درجه زوم";
   static invalidZoomRange = "درجه زوم باید بین ۵ تا ۱۵ باشد";
+  static adminFormDoesNotExist = "این فرم هنوز ساخته نشده‌است";
 }
 
 export default Strings;
