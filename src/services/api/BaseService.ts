@@ -5,8 +5,10 @@ import toast from "react-hot-toast";
 class BaseService {
   protected Api: AxiosInstance;
   protected config: AxiosRequestConfig | undefined;
+  protected MapApi: AxiosInstance;
 
   private baseUrl = "https://ssja.ir/api";
+  private mapBaseUrl = "https://api.neshan.org";
 
   constructor() {
     this.Api = axios.create({
@@ -14,6 +16,14 @@ class BaseService {
       timeout: 5000,
       headers: {
         "content-type": "application/json",
+      },
+    });
+    this.MapApi = axios.create({
+      baseURL: this.mapBaseUrl,
+      timeout: 5000,
+      headers: {
+        "content-type": "application/json",
+        "Api-Key": `${process.env.REACT_APP_MAP_SERVICE_API_KEY}`,
       },
     });
   }

@@ -10,6 +10,7 @@ class Strings {
   static estateTypes = "نوع ملک‌ها";
   static provinces = "استان‌ها";
   static cities = "شهر‌ها";
+  static neighborhoods = "منطقه‌ها";
   static units = "واحدها";
   static forms = "فرم‌ها";
   static owners = "مالک‌ها";
@@ -21,7 +22,9 @@ class Strings {
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
   static choose = "انتخاب کنید";
   static chooseProvince = "انتخاب استان";
+  static chooseCity = "انتخاب شهر";
   static addNewCity = "افزودن شهر جدید";
+  static addNewNeighborhood = "افزودن منطقه جدید";
   static addNewUnit = "افزودن واحد جدید";
   static login = "ورود";
   static sajaLogin = "ورود به سامانه ثجا";
@@ -74,6 +77,7 @@ class Strings {
   static estateType = "نوع ملک";
   static province = "استان";
   static city = "شهر";
+  static neighborhood = "منطقه";
   static unit = "واحد";
   static clientUnknownError = "خطای سمت کاربر";
   static unknownServerError = "خطای سمت سرور";
@@ -89,8 +93,11 @@ class Strings {
   static imageField = "تصویر";
   static rangeField = "بازه";
   static loadingOptions = "در حال به‌روزرسانی گزینه‌ها";
+  static loadingLocations = "در حال به‌روزرسانی مناطق جغرافیایی";
   static loadingOptionsSuccess = "گزینه‌ها با موفقیت به‌روزرسانی شدند";
+  static loadingLocationsSuccess = "مناطق جغرافیایی با موفقیت به‌روزرسانی شدند";
   static loadingOptionsFailed = "به‌روزرسانی گزینه‌ها با خطا مواجه شد";
+  static loadingLocationsFailed = "به‌روزرسانی مناطق جغرافیایی با خطا مواجه شد";
   static confirm = "ثبت";
   static sectionTitle = "عنوان بخش";
   static newTitle = "عنوان جدید";
@@ -126,6 +133,11 @@ class Strings {
   static optionalField = "اختیاری";
   static imagesLimit = "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!";
   static formDoesNotExist = "این فرم وجود ندارد";
+  static latitude = "عرض جغرافیایی";
+  static longitude = "طول جغرافیایی";
+  static zoom = "درجه زوم";
+  static invalidZoomRange = "درجه زوم باید بین ۵ تا ۱۵ باشد";
+  static adminFormDoesNotExist = "این فرم هنوز ساخته نشده‌است";
 }
 
 export default Strings;

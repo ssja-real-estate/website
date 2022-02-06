@@ -7,6 +7,7 @@ import editItemModalState, {
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
 import City from "global/types/City";
+import Neighborhood from "global/types/Neighborhood";
 import Province from "global/types/Province";
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -23,17 +24,19 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import LocationService from "services/api/LocationService/LocationService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
 
-function CityList() {
+function NeighborhoodList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [cities, setCities] = useState<City[]>([]);
-  const [removedItems, setRemovedItems] = useState<City[]>([]);
-  const [newItems, setNewItems] = useState<City[]>([]);
-  const [newCity, setNewCity] = useState<City>({
+  const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
+  const [removedItems, setRemovedItems] = useState<Neighborhood[]>([]);
+  const [newItems, setNewItems] = useState<Neighborhood[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<Province>();
+  const [selectedCity, setSelectedCity] = useState<City>();
+  const [newNeighborhood, setNewNeighborhood] = useState<Neighborhood>({
     id: "",
     name: "",
-    neighborhoods: [],
   });
-  const [selectedProvince, setSelectedProvince] = useState<Province>();
+
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
@@ -44,6 +47,7 @@ function CityList() {
 
   useEffect(() => {
     locationService.current.setToken(state.token);
+    loadLocations();
     loadData();
 
     return () => {
@@ -54,16 +58,16 @@ function CityList() {
 
   useEffect(() => {
     if (modalState.editMap[EditItemType.City]) {
-      editCity();
+      editNeighborhood();
     }
 
     return () => {
       modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editMap[EditItemType.City]]);
+  }, [modalState.editMap[EditItemType.Neighborhood]]);
 
-  const loadProvinces = async () => {
+  const loadLocations = async () => {
     toast.promise(
       locationService.current
         .getAllProvinces()
@@ -76,6 +80,15 @@ function CityList() {
             if (province) {
               setSelectedProvince(province);
               setCities((prev) => province.cities);
+              if (selectedCity?.id) {
+                const city = province.cities.find(
+                  (c) => c.id === selectedCity.id
+                );
+                if (city) {
+                  setSelectedCity(city);
+                  setNeighborhoods(city.neighborhoods);
+                }
+              }
             }
           }
         })
@@ -94,58 +107,67 @@ function CityList() {
     if (!loading) {
       setLoading((prev) => true);
     }
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
+    }
 
-    if (!mounted.current) return;
-
-    await loadProvinces();
-
+    await loadLocations();
     setLoading((prev) => false);
   };
 
-  const selectItemAsDeleted = async (city: City) => {
+  const selectItemAsDeleted = async (neighborhood: Neighborhood) => {
     setRemovedItems((prev) => {
-      const item = prev.find((e) => e.id === city.id);
+      const item = prev.find((e) => e.id === neighborhood.id);
       if (item) {
-        const newRemovedItems = prev.filter((item) => item.id !== city.id);
+        const newRemovedItems = prev.filter(
+          (item) => item.id !== neighborhood.id
+        );
         return newRemovedItems;
       } else {
-        const newRemovedItems = [...prev, city];
+        const newRemovedItems = [...prev, neighborhood];
         return newRemovedItems;
       }
     });
   };
 
-  const createNewCities = async () => {
+  const createNewNeighborhoods = async () => {
     const provinceId = selectedProvince?.id;
-    if (!provinceId) return;
-    for (let i = 0; i < newItems.length; i++) {
-      const city = newItems[i];
-      await locationService.current.createCityInProvince(provinceId, city);
-    }
+    const cityId = selectedCity?.id;
+    if (!provinceId || !cityId) return;
+    // for (let i = 0; i < newItems.length; i++) {
+    //   const neighborhood = newItems[i];
+    //   await geoLocationService.current.createNeighborhoodInCity(
+    //     provinceId,
+    //     cityId,
+    //     neighborhood
+    //   );
+    // }
   };
 
-  const editCity = async () => {
+  const editNeighborhood = async () => {
     if (modalState.id === "") return;
     setLoading((prev) => true);
 
-    let provinceId = selectedProvince?.id ?? "";
-    let updatedCity = await locationService.current.editCityInProvince(
-      provinceId,
-      {
+    let provinceId = selectedProvince?.id;
+    let cityId = selectedCity?.id;
+
+    if (!provinceId || !cityId) return;
+
+    let updatedNeighborhood =
+      await locationService.current.editNeighborhoodInCity(provinceId, cityId, {
         id: modalState.id,
         name: modalState.value,
-        neighborhoods: [],
-      }
-    );
-    if (updatedCity) {
-      setProvinces((prev) => {
-        let prevProvince = prev.find((t) => t.id === provinceId);
-        if (prevProvince) {
-          let prevCity = prevProvince.cities.find(
-            (c) => c.id === updatedCity!.id
+      });
+    if (updatedNeighborhood) {
+      setCities((prev) => {
+        let prevCity = prev.find((t) => t.id === provinceId);
+        if (prevCity) {
+          let prevNeighborhood = prevCity.neighborhoods.find(
+            (c) => c.id === updatedNeighborhood!.id
           );
-          if (prevCity) {
-            prevCity.name = updatedCity!.name;
+          if (prevNeighborhood) {
+            prevNeighborhood.name = updatedNeighborhood!.name;
           }
         }
         return prev;
@@ -157,19 +179,24 @@ function CityList() {
     setLoading((prev) => false);
   };
 
-  const deleteCities = async () => {
+  const deleteNeighborhoods = async () => {
     const provinceId = selectedProvince?.id;
-    if (!provinceId) return;
+    const cityId = selectedCity?.id;
+    if (!provinceId || !cityId) return;
     for (let i = 0; i < removedItems.length; i++) {
-      const city = removedItems[i];
-      await locationService.current.deleteCityInProvince(provinceId, city);
+      // const neighborhood = removedItems[i];
+      // await geoLocationService.current.deleteNeighborhoodInCity(
+      //   provinceId,
+      //   cityId,
+      //   neighborhood.id
+      // );
     }
   };
 
   const saveChanges = async () => {
     setLoading((prev) => true);
-    await deleteCities();
-    await createNewCities();
+    await deleteNeighborhoods();
+    await createNewNeighborhoods();
     await loadData();
   };
 
@@ -177,10 +204,10 @@ function CityList() {
     <>
       <EditItemModal
         title={Strings.edit}
-        placeholder={Strings.city}
-        editItemType={EditItemType.City}
+        placeholder={Strings.neighborhood}
+        editItemType={EditItemType.Neighborhood}
       />
-      <h4 className="mt-4 ms-3 d-inline">{Strings.cities}</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.neighborhoods}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
@@ -196,16 +223,16 @@ function CityList() {
             <Button
               variant="dark"
               onClick={() => {
-                newCity.name.trim() !== "" &&
+                newNeighborhood.name.trim() !== "" &&
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      ...newCity,
-                      name: newCity.name.trim(),
+                      ...newNeighborhood,
+                      name: newNeighborhood.name.trim(),
                     },
                   ]);
-                setNewCity({
-                  ...newCity,
+                setNewNeighborhood({
+                  ...newNeighborhood,
                   name: "",
                 });
               }}
@@ -214,15 +241,40 @@ function CityList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder={Strings.addNewCity}
-              value={newCity.name}
+              placeholder={Strings.addNewNeighborhood}
+              value={newNeighborhood.name}
               onChange={(e) => {
-                setNewCity({
-                  ...newCity,
+                setNewNeighborhood({
+                  ...newNeighborhood,
                   name: e.target.value,
                 });
               }}
             />
+            <Form.Select
+              defaultValue="default"
+              value={selectedCity?.id}
+              onChange={(e) => {
+                const cityId = e.currentTarget.value;
+                if (cityId) {
+                  const city = cities.find((c) => c.id === cityId);
+                  if (city) {
+                    setSelectedCity(city);
+                    setNeighborhoods(city.neighborhoods);
+                  }
+                }
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.chooseCity}
+              </option>
+              {cities.map((city, index) => {
+                return (
+                  <option key={index} value={city.id}>
+                    {city.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
             <Form.Select
               defaultValue="default"
               value={selectedProvince?.id}
@@ -233,6 +285,9 @@ function CityList() {
                   if (province) {
                     setSelectedProvince(province);
                     setCities(province.cities);
+                    if (province.cities && province.cities.length > 0) {
+                      setSelectedCity(province.cities[0]);
+                    }
                   }
                 }
               }}
@@ -252,7 +307,7 @@ function CityList() {
               variant="dark"
               className="align-items-center pt-lg-2"
               onClick={async () => {
-                await loadProvinces();
+                await loadLocations();
               }}
             >
               <i className="bi-arrow-counterclockwise"></i>
@@ -279,22 +334,22 @@ function CityList() {
             <Spinner animation="border" variant="primary" className="my-5" />
           ) : (
             <ListGroup>
-              {cities &&
-                cities.map((city, index) => {
+              {neighborhoods &&
+                neighborhoods.map((neighborhood, index) => {
                   return (
                     <React.Fragment key={index}>
                       <ListItem
-                        title={city.name}
+                        title={neighborhood.name}
                         onRemove={() => {
-                          selectItemAsDeleted(city);
+                          selectItemAsDeleted(neighborhood);
                         }}
                         onEdit={() => {
-                          const newMap = buildMap(EditItemType.City);
+                          const newMap = buildMap(EditItemType.Neighborhood);
                           if (!modalMounted.current) return;
                           setModalState({
                             ...defaultEditItemModalState,
-                            id: city.id,
-                            value: city.name,
+                            id: neighborhood.id,
+                            value: neighborhood.name,
                             displayMap: [...newMap],
                           });
                         }}
@@ -334,4 +389,4 @@ function CityList() {
   );
 }
 
-export default CityList;
+export default NeighborhoodList;
