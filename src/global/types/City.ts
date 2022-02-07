@@ -8,4 +8,10 @@ interface City {
   mapInfo?: MapInfo;
 }
 
+export const defaultCity: City = {
+  id: "",
+  name: "",
+  neighborhoods: [],
+};
+
 export default City;

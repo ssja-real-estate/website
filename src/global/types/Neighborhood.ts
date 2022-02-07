@@ -6,4 +6,9 @@ interface Neighborhood {
   mapInfo?: MapInfo;
 }
 
+export const defaultNeighborhood = {
+  id: "",
+  name: "",
+};
+
 export default Neighborhood;

@@ -19,9 +19,9 @@ import toast from "react-hot-toast";
 import DelegationType from "global/types/DelegationType";
 import EstateService from "services/api/EstateService/EstateService";
 import MapScreen from "screens/Map/Map";
-import Province from "global/types/Province";
-import Neighborhood from "global/types/Neighborhood";
-import City from "global/types/City";
+import Province, { defaultProvince } from "global/types/Province";
+import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
+import City, { defaultCity } from "global/types/City";
 import LocationService from "services/api/LocationService/LocationService";
 import MapInfo from "global/types/MapInfo";
 
@@ -32,18 +32,14 @@ function AddEstateScreen() {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<Province>({
-    id: "",
-    name: "default",
-    cities: [],
-  });
+  const [selectedProvince, setSelectedProvince] =
+    useState<Province>(defaultProvince);
   const [selectedCity, setSelectedCity] = useState<City>({
-    id: "",
-    name: "default",
+    ...defaultCity,
     neighborhoods: [{ id: "1", name: "جام جم" }],
   });
   const [selectedNeighborhood, setSelectedNeighborhood] =
-    useState<Neighborhood>({ id: "", name: "default" });
+    useState<Neighborhood>(defaultNeighborhood);
   const [selectedDelegationType, setSelectedDelegationType] =
     useState<DelegationType>({
       id: "",
@@ -67,28 +63,24 @@ function AddEstateScreen() {
   const estateService = useRef(new EstateService());
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
-  const [mapInfo, setMapInfo] = useState<MapInfo>({
-    latitude: 0,
-    longitude: 0,
-    zoom: 5,
-  });
+  const [mapInfo, setMapInfo] = useState<MapInfo>();
 
   const provinceMapInfo: MapInfo = {
     latitude: 37.56194599594773,
     longitude: 44.942478825699396,
-    zoom: 9,
+    zoom: 7,
   };
 
   const cityMapInfo: MapInfo = {
     latitude: 36.7705821414231,
     longitude: 45.72602696787074,
-    zoom: 11,
+    zoom: 13,
   };
 
   const neighborhoodMapInfo: MapInfo = {
     latitude: 36.76390324579972,
     longitude: 45.72528253764556,
-    zoom: 13,
+    zoom: 15,
   };
   useEffect(() => {
     formService.current.setToken(state.token);
@@ -212,6 +204,7 @@ function AddEstateScreen() {
       cities: province.cities,
       mapInfo: provinceMapInfo,
     });
+
     setMapInfo(provinceMapInfo);
     setCities(province.cities);
   }
@@ -575,8 +568,12 @@ function AddEstateScreen() {
     <div className="main-container">
       <div>
         <MapScreen
-          latLang={{ lat: mapInfo.latitude, lng: mapInfo.longitude }}
-          zoom={mapInfo.zoom}
+          latLang={
+            mapInfo
+              ? { lat: mapInfo.latitude, lng: mapInfo.longitude }
+              : undefined
+          }
+          zoom={mapInfo?.zoom}
         />
       </div>
       <div className="add-estate-container">
@@ -596,7 +593,7 @@ function AddEstateScreen() {
               value={selectedProvince?.name}
               onChange={handleProvinceChange}
             >
-              <option value="default" disabled>
+              <option value="" disabled>
                 {Strings.choose}
               </option>
               {provinces.map((province, index) => {
@@ -615,7 +612,7 @@ function AddEstateScreen() {
               value={selectedCity?.name}
               onChange={handleCityChange}
             >
-              <option value="default" disabled>
+              <option value="" disabled>
                 {Strings.choose}
               </option>
               {cities.map((city, index) => {
@@ -634,7 +631,7 @@ function AddEstateScreen() {
               value={selectedNeighborhood?.name}
               onChange={handleNeighborhoodChange}
             >
-              <option value="default" disabled>
+              <option value="" disabled>
                 {Strings.choose}
               </option>
               {neighborhoods.map((neighborhood, index) => {
