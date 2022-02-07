@@ -18,21 +18,44 @@ import FormService from "services/api/FormService/FormService";
 import toast from "react-hot-toast";
 import DelegationType from "global/types/DelegationType";
 import EstateService from "services/api/EstateService/EstateService";
+import MapScreen from "screens/Map/Map";
+import Province from "global/types/Province";
+import Neighborhood from "global/types/Neighborhood";
+import City from "global/types/City";
+import LocationService from "services/api/LocationService/LocationService";
+import MapInfo from "global/types/MapInfo";
 
 function AddEstateScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
-  const [delegationType, setDelegationType] = useState<DelegationType>({
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<Province>({
     id: "",
     name: "default",
+    cities: [],
   });
-  const [estateType, setEstateType] = useState<EstateType>({
+  const [selectedCity, setSelectedCity] = useState<City>({
+    id: "",
+    name: "default",
+    neighborhoods: [{ id: "1", name: "جام جم" }],
+  });
+  const [selectedNeighborhood, setSelectedNeighborhood] =
+    useState<Neighborhood>({ id: "", name: "default" });
+  const [selectedDelegationType, setSelectedDelegationType] =
+    useState<DelegationType>({
+      id: "",
+      name: "default",
+    });
+  const [selectedEstateType, setSelectedEstateType] = useState<EstateType>({
     id: "",
     name: "default",
   });
   const isDefault: boolean =
-    delegationType.name === "default" || estateType.name === "default"
+    selectedDelegationType.name === "default" ||
+    selectedEstateType.name === "default"
       ? true
       : false;
   const [estate, setForm] = useState<EstateForm>(defaultForm);
@@ -42,14 +65,39 @@ function AddEstateScreen() {
   const delegationTypeService = useRef(new DelegationTypeService());
   const estateTypeService = useRef(new EstateTypeService());
   const estateService = useRef(new EstateService());
+  const locationService = useRef(new LocationService());
   const mounted = useRef(true);
+  const [mapInfo, setMapInfo] = useState<MapInfo>({
+    latitude: 0,
+    longitude: 0,
+    zoom: 5,
+  });
 
+  const provinceMapInfo: MapInfo = {
+    latitude: 37.56194599594773,
+    longitude: 44.942478825699396,
+    zoom: 9,
+  };
+
+  const cityMapInfo: MapInfo = {
+    latitude: 36.7705821414231,
+    longitude: 45.72602696787074,
+    zoom: 11,
+  };
+
+  const neighborhoodMapInfo: MapInfo = {
+    latitude: 36.76390324579972,
+    longitude: 45.72528253764556,
+    zoom: 13,
+  };
   useEffect(() => {
     formService.current.setToken(state.token);
     delegationTypeService.current.setToken(state.token);
     estateTypeService.current.setToken(state.token);
     estateService.current.setToken(state.token);
+    locationService.current.setToken(state.token);
 
+    loadLocations();
     loadOptions();
     loadData();
 
@@ -57,7 +105,60 @@ function AddEstateScreen() {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [delegationType, estateType, state.token]);
+  }, [selectedDelegationType, selectedEstateType, state.token]);
+
+  const loadLocations = async () => {
+    toast.promise(
+      locationService.current
+        .getAllProvinces()
+        .then((fetchedProvinces) => {
+          setProvinces(fetchedProvinces);
+          if (selectedProvince?.id) {
+            const province = fetchedProvinces.find(
+              (p) => p.id === selectedProvince.id
+            );
+            if (province) {
+              setSelectedProvince({ ...province, mapInfo: provinceMapInfo });
+              setMapInfo(provinceMapInfo);
+              setCities((prev) => province.cities);
+              if (selectedCity?.id) {
+                const city = province.cities.find(
+                  (c) => c.id === selectedCity.id
+                );
+                if (city) {
+                  setSelectedCity({ ...city, mapInfo: cityMapInfo });
+                  setMapInfo(cityMapInfo);
+                  const neighborhoods = city.neighborhoods ?? [
+                    { id: "1", name: "جام جم" },
+                  ];
+                  setNeighborhoods((prev) => neighborhoods);
+                  if (selectedNeighborhood?.id) {
+                    const neighborhood = neighborhoods.find(
+                      (n) => n.id === selectedNeighborhood.id
+                    );
+                    if (neighborhood) {
+                      setSelectedNeighborhood({
+                        ...neighborhood,
+                        mapInfo: neighborhoodMapInfo,
+                      });
+                      setMapInfo(neighborhoodMapInfo);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        }),
+      {
+        success: Strings.loadingLocationsSuccess,
+        loading: Strings.loadingLocations,
+        error: Strings.loadingLocationsFailed,
+      }
+    );
+  };
 
   async function loadOptions() {
     toast.promise(
@@ -86,29 +187,76 @@ function AddEstateScreen() {
       setLoading((prev) => true);
     }
 
-    if (!delegationType.id || !estateType.id) {
+    if (!selectedDelegationType.id || !selectedEstateType.id) {
       return;
     }
     const loadedForm = await formService.current.getForm(
-      delegationType.id,
-      estateType.id
+      selectedDelegationType.id,
+      selectedEstateType.id
     );
 
     setForm(loadedForm);
+    await loadLocations();
     await loadOptions();
     setLoading((prev) => false);
   }
 
+  function handleProvinceChange(event: ChangeEvent<HTMLSelectElement>) {
+    const provinceId = event.currentTarget.value;
+    const province = provinces.find((p) => p.id === provinceId);
+    if (!province) return;
+
+    setSelectedProvince({
+      id: provinceId,
+      name: provinceId,
+      cities: province.cities,
+      mapInfo: provinceMapInfo,
+    });
+    setMapInfo(provinceMapInfo);
+    setCities(province.cities);
+  }
+
+  function handleCityChange(event: ChangeEvent<HTMLSelectElement>) {
+    const cityId = event.currentTarget.value;
+    const city = cities.find((c) => c.id === cityId);
+
+    if (!city) return;
+
+    setSelectedCity({
+      id: cityId,
+      name: cityId,
+      neighborhoods: city.neighborhoods ?? [],
+      mapInfo: cityMapInfo,
+    });
+    setMapInfo(cityMapInfo);
+    setNeighborhoods(city.neighborhoods ?? [{ id: "1", name: "جام جم" }]);
+  }
+
+  function handleNeighborhoodChange(event: ChangeEvent<HTMLSelectElement>) {
+    const neighborhoodId = event.currentTarget.value;
+
+    const neighborhood = neighborhoods.find((n) => n.id === neighborhoodId);
+
+    if (!neighborhood) return;
+
+    setSelectedNeighborhood({
+      id: neighborhoodId,
+      name: neighborhoodId,
+      mapInfo: neighborhoodMapInfo,
+    });
+    setMapInfo(neighborhoodMapInfo);
+  }
+
   function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setDelegationType({
-      id: event.target.value,
-      name: event.target.value,
+    setSelectedDelegationType({
+      id: event.currentTarget.value,
+      name: event.currentTarget.value,
     });
   }
   function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setEstateType({
-      id: event.target.value,
-      name: event.target.value,
+    setSelectedEstateType({
+      id: event.currentTarget.value,
+      name: event.currentTarget.value,
     });
   }
 
@@ -424,107 +572,174 @@ function AddEstateScreen() {
   }
 
   return (
-    <div className="add-estate-container">
-      <motion.div
-        variants={elevationEffect}
-        initial="first"
-        animate="second"
-        className="add-estate card glass shadow rounded-3 py-3 my-4"
-      >
-        <h2 className="add-estate-title text-center">{Strings.addEstate}</h2>
-        <form className="add-estate-form">
-          <label htmlFor="delegationType">{Strings.delegationType}</label>
-          <Form.Select
-            className="form-select rounded-3"
-            name="delegationType"
-            id="delegationType"
-            value={delegationType.name}
-            onChange={handleDelegationChange}
-          >
-            <option value="default" disabled>
-              {Strings.choose}
-            </option>
-            {delegationTypes.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <label htmlFor="delegationType">{Strings.estateType}</label>
-          <Form.Select
-            className="form-select rounded-3"
-            name="estateType"
-            id="estateType"
-            value={estateType.name}
-            onChange={handleTypeChange}
-          >
-            <option value="default" disabled>
-              {Strings.choose}
-            </option>
-            {estateTypes.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-        </form>
-      </motion.div>
-      {isDefault ? (
+    <div className="main-container">
+      <div>
+        <MapScreen
+          latLang={{ lat: mapInfo.latitude, lng: mapInfo.longitude }}
+          zoom={mapInfo.zoom}
+        />
+      </div>
+      <div className="add-estate-container">
         <motion.div
-          variants={crossfadeAnimation}
+          variants={elevationEffect}
           initial="first"
           animate="second"
-          className="card glass shadow rounded-3 glass p-5"
+          className="add-estate card glass shadow rounded-3 py-3 my-4"
         >
-          <h4 className="fw-light fs-4">
-            {Strings.chooseDelegationAndEstateTypes}
-          </h4>
+          <h2 className="add-estate-title text-center">{Strings.addEstate}</h2>
+          <form className="add-estate-form">
+            <label htmlFor="province">{Strings.province}</label>
+            <Form.Select
+              className="form-select rounded-3"
+              name="province"
+              id="province"
+              value={selectedProvince?.name}
+              onChange={handleProvinceChange}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {provinces.map((province, index) => {
+                return (
+                  <option key={index} value={province.id}>
+                    {province.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
+            <label htmlFor="city">{Strings.city}</label>
+            <Form.Select
+              className="form-select rounded-3"
+              name="city"
+              id="city"
+              value={selectedCity?.name}
+              onChange={handleCityChange}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {cities.map((city, index) => {
+                return (
+                  <option key={index} value={city.id}>
+                    {city.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
+            <label htmlFor="neighborhood">{Strings.neighborhood}</label>
+            <Form.Select
+              className="form-select rounded-3"
+              name="neighborhood"
+              id="neighborhood"
+              value={selectedNeighborhood?.name}
+              onChange={handleNeighborhoodChange}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {neighborhoods.map((neighborhood, index) => {
+                return (
+                  <option key={index} value={neighborhood.id}>
+                    {neighborhood.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
+          </form>
+          <form className="add-estate-form mt-2">
+            <label htmlFor="delegationType">{Strings.delegationType}</label>
+            <Form.Select
+              className="form-select rounded-3"
+              name="delegationType"
+              id="delegationType"
+              value={selectedDelegationType.name}
+              onChange={handleDelegationChange}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {delegationTypes.map((option, index) => {
+                return (
+                  <option key={index} value={option.id}>
+                    {option.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
+            <label htmlFor="delegationType">{Strings.estateType}</label>
+            <Form.Select
+              className="form-select rounded-3"
+              name="estateType"
+              id="estateType"
+              value={selectedEstateType.name}
+              onChange={handleTypeChange}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {estateTypes.map((option, index) => {
+                return (
+                  <option key={index} value={option.id}>
+                    {option.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
+          </form>
         </motion.div>
-      ) : loading ? (
-        <Row>
-          <Col>
-            <Spinner animation="border" variant="primary" className="my-5" />
-          </Col>
-        </Row>
-      ) : (
-        <div className="items-container">
-          {estate?.sections.map((section, sectionIndex) => {
-            return (
-              <div
-                className="section card glass shadow-sm py-2 px-4 my-2"
-                key={sectionIndex}
+        {isDefault ? (
+          <motion.div
+            variants={crossfadeAnimation}
+            initial="first"
+            animate="second"
+            className="card glass shadow rounded-3 glass p-5"
+          >
+            <h4 className="fw-light fs-4">
+              {Strings.chooseDelegationAndEstateTypes}
+            </h4>
+          </motion.div>
+        ) : loading ? (
+          <Row>
+            <Col>
+              <Spinner animation="border" variant="primary" className="my-5" />
+            </Col>
+          </Row>
+        ) : (
+          <div className="items-container">
+            {estate?.sections.map((section, sectionIndex) => {
+              return (
+                <div
+                  className="section card glass shadow-sm py-2 px-4 my-2"
+                  key={sectionIndex}
+                >
+                  <h3 className="section-title py-3">{section.title}</h3>
+                  {mapFields(section.fields, estate, sectionIndex)}
+                </div>
+              );
+            })}
+            {!estate.id ? (
+              <motion.div
+                variants={crossfadeAnimation}
+                initial="first"
+                animate="second"
+                className="card glass shadow rounded-3 glass p-5 align-items-center"
               >
-                <h3 className="section-title py-3">{section.title}</h3>
-                {mapFields(section.fields, estate, sectionIndex)}
-              </div>
-            );
-          })}
-          {!estate.id ? (
-            <motion.div
-              variants={crossfadeAnimation}
-              initial="first"
-              animate="second"
-              className="card glass shadow rounded-3 glass p-5 align-items-center"
-            >
-              <h4 className="fw-light">{Strings.formDoesNotExist}</h4>
-            </motion.div>
-          ) : (
-            <Button
-              className="w-100 mb-5 mt-3"
-              variant="purple"
-              onClick={() => {
-                estateService.current.requestAddEtate(estate);
-              }}
-            >
-              {Strings.addEstate}
-            </Button>
-          )}
-        </div>
-      )}
+                <h4 className="fw-light">{Strings.formDoesNotExist}</h4>
+              </motion.div>
+            ) : (
+              <Button
+                className="w-100 mb-5 mt-3"
+                variant="purple"
+                onClick={() => {
+                  estateService.current.requestAddEtate(estate);
+                }}
+              >
+                {Strings.addEstate}
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
