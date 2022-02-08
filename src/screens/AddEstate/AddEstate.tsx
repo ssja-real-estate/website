@@ -5,7 +5,7 @@ import {
   crossfadeAnimation,
   elevationEffect,
 } from "../../animations/motionVariants";
-import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Form, Navbar, Row, Spinner } from "react-bootstrap";
 import { defaultForm, EstateForm } from "../../global/types/EstateForm";
 import { FieldType, Field } from "../../global/types/Field";
 import Strings from "global/constants/strings";
@@ -565,179 +565,191 @@ function AddEstateScreen() {
   }
 
   return (
-    <div className="main-container">
-      <div>
-        <MapScreen
-          latLang={
-            mapInfo
-              ? { lat: mapInfo.latitude, lng: mapInfo.longitude }
-              : undefined
-          }
-          zoom={mapInfo?.zoom}
-        />
-      </div>
-      <div className="add-estate-container">
-        <motion.div
-          variants={elevationEffect}
-          initial="first"
-          animate="second"
-          className="add-estate card glass shadow rounded-3 py-3 my-4"
-        >
-          <h2 className="add-estate-title text-center">{Strings.addEstate}</h2>
-          <form className="add-estate-form">
-            <label htmlFor="province">{Strings.province}</label>
-            <Form.Select
-              className="form-select rounded-3"
-              name="province"
-              id="province"
-              value={selectedProvince?.name}
-              onChange={handleProvinceChange}
+    <Row className="main-row">
+      <Col>
+        <div className="main-container">
+          <div className="add-estate-container">
+            <motion.div
+              variants={elevationEffect}
+              initial="first"
+              animate="second"
+              className="add-estate card glass shadow rounded-3 py-3 my-4"
             >
-              <option value="" disabled>
-                {Strings.choose}
-              </option>
-              {provinces.map((province, index) => {
-                return (
-                  <option key={index} value={province.id}>
-                    {province.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-            <label htmlFor="city">{Strings.city}</label>
-            <Form.Select
-              className="form-select rounded-3"
-              name="city"
-              id="city"
-              value={selectedCity?.name}
-              onChange={handleCityChange}
-            >
-              <option value="" disabled>
-                {Strings.choose}
-              </option>
-              {cities.map((city, index) => {
-                return (
-                  <option key={index} value={city.id}>
-                    {city.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-            <label htmlFor="neighborhood">{Strings.neighborhood}</label>
-            <Form.Select
-              className="form-select rounded-3"
-              name="neighborhood"
-              id="neighborhood"
-              value={selectedNeighborhood?.name}
-              onChange={handleNeighborhoodChange}
-            >
-              <option value="" disabled>
-                {Strings.choose}
-              </option>
-              {neighborhoods.map((neighborhood, index) => {
-                return (
-                  <option key={index} value={neighborhood.id}>
-                    {neighborhood.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </form>
-          <form className="add-estate-form mt-2">
-            <label htmlFor="delegationType">{Strings.delegationType}</label>
-            <Form.Select
-              className="form-select rounded-3"
-              name="delegationType"
-              id="delegationType"
-              value={selectedDelegationType.name}
-              onChange={handleDelegationChange}
-            >
-              <option value="default" disabled>
-                {Strings.choose}
-              </option>
-              {delegationTypes.map((option, index) => {
-                return (
-                  <option key={index} value={option.id}>
-                    {option.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-            <label htmlFor="delegationType">{Strings.estateType}</label>
-            <Form.Select
-              className="form-select rounded-3"
-              name="estateType"
-              id="estateType"
-              value={selectedEstateType.name}
-              onChange={handleTypeChange}
-            >
-              <option value="default" disabled>
-                {Strings.choose}
-              </option>
-              {estateTypes.map((option, index) => {
-                return (
-                  <option key={index} value={option.id}>
-                    {option.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </form>
-        </motion.div>
-        {isDefault ? (
-          <motion.div
-            variants={crossfadeAnimation}
-            initial="first"
-            animate="second"
-            className="card glass shadow rounded-3 glass p-5"
-          >
-            <h4 className="fw-light fs-4">
-              {Strings.chooseDelegationAndEstateTypes}
-            </h4>
-          </motion.div>
-        ) : loading ? (
-          <Row>
-            <Col>
-              <Spinner animation="border" variant="primary" className="my-5" />
-            </Col>
-          </Row>
-        ) : (
-          <div className="items-container">
-            {estate?.sections.map((section, sectionIndex) => {
-              return (
-                <div
-                  className="section card glass shadow-sm py-2 px-4 my-2"
-                  key={sectionIndex}
+              <h2 className="add-estate-title text-center">
+                {Strings.addEstate}
+              </h2>
+              <form className="add-estate-form">
+                <label htmlFor="province">{Strings.province}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="province"
+                  id="province"
+                  value={selectedProvince?.name}
+                  onChange={handleProvinceChange}
                 >
-                  <h3 className="section-title py-3">{section.title}</h3>
-                  {mapFields(section.fields, estate, sectionIndex)}
-                </div>
-              );
-            })}
-            {!estate.id ? (
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {provinces.map((province, index) => {
+                    return (
+                      <option key={index} value={province.id}>
+                        {province.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                <label htmlFor="city">{Strings.city}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="city"
+                  id="city"
+                  value={selectedCity?.name}
+                  onChange={handleCityChange}
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {cities.map((city, index) => {
+                    return (
+                      <option key={index} value={city.id}>
+                        {city.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                <label htmlFor="neighborhood">{Strings.neighborhood}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="neighborhood"
+                  id="neighborhood"
+                  value={selectedNeighborhood?.name}
+                  onChange={handleNeighborhoodChange}
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {neighborhoods.map((neighborhood, index) => {
+                    return (
+                      <option key={index} value={neighborhood.id}>
+                        {neighborhood.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </form>
+              <form className="add-estate-form mt-2">
+                <label htmlFor="delegationType">{Strings.delegationType}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="delegationType"
+                  id="delegationType"
+                  value={selectedDelegationType.name}
+                  onChange={handleDelegationChange}
+                >
+                  <option value="default" disabled>
+                    {Strings.choose}
+                  </option>
+                  {delegationTypes.map((option, index) => {
+                    return (
+                      <option key={index} value={option.id}>
+                        {option.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                <label htmlFor="delegationType">{Strings.estateType}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="estateType"
+                  id="estateType"
+                  value={selectedEstateType.name}
+                  onChange={handleTypeChange}
+                >
+                  <option value="default" disabled>
+                    {Strings.choose}
+                  </option>
+                  {estateTypes.map((option, index) => {
+                    return (
+                      <option key={index} value={option.id}>
+                        {option.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </form>
+            </motion.div>
+            {isDefault ? (
               <motion.div
                 variants={crossfadeAnimation}
                 initial="first"
                 animate="second"
-                className="card glass shadow rounded-3 glass p-5 align-items-center"
+                className="card glass shadow rounded-3 glass p-5"
               >
-                <h4 className="fw-light">{Strings.formDoesNotExist}</h4>
+                <h4 className="fw-light fs-4">
+                  {Strings.chooseDelegationAndEstateTypes}
+                </h4>
               </motion.div>
+            ) : loading ? (
+              <Row>
+                <Col>
+                  <Spinner
+                    animation="border"
+                    variant="primary"
+                    className="my-5"
+                  />
+                </Col>
+              </Row>
             ) : (
-              <Button
-                className="w-100 mb-5 mt-3"
-                variant="purple"
-                onClick={() => {
-                  estateService.current.requestAddEtate(estate);
-                }}
-              >
-                {Strings.addEstate}
-              </Button>
+              <div className="items-container">
+                {estate?.sections.map((section, sectionIndex) => {
+                  return (
+                    <div
+                      className="section card glass shadow-sm py-2 px-4 my-2"
+                      key={sectionIndex}
+                    >
+                      <h3 className="section-title py-3">{section.title}</h3>
+                      {mapFields(section.fields, estate, sectionIndex)}
+                    </div>
+                  );
+                })}
+                {!estate.id ? (
+                  <motion.div
+                    variants={crossfadeAnimation}
+                    initial="first"
+                    animate="second"
+                    className="card glass shadow rounded-3 glass p-5 align-items-center"
+                  >
+                    <h4 className="fw-light">{Strings.formDoesNotExist}</h4>
+                  </motion.div>
+                ) : (
+                  <Button
+                    className="w-100 mb-5 mt-3"
+                    variant="purple"
+                    onClick={() => {
+                      estateService.current.requestAddEtate(estate);
+                    }}
+                  >
+                    {Strings.addEstate}
+                  </Button>
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </Col>
+      <Col>
+        <div className="map-container shadow-lg rounded-3">
+          <MapScreen
+            latLang={
+              mapInfo
+                ? { lat: mapInfo.latitude, lng: mapInfo.longitude }
+                : undefined
+            }
+            zoom={mapInfo?.zoom}
+          />
+        </div>
+      </Col>
+    </Row>
   );
 }
 

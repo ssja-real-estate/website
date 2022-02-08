@@ -36,9 +36,10 @@ const MapScreen = (props) => {
   //   radius: 400,
   // });
   const [defaultStyle, setDefaultStyle] = useState({
-    width: "50vw",
+    borderRadius: 4,
     height: "85vh",
-    marginRight: 12,
+    width: "100%",
+    zIndex: -10,
   });
   const mounted = useRef(true);
 
