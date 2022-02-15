@@ -66,7 +66,10 @@ function DelegationTypesList() {
     }
     const data = await service.current.getAllDelegationTypes();
 
-    if (!mounted.current) return;
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
+    }
 
     setDelegationTypes(data);
     setLoading((prev) => false);
@@ -172,7 +175,7 @@ function DelegationTypesList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder={Strings.addNewType}
+              placeholder={Strings.addNewDelegationType}
               value={newDelegationType.name}
               onChange={(e) => {
                 setNewDelegationType({
@@ -213,7 +216,6 @@ function DelegationTypesList() {
                       }}
                       onEdit={() => {
                         const newMap = buildMap(EditItemType.DelegationType);
-                        if (!modalMounted.current) return;
                         setModalState({
                           ...defaultEditItemModalState,
                           id: delegationType.id,

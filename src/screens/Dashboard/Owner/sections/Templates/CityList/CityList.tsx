@@ -95,7 +95,10 @@ function CityList() {
       setLoading((prev) => true);
     }
 
-    if (!mounted.current) return;
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
+    }
 
     await loadProvinces();
 
@@ -135,6 +138,7 @@ function CityList() {
         id: modalState.id,
         name: modalState.value,
         neighborhoods: [],
+        mapInfo: modalState.mapInfo,
       }
     );
     if (updatedCity) {
@@ -146,6 +150,7 @@ function CityList() {
           );
           if (prevCity) {
             prevCity.name = updatedCity!.name;
+            prevCity.mapInfo = updatedCity?.mapInfo;
           }
         }
         return prev;
@@ -290,7 +295,6 @@ function CityList() {
                         }}
                         onEdit={() => {
                           const newMap = buildMap(EditItemType.City);
-                          if (!modalMounted.current) return;
                           setModalState({
                             ...defaultEditItemModalState,
                             id: city.id,

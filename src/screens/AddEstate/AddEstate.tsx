@@ -5,18 +5,20 @@ import {
   crossfadeAnimation,
   elevationEffect,
 } from "../../animations/motionVariants";
-import { Button, Col, Form, Navbar, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { defaultForm, EstateForm } from "../../global/types/EstateForm";
 import { FieldType, Field } from "../../global/types/Field";
 import Strings from "global/constants/strings";
-import EstateType from "global/types/EstateType";
+import EstateType, { defaultEstateType } from "global/types/EstateType";
 import { globalState } from "global/states/globalStates";
 import { useRecoilValue } from "recoil";
 import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
 import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
 import FormService from "services/api/FormService/FormService";
 import toast from "react-hot-toast";
-import DelegationType from "global/types/DelegationType";
+import DelegationType, {
+  defaultDelegationType,
+} from "global/types/DelegationType";
 import EstateService from "services/api/EstateService/EstateService";
 import MapScreen from "screens/Map/Map";
 import Province, { defaultProvince } from "global/types/Province";
@@ -34,26 +36,15 @@ function AddEstateScreen() {
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const [selectedProvince, setSelectedProvince] =
     useState<Province>(defaultProvince);
-  const [selectedCity, setSelectedCity] = useState<City>({
-    ...defaultCity,
-    neighborhoods: [{ id: "1", name: "جام جم" }],
-  });
+  const [selectedCity, setSelectedCity] = useState<City>(defaultCity);
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<Neighborhood>(defaultNeighborhood);
   const [selectedDelegationType, setSelectedDelegationType] =
-    useState<DelegationType>({
-      id: "",
-      name: "default",
-    });
-  const [selectedEstateType, setSelectedEstateType] = useState<EstateType>({
-    id: "",
-    name: "default",
-  });
+    useState<DelegationType>(defaultDelegationType);
+  const [selectedEstateType, setSelectedEstateType] =
+    useState<EstateType>(defaultEstateType);
   const isDefault: boolean =
-    selectedDelegationType.name === "default" ||
-    selectedEstateType.name === "default"
-      ? true
-      : false;
+    !selectedDelegationType.name || !selectedEstateType.name ? true : false;
   const [estate, setForm] = useState<EstateForm>(defaultForm);
 
   const state = useRecoilValue(globalState);
@@ -65,23 +56,6 @@ function AddEstateScreen() {
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
 
-  const provinceMapInfo: MapInfo = {
-    latitude: 37.56194599594773,
-    longitude: 44.942478825699396,
-    zoom: 7,
-  };
-
-  const cityMapInfo: MapInfo = {
-    latitude: 36.7705821414231,
-    longitude: 45.72602696787074,
-    zoom: 13,
-  };
-
-  const neighborhoodMapInfo: MapInfo = {
-    latitude: 36.76390324579972,
-    longitude: 45.72528253764556,
-    zoom: 15,
-  };
   useEffect(() => {
     formService.current.setToken(state.token);
     delegationTypeService.current.setToken(state.token);
@@ -110,30 +84,22 @@ function AddEstateScreen() {
               (p) => p.id === selectedProvince.id
             );
             if (province) {
-              setSelectedProvince({ ...province, mapInfo: provinceMapInfo });
-              setMapInfo(provinceMapInfo);
+              setSelectedProvince({ ...province });
               setCities((prev) => province.cities);
               if (selectedCity?.id) {
                 const city = province.cities.find(
                   (c) => c.id === selectedCity.id
                 );
                 if (city) {
-                  setSelectedCity({ ...city, mapInfo: cityMapInfo });
-                  setMapInfo(cityMapInfo);
-                  const neighborhoods = city.neighborhoods ?? [
-                    { id: "1", name: "جام جم" },
-                  ];
+                  setSelectedCity({ ...city });
+                  const neighborhoods = city.neighborhoods;
                   setNeighborhoods((prev) => neighborhoods);
                   if (selectedNeighborhood?.id) {
                     const neighborhood = neighborhoods.find(
                       (n) => n.id === selectedNeighborhood.id
                     );
                     if (neighborhood) {
-                      setSelectedNeighborhood({
-                        ...neighborhood,
-                        mapInfo: neighborhoodMapInfo,
-                      });
-                      setMapInfo(neighborhoodMapInfo);
+                      setSelectedNeighborhood(neighborhood);
                     }
                   }
                 }
@@ -180,6 +146,7 @@ function AddEstateScreen() {
     }
 
     if (!selectedDelegationType.id || !selectedEstateType.id) {
+      setLoading((prev) => false);
       return;
     }
     const loadedForm = await formService.current.getForm(
@@ -202,10 +169,9 @@ function AddEstateScreen() {
       id: provinceId,
       name: provinceId,
       cities: province.cities,
-      mapInfo: provinceMapInfo,
+      mapInfo: province.mapInfo,
     });
-
-    setMapInfo(provinceMapInfo);
+    setMapInfo(province.mapInfo);
     setCities(province.cities);
   }
 
@@ -218,11 +184,11 @@ function AddEstateScreen() {
     setSelectedCity({
       id: cityId,
       name: cityId,
-      neighborhoods: city.neighborhoods ?? [],
-      mapInfo: cityMapInfo,
+      neighborhoods: city.neighborhoods,
+      mapInfo: city.mapInfo,
     });
-    setMapInfo(cityMapInfo);
-    setNeighborhoods(city.neighborhoods ?? [{ id: "1", name: "جام جم" }]);
+    setMapInfo(city.mapInfo);
+    setNeighborhoods(city.neighborhoods);
   }
 
   function handleNeighborhoodChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -235,9 +201,9 @@ function AddEstateScreen() {
     setSelectedNeighborhood({
       id: neighborhoodId,
       name: neighborhoodId,
-      mapInfo: neighborhoodMapInfo,
+      mapInfo: neighborhood.mapInfo,
     });
-    setMapInfo(neighborhoodMapInfo);
+    setMapInfo(neighborhood.mapInfo);
   }
 
   function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -646,7 +612,7 @@ function AddEstateScreen() {
                   value={selectedDelegationType.name}
                   onChange={handleDelegationChange}
                 >
-                  <option value="default" disabled>
+                  <option value="" disabled>
                     {Strings.choose}
                   </option>
                   {delegationTypes.map((option, index) => {
@@ -665,7 +631,7 @@ function AddEstateScreen() {
                   value={selectedEstateType.name}
                   onChange={handleTypeChange}
                 >
-                  <option value="default" disabled>
+                  <option value="" disabled>
                     {Strings.choose}
                   </option>
                   {estateTypes.map((option, index) => {

@@ -65,10 +65,13 @@ function EstateTypesList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllEstateTypes();
-    if (mounted.current) {
-      setEstateTypes(data);
+    if (!mounted.current) {
       setLoading((prev) => false);
+      return;
     }
+
+    setEstateTypes(data);
+    setLoading((prev) => false);
   };
 
   const selectItemAsDeleted = (estateType: EstateType) => {
@@ -172,7 +175,7 @@ function EstateTypesList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder={Strings.addNewType}
+              placeholder={Strings.addNewEstateType}
               value={newEstateType.name}
               onChange={(e) => {
                 setNewEstateType({
@@ -213,7 +216,6 @@ function EstateTypesList() {
                       }}
                       onEdit={() => {
                         const newMap = buildMap(EditItemType.EstateType);
-                        if (!modalMounted.current) return;
                         setModalState({
                           ...defaultEditItemModalState,
                           id: estateType.id,

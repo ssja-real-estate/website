@@ -13,14 +13,13 @@ const MapScreen = (props) => {
     lat: 35.706408599732605,
     lng: 411.4163636999659,
   };
-  const defaultZoom = 9;
+  const defaultZoom = 10;
 
   const latLang = props.latLang ?? defaultLatLang;
   const zoom = props.zoom ?? defaultZoom;
   const position = [latLang.lat, latLang.lng];
   const [, setMap] = useState();
   const [firstRender, setFirstRender] = useState(true);
-  // const [position, setPosition] = useState([latLang.lat, latLang.lng]);
   const [defaultOptions, setDefaultOptions] = useState({
     key: process.env.REACT_APP_MAP_WEB_API_KEY,
     maptype: "osm-bright",

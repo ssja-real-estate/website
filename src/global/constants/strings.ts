@@ -17,12 +17,15 @@ class Strings {
   static admins = "ادمین‌ها";
   static users = "کاربرها";
   static addNewType = "افزودن نوع جدید";
+  static addNewDelegationType = "افزودن نوع واگذاری جدید";
+  static addNewEstateType = "افزودن نوع ملک جدید";
   static saveChanges = "ذخیره تغییرات";
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
   static choose = "انتخاب کنید";
   static chooseProvince = "انتخاب استان";
   static chooseCity = "انتخاب شهر";
+  static addNewProvince = "افزودن استان جدید";
   static addNewCity = "افزودن شهر جدید";
   static addNewNeighborhood = "افزودن منطقه جدید";
   static addNewUnit = "افزودن واحد جدید";

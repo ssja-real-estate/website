@@ -6,9 +6,9 @@ import editItemModalState, {
 } from "components/EditItemModal/EditItemModalState";
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import City from "global/types/City";
+import City, { defaultCity } from "global/types/City";
 import Neighborhood from "global/types/Neighborhood";
-import Province from "global/types/Province";
+import Province, { defaultProvince } from "global/types/Province";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
@@ -30,8 +30,9 @@ function NeighborhoodList() {
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const [removedItems, setRemovedItems] = useState<Neighborhood[]>([]);
   const [newItems, setNewItems] = useState<Neighborhood[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<Province>();
-  const [selectedCity, setSelectedCity] = useState<City>();
+  const [selectedProvince, setSelectedProvince] =
+    useState<Province>(defaultProvince);
+  const [selectedCity, setSelectedCity] = useState<City>(defaultCity);
   const [newNeighborhood, setNewNeighborhood] = useState<Neighborhood>({
     id: "",
     name: "",
@@ -57,7 +58,7 @@ function NeighborhoodList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (modalState.editMap[EditItemType.City]) {
+    if (modalState.editMap[EditItemType.Neighborhood]) {
       editNeighborhood();
     }
 
@@ -135,14 +136,14 @@ function NeighborhoodList() {
     const provinceId = selectedProvince?.id;
     const cityId = selectedCity?.id;
     if (!provinceId || !cityId) return;
-    // for (let i = 0; i < newItems.length; i++) {
-    //   const neighborhood = newItems[i];
-    //   await geoLocationService.current.createNeighborhoodInCity(
-    //     provinceId,
-    //     cityId,
-    //     neighborhood
-    //   );
-    // }
+    for (let i = 0; i < newItems.length; i++) {
+      const neighborhood = newItems[i];
+      await locationService.current.createNeighborhoodInCity(
+        provinceId,
+        cityId,
+        neighborhood
+      );
+    }
   };
 
   const editNeighborhood = async () => {
@@ -158,16 +159,21 @@ function NeighborhoodList() {
       await locationService.current.editNeighborhoodInCity(provinceId, cityId, {
         id: modalState.id,
         name: modalState.value,
+        mapInfo: modalState.mapInfo,
       });
+    console.log("updatedNeighborhood");
+    console.log(updatedNeighborhood);
+
     if (updatedNeighborhood) {
       setCities((prev) => {
-        let prevCity = prev.find((t) => t.id === provinceId);
+        let prevCity = prev.find((t) => t.id === cityId);
         if (prevCity) {
           let prevNeighborhood = prevCity.neighborhoods.find(
             (c) => c.id === updatedNeighborhood!.id
           );
           if (prevNeighborhood) {
             prevNeighborhood.name = updatedNeighborhood!.name;
+            prevNeighborhood.mapInfo = updatedNeighborhood?.mapInfo;
           }
         }
         return prev;
@@ -184,12 +190,12 @@ function NeighborhoodList() {
     const cityId = selectedCity?.id;
     if (!provinceId || !cityId) return;
     for (let i = 0; i < removedItems.length; i++) {
-      // const neighborhood = removedItems[i];
-      // await geoLocationService.current.deleteNeighborhoodInCity(
-      //   provinceId,
-      //   cityId,
-      //   neighborhood.id
-      // );
+      const neighborhood = removedItems[i];
+      await locationService.current.deleteNeighborhoodInCity(
+        provinceId,
+        cityId,
+        neighborhood.id
+      );
     }
   };
 
@@ -251,20 +257,19 @@ function NeighborhoodList() {
               }}
             />
             <Form.Select
-              defaultValue="default"
-              value={selectedCity?.id}
+              value={selectedCity.name}
               onChange={(e) => {
                 const cityId = e.currentTarget.value;
                 if (cityId) {
                   const city = cities.find((c) => c.id === cityId);
                   if (city) {
-                    setSelectedCity(city);
+                    setSelectedCity({ ...city, id: city.id, name: city.id });
                     setNeighborhoods(city.neighborhoods);
                   }
                 }
               }}
             >
-              <option value="default" disabled>
+              <option value="" disabled>
                 {Strings.chooseCity}
               </option>
               {cities.map((city, index) => {
@@ -276,23 +281,24 @@ function NeighborhoodList() {
               })}
             </Form.Select>
             <Form.Select
-              defaultValue="default"
-              value={selectedProvince?.id}
+              value={selectedProvince.name}
               onChange={(e) => {
                 const provinceId = e.currentTarget.value;
                 if (provinceId) {
                   const province = provinces.find((p) => p.id === provinceId);
                   if (province) {
-                    setSelectedProvince(province);
+                    console.log(province);
+                    setSelectedProvince({
+                      ...province,
+                      id: province.id,
+                      name: province.id,
+                    });
                     setCities(province.cities);
-                    if (province.cities && province.cities.length > 0) {
-                      setSelectedCity(province.cities[0]);
-                    }
                   }
                 }
               }}
             >
-              <option value="default" disabled>
+              <option value="" disabled>
                 {Strings.chooseProvince}
               </option>
               {provinces.map((province, index) => {
@@ -345,12 +351,12 @@ function NeighborhoodList() {
                         }}
                         onEdit={() => {
                           const newMap = buildMap(EditItemType.Neighborhood);
-                          if (!modalMounted.current) return;
                           setModalState({
                             ...defaultEditItemModalState,
                             id: neighborhood.id,
                             value: neighborhood.name,
                             displayMap: [...newMap],
+                            mapInfo: neighborhood.mapInfo,
                           });
                         }}
                       />

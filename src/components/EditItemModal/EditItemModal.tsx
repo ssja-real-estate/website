@@ -2,7 +2,6 @@ import Strings from "global/constants/strings";
 import MapInfo, { defaultMapInfo } from "global/types/MapInfo";
 import { useEffect, useState } from "react";
 import { Button, Container, Form, Modal } from "react-bootstrap";
-import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
 import editItemModalState, {
   buildMap,
@@ -23,6 +22,9 @@ const EditItemModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     setNewValue(modalState.value);
+    if (modalState.mapInfo) {
+      setMapInfo(modalState.mapInfo);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.displayMap[props.editItemType]]);
 
@@ -33,17 +35,6 @@ const EditItemModal: React.FC<Props> = (props) => {
   };
 
   const submit = () => {
-    // if (newValue.trim() === modalState.value.trim()) {
-    //   return;
-    // }
-
-    if (mapInfo.zoom) {
-      if (mapInfo.zoom < 5 || mapInfo.zoom > 15) {
-        toast.error(Strings.invalidZoomRange);
-        return;
-      }
-    }
-
     const displayMap = buildMap(props.editItemType, false);
     const editMap = buildMap(props.editItemType);
 

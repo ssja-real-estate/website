@@ -43,8 +43,10 @@ class EstateTypeService extends BaseService {
 
     try {
       const response = await this.Api.put(
-        this.estateTypeUrl,
-        estateType,
+        `${this.estateTypeUrl}/${estateType.id}`,
+        {
+          name: estateType.name,
+        },
         this.config
       );
 
