@@ -15,6 +15,8 @@ import Strings from "global/constants/strings";
 import {
   defaultField,
   Field,
+  FieldInputNecessity,
+  FieldInputNecessityLabel,
   FieldType,
   FieldTypeTitle,
 } from "global/types/Field";
@@ -24,6 +26,7 @@ import {
   editSelectFieldModalDataAtom,
   innerFieldModalDataAtom,
 } from "../FormsState";
+import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 function EditConditionalField() {
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
@@ -41,11 +44,18 @@ function EditConditionalField() {
     useState<boolean>(false);
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
     useRecoilState(editSelectFieldModalDataAtom);
+  const [fieldInputNecessity, setFieldInputNecessity] = useState<number>(
+    FieldInputNecessity.Obligatory
+  );
 
   function addNewInnerField(field: Field) {
     const newField = { ...field, options };
-    console.log(newField);
-    const newInnerFields = [newField, ...innerFieldModalData.data.fields!];
+    if (newField.type === FieldType.Bool) {
+      newField.value = false;
+    } else if (newField.type === FieldType.Number) {
+      newField.value = 0;
+    }
+    const newInnerFields = [...innerFieldModalData.data.fields!, newField];
     setInnerFieldModalData({
       ...innerFieldModalData,
       data: {
@@ -56,7 +66,6 @@ function EditConditionalField() {
   }
 
   function updateChangedSelectField() {
-    console.log("here");
     const innerFieldIndex = editSelectFieldModalData.index;
     const data = editSelectFieldModalData.data;
     const innerFields = innerFieldModalData.data.fields!.slice();
@@ -140,6 +149,9 @@ function EditConditionalField() {
                         index: innerFieldIndex,
                         newTitle: innerField.title,
                         newType: innerField.type,
+                        newFieldInputNecessity: innerField.optional
+                          ? FieldInputNecessity.Optional
+                          : FieldInputNecessity.Obligatory,
                       });
                       setShowRenameInnerFieldModal(true);
                     }}
@@ -147,19 +159,7 @@ function EditConditionalField() {
                 </Col>
                 <Col>
                   <h6 className="d-inline text-muted">
-                    {innerField.type === FieldType.Text
-                      ? FieldTypeTitle.Text
-                      : innerField.type === FieldType.Number
-                      ? FieldTypeTitle.Number
-                      : innerField.type === FieldType.Select
-                      ? FieldTypeTitle.Select
-                      : innerField.type === FieldType.Bool
-                      ? FieldTypeTitle.Bool
-                      : innerField.type === FieldType.Conditional
-                      ? FieldTypeTitle.Conditional
-                      : innerField.type === FieldType.Image
-                      ? FieldTypeTitle.Image
-                      : "---"}
+                    {getFieldTypeAndNecessity(innerField)}
                   </h6>
                   {innerField.type === FieldType.Select && (
                     <i
@@ -206,6 +206,7 @@ function EditConditionalField() {
               ...defaultField,
               title: newInnerFieldTitle,
               type: selectedType,
+              optional: fieldInputNecessity === FieldInputNecessity.Optional,
             };
             if (newInnerFieldTitle.trim() === "") {
               alert(Strings.enterValidTitleForInnerInput);
@@ -222,10 +223,25 @@ function EditConditionalField() {
             addNewInnerField(newInnerField);
             setNewInnerFieldTitle("");
             setOptions([]);
+            setFieldInputNecessity(FieldInputNecessity.Obligatory);
           }}
         >
           <i className="bi-plus-lg fs-6"></i>
         </Button>
+        <Form.Select
+          style={{ minWidth: 100, maxWidth: "15vw" }}
+          value={fieldInputNecessity}
+          onChange={(e) => {
+            setFieldInputNecessity(Number(e.currentTarget.value));
+          }}
+        >
+          <option value={FieldInputNecessity.Obligatory}>
+            {FieldInputNecessityLabel.Obligatory}
+          </option>
+          <option value={FieldInputNecessity.Optional}>
+            {FieldInputNecessityLabel.Optional}
+          </option>
+        </Form.Select>
         <Form.Select
           style={{ minWidth: 100, maxWidth: "15vw" }}
           value={selectedType}
@@ -319,6 +335,9 @@ function EditConditionalField() {
             ...innerFields[index],
             title: renameInnerFieldModalData.newTitle,
             type: renameInnerFieldModalData.newType,
+            optional:
+              renameInnerFieldModalData.newFieldInputNecessity ===
+              FieldInputNecessity.Optional,
           };
 
           setInnerFieldModalData({
@@ -332,17 +351,36 @@ function EditConditionalField() {
           setRenameInnerFieldModalData({ index: -1, newTitle: "", newType: 0 });
         }}
       >
-        <Form.Control
-          type="text"
-          placeholder={Strings.newTitle}
-          value={renameInnerFieldModalData.newTitle}
-          onChange={(e) => {
-            setRenameInnerFieldModalData({
-              ...renameInnerFieldModalData!,
-              newTitle: e.target.value,
-            });
-          }}
-        />
+        <InputGroup style={{ direction: "rtl" }}>
+          <Form.Control
+            type="text"
+            placeholder={Strings.newTitle}
+            value={renameInnerFieldModalData.newTitle}
+            onChange={(e) => {
+              setRenameInnerFieldModalData({
+                ...renameInnerFieldModalData!,
+                newTitle: e.target.value,
+              });
+            }}
+          />
+          <Form.Select
+            style={{ minWidth: 50, maxWidth: "10vw" }}
+            value={renameInnerFieldModalData.newFieldInputNecessity}
+            onChange={(e) => {
+              setRenameInnerFieldModalData({
+                ...renameInnerFieldModalData!,
+                newFieldInputNecessity: Number(e.currentTarget.value),
+              });
+            }}
+          >
+            <option value={FieldInputNecessity.Obligatory}>
+              {FieldInputNecessityLabel.Obligatory}
+            </option>
+            <option value={FieldInputNecessity.Optional}>
+              {FieldInputNecessityLabel.Optional}
+            </option>
+          </Form.Select>
+        </InputGroup>
       </CustomModal>
       <CustomModal
         show={showEditSelectFieldModal}

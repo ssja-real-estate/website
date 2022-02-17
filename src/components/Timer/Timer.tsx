@@ -22,8 +22,6 @@ const Timer = (props: Props) => {
     autoStart: props.autoStart,
   });
 
-  console.log(isRunning);
-
   return (
     <div style={{ textAlign: "center" }}>
       <Container>

@@ -101,19 +101,23 @@ function ProvinceList() {
 
     setLoading((prev) => true);
 
-    if (province && province.name !== modalState.value) {
+    if (province) {
       let newType = await service.current.editProvince({
         id: modalState.id,
         name: modalState.value,
         cities: province !== undefined ? province.cities : [],
+        mapInfo: modalState.mapInfo,
       });
 
       if (newType) {
         setProvinces((prev) => {
           let prevType = prev.find((t) => t.id === newType!.id);
+
           if (prevType) {
             prevType.name = newType!.name;
+            prevType.mapInfo = newType?.mapInfo;
           }
+
           return prev;
         });
       }
@@ -180,7 +184,7 @@ function ProvinceList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder={Strings.addNewType}
+              placeholder={Strings.addNewProvince}
               value={newProvince.name}
               onChange={(e) => {
                 setNewProvince({
@@ -226,6 +230,7 @@ function ProvinceList() {
                           id: province.id,
                           value: province.name,
                           displayMap: [...newMap],
+                          mapInfo: province.mapInfo,
                         });
                       }}
                     />

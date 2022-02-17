@@ -4,8 +4,8 @@ interface DelegationType {
 }
 
 const defaultDelegationType = {
-  id: '',
-  name: '',
+  id: "",
+  name: "",
 };
 
 export default DelegationType;

@@ -172,6 +172,7 @@ const Forms = () => {
             type: FieldType.Image,
             title: Strings.chooseImages,
             value: [],
+            optional: true,
           },
         ],
       };
@@ -221,6 +222,7 @@ const Forms = () => {
         assignmentTypeId: delegationType.id,
         estateTypeId: estateType.id,
       };
+
       if (targetForm.id) {
         await formService.current.updateForm(targetForm.id, targetForm);
       } else {

@@ -8,4 +8,10 @@ interface Province {
   mapInfo?: MapInfo;
 }
 
+export const defaultProvince: Province = {
+  id: "",
+  name: "",
+  cities: [],
+};
+
 export default Province;

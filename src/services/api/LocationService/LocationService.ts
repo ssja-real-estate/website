@@ -47,7 +47,7 @@ class LocationService extends BaseService {
     let newProvince = undefined;
     try {
       const response = await this.Api.put(
-        this.provinceUrl,
+        `${this.provinceUrl}/${province.id}`,
         province,
         this.config
       );
@@ -91,7 +91,7 @@ class LocationService extends BaseService {
   async createCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.post(
-        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}`,
         { name: city.name },
         this.config
       );
@@ -106,7 +106,7 @@ class LocationService extends BaseService {
     let updatedCity = undefined;
     try {
       const response = await this.Api.put(
-        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${city.id}`,
         city,
         this.config
       );
@@ -123,13 +123,9 @@ class LocationService extends BaseService {
   async deleteCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.delete(
-        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${city.id}`,
         {
           ...this.config,
-          data: {
-            id: city.id,
-            name: city.name,
-          },
         }
       );
     } catch (error: any) {
@@ -143,11 +139,11 @@ class LocationService extends BaseService {
     neighborhood: Neighborhood
   ) {
     try {
-      // await this.Api.post(
-      //   `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}`,
-      //   { name: neighborhood.name },
-      //   this.config
-      // );
+      await this.Api.post(
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}`,
+        { name: neighborhood.name },
+        this.config
+      );
     } catch (error) {
       this.handleError(error);
     }
@@ -161,11 +157,14 @@ class LocationService extends BaseService {
     if (provinceId === "" || cityId === "" || neighborhood.id === "") return;
     let updatedNeighborhood = undefined;
     try {
-      // await this.Api.put(
-      //   `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}/${neighborhood.id}`,
-      //   neighborhood,
-      //   this.config
-      // );
+      let response = await this.Api.put(
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}/${neighborhood.id}`,
+        neighborhood,
+        this.config
+      );
+      if (response.data) {
+        updatedNeighborhood = response.data as Neighborhood;
+      }
     } catch (error) {
       this.handleError(error);
     }
@@ -179,10 +178,10 @@ class LocationService extends BaseService {
     neighborhoodId: string
   ) {
     try {
-      // await this.Api.delete(
-      //   `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}/${neighborhoodId}`,
-      //   this.config
-      // );
+      await this.Api.delete(
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}/${neighborhoodId}`,
+        this.config
+      );
     } catch (error) {
       this.handleError(error);
     }

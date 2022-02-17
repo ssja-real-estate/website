@@ -20,9 +20,14 @@ const EditItemModal: React.FC<Props> = (props) => {
   const [modalState, setModalState] = useRecoilState(editItemModalState);
   const [newValue, setNewValue] = useState("");
   const [mapInfo, setMapInfo] = useState<MapInfo>(defaultMapInfo);
+  const [zoom, setZoom] = useState<string>("0");
 
   useEffect(() => {
     setNewValue(modalState.value);
+    if (modalState.mapInfo) {
+      setMapInfo(modalState.mapInfo);
+      setZoom(modalState.mapInfo.zoom.toString());
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.displayMap[props.editItemType]]);
 
@@ -33,29 +38,24 @@ const EditItemModal: React.FC<Props> = (props) => {
   };
 
   const submit = () => {
-    // if (newValue.trim() === modalState.value.trim()) {
-    //   return;
-    // }
-
-    if (mapInfo.zoom) {
-      if (mapInfo.zoom < 5 || mapInfo.zoom > 15) {
-        toast.error(Strings.invalidZoomRange);
-        return;
-      }
-    }
-
     const displayMap = buildMap(props.editItemType, false);
     const editMap = buildMap(props.editItemType);
+
+    if (isNaN(+zoom)) {
+      toast.error(Strings.invalidZoomValue);
+      return;
+    }
 
     setModalState({
       ...modalState,
       value: newValue.trim(),
       displayMap: displayMap,
       editMap: editMap,
-      mapInfo: mapInfo,
+      mapInfo: { ...mapInfo, zoom: parseFloat(zoom) },
     });
     setNewValue("");
     setMapInfo(defaultMapInfo);
+    setZoom("0");
   };
 
   return (
@@ -115,13 +115,10 @@ const EditItemModal: React.FC<Props> = (props) => {
                 <Form.Group className="mt-3">
                   <Form.Label>{Strings.zoom}</Form.Label>
                   <Form.Control
-                    type="text"
-                    value={mapInfo.zoom}
+                    type="float"
+                    value={zoom}
                     onChange={(e) => {
-                      setMapInfo({
-                        ...mapInfo,
-                        zoom: +e.currentTarget.value,
-                      });
+                      setZoom(e.currentTarget.value);
                     }}
                   />
                 </Form.Group>

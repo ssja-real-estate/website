@@ -7,7 +7,7 @@ import editItemModalState, {
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
 import City from "global/types/City";
-import Province from "global/types/Province";
+import Province, { defaultProvince } from "global/types/Province";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
@@ -77,6 +77,8 @@ function CityList() {
               setSelectedProvince(province);
               setCities((prev) => province.cities);
             }
+          } else {
+            setSelectedProvince(defaultProvince);
           }
         })
         .catch((error) => {
@@ -95,7 +97,10 @@ function CityList() {
       setLoading((prev) => true);
     }
 
-    if (!mounted.current) return;
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
+    }
 
     await loadProvinces();
 
@@ -135,6 +140,7 @@ function CityList() {
         id: modalState.id,
         name: modalState.value,
         neighborhoods: [],
+        mapInfo: modalState.mapInfo,
       }
     );
     if (updatedCity) {
@@ -146,6 +152,7 @@ function CityList() {
           );
           if (prevCity) {
             prevCity.name = updatedCity!.name;
+            prevCity.mapInfo = updatedCity?.mapInfo;
           }
         }
         return prev;
@@ -290,7 +297,6 @@ function CityList() {
                         }}
                         onEdit={() => {
                           const newMap = buildMap(EditItemType.City);
-                          if (!modalMounted.current) return;
                           setModalState({
                             ...defaultEditItemModalState,
                             id: city.id,

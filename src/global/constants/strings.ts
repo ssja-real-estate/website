@@ -3,6 +3,7 @@ class Strings {
   static sajaSystem = "سامانه ثجا";
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
+  static addEstate = "ثبت ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
   static delegationTypes = "نوع واگذاری‌ها";
@@ -16,12 +17,15 @@ class Strings {
   static admins = "ادمین‌ها";
   static users = "کاربرها";
   static addNewType = "افزودن نوع جدید";
+  static addNewDelegationType = "افزودن نوع واگذاری جدید";
+  static addNewEstateType = "افزودن نوع ملک جدید";
   static saveChanges = "ذخیره تغییرات";
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
   static choose = "انتخاب کنید";
   static chooseProvince = "انتخاب استان";
   static chooseCity = "انتخاب شهر";
+  static addNewProvince = "افزودن استان جدید";
   static addNewCity = "افزودن شهر جدید";
   static addNewNeighborhood = "افزودن منطقه جدید";
   static addNewUnit = "افزودن واحد جدید";
@@ -129,12 +133,17 @@ class Strings {
   static usersTooltip = "کاربران";
   static estatesTooltip = "املاک";
   static templatesTooltip = "قالب‌ها";
-  static optionalField = "اختیاری";
+  static optionalField = "(اختیاری)";
+  static imagesLimit = "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!";
+  static imagesSizeLimit = "حداکثر حجم تصاویر انتخاب شده ۲ مگابایت است";
+  static formDoesNotExist = "این فرم وجود ندارد";
   static latitude = "عرض جغرافیایی";
   static longitude = "طول جغرافیایی";
   static zoom = "درجه زوم";
-  static invalidZoomRange = "درجه زوم باید بین ۵ تا ۱۵ باشد";
+  static invalidZoomValue = "مقدار واردشده برای زوم نامعتبر است";
   static adminFormDoesNotExist = "این فرم هنوز ساخته نشده‌است";
+  static enterlocationInfo = "استان، شهر و منطقه را وارد کنید";
+  static addEstateRequestSuccess = "درخواست ثبت ملک با موفقیت ارسال شد";
 }
 
 export default Strings;

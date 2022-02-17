@@ -46,8 +46,10 @@ class DelegationTypeService extends BaseService {
     let newDelegationType = undefined;
     try {
       const response = await this.Api.put(
-        this.delegationTypeUrl,
-        delegationType,
+        `${this.delegationTypeUrl}/${delegationType.id}`,
+        {
+          name: delegationType.name,
+        },
         this.config
       );
 

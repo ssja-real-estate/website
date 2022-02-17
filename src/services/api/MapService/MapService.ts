@@ -4,7 +4,6 @@ class MapService extends BaseService {
   async searchMap(searchText: string): Promise<any> {
     let result: any = undefined;
     try {
-      console.log("requesting");
       const response = await this.MapApi.get("/v4/geocoding", {
         params: {
           address: searchText,
