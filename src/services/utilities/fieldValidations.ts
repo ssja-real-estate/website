@@ -4,16 +4,32 @@ import { FieldType } from "global/types/Field";
 
 const validateForm = (form: EstateForm): Error[] => {
   let errors: Error[] = [];
+  let errorMessage: string = "";
 
-  form.sections.forEach((section) => {
-    section.fields.forEach((field) => {
+  for (let i = 0; i < form.sections.length; i++) {
+    const section = form.sections[i];
+    for (let j = 0; j < section.fields.length; j++) {
+      const field = section.fields[j];
       if (!field.optional) {
-        if (!field.value) {
-          let errorMessage = getErrorMessage(
-            section.title,
-            field.title,
-            field.type
-          );
+        if (field.type === FieldType.Bool) continue;
+        else if (field.type === FieldType.Conditional) {
+          if (!field.value) continue;
+
+          for (let k = 0; k < field.fields!.length; k++) {
+            const innerField = field.fields![k];
+            if (!innerField.optional && innerField.type !== FieldType.Bool) {
+              if (!innerField.value) {
+                errorMessage = getErrorMessage(innerField.title);
+                if (!!errorMessage) {
+                  errors.push({
+                    message: errorMessage,
+                  });
+                }
+              }
+            }
+          }
+        } else if (!field.value) {
+          errorMessage = getErrorMessage(field.title);
           if (!!errorMessage) {
             errors.push({
               message: errorMessage,
@@ -21,40 +37,14 @@ const validateForm = (form: EstateForm): Error[] => {
           }
         }
       }
-    });
-  });
+    }
+  }
+
   return errors;
 };
 
-// const validateField = (
-//   sectionTitle: string,
-//   field: Field
-// ): Error | undefined => {
-//   let error = undefined;
-
-//   switch (field.type) {
-//     case FieldType.Select:
-//       if (!field.options!.includes(field.value as string)) {
-//         error = {
-//           message: getErrorMessage(sectionTitle, field.title, field.type),
-//         } as Error;
-//       }
-//       break;
-//   }
-
-//   return error;
-// };
-
-const getErrorMessage = (
-  sectionTitle: string,
-  fieldTitle: string,
-  fieldType: FieldType
-) => {
-  switch (fieldType) {
-    case FieldType.Select:
-      return `ورودی ${fieldTitle} در بخش ${sectionTitle} باید مقدار داشته باشد`;
-  }
-  return undefined;
+const getErrorMessage = (fieldTitle: string) => {
+  return `ورودی ${fieldTitle} باید مقدار داشته باشد`;
 };
 
 export { validateForm };

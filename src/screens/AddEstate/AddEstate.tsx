@@ -415,7 +415,10 @@ function AddEstateScreen() {
     return fields.map((innerField, innerFieldIndex) => {
       return (
         <div key={innerFieldIndex} className="input-item py-3">
-          <label>{innerField.title}</label>
+          <label>
+            {innerField.title}{" "}
+            {innerField.optional ? Strings.optionalField : null}
+          </label>
           {innerField.type === FieldType.Text ? (
             <Form.Control
               type="text"
@@ -590,7 +593,7 @@ function AddEstateScreen() {
 
     if (response) {
       toast.success(Strings.addEstateRequestSuccess, {
-        duration: 4000,
+        duration: 5000,
       });
       setSelectedProvince(defaultProvince);
       setSelectedCity(defaultCity);
