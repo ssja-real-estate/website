@@ -91,6 +91,9 @@ function NeighborhoodList() {
                 }
               }
             }
+          } else {
+            setSelectedProvince(defaultProvince);
+            setSelectedCity(defaultCity);
           }
         })
         .catch((error) => {
@@ -161,8 +164,6 @@ function NeighborhoodList() {
         name: modalState.value,
         mapInfo: modalState.mapInfo,
       });
-    console.log("updatedNeighborhood");
-    console.log(updatedNeighborhood);
 
     if (updatedNeighborhood) {
       setCities((prev) => {
@@ -287,7 +288,6 @@ function NeighborhoodList() {
                 if (provinceId) {
                   const province = provinces.find((p) => p.id === provinceId);
                   if (province) {
-                    console.log(province);
                     setSelectedProvince({
                       ...province,
                       id: province.id,

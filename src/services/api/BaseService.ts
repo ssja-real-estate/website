@@ -13,14 +13,14 @@ class BaseService {
   constructor() {
     this.Api = axios.create({
       baseURL: this.baseUrl,
-      timeout: 5000,
+      timeout: 10000,
       headers: {
         "content-type": "application/json",
       },
     });
     this.MapApi = axios.create({
       baseURL: this.mapBaseUrl,
-      timeout: 5000,
+      timeout: 10000,
       headers: {
         "content-type": "application/json",
         "Api-Key": `${process.env.REACT_APP_MAP_SERVICE_API_KEY}`,

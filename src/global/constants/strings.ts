@@ -133,14 +133,17 @@ class Strings {
   static usersTooltip = "کاربران";
   static estatesTooltip = "املاک";
   static templatesTooltip = "قالب‌ها";
-  static optionalField = "اختیاری";
+  static optionalField = "(اختیاری)";
   static imagesLimit = "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!";
+  static imagesSizeLimit = "حداکثر حجم تصاویر انتخاب شده ۲ مگابایت است";
   static formDoesNotExist = "این فرم وجود ندارد";
   static latitude = "عرض جغرافیایی";
   static longitude = "طول جغرافیایی";
   static zoom = "درجه زوم";
-  static invalidZoomRange = "درجه زوم باید بین ۵ تا ۱۵ باشد";
+  static invalidZoomValue = "مقدار واردشده برای زوم نامعتبر است";
   static adminFormDoesNotExist = "این فرم هنوز ساخته نشده‌است";
+  static enterlocationInfo = "استان، شهر و منطقه را وارد کنید";
+  static addEstateRequestSuccess = "درخواست ثبت ملک با موفقیت ارسال شد";
 }
 
 export default Strings;

@@ -44,7 +44,9 @@ function EditConditionalField() {
 
   function addNewInnerField(field: Field) {
     const newField = { ...field, options };
-    console.log(newField);
+    if (newField.type === FieldType.Bool) {
+      newField.value = false;
+    }
     const newInnerFields = [newField, ...innerFieldModalData.data.fields!];
     setInnerFieldModalData({
       ...innerFieldModalData,
@@ -56,7 +58,6 @@ function EditConditionalField() {
   }
 
   function updateChangedSelectField() {
-    console.log("here");
     const innerFieldIndex = editSelectFieldModalData.index;
     const data = editSelectFieldModalData.data;
     const innerFields = innerFieldModalData.data.fields!.slice();

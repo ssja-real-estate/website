@@ -27,6 +27,12 @@ function NewField() {
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
 
   function addNewField(newField: Field) {
+    if (
+      newField.type === FieldType.Bool ||
+      newField.type === FieldType.Conditional
+    ) {
+      newField.value = false;
+    }
     const newFields = [...modalSection.data.fields, newField];
     setModalSection({
       ...modalSection,

@@ -28,6 +28,9 @@ function NewConditionalField() {
   const [options, setOptions] = useState<string[]>([]);
 
   function addNewInnerField(newField: Field) {
+    if (newField.type === FieldType.Bool) {
+      newField.value = false;
+    }
     const newInnerFields = [newField, ...innerFields];
     setInnerFields(newInnerFields);
   }

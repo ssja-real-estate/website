@@ -123,13 +123,9 @@ class LocationService extends BaseService {
   async deleteCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.delete(
-        `${this.provinceUrl}/${provinceId}${this.cityUrl}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${city.id}`,
         {
           ...this.config,
-          data: {
-            id: city.id,
-            name: city.name,
-          },
         }
       );
     } catch (error: any) {

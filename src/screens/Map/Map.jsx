@@ -4,17 +4,17 @@ import React from "react";
 import { useEffect, useRef, useState } from "react";
 import NeshanMap from "react-neshan-map-leaflet";
 
+const defaultLatLang = {
+  lat: 35.706408599732605,
+  lng: 411.4163636999659,
+};
+const defaultZoom = 7;
+
 // latLang : {lat: 212, lng: 322}
 // position: [654564, 54654]
 // zoom : 10
 // readOnly : true
 const MapScreen = (props) => {
-  const defaultLatLang = {
-    lat: 35.706408599732605,
-    lng: 411.4163636999659,
-  };
-  const defaultZoom = 10;
-
   const latLang = props.latLang ?? defaultLatLang;
   const zoom = props.zoom ?? defaultZoom;
   const position = [latLang.lat, latLang.lng];

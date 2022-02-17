@@ -6,7 +6,7 @@ import {
   elevationEffect,
 } from "../../animations/motionVariants";
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
-import { defaultForm, EstateForm } from "../../global/types/EstateForm";
+import { EstateForm } from "../../global/types/EstateForm";
 import { FieldType, Field } from "../../global/types/Field";
 import Strings from "global/constants/strings";
 import EstateType, { defaultEstateType } from "global/types/EstateType";
@@ -26,6 +26,7 @@ import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
 import City, { defaultCity } from "global/types/City";
 import LocationService from "services/api/LocationService/LocationService";
 import MapInfo from "global/types/MapInfo";
+import { defaultEstate, Estate } from "global/types/Estate";
 
 function AddEstateScreen() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,7 +46,9 @@ function AddEstateScreen() {
     useState<EstateType>(defaultEstateType);
   const isDefault: boolean =
     !selectedDelegationType.name || !selectedEstateType.name ? true : false;
-  const [estate, setForm] = useState<EstateForm>(defaultForm);
+  const [estate, setEstate] = useState<Estate>(defaultEstate);
+  const [formData, setFormData] = useState<FormData>(new FormData());
+  const [imagesCount, setImagesCount] = useState<number>(0);
 
   const state = useRecoilValue(globalState);
   const formService = useRef(new FormService());
@@ -154,7 +157,7 @@ function AddEstateScreen() {
       selectedEstateType.id
     );
 
-    setForm(loadedForm);
+    setEstate({ ...estate, dataForm: loadedForm });
     await loadLocations();
     await loadOptions();
     setLoading((prev) => false);
@@ -171,8 +174,14 @@ function AddEstateScreen() {
       cities: province.cities,
       mapInfo: province.mapInfo,
     });
+    setSelectedCity(defaultCity);
+    setSelectedNeighborhood(defaultNeighborhood);
     setMapInfo(province.mapInfo);
     setCities(province.cities);
+    setEstate({
+      ...estate,
+      provinceId,
+    });
   }
 
   function handleCityChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -187,8 +196,14 @@ function AddEstateScreen() {
       neighborhoods: city.neighborhoods,
       mapInfo: city.mapInfo,
     });
+    setSelectedNeighborhood(defaultNeighborhood);
     setMapInfo(city.mapInfo);
     setNeighborhoods(city.neighborhoods);
+
+    setEstate({
+      ...estate,
+      cityId,
+    });
   }
 
   function handleNeighborhoodChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -204,6 +219,7 @@ function AddEstateScreen() {
       mapInfo: neighborhood.mapInfo,
     });
     setMapInfo(neighborhood.mapInfo);
+    setEstate({ ...estate, neighborhoodId });
   }
 
   function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -219,9 +235,9 @@ function AddEstateScreen() {
     });
   }
 
-  function checkMaxFiles(files: File[]): boolean {
-    const maxFiles = 10;
-    return files.length > maxFiles ? false : true;
+  function checkFileSizes(files: File[]): boolean {
+    const sumOfFileSizes = files.map((f) => f.size).reduce((a, b) => a + b, 0);
+    return sumOfFileSizes > 2048;
   }
 
   function onFieldChange(
@@ -239,9 +255,12 @@ function AddEstateScreen() {
     fields[fieldIndex] = currentField;
     sections[sectionIndex].fields = fields;
 
-    setForm({
-      ...form,
-      sections: sections,
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        sections: sections,
+      },
     });
   }
 
@@ -265,9 +284,12 @@ function AddEstateScreen() {
     fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
     sections[sectionIndex].fields = fields;
 
-    setForm({
-      ...form,
-      sections: sections,
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        sections: sections,
+      },
     });
   }
 
@@ -275,7 +297,9 @@ function AddEstateScreen() {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
-          <label>{field.title}</label>
+          <label>
+            {field.title} {field.optional ? Strings.optionalField : null}
+          </label>
           {field.type === FieldType.Text ? (
             <Form.Control
               type="text"
@@ -319,7 +343,6 @@ function AddEstateScreen() {
               checked={field.value ? true : false}
               onChange={(e) => {
                 const booleanValue = e.target.checked;
-
                 onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
               }}
             />
@@ -331,7 +354,6 @@ function AddEstateScreen() {
                 checked={field.value ? true : false}
                 onChange={(e) => {
                   const booleanValue = e.target.checked;
-
                   onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
                 }}
               />
@@ -349,19 +371,20 @@ function AddEstateScreen() {
               multiple
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 let selectedFiles = Array.from(e.target.files!);
+                setImagesCount(selectedFiles.length);
 
-                if (!checkMaxFiles(selectedFiles)) {
-                  alert(Strings.imagesLimit);
+                if (!checkFileSizes(selectedFiles)) {
+                  alert(Strings.imagesSizeLimit);
                   e.target.value = "";
                   selectedFiles = [];
                 }
 
                 const data = new FormData();
                 selectedFiles.forEach((file, index) => {
-                  data.append(`image${index}`, file);
+                  data.append("images", file);
                 });
-
-                onFieldChange(data, form, sectionIndex, fieldIndex);
+                setFormData(data);
+                // onFieldChange(data, form, sectionIndex, fieldIndex);
               }}
             />
           ) : (
@@ -493,19 +516,22 @@ function AddEstateScreen() {
               multiple
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 let selectedFiles = Array.from(e.target.files!);
+                setImagesCount(selectedFiles.length);
 
-                if (!checkMaxFiles(selectedFiles)) {
-                  alert(Strings.imagesLimit);
+                if (!checkFileSizes(selectedFiles)) {
+                  alert(Strings.imagesSizeLimit);
                   e.target.value = "";
                   selectedFiles = [];
                 }
 
                 const data = new FormData();
                 selectedFiles.forEach((file, index) => {
-                  data.append(`image${index}`, file);
+                  data.append("images", file);
                 });
 
-                onFieldChange(data, form, sectionIndex, fieldIndex);
+                setFormData(data);
+
+                // onFieldChange(data, form, sectionIndex, fieldIndex);
               }}
             />
           ) : (
@@ -528,6 +554,38 @@ function AddEstateScreen() {
         </div>
       );
     });
+  }
+
+  async function submitEstate() {
+    if (!selectedProvince.id || !selectedCity.id || !selectedNeighborhood.id) {
+      toast.error(Strings.enterlocationInfo);
+      return;
+    }
+
+    if (imagesCount > 10) {
+      toast.error(Strings.imagesLimit);
+      return;
+    }
+    setLoading((prev) => true);
+
+    let response = await estateService.current.requestAddEtate(
+      estate,
+      formData
+    );
+
+    if (response) {
+      toast.success(Strings.addEstateRequestSuccess, {
+        duration: 1000,
+      });
+      setSelectedProvince(defaultProvince);
+      setSelectedCity(defaultCity);
+      setSelectedNeighborhood(defaultNeighborhood);
+      setSelectedDelegationType(defaultDelegationType);
+      setSelectedEstateType(defaultEstateType);
+      setFormData(new FormData());
+      setEstate(defaultEstate);
+    }
+    setLoading((prev) => false);
   }
 
   return (
@@ -667,18 +725,18 @@ function AddEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                {estate?.sections.map((section, sectionIndex) => {
+                {estate.dataForm.sections.map((section, sectionIndex) => {
                   return (
                     <div
                       className="section card glass shadow-sm py-2 px-4 my-2"
                       key={sectionIndex}
                     >
                       <h3 className="section-title py-3">{section.title}</h3>
-                      {mapFields(section.fields, estate, sectionIndex)}
+                      {mapFields(section.fields, estate.dataForm, sectionIndex)}
                     </div>
                   );
                 })}
-                {!estate.id ? (
+                {!estate.dataForm.id ? (
                   <motion.div
                     variants={crossfadeAnimation}
                     initial="first"
@@ -691,9 +749,7 @@ function AddEstateScreen() {
                   <Button
                     className="w-100 mb-5 mt-3"
                     variant="purple"
-                    onClick={() => {
-                      estateService.current.requestAddEtate(estate);
-                    }}
+                    onClick={submitEstate}
                   >
                     {Strings.addEstate}
                   </Button>
