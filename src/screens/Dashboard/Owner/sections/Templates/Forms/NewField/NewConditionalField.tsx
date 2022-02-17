@@ -30,6 +30,8 @@ function NewConditionalField() {
   function addNewInnerField(newField: Field) {
     if (newField.type === FieldType.Bool) {
       newField.value = false;
+    } else if (newField.type === FieldType.Number) {
+      newField.value = 0;
     }
     const newInnerFields = [newField, ...innerFields];
     setInnerFields(newInnerFields);

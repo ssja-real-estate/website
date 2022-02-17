@@ -27,6 +27,7 @@ import City, { defaultCity } from "global/types/City";
 import LocationService from "services/api/LocationService/LocationService";
 import MapInfo from "global/types/MapInfo";
 import { defaultEstate, Estate } from "global/types/Estate";
+import { validateForm } from "services/utilities/fieldValidations";
 
 function AddEstateScreen() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -156,6 +157,8 @@ function AddEstateScreen() {
       selectedDelegationType.id,
       selectedEstateType.id
     );
+    console.log("loaded form");
+    console.log(loadedForm);
 
     setEstate({ ...estate, dataForm: loadedForm });
     await loadLocations();
@@ -566,6 +569,18 @@ function AddEstateScreen() {
       toast.error(Strings.imagesLimit);
       return;
     }
+
+    const errors = validateForm(estate.dataForm);
+    if (errors.length > 0) {
+      for (let i = 0; i < errors.length; i++) {
+        const error = errors[i];
+        toast.error(error.message, {
+          duration: 2000,
+        });
+      }
+      return;
+    }
+
     setLoading((prev) => true);
 
     let response = await estateService.current.requestAddEtate(
@@ -575,7 +590,7 @@ function AddEstateScreen() {
 
     if (response) {
       toast.success(Strings.addEstateRequestSuccess, {
-        duration: 1000,
+        duration: 4000,
       });
       setSelectedProvince(defaultProvince);
       setSelectedCity(defaultCity);

@@ -43,9 +43,14 @@ function EditConditionalField() {
     useRecoilState(editSelectFieldModalDataAtom);
 
   function addNewInnerField(field: Field) {
+    console.log("add new inner field");
+    console.log(field);
+
     const newField = { ...field, options };
     if (newField.type === FieldType.Bool) {
       newField.value = false;
+    } else if (newField.type === FieldType.Number) {
+      newField.value = 0;
     }
     const newInnerFields = [newField, ...innerFieldModalData.data.fields!];
     setInnerFieldModalData({
