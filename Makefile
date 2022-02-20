@@ -6,6 +6,8 @@ cnf=./app-config.sh
 
 username?=sajaweb
 password?=
+map_key?=
+name?=
 
 # image name 
 IMAGE_NAME=$(shell $(cnf) name $(username))
@@ -49,7 +51,8 @@ help: ## help(default)
 
 # Build docker image 
 build: ## build-image 
-	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
+	docker build --build-arg MAP_API_KEY=$(map_key) APP_NAME=$(name) 
+				 -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
 # Build docker image on local machine
 build-local: ## build-local-image

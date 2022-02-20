@@ -10,15 +10,18 @@ RUN yarn install --production --frozen-lockfile
 
 COPY . .
 
+ARG MAP_API_KEY
+ARG APP_NAME
+
+ENV REACT_APP_MAP_WEB_API_KEY=$MAP_API_KEY
+ENV REACT_APP_NAME=$APP_NAME
+
 RUN yarn build
 
 # production stage
 FROM nginx:1.18.0 as prod
 
 COPY --from=build /app/build /usr/share/nginx/html
-
-# ENV REACT_APP_MAP_WEB_API_KEY=$REACT_APP_MAP_WEB_API_KEY
-# ENV REACT_APP_NAME=$REACT_APP_NAME
 
 EXPOSE 80
 
