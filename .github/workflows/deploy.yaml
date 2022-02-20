@@ -15,7 +15,7 @@ jobs:
       - run: make password=$DOCKER_PASSWORD map_key=$MAP_API_KEY name=$NAME login
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          MAP_API_KEY: ${{ secrects.MAP_API_KEY }}
+          MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
           NAME: ${{ secrets.NAME }}
       - run: make stage=prod push
       - run: make logout
