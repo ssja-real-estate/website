@@ -1,10 +1,7 @@
 .vscode
-data
 node_modules
 npm-debug.log
-.dockerignore
 .git
 .gitignore
 .prettierignore
 .prettierrc.json
-docker-config.sh
