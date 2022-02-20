@@ -51,6 +51,9 @@ help: ## help(default)
 
 # Build docker image 
 build: ## build-image 
+	echo hello
+	echo $(map_key)
+	echo $(name)
 	docker build --build-arg MAP_API_KEY=$(map_key) --build-arg APP_NAME=$(name) \
 				 -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
