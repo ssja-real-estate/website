@@ -8,6 +8,8 @@ COPY yarn.lock .
 
 RUN yarn install --production --frozen-lockfile
 
+ENV REACT_APP_MAP_WEB_API_KEY=$REACT_APP_MAP_WEB_API_KEY
+
 COPY . .
 
 RUN yarn build
