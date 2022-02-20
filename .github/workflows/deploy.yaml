@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: make stage=prod build
-      - run: make password=$DOCKER_PASSWORD map_key=$MAP_API_KEY name=$NAME login
+      - run: make stage=prod map_key=$MAP_API_KEY name=$NAME build
+      - run: make password=$DOCKER_PASSWORD login
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
