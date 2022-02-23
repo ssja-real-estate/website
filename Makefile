@@ -1,4 +1,4 @@
-.SILENT:
+# .SILENT:
 
 # import config
 # you can change the default config with `make cnf="config_special.env" build`
@@ -53,6 +53,9 @@ help: ## help(default)
 build: ## build-image 
 	# docker build --build-arg MAP_API_KEY=$(map_key) --build-arg APP_NAME=$(name) \
 	# 			 -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
+	echo "build"
+	echo "stage: $(stage)"
+	echo "image tag: $(IMAGE_TAG)"
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
 # Build docker image on local machine
@@ -104,6 +107,8 @@ rm-local-image: ## remove-local-image
 	docker rmi $(CONTAINER_NAME)
 
 login: set-password ## login-to-docker-hub
+	echo "login"
+	echo "username: $(username)"
 	cat pass | docker login -u $(username) --password-stdin
 	rm -f pass
 
@@ -115,6 +120,8 @@ logout: ## logout-from-docker-hub
 	docker logout
 
 push: ## push-docker-image-to-registry
+	echo "push"
+	echo "image tag: $(IMAGE_TAG)"
 	docker push $(IMAGE_TAG)
 
 push-local: ## push-local-docker-image-to-registry
