@@ -1,4 +1,4 @@
-# .SILENT:
+.SILENT:
 
 # import config
 # you can change the default config with `make cnf="config_special.env" build`
@@ -6,8 +6,6 @@ cnf=./app-config.sh
 
 username?=sajaweb
 password?=
-map_key?=
-name?=
 
 # Dockerfile stage to build(default is set to dev)
 stage?=dev
@@ -51,51 +49,48 @@ help: ## help(default)
 
 # Build docker image 
 build: ## build-image 
-	# docker build --build-arg MAP_API_KEY=$(map_key) --build-arg APP_NAME=$(name) \
-	# 			 -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
-	echo "build"
-	echo "stage: $(stage)"
-	echo "image tag: $(IMAGE_TAG)"
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
 # Build docker image on local machine
 build-local: ## build-local-image
-	# docker build --build-arg MAP_API_KEY=$(map_key) --build-arg APP_NAME=$(name) \
-	#  			  -f Dockerfile.$(stage) -t $(CONTAINER_NAME) .
 	docker build -f Dockerfile.$(stage) -t $(CONTAINER_NAME) .
 
+# Run docker container in development mode
+run-dev: stop ## run-dev-container 
+	docker run --rm -itd --env-file ./.env --name $(CONTAINER_NAME) \
+		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
+		$(IMAGE_TAG) 
 
-
-# Run docker container
-run: stop ## run-container 
-	# docker run --rm -itd --name $(CONTAINER_NAME) \
-	# 	-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
-	# 	$(IMAGE_TAG) 
-	docker run --rm -itd --name $(CONTAINER_NAME) \
+# Run docker container in production mode
+run-prod: stop ## run-prod-container 
+	docker run --rm -itd --env-file ./.env --name $(CONTAINER_NAME) \
 		-p $(PORT):$(CONTAINER_PORT) $(IMAGE_TAG) 
 
-# Run docker container locally
-run-local: stop-local ## run-container-locally
-	# docker run --rm -it --env-file ./.env --name $(CONTAINER_NAME) \
-	# 	-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src \
-	# 	$(CONTAINER_NAME):latest
+# Run docker container locally in development mode
+run-local-dev: stop-local ## run-dev-container-locally
+	docker run --rm -it --env-file ./.env --name $(CONTAINER_NAME) \
+		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src \
+		$(CONTAINER_NAME):latest
+
+# Run docker container locally in production mode
+run-local-prod: stop-local ## run-prod-container-locally
 	docker run --rm -itd --env-file ./.env --name $(CONTAINER_NAME) \
 		-p $(PORT):$(CONTAINER_PORT) $(CONTAINER_NAME):latest
-		
-# Execute local docker container shell
-exec-local: ## execute-local-container
-	docker exec -it $(CONTAINER_NAME) bash
-
+	
 # Execute docker container shell
 exec: ## execute-container
 	docker exec -it $(CONTAINER_NAME) bash
 
-# Stop the local docker container
-stop-local: ## stop-local-container
-	docker rm $(CONTAINER_NAME) -f
+# Execute local docker container shell
+exec-local: ## execute-local-container
+	docker exec -it $(CONTAINER_NAME) bash
 
 # Stop the docker container
 stop: ## stop-container
+	docker rm $(CONTAINER_NAME) -f
+
+# Stop the local docker container
+stop-local: ## stop-local-container
 	docker rm $(CONTAINER_NAME) -f
 
 # Remove docker image
@@ -107,8 +102,6 @@ rm-local-image: ## remove-local-image
 	docker rmi $(CONTAINER_NAME)
 
 login: set-password ## login-to-docker-hub
-	echo "login"
-	echo "username: $(username)"
 	cat pass | docker login -u $(username) --password-stdin
 	rm -f pass
 
@@ -120,8 +113,6 @@ logout: ## logout-from-docker-hub
 	docker logout
 
 push: ## push-docker-image-to-registry
-	echo "push"
-	echo "image tag: $(IMAGE_TAG)"
 	docker push $(IMAGE_TAG)
 
 push-local: ## push-local-docker-image-to-registry
