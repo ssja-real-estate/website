@@ -27,7 +27,7 @@ jobs:
           context: .
           push: true
           tags: sajaweb/saja-react-prod
-          dockerfile: ./Dockerfile.prod
+          file: ./Dockerfile.prod
       # - uses: actions/checkout@v2
       # - run: make stage=prod build
       # - run: make password=$DOCKER_PASSWORD login
