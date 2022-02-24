@@ -28,13 +28,6 @@ jobs:
           push: true
           tags: sajaweb/saja-react-prod
           file: ./Dockerfile.prod
-      # - uses: actions/checkout@v2
-      # - run: make stage=prod build
-      # - run: make password=$DOCKER_PASSWORD login
-      #   env:
-      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      # - run: make stage=prod push
-      # - run: make logout
       - uses: appleboy/ssh-action@master
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
