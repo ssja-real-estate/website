@@ -13,7 +13,6 @@ function HomeScreen() {
         className="content"
       >
         <h1 className="fw-light">{Strings.sajaSystemCompleteName}</h1>
-        <h2>{`Hello ${process.env.REACT_APP_NAME}`}</h2>
         <p className="app-description py-3">
           لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با
           استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در
