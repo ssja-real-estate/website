@@ -1,4 +1,4 @@
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal } from "react-bootstrap";
 
 interface CustomModalProps {
   show: boolean;
@@ -13,9 +13,9 @@ interface CustomModalProps {
 
 const CustomModal: React.FC<CustomModalProps> = ({
   show = false,
-  title = 'Modal Title',
-  cancelTitle = 'Close',
-  successTitle = 'Save',
+  title = "Modal Title",
+  cancelTitle = "Close",
+  successTitle = "Save",
   handleClose,
   handleSuccess,
   isLarge = false,
@@ -26,7 +26,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
     <Modal
       show={show}
       onHide={handleClose}
-      size={isLarge ? 'lg' : undefined}
+      size={isLarge ? "lg" : undefined}
       fullscreen={isFullscreen ? true : undefined}
       centered
     >
@@ -35,12 +35,16 @@ const CustomModal: React.FC<CustomModalProps> = ({
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          {cancelTitle}
-        </Button>
-        <Button variant="purple" onClick={handleSuccess}>
-          {successTitle}
-        </Button>
+        {handleClose && (
+          <Button variant="secondary" onClick={handleClose}>
+            {cancelTitle}
+          </Button>
+        )}
+        {handleSuccess && (
+          <Button variant="purple" onClick={handleSuccess}>
+            {successTitle}
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );

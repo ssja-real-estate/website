@@ -88,9 +88,12 @@ class EstateService extends BaseService {
     try {
       let response = await this.Api.put(
         `${this.estateUrl}/verify/${estateId}`,
+        undefined,
         this.config
       );
       if (response.data) {
+        console.log("verify response");
+        console.log(response.data);
       }
     } catch (error) {
       this.handleError(error);

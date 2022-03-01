@@ -157,8 +157,6 @@ function AddEstateScreen() {
       selectedDelegationType.id,
       selectedEstateType.id
     );
-    console.log("loaded form");
-    console.log(loadedForm);
 
     setEstate({ ...estate, dataForm: loadedForm });
     await loadLocations();
