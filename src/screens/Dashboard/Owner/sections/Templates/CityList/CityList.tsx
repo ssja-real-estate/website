@@ -64,32 +64,25 @@ function CityList() {
   }, [modalState.editMap[EditItemType.City]]);
 
   const loadProvinces = async () => {
-    toast.promise(
-      locationService.current
-        .getAllProvinces()
-        .then((fetchedProvinces) => {
-          setProvinces(fetchedProvinces);
-          if (selectedProvince?.id) {
-            const province = fetchedProvinces.find(
-              (p) => p.id === selectedProvince.id
-            );
-            if (province) {
-              setSelectedProvince(province);
-              setCities((prev) => province.cities);
-            }
-          } else {
-            setSelectedProvince(defaultProvince);
+    locationService.current
+      .getAllProvinces()
+      .then((fetchedProvinces) => {
+        setProvinces(fetchedProvinces);
+        if (selectedProvince?.id) {
+          const province = fetchedProvinces.find(
+            (p) => p.id === selectedProvince.id
+          );
+          if (province) {
+            setSelectedProvince(province);
+            setCities((prev) => province.cities);
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingLocationsSuccess,
-        loading: Strings.loadingLocations,
-        error: Strings.loadingLocationsFailed,
-      }
-    );
+        } else {
+          setSelectedProvince(defaultProvince);
+        }
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   const loadData = async () => {

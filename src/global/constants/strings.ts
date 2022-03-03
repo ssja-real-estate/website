@@ -144,6 +144,11 @@ class Strings {
   static adminFormDoesNotExist = "این فرم هنوز ساخته نشده‌است";
   static enterlocationInfo = "استان، شهر و منطقه را وارد کنید";
   static addEstateRequestSuccess = "درخواست ثبت ملک با موفقیت ارسال شد";
+  static estateInfo = "اطلاعات ملک";
+  static description = "توضیحات";
+  static rejectEstate = "عدم تایید ملک";
+  static close = "بستن";
+  static rejected = "غیرقابل قبول";
 }
 
 export default Strings;

@@ -32,39 +32,32 @@ function NeighborhoodList() {
   }, [state.token]);
 
   const loadLocations = async () => {
-    toast.promise(
-      locationService.current
-        .getAllProvinces()
-        .then((fetchedProvinces) => {
-          setProvinces(fetchedProvinces);
-          if (selectedProvince?.id) {
-            const province = fetchedProvinces.find(
-              (p) => p.id === selectedProvince.id
-            );
-            if (province) {
-              setSelectedProvince(province);
-              setCities((prev) => province.cities);
-              if (selectedCity?.id) {
-                const city = province.cities.find(
-                  (c) => c.id === selectedCity.id
-                );
-                if (city) {
-                  setSelectedCity(city);
-                  setNeighborhoods(city.neighborhoods);
-                }
+    locationService.current
+      .getAllProvinces()
+      .then((fetchedProvinces) => {
+        setProvinces(fetchedProvinces);
+        if (selectedProvince?.id) {
+          const province = fetchedProvinces.find(
+            (p) => p.id === selectedProvince.id
+          );
+          if (province) {
+            setSelectedProvince(province);
+            setCities((prev) => province.cities);
+            if (selectedCity?.id) {
+              const city = province.cities.find(
+                (c) => c.id === selectedCity.id
+              );
+              if (city) {
+                setSelectedCity(city);
+                setNeighborhoods(city.neighborhoods);
               }
             }
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingLocationsSuccess,
-        loading: Strings.loadingLocations,
-        error: Strings.loadingLocationsFailed,
-      }
-    );
+        }
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   return (

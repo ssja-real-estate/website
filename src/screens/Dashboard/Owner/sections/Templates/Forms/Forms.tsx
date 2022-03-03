@@ -90,25 +90,18 @@ const Forms = () => {
   }, [isDefault, delegationType.name, estateType.name]);
 
   const loadOptions = async () => {
-    toast.promise(
-      delegationTypeService.current
-        .getAllDelegationTypes()
-        .then((delegationTypes) => {
-          setDelegationTypes(delegationTypes);
-        })
-        .then(() => estateTypeService.current.getAllEstateTypes())
-        .then((estateTypes) => {
-          setEstateTypes(estateTypes);
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingOptionsSuccess,
-        loading: Strings.loadingOptions,
-        error: Strings.loadingOptionsFailed,
-      }
-    );
+    delegationTypeService.current
+      .getAllDelegationTypes()
+      .then((delegationTypes) => {
+        setDelegationTypes(delegationTypes);
+      })
+      .then(() => estateTypeService.current.getAllEstateTypes())
+      .then((estateTypes) => {
+        setEstateTypes(estateTypes);
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   const loadData = async () => {

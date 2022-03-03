@@ -9,6 +9,7 @@ class UserService extends BaseService {
   private signupUrl = "/signup";
   private loginUrl = "/signin";
   private verifyUrl = "/verify";
+  private changePasswordUrl = "/change-password";
 
   async getAllUsers(role: Role = Role.USER): Promise<User[]> {
     let users: User[] = [];
@@ -164,6 +165,26 @@ class UserService extends BaseService {
     }
 
     return globalState;
+  }
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    let message;
+    try {
+      let response = await this.Api.post(
+        `${this.changePasswordUrl}`,
+        {
+          currentPassword,
+          newPassword,
+        },
+        this.config
+      );
+      if (response.data) {
+        message = response.data as string;
+      }
+    } catch (error) {
+      this.handleError(error);
+    }
+    return message;
   }
 }
 
