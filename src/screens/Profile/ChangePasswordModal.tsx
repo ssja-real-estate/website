@@ -1,9 +1,11 @@
-import Strings from 'global/constants/strings';
-import { useState } from 'react';
-import { Button, Container, Form, InputGroup, Modal } from 'react-bootstrap';
-import toast from 'react-hot-toast';
-import { useRecoilState } from 'recoil';
-import { profileModalState } from './ProfileState';
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import { useEffect, useRef, useState } from "react";
+import { Button, Container, Form, InputGroup, Modal } from "react-bootstrap";
+import toast from "react-hot-toast";
+import { useRecoilState, useRecoilValue } from "recoil";
+import UserService from "services/api/UserService/UserService";
+import { profileModalState } from "./ProfileState";
 
 interface Props {
   userId: string;
@@ -12,10 +14,22 @@ interface Props {
 
 const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
   const [modalState, setModalState] = useRecoilState(profileModalState);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmationPassword, setConfirmationPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmationPassword, setConfirmationPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
+
+  const state = useRecoilValue(globalState);
+  const userService = useRef(new UserService());
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    userService.current.setToken(state.token);
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [state.token]);
 
   const toggleModalDisplay = (flag: boolean) => {
     setModalState({
@@ -28,8 +42,18 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
     if (confirmationPassword !== newPassword) {
       toast.error(Strings.invalidRepeatPassword);
     }
+    if (userId === "" || !mounted.current) return;
 
-    if (userId === '') return;
+    const message = await userService.current.changePassword(
+      currentPassword,
+      newPassword
+    );
+
+    if (!message) return;
+    toast.success(message, { duration: 2000 });
+
+    if (!reloadScreen) return;
+    reloadScreen();
   };
 
   return (
@@ -47,7 +71,7 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
         <Form>
           <Container>
             <Form.Control
-              type={visibility ? 'text' : 'password'}
+              type={visibility ? "text" : "password"}
               id="newPassword"
               name="newPassword"
               placeholder={Strings.currentPassword}
@@ -58,7 +82,7 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
               }}
             />
             <Form.Control
-              type={visibility ? 'text' : 'password'}
+              type={visibility ? "text" : "password"}
               id="newPassword"
               name="newPassword"
               placeholder={Strings.newPassword}
@@ -69,7 +93,7 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
               }}
             />
             <Form.Control
-              type={visibility ? 'text' : 'password'}
+              type={visibility ? "text" : "password"}
               id="newPassword"
               name="newPassword"
               placeholder={Strings.repeatNewPassword}
@@ -107,7 +131,7 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
         <Button className="rounded-3" variant="purple" onClick={changePassword}>
           {Strings.save}
         </Button>
-      </Modal.Footer>{' '}
+      </Modal.Footer>{" "}
     </Modal>
   );
 };

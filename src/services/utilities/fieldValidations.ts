@@ -44,7 +44,7 @@ const validateForm = (form: EstateForm): Error[] => {
 };
 
 const getErrorMessage = (fieldTitle: string) => {
-  return `ورودی ${fieldTitle} باید مقدار داشته باشد`;
+  return `ورودی «${fieldTitle}» باید مقدار داشته باشد`;
 };
 
 export { validateForm };

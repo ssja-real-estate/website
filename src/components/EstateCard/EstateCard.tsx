@@ -42,6 +42,7 @@ function EstateCard({
           <h6 className="fw-light text-secondary">
             {Strings.neighborhood} : {estate.neighborhood.name}
           </h6>
+          {estate.rejectionStatus.rejected && <small>{Strings.rejected}</small>}
         </div>
         <div className="buttons gap-2 d-flex flex-column">
           {verifyButton && (

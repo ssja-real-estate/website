@@ -95,6 +95,20 @@ class EstateService extends BaseService {
       this.handleError(error);
     }
   }
+
+  async rejectEstate(estateId: string, description: string) {
+    try {
+      await this.Api.put(
+        `${this.estateUrl}/reject/${estateId}`,
+        {
+          description,
+        },
+        this.config
+      );
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
 }
 
 export default EstateService;

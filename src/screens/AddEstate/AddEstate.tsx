@@ -78,70 +78,56 @@ function AddEstateScreen() {
   }, [selectedDelegationType, selectedEstateType, state.token]);
 
   const loadLocations = async () => {
-    toast.promise(
-      locationService.current
-        .getAllProvinces()
-        .then((fetchedProvinces) => {
-          setProvinces(fetchedProvinces);
-          if (selectedProvince?.id) {
-            const province = fetchedProvinces.find(
-              (p) => p.id === selectedProvince.id
-            );
-            if (province) {
-              setSelectedProvince({ ...province });
-              setCities((prev) => province.cities);
-              if (selectedCity?.id) {
-                const city = province.cities.find(
-                  (c) => c.id === selectedCity.id
-                );
-                if (city) {
-                  setSelectedCity({ ...city });
-                  const neighborhoods = city.neighborhoods;
-                  setNeighborhoods((prev) => neighborhoods);
-                  if (selectedNeighborhood?.id) {
-                    const neighborhood = neighborhoods.find(
-                      (n) => n.id === selectedNeighborhood.id
-                    );
-                    if (neighborhood) {
-                      setSelectedNeighborhood(neighborhood);
-                    }
+    locationService.current
+      .getAllProvinces()
+      .then((fetchedProvinces) => {
+        setProvinces(fetchedProvinces);
+        if (selectedProvince?.id) {
+          const province = fetchedProvinces.find(
+            (p) => p.id === selectedProvince.id
+          );
+          if (province) {
+            setSelectedProvince({ ...province });
+            setCities((prev) => province.cities);
+            if (selectedCity?.id) {
+              const city = province.cities.find(
+                (c) => c.id === selectedCity.id
+              );
+              if (city) {
+                setSelectedCity({ ...city });
+                const neighborhoods = city.neighborhoods;
+                setNeighborhoods((prev) => neighborhoods);
+                if (selectedNeighborhood?.id) {
+                  const neighborhood = neighborhoods.find(
+                    (n) => n.id === selectedNeighborhood.id
+                  );
+                  if (neighborhood) {
+                    setSelectedNeighborhood(neighborhood);
                   }
                 }
               }
             }
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingLocationsSuccess,
-        loading: Strings.loadingLocations,
-        error: Strings.loadingLocationsFailed,
-      }
-    );
+        }
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   async function loadOptions() {
-    toast.promise(
-      delegationTypeService.current
-        .getAllDelegationTypes()
-        .then((delegationTypes) => {
-          setDelegationTypes(delegationTypes);
-        })
-        .then(() => estateTypeService.current.getAllEstateTypes())
-        .then((estateTypes) => {
-          setEstateTypes(estateTypes);
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingOptionsSuccess,
-        loading: Strings.loadingOptions,
-        error: Strings.loadingOptionsFailed,
-      }
-    );
+    delegationTypeService.current
+      .getAllDelegationTypes()
+      .then((delegationTypes) => {
+        setDelegationTypes(delegationTypes);
+      })
+      .then(() => estateTypeService.current.getAllEstateTypes())
+      .then((estateTypes) => {
+        setEstateTypes(estateTypes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   async function loadData() {

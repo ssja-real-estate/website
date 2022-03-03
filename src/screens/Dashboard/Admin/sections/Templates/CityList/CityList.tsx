@@ -29,30 +29,23 @@ function CityList() {
   }, [state.token]);
 
   const loadProvinces = async () => {
-    toast.promise(
-      locationService.current
-        .getAllProvinces()
-        .then((fetchedProvinces) => {
-          setProvinces(fetchedProvinces);
-          if (selectedProvince?.id) {
-            const province = fetchedProvinces.find(
-              (p) => p.id === selectedProvince.id
-            );
-            if (province) {
-              setSelectedProvince(province);
-              setCities((prev) => province.cities);
-            }
+    locationService.current
+      .getAllProvinces()
+      .then((fetchedProvinces) => {
+        setProvinces(fetchedProvinces);
+        if (selectedProvince?.id) {
+          const province = fetchedProvinces.find(
+            (p) => p.id === selectedProvince.id
+          );
+          if (province) {
+            setSelectedProvince(province);
+            setCities((prev) => province.cities);
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingLocationsSuccess,
-        loading: Strings.loadingLocations,
-        error: Strings.loadingLocationsFailed,
-      }
-    );
+        }
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   return (

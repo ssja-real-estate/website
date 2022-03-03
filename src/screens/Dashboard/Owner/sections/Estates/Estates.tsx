@@ -17,6 +17,11 @@ import {
 import CustomModal from "components/CustomModal/CustomModal";
 import EstateInfoModal from "components/EstateInfoModal/EstateInfoModal";
 import Strings from "global/constants/strings";
+import {
+  defaultRejectEstate,
+  rejectEstateAtom,
+} from "components/RejectEstateModal/RejectEstateModalState";
+import RejectEstateModal from "components/RejectEstateModal/RejectEstateModal";
 
 const loadingItems = [1, 1, 1, 1, 1, 1, 1, 1];
 
@@ -25,6 +30,8 @@ function EstatesSection() {
   const [loading, setLoading] = useState<boolean>(true);
   const [estateInfoModalState, setEstateInfoModalState] =
     useRecoilState(estateInfoModalAtom);
+  const [rejectEstateState, setRejectEstateState] =
+    useRecoilState(rejectEstateAtom);
 
   const state = useRecoilValue(globalState);
   const estateService = useRef(new EstateService());
@@ -48,6 +55,8 @@ function EstatesSection() {
     const unverifiedEstates =
       await estateService.current.getUnverifiedEstates();
 
+    console.log(unverifiedEstates);
+
     if (unverifiedEstates) {
       setUnverifiedEstates(unverifiedEstates);
     }
@@ -56,17 +65,30 @@ function EstatesSection() {
   };
 
   const verifyEstate = async (estateId: string) => {
+    if (!mounted.current) return;
     setLoading((prev) => true);
 
     await estateService.current.verifyEstate(estateId);
 
-    loadData();
+    await loadData();
 
     setLoading((prev) => false);
   };
 
-  const rejectEstate = async (estateId: string) => {
-    console.log("reject estate");
+  const rejectEstate = async () => {
+    if (!mounted.current || !rejectEstateState.estateId) return;
+    setLoading((prev) => true);
+
+    console.log(rejectEstateState);
+
+    await estateService.current.rejectEstate(
+      rejectEstateState.estateId,
+      rejectEstateState.description
+    );
+
+    setRejectEstateState(defaultRejectEstate);
+    await loadData();
+    setLoading((prev) => false);
   };
 
   return (
@@ -97,7 +119,13 @@ function EstatesSection() {
                     verifyButton
                     rejectButton
                     onVerify={() => verifyEstate(estate.id)}
-                    onReject={() => rejectEstate(estate.id)}
+                    onReject={() => {
+                      setRejectEstateState({
+                        estateId: estate.id,
+                        description: estate.rejectionStatus.description,
+                        showModal: true,
+                      });
+                    }}
                     onShowEstateInfo={() => {
                       setEstateInfoModalState({
                         estate,
@@ -112,11 +140,24 @@ function EstatesSection() {
       <CustomModal
         show={estateInfoModalState.showModal}
         title={Strings.estateInfo}
+        cancelTitle={Strings.close}
         handleClose={() => {
           setEstateInfoModalState(defaultEstateInfoModalState);
         }}
       >
         <EstateInfoModal />
+      </CustomModal>
+      <CustomModal
+        show={rejectEstateState.showModal}
+        title={Strings.rejectEstate}
+        successTitle={Strings.save}
+        cancelTitle={Strings.cancel}
+        handleSuccess={rejectEstate}
+        handleClose={() => {
+          setRejectEstateState(defaultRejectEstate);
+        }}
+      >
+        <RejectEstateModal />
       </CustomModal>
     </div>
   );

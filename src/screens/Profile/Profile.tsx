@@ -46,6 +46,7 @@ const Profile = () => {
     if (mounted.current) {
       setUser(fetchedUser);
       setLoading(false);
+      toggleModalDisplay(false);
     }
   };
 
