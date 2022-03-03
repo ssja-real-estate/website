@@ -1,18 +1,28 @@
 import { defaultForm, EstateForm } from "./EstateForm";
 
+interface EstateLocation {
+  id: string;
+  name: string;
+}
+
+const defaultLocation: EstateLocation = {
+  id: "",
+  name: "",
+};
+
 interface Estate {
   id: string;
-  cityId: string;
-  provinceId: string;
-  neighborhoodId: string;
+  province: EstateLocation;
+  city: EstateLocation;
+  neighborhood: EstateLocation;
   dataForm: EstateForm;
 }
 
 const defaultEstate: Estate = {
   id: "",
-  cityId: "",
-  provinceId: "",
-  neighborhoodId: "",
+  city: defaultLocation,
+  province: defaultLocation,
+  neighborhood: defaultLocation,
   dataForm: defaultForm,
 };
 

@@ -18,10 +18,11 @@ import CustomModal from "components/CustomModal/CustomModal";
 import EstateInfoModal from "components/EstateInfoModal/EstateInfoModal";
 import Strings from "global/constants/strings";
 
+const loadingItems = [1, 1, 1, 1, 1, 1, 1, 1];
+
 function EstatesSection() {
   const [unverifiedEstates, setUnverifiedEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const loadingItems = [1, 1, 1, 1, 1, 1, 1, 1];
   const [estateInfoModalState, setEstateInfoModalState] =
     useRecoilState(estateInfoModalAtom);
 
@@ -104,19 +105,19 @@ function EstatesSection() {
                       });
                     }}
                   />
-                  <CustomModal
-                    show={estateInfoModalState.showModal}
-                    title={Strings.estateInfo}
-                    handleClose={() => {
-                      setEstateInfoModalState(defaultEstateInfoModalState);
-                    }}
-                  >
-                    <EstateInfoModal />
-                  </CustomModal>
                 </React.Fragment>
               );
             })}
       </div>
+      <CustomModal
+        show={estateInfoModalState.showModal}
+        title={Strings.estateInfo}
+        handleClose={() => {
+          setEstateInfoModalState(defaultEstateInfoModalState);
+        }}
+      >
+        <EstateInfoModal />
+      </CustomModal>
     </div>
   );
 }

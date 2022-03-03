@@ -181,7 +181,10 @@ function AddEstateScreen() {
     setCities(province.cities);
     setEstate({
       ...estate,
-      provinceId,
+      province: {
+        id: provinceId,
+        name: province.name,
+      },
     });
   }
 
@@ -203,7 +206,10 @@ function AddEstateScreen() {
 
     setEstate({
       ...estate,
-      cityId,
+      city: {
+        id: cityId,
+        name: city.name,
+      },
     });
   }
 
@@ -220,7 +226,13 @@ function AddEstateScreen() {
       mapInfo: neighborhood.mapInfo,
     });
     setMapInfo(neighborhood.mapInfo);
-    setEstate({ ...estate, neighborhoodId });
+    setEstate({
+      ...estate,
+      neighborhood: {
+        id: neighborhoodId,
+        name: neighborhood.name,
+      },
+    });
   }
 
   function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {

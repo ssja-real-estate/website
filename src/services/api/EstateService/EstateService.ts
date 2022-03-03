@@ -8,7 +8,7 @@ class EstateService extends BaseService {
     let verifiedEstates: Estate[] = [];
     try {
       let response = await this.Api.get(
-        `${this.estateUrl}/show/all`,
+        `${this.estateUrl}/list/verified`,
         this.config
       );
       if (response.data) {
@@ -25,7 +25,7 @@ class EstateService extends BaseService {
     let unVerifiedEstates: Estate[] = [];
     try {
       let response = await this.Api.get(
-        `${this.estateUrl}/show/unverified`,
+        `${this.estateUrl}/list/unverified`,
         this.config
       );
       if (response.data) {
@@ -54,11 +54,11 @@ class EstateService extends BaseService {
     return estate;
   }
 
-  async getUserEstates(userId: string) {
+  async getUserEstates() {
     let estates: Estate[] = [];
     try {
       let response = await this.Api.get(
-        `${this.estateUrl}/estate/user/${userId}`,
+        `${this.estateUrl}/estate/list/user`,
         this.config
       );
       if (response.data) {
@@ -86,15 +86,11 @@ class EstateService extends BaseService {
 
   async verifyEstate(estateId: string) {
     try {
-      let response = await this.Api.put(
+      await this.Api.put(
         `${this.estateUrl}/verify/${estateId}`,
         undefined,
         this.config
       );
-      if (response.data) {
-        console.log("verify response");
-        console.log(response.data);
-      }
     } catch (error) {
       this.handleError(error);
     }

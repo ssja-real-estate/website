@@ -1,3 +1,4 @@
+import Strings from "global/constants/strings";
 import { MouseEventHandler } from "react";
 import { Button } from "react-bootstrap";
 import Tilt from "react-parallax-tilt";
@@ -32,12 +33,15 @@ function EstateCard({
               {estate.dataForm.title}
             </h4>
           </div>
-          {/* <h4 className="delegation-and-estate-type fs-5 fw-bold py-4">
-            {estate.delegationType} {estate.estateType}
-          </h4> */}
-          {/* <h6 className="province-and-city fw-light text-secondary">
-            {estate.cityId}، {estate.provinceId}
-          </h6> */}
+          <h6 className="fw-light text-secondary">
+            {Strings.province} : {estate.province.name}
+          </h6>
+          <h6 className="fw-light text-secondary">
+            {Strings.city} : {estate.city.name}
+          </h6>
+          <h6 className="fw-light text-secondary">
+            {Strings.neighborhood} : {estate.neighborhood.name}
+          </h6>
         </div>
         <div className="buttons gap-2 d-flex flex-column">
           {verifyButton && (
