@@ -48,7 +48,7 @@ function AdminSidebar() {
       <OverlayTrigger
         placement="left"
         overlay={
-          <Tooltip id="estates-tooltip">{Strings.estatesTooltip}</Tooltip>
+          <Tooltip id="estates-tooltip">{Strings.myEstatesTooltip}</Tooltip>
         }
       >
         <Button

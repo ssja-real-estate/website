@@ -1,93 +1,61 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import CustomModal from "components/CustomModal/CustomModal";
+import EstateInfoModal from "components/EstateInfoModal/EstateInfoModal";
+import {
+  defaultEstateInfoModalState,
+  estateInfoModalAtom,
+} from "components/EstateInfoModal/EstateInfoModalState";
+import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import DelegationType from "global/types/DelegationType";
-import EstateType from "global/types/EstateType";
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Row } from "react-bootstrap";
 import Tilt from "react-parallax-tilt";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import EstateService from "services/api/EstateService/EstateService";
 import EstateCard from "../../../../../components/EstateCard/EstateCard";
 import { Estate } from "../../../../../global/types/Estate";
 import "./Estates.css";
 
+const loadingItems = [1, 1, 1, 1, 1, 1, 1, 1];
+
 function EstatesSection() {
-  const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
-  const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
-  const [delegationType, setDelegationType] = useState<string>("default");
-  const [estateType, setEstateType] = useState<string>("default");
-  const [location, setLocation] = useState<string>("");
-  const [estates, setEstates] = useState<Estate[]>([]);
+  const [userEstates, setUserEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [estateInfoModalState, setEstateInfoModalState] =
+    useRecoilState(estateInfoModalAtom);
 
-  // const state = useRecoilValue(globalState);
-  // const mounted = useRef(true);
+  const state = useRecoilValue(globalState);
+  const estateService = useRef(new EstateService());
+  const mounted = useRef(true);
 
-  // useEffect(() => {
-  //   if (mounted.current) {
-  //   }
+  useEffect(() => {
+    estateService.current.setToken(state.token);
 
-  //   return () => {
-  //     mounted.current = false;
-  //   };
-  // }, [state.token]);
+    loadData();
 
-  function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setDelegationType(event.target.value);
-  }
-  function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setEstateType(event.target.value);
-  }
-  function handleLocationChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setLocation(event.target.value);
-  }
+    return () => {
+      mounted.current = false;
+    };
+  }, [state.token]);
+
+  const loadData = async () => {
+    if (!mounted.current) {
+      return;
+    }
+    setLoading((prev) => true);
+    const userEstates = await estateService.current.getUserEstates();
+
+    if (userEstates) {
+      setUserEstates(userEstates);
+    }
+
+    setLoading((prev) => false);
+  };
 
   return (
     <div className="estates-section">
-      <div className="estates-filter card shadow p-4 mb-4 sticky-top">
-        <Row md={4}>
-          <h4 className="fw-light">فیلتر نتایج</h4>
-          <div>
-            <Form.Select
-              value={delegationType}
-              onChange={handleDelegationChange}
-            >
-              <option value="default">همه</option>
-              {delegationTypes.map((option, index) => {
-                return (
-                  <option key={index} value={option.name}>
-                    {option.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </div>
-          <div>
-            <Form.Select value={estateType} onChange={handleTypeChange}>
-              <option value="default">همه</option>
-              {estateTypes.map((option, index) => {
-                return (
-                  <option key={index} value={option.name}>
-                    {option.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </div>
-          <div>
-            <Form.Control
-              type="text"
-              id="location"
-              name="location"
-              placeholder="مکان"
-              value={location}
-              onChange={handleLocationChange}
-            />
-          </div>
-        </Row>
-      </div>
       <div className="estates-grid">
         {loading
-          ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => {
+          ? loadingItems.map((_, index) => {
               return (
                 <Tilt key={index}>
                   <div className="estate card shadow rounded-3 p-4">
@@ -103,14 +71,34 @@ function EstatesSection() {
                 </Tilt>
               );
             })
-          : estates.map((estate, index) => {
+          : userEstates.map((estate, index) => {
               return (
                 <React.Fragment key={index}>
-                  <EstateCard estate={estate} verifyButton rejectButton />
+                  <EstateCard
+                    estate={estate}
+                    rejectButton
+                    onReject={() => {}}
+                    onShowEstateInfo={() => {
+                      setEstateInfoModalState({
+                        estate,
+                        showModal: true,
+                      });
+                    }}
+                  />
                 </React.Fragment>
               );
             })}
       </div>
+      <CustomModal
+        show={estateInfoModalState.showModal}
+        title={Strings.estateInfo}
+        cancelTitle={Strings.close}
+        handleClose={() => {
+          setEstateInfoModalState(defaultEstateInfoModalState);
+        }}
+      >
+        <EstateInfoModal />
+      </CustomModal>
     </div>
   );
 }

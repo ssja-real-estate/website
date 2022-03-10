@@ -132,6 +132,10 @@ class Strings {
   static profileTooltip = "پروفایل";
   static usersTooltip = "کاربران";
   static estatesTooltip = "املاک";
+  static myEstatesTooltip = "املاک من";
+  static myVerifiedEstatesTooltip = "املاک تاییدشده‌ی من";
+  static unverifiedEstatesTooltip = "املاک در انتظار تایید";
+  static rejectedEstatesTooltip = "املاک تایید نشده";
   static templatesTooltip = "قالب‌ها";
   static optionalField = "(اختیاری)";
   static imagesLimit = "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!";
@@ -149,6 +153,8 @@ class Strings {
   static rejectEstate = "عدم تایید ملک";
   static close = "بستن";
   static rejected = "غیرقابل قبول";
+  static verified = "تاییده شده";
+  static unverified = "در انتظار تایید";
 }
 
 export default Strings;

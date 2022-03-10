@@ -48,14 +48,58 @@ function OwnerSidebar() {
       <OverlayTrigger
         placement="left"
         overlay={
-          <Tooltip id="estates-tooltip">{Strings.estatesTooltip}</Tooltip>
+          <Tooltip id="verified-estates-tooltip">
+            {Strings.myVerifiedEstatesTooltip}
+          </Tooltip>
         }
       >
         <Button
           variant=""
-          className={section === "estates" ? "btn-purple" : "btn-light"}
+          className={
+            section === "verified-estates" ? "btn-purple" : "btn-light"
+          }
           onClick={() => {
-            setSection("estates");
+            setSection("verified-estates");
+          }}
+        >
+          <i className="bi-grid-3x3-gap-fill"></i>
+        </Button>
+      </OverlayTrigger>
+      <OverlayTrigger
+        placement="left"
+        overlay={
+          <Tooltip id="unverified-estates-tooltip">
+            {Strings.unverifiedEstatesTooltip}
+          </Tooltip>
+        }
+      >
+        <Button
+          variant=""
+          className={
+            section === "unverified-estates" ? "btn-purple" : "btn-light"
+          }
+          onClick={() => {
+            setSection("unverified-estates");
+          }}
+        >
+          <i className="bi-grid-3x3-gap-fill"></i>
+        </Button>
+      </OverlayTrigger>
+      <OverlayTrigger
+        placement="left"
+        overlay={
+          <Tooltip id="rejected-estates-tooltip">
+            {Strings.rejectedEstatesTooltip}
+          </Tooltip>
+        }
+      >
+        <Button
+          variant=""
+          className={
+            section === "rejected-estates" ? "btn-purple" : "btn-light"
+          }
+          onClick={() => {
+            setSection("rejected-estates");
           }}
         >
           <i className="bi-grid-3x3-gap-fill"></i>

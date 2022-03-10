@@ -1,14 +1,14 @@
-import { defaultEstate, Estate } from "global/types/Estate";
+import { defaultEstate, Estate, EstateStatus } from "global/types/Estate";
 import BaseService from "../BaseService";
 
 class EstateService extends BaseService {
   estateUrl = "/estate";
 
-  async getVerifiedEstates() {
+  async getEstates(status: EstateStatus = EstateStatus.Verified) {
     let verifiedEstates: Estate[] = [];
     try {
       let response = await this.Api.get(
-        `${this.estateUrl}/list/verified`,
+        `${this.estateUrl}/list/${status}`,
         this.config
       );
       if (response.data) {
@@ -19,23 +19,6 @@ class EstateService extends BaseService {
     }
 
     return verifiedEstates;
-  }
-
-  async getUnverifiedEstates() {
-    let unVerifiedEstates: Estate[] = [];
-    try {
-      let response = await this.Api.get(
-        `${this.estateUrl}/list/unverified`,
-        this.config
-      );
-      if (response.data) {
-        unVerifiedEstates = response.data as Estate[];
-      }
-    } catch (error) {
-      this.handleError(error);
-    }
-
-    return unVerifiedEstates;
   }
 
   async getEstateById(estateId: string) {
@@ -58,7 +41,7 @@ class EstateService extends BaseService {
     let estates: Estate[] = [];
     try {
       let response = await this.Api.get(
-        `${this.estateUrl}/estate/list/user`,
+        `${this.estateUrl}/list/user`,
         this.config
       );
       if (response.data) {
@@ -84,23 +67,16 @@ class EstateService extends BaseService {
     return newEstate;
   }
 
-  async verifyEstate(estateId: string) {
+  async updateEstateStatus(
+    estateId: string,
+    status: EstateStatus,
+    description: string = ""
+  ) {
     try {
       await this.Api.put(
-        `${this.estateUrl}/verify/${estateId}`,
-        undefined,
-        this.config
-      );
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  async rejectEstate(estateId: string, description: string) {
-    try {
-      await this.Api.put(
-        `${this.estateUrl}/reject/${estateId}`,
+        `${this.estateUrl}/status/${estateId}`,
         {
+          status,
           description,
         },
         this.config

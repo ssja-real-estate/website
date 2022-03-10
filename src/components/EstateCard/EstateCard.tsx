@@ -6,8 +6,11 @@ import { Estate } from "../../global/types/Estate";
 
 interface EstateCardProps {
   estate: Estate;
+  editButton?: boolean;
   verifyButton?: boolean;
   rejectButton?: boolean;
+  showEstateInfoButton?: boolean;
+  onEdit?: MouseEventHandler;
   onVerify?: MouseEventHandler;
   onReject?: MouseEventHandler;
   onShowEstateInfo?: MouseEventHandler;
@@ -16,8 +19,11 @@ interface EstateCardProps {
 
 function EstateCard({
   estate,
+  editButton = false,
   verifyButton = false,
   rejectButton = false,
+  showEstateInfoButton = false,
+  onEdit,
   onVerify,
   onReject,
   onShowEstateInfo,
@@ -42,9 +48,13 @@ function EstateCard({
           <h6 className="fw-light text-secondary">
             {Strings.neighborhood} : {estate.neighborhood.name}
           </h6>
-          {estate.rejectionStatus.rejected && <small>{Strings.rejected}</small>}
         </div>
         <div className="buttons gap-2 d-flex flex-column">
+          {editButton && (
+            <Button className="info-btn" variant="outline-primary">
+              <i className="bi-pencil" onClick={onEdit}></i>
+            </Button>
+          )}
           {verifyButton && (
             <Button
               className="verify-btn"
@@ -63,12 +73,14 @@ function EstateCard({
               <i className="reject-icon bi-x"></i>
             </Button>
           )}
-          <Button className="info-btn" variant="outline-secondary">
-            <i
-              className="info-icon bi-info-circle-fill"
-              onClick={onShowEstateInfo}
-            ></i>
-          </Button>
+          {showEstateInfoButton && (
+            <Button className="info-btn" variant="outline-secondary">
+              <i
+                className="info-icon bi-info-circle-fill"
+                onClick={onShowEstateInfo}
+              ></i>
+            </Button>
+          )}
         </div>
       </div>
     </Tilt>
