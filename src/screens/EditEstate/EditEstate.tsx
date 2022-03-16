@@ -450,19 +450,30 @@ function EditEstateScreen() {
                 )}
             </>
           ) : field.type === FieldType.Image ? (
-            <>
+            <Row>
               {previousImages.length > 0
                 ? previousImages.map((img, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => {
-                        let filteredImages = previousImages.filter(
-                          (i) => i !== img
-                        );
-                        setPreviousImages(filteredImages);
-                        setDeletedImages((prev) => [...prev, img]);
-                      }}
-                    >{`${imagesBaseUrl}/${img}`}</div>
+                    <Col>
+                      <div key={idx}>
+                        <img
+                          src={`${imagesBaseUrl}/${img}`}
+                          alt={`${imagesBaseUrl}/${img}`}
+                          className="thumbnail rounded-3"
+                        />
+                        <button
+                          className="btn-remove"
+                          onClick={() => {
+                            let filteredImages = previousImages.filter(
+                              (i) => i !== img
+                            );
+                            setPreviousImages(filteredImages);
+                            setDeletedImages((prev) => [...prev, img]);
+                          }}
+                        >
+                          X
+                        </button>
+                      </div>
+                    </Col>
                   ))
                 : null}
               <Form.Control
@@ -486,7 +497,7 @@ function EditEstateScreen() {
                   // onFieldChange(data, form, sectionIndex, fieldIndex);
                 }}
               />
-            </>
+            </Row>
           ) : (
             <Form.Control
               type="text"
