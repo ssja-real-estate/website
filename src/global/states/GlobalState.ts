@@ -14,5 +14,7 @@ const defaultGlobalState: GlobalState = {
   loggedIn: false,
 };
 
+export const imagesBaseUrl = "https://ssja.ir/api/images";
+
 export default GlobalState;
 export { defaultGlobalState };

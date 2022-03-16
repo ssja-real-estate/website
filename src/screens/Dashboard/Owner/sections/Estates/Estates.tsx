@@ -11,10 +11,12 @@ import {
   rejectEstateAtom,
 } from "components/RejectEstateModal/RejectEstateModalState";
 import Strings from "global/constants/strings";
+import { estateScreenAtom, ScreenType } from "global/states/EstateScreen";
 import { globalState } from "global/states/globalStates";
 import React, { useEffect, useRef, useState } from "react";
 import Tilt from "react-parallax-tilt";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useHistory } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import EstateService from "services/api/EstateService/EstateService";
 import EstateCard from "../../../../../components/EstateCard/EstateCard";
 import { Estate, EstateStatus } from "../../../../../global/types/Estate";
@@ -34,9 +36,11 @@ function EstatesSection({ status = EstateStatus.Unverified }: Props) {
   const [rejectEstateState, setRejectEstateState] =
     useRecoilState(rejectEstateAtom);
 
+  const setEstateScreenState = useSetRecoilState(estateScreenAtom);
   const state = useRecoilValue(globalState);
   const estateService = useRef(new EstateService());
   const mounted = useRef(true);
+  const history = useHistory();
 
   useEffect(() => {
     estateService.current.setToken(state.token);
@@ -88,8 +92,6 @@ function EstatesSection({ status = EstateStatus.Unverified }: Props) {
     if (!mounted.current || !rejectEstateState.estateId) return;
     setLoading((prev) => true);
 
-    console.log(rejectEstateState);
-
     await estateService.current.updateEstateStatus(
       rejectEstateState.estateId,
       EstateStatus.Rejected,
@@ -131,7 +133,12 @@ function EstatesSection({ status = EstateStatus.Unverified }: Props) {
                     rejectButton={status === EstateStatus.Unverified}
                     showEstateInfoButton={true}
                     onEdit={() => {
-                      console.log("edit estate");
+                      setEstateScreenState((prev) => ({
+                        ...prev,
+                        inputEstate: estate,
+                        screenType: ScreenType.Edit,
+                      }));
+                      history.push("/edit-estate");
                     }}
                     onVerify={() => verifyEstate(estate.id)}
                     onReject={

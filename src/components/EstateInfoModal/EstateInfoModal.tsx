@@ -1,10 +1,9 @@
 import Strings from "global/constants/strings";
+import { imagesBaseUrl } from "global/states/GlobalState";
 import { FieldType } from "global/types/Field";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { estateInfoModalAtom } from "./EstateInfoModalState";
-
-const imagesBaseUrl = "https://ssja.ir/api/images";
 
 const EstateInfoModal = () => {
   const estateInfo = useRecoilValue(estateInfoModalAtom);

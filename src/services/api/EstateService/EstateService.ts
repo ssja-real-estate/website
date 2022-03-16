@@ -53,8 +53,7 @@ class EstateService extends BaseService {
     return estates;
   }
 
-  async requestAddEtate(estate: Estate, formData: FormData) {
-    formData.append("estate", JSON.stringify(estate));
+  async requestAddEtate(formData: FormData) {
     let newEstate = undefined;
     try {
       let response = await this.Api.post(this.estateUrl, formData, this.config);
@@ -65,6 +64,15 @@ class EstateService extends BaseService {
       this.handleError(error);
     }
     return newEstate;
+  }
+
+  async editEstate(formData: FormData) {
+    let editedEstate = undefined;
+    try {
+    } catch (error) {
+      this.handleError(error);
+    }
+    return editedEstate;
   }
 
   async updateEstateStatus(

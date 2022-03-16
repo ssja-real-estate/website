@@ -1,35 +1,38 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import "./AddEstate.css";
 import { motion } from "framer-motion";
+import Strings from "global/constants/strings";
+import { estateScreenAtom, ScreenType } from "global/states/EstateScreen";
+import { imagesBaseUrl } from "global/states/GlobalState";
+import { globalState } from "global/states/globalStates";
+import City, { defaultCity } from "global/types/City";
+import DelegationType, {
+  defaultDelegationType,
+} from "global/types/DelegationType";
+import { defaultEstate, Estate } from "global/types/Estate";
+import EstateType, { defaultEstateType } from "global/types/EstateType";
+import MapInfo from "global/types/MapInfo";
+import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
+import Province, { defaultProvince } from "global/types/Province";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
+import { useRecoilValue } from "recoil";
+import MapScreen from "screens/Map/Map";
+import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
+import EstateService from "services/api/EstateService/EstateService";
+import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import FormService from "services/api/FormService/FormService";
+import LocationService from "services/api/LocationService/LocationService";
+import { validateForm } from "services/utilities/fieldValidations";
 import {
   crossfadeAnimation,
   elevationEffect,
 } from "../../animations/motionVariants";
-import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
-import { EstateForm } from "../../global/types/EstateForm";
-import { FieldType, Field } from "../../global/types/Field";
-import Strings from "global/constants/strings";
-import EstateType, { defaultEstateType } from "global/types/EstateType";
-import { globalState } from "global/states/globalStates";
-import { useRecoilValue } from "recoil";
-import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
-import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
-import FormService from "services/api/FormService/FormService";
-import toast from "react-hot-toast";
-import DelegationType, {
-  defaultDelegationType,
-} from "global/types/DelegationType";
-import EstateService from "services/api/EstateService/EstateService";
-import MapScreen from "screens/Map/Map";
-import Province, { defaultProvince } from "global/types/Province";
-import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
-import City, { defaultCity } from "global/types/City";
-import LocationService from "services/api/LocationService/LocationService";
-import MapInfo from "global/types/MapInfo";
-import { defaultEstate, Estate } from "global/types/Estate";
-import { validateForm } from "services/utilities/fieldValidations";
+import { defaultForm, EstateForm } from "../../global/types/EstateForm";
+import { Field, FieldType } from "../../global/types/Field";
+import "./EditEstate.css";
 
-function AddEstateScreen() {
+function EditEstateScreen() {
+  const { inputEstate, screenType } = useRecoilValue(estateScreenAtom);
   const [loading, setLoading] = useState<boolean>(true);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
@@ -50,6 +53,8 @@ function AddEstateScreen() {
   const [estate, setEstate] = useState<Estate>(defaultEstate);
   const [formData, setFormData] = useState<FormData>(new FormData());
   const [imagesCount, setImagesCount] = useState<number>(0);
+  const [previousImages, setPreviousImages] = useState<string[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
   const state = useRecoilValue(globalState);
   const formService = useRef(new FormService());
@@ -61,14 +66,11 @@ function AddEstateScreen() {
   const [mapInfo, setMapInfo] = useState<MapInfo>();
 
   useEffect(() => {
-    formService.current.setToken(state.token);
-    delegationTypeService.current.setToken(state.token);
-    estateTypeService.current.setToken(state.token);
-    estateService.current.setToken(state.token);
-    locationService.current.setToken(state.token);
-
+    setServinceTokens();
     loadLocations();
-    loadOptions();
+    if (screenType === ScreenType.Add) {
+      loadOptions();
+    }
     loadData();
 
     return () => {
@@ -77,57 +79,140 @@ function AddEstateScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDelegationType, selectedEstateType, state.token]);
 
-  const loadLocations = async () => {
+  useEffect(() => {
+    if (screenType === ScreenType.Edit) {
+      loadLocations();
+      loadOptions();
+      loadData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screenType]);
+
+  const setServinceTokens = () => {
+    formService.current.setToken(state.token);
+    delegationTypeService.current.setToken(state.token);
+    estateTypeService.current.setToken(state.token);
+    estateService.current.setToken(state.token);
+    locationService.current.setToken(state.token);
+  };
+
+  async function loadLocations() {
     locationService.current
       .getAllProvinces()
       .then((fetchedProvinces) => {
         setProvinces(fetchedProvinces);
-        if (selectedProvince?.id) {
-          const province = fetchedProvinces.find(
-            (p) => p.id === selectedProvince.id
-          );
-          if (province) {
-            setSelectedProvince({ ...province });
-            setCities((prev) => province.cities);
-            if (selectedCity?.id) {
-              const city = province.cities.find(
-                (c) => c.id === selectedCity.id
-              );
-              if (city) {
-                setSelectedCity({ ...city });
-                const neighborhoods = city.neighborhoods;
-                setNeighborhoods((prev) => neighborhoods);
-                if (selectedNeighborhood?.id) {
-                  const neighborhood = neighborhoods.find(
-                    (n) => n.id === selectedNeighborhood.id
-                  );
-                  if (neighborhood) {
-                    setSelectedNeighborhood(neighborhood);
-                  }
-                }
-              }
-            }
-          }
+        let locationIds = undefined;
+        if (screenType === ScreenType.Add) {
+          locationIds = {
+            provinceId: selectedProvince.id,
+            cityId: selectedCity.id,
+            neighborhoodId: selectedNeighborhood.id,
+          };
+        } else {
+          if (!inputEstate || !inputEstate.id) return;
+          locationIds = {
+            provinceId: inputEstate.province.id,
+            cityId: inputEstate.city.id,
+            neighborhoodId: inputEstate.neighborhood.id,
+          };
         }
+        if (!locationIds) return;
+        setLocationValues(fetchedProvinces, locationIds);
       })
       .catch((_) => {
         toast.error(Strings.loadingLocationsFailed);
       });
-  };
+  }
+
+  function setLocationValues(
+    fetchedProvinces: Province[],
+    locationIds: {
+      provinceId?: string;
+      cityId?: string;
+      neighborhoodId?: string;
+    }
+  ) {
+    const { provinceId, cityId, neighborhoodId } = locationIds;
+    if (!provinceId) return;
+    const province = fetchedProvinces.find((p) => p.id === provinceId);
+    if (!province) return;
+    setSelectedProvince(province);
+
+    setCities((prev) => province.cities);
+    if (!cityId) return;
+    const city = province.cities.find((c) => c.id === cityId);
+    if (!city) return;
+    setSelectedCity(city);
+
+    setNeighborhoods((prev) => city.neighborhoods);
+    if (!neighborhoodId) return;
+    const neighborhood = city.neighborhoods.find(
+      (n) => n.id === neighborhoodId
+    );
+    if (!neighborhood) return;
+    setSelectedNeighborhood(neighborhood);
+    setMapInfo(neighborhood.mapInfo);
+  }
 
   async function loadOptions() {
+    let fetchedDelegationTypes: DelegationType[] = [];
+    let fetchedEstateTypes: EstateType[] = [];
     delegationTypeService.current
       .getAllDelegationTypes()
-      .then((delegationTypes) => {
-        setDelegationTypes(delegationTypes);
+      .then((types) => {
+        setDelegationTypes(types);
+        fetchedDelegationTypes = types;
       })
       .then(() => estateTypeService.current.getAllEstateTypes())
-      .then((estateTypes) => {
-        setEstateTypes(estateTypes);
+      .then((types) => {
+        setEstateTypes(types);
+        fetchedEstateTypes = types;
+      })
+      .then(() => {
+        let ids = {
+          delegationTypeId:
+            screenType === ScreenType.Add
+              ? selectedDelegationType.id
+              : inputEstate.dataForm.assignmentTypeId,
+          estateTypeId:
+            screenType === ScreenType.Add
+              ? selectedEstateType.id
+              : inputEstate.dataForm.estateTypeId,
+        };
+        setOptions({ fetchedDelegationTypes, fetchedEstateTypes }, ids);
       })
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  function setOptions(
+    options: {
+      fetchedDelegationTypes: DelegationType[];
+      fetchedEstateTypes: EstateType[];
+    },
+    ids: { delegationTypeId?: string; estateTypeId?: string }
+  ) {
+    const { fetchedDelegationTypes, fetchedEstateTypes } = options;
+    const { delegationTypeId, estateTypeId } = ids;
+    if (fetchedDelegationTypes) {
+      if (delegationTypeId) {
+        const type = fetchedDelegationTypes.find(
+          (d) => d.id === delegationTypeId
+        );
+        if (type) {
+          setSelectedDelegationType(type);
+        }
+      }
+    }
+    if (fetchedEstateTypes) {
+      if (estateTypeId) {
+        const type = fetchedEstateTypes.find((e) => e.id === estateTypeId);
+        if (type) {
+          setSelectedEstateType(type);
+        }
+      }
+    }
   }
 
   async function loadData() {
@@ -139,19 +224,36 @@ function AddEstateScreen() {
       setLoading((prev) => false);
       return;
     }
-    const loadedForm = await formService.current.getForm(
-      selectedDelegationType.id,
-      selectedEstateType.id
-    );
 
-    setEstate({ ...estate, dataForm: loadedForm });
-    await loadLocations();
-    await loadOptions();
+    let loadedEstate: Estate = { ...estate, dataForm: defaultForm };
+    if (screenType === ScreenType.Add) {
+      loadedEstate.dataForm = await formService.current.getForm(
+        selectedDelegationType.id,
+        selectedEstateType.id
+      );
+    } else {
+      if (inputEstate && inputEstate.id) {
+        loadedEstate = JSON.parse(JSON.stringify(inputEstate));
+      }
+    }
+    setEstate(loadedEstate);
+    setImages(loadedEstate.dataForm);
     setLoading((prev) => false);
   }
 
-  function handleProvinceChange(event: ChangeEvent<HTMLSelectElement>) {
-    const provinceId = event.currentTarget.value;
+  function setImages(form: EstateForm) {
+    if (!form.sections || form.sections.length < 1) return;
+
+    const firstSection = form.sections[0];
+    if (!firstSection.fields || firstSection.fields.length < 1) return;
+
+    const firstField = firstSection.fields[0];
+    if (firstField.type !== FieldType.Image) return;
+
+    setPreviousImages((firstField.value as string[]) ?? []);
+  }
+
+  function handleProvinceChange(provinceId: string) {
     const province = provinces.find((p) => p.id === provinceId);
     if (!province) return;
 
@@ -174,8 +276,7 @@ function AddEstateScreen() {
     });
   }
 
-  function handleCityChange(event: ChangeEvent<HTMLSelectElement>) {
-    const cityId = event.currentTarget.value;
+  function handleCityChange(cityId: string) {
     const city = cities.find((c) => c.id === cityId);
 
     if (!city) return;
@@ -199,11 +300,8 @@ function AddEstateScreen() {
     });
   }
 
-  function handleNeighborhoodChange(event: ChangeEvent<HTMLSelectElement>) {
-    const neighborhoodId = event.currentTarget.value;
-
+  function handleNeighborhoodChange(neighborhoodId: string) {
     const neighborhood = neighborhoods.find((n) => n.id === neighborhoodId);
-
     if (!neighborhood) return;
 
     setSelectedNeighborhood({
@@ -221,19 +319,6 @@ function AddEstateScreen() {
     });
   }
 
-  function handleDelegationChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedDelegationType({
-      id: event.currentTarget.value,
-      name: event.currentTarget.value,
-    });
-  }
-  function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedEstateType({
-      id: event.currentTarget.value,
-      name: event.currentTarget.value,
-    });
-  }
-
   function checkFileSizes(files: File[]): boolean {
     const sumOfFileSizes = files.map((f) => f.size).reduce((a, b) => a + b, 0);
     return sumOfFileSizes > 2048;
@@ -241,23 +326,24 @@ function AddEstateScreen() {
 
   function onFieldChange(
     targetValue: any,
-    form: EstateForm,
+    // form: EstateForm,
     sectionIndex: number,
     fieldIndex: number
   ) {
-    const currentField = {
-      ...form.sections[sectionIndex].fields[fieldIndex],
+    let currentField = {
+      ...estate.dataForm.sections[sectionIndex].fields[fieldIndex],
       value: targetValue,
     };
-    const sections = form.sections;
-    const fields = sections[sectionIndex].fields;
-    fields[fieldIndex] = currentField;
+    let sections = [...estate.dataForm.sections];
+    let fields = sections[sectionIndex].fields;
+    fields[fieldIndex] = { ...currentField };
+    // fields[fieldIndex] = { ...fields[fieldIndex], value: targetValue };
     sections[sectionIndex].fields = fields;
 
     setEstate({
       ...estate,
       dataForm: {
-        ...form,
+        ...estate.dataForm,
         sections: sections,
       },
     });
@@ -305,8 +391,7 @@ function AddEstateScreen() {
               value={field.value ? String(field.value) : ""}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
-
-                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, sectionIndex, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Number ? (
@@ -316,7 +401,7 @@ function AddEstateScreen() {
               onChange={(e) => {
                 const numberValue = Number(e.target.value);
 
-                onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, sectionIndex, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Select ? (
@@ -325,7 +410,7 @@ function AddEstateScreen() {
               onChange={(e) => {
                 const numberValue = String(e.currentTarget.value);
 
-                onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, sectionIndex, fieldIndex);
               }}
             >
               <option value="default" disabled>
@@ -342,7 +427,7 @@ function AddEstateScreen() {
               checked={field.value ? true : false}
               onChange={(e) => {
                 const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                onFieldChange(booleanValue, sectionIndex, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Conditional ? (
@@ -353,7 +438,7 @@ function AddEstateScreen() {
                 checked={field.value ? true : false}
                 onChange={(e) => {
                   const booleanValue = e.target.checked;
-                  onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                  onFieldChange(booleanValue, sectionIndex, fieldIndex);
                 }}
               />
               {field.value &&
@@ -365,35 +450,50 @@ function AddEstateScreen() {
                 )}
             </>
           ) : field.type === FieldType.Image ? (
-            <Form.Control
-              type="file"
-              multiple
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                let selectedFiles = Array.from(e.target.files!);
-                setImagesCount(selectedFiles.length);
+            <>
+              {previousImages.length > 0
+                ? previousImages.map((img, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        let filteredImages = previousImages.filter(
+                          (i) => i !== img
+                        );
+                        setPreviousImages(filteredImages);
+                        setDeletedImages((prev) => [...prev, img]);
+                      }}
+                    >{`${imagesBaseUrl}/${img}`}</div>
+                  ))
+                : null}
+              <Form.Control
+                type="file"
+                multiple
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  let selectedFiles = Array.from(e.target.files!);
+                  setImagesCount(selectedFiles.length);
 
-                if (!checkFileSizes(selectedFiles)) {
-                  alert(Strings.imagesSizeLimit);
-                  e.target.value = "";
-                  selectedFiles = [];
-                }
+                  if (!checkFileSizes(selectedFiles)) {
+                    alert(Strings.imagesSizeLimit);
+                    e.target.value = "";
+                    selectedFiles = [];
+                  }
 
-                const data = new FormData();
-                selectedFiles.forEach((file, index) => {
-                  data.append("images", file);
-                });
-                setFormData(data);
-                // onFieldChange(data, form, sectionIndex, fieldIndex);
-              }}
-            />
+                  const data = new FormData();
+                  selectedFiles.forEach((file, index) => {
+                    data.append("images", file);
+                  });
+                  setFormData(data);
+                  // onFieldChange(data, form, sectionIndex, fieldIndex);
+                }}
+              />
+            </>
           ) : (
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
-
-                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, sectionIndex, fieldIndex);
               }}
             />
           )}
@@ -564,7 +664,7 @@ function AddEstateScreen() {
       return;
     }
 
-    if (imagesCount > 10) {
+    if (imagesCount + previousImages.length > 10) {
       toast.error(Strings.imagesLimit);
       return;
     }
@@ -582,8 +682,15 @@ function AddEstateScreen() {
 
     setLoading((prev) => true);
 
+    let response: Estate | undefined;
+
     formData.append("estate", JSON.stringify(estate));
-    let response = await estateService.current.requestAddEtate(formData);
+    formData.append("deletedImages", JSON.stringify(deletedImages));
+    if (screenType === ScreenType.Add) {
+      response = await estateService.current.requestAddEtate(formData);
+    } else {
+      response = await estateService.current.editEstate(formData);
+    }
 
     if (response) {
       toast.success(Strings.addEstateRequestSuccess, {
@@ -604,24 +711,26 @@ function AddEstateScreen() {
     <Row className="main-row">
       <Col>
         <div className="main-container">
-          <div className="add-estate-container">
+          <div className="edit-estate-container">
             <motion.div
               variants={elevationEffect}
               initial="first"
               animate="second"
-              className="add-estate card glass shadow rounded-3 py-3 my-4"
+              className="edit-estate card glass shadow rounded-3 py-3 my-4"
             >
-              <h2 className="add-estate-title text-center">
-                {Strings.addEstate}
+              <h2 className="edit-estate-title text-center">
+                {screenType === ScreenType.Add
+                  ? Strings.addEstate
+                  : Strings.editEstate}
               </h2>
-              <form className="add-estate-form">
+              <form className="edit-estate-form">
                 <label htmlFor="province">{Strings.province}</label>
                 <Form.Select
                   className="form-select rounded-3"
                   name="province"
                   id="province"
                   value={selectedProvince?.name}
-                  onChange={handleProvinceChange}
+                  onChange={(e) => handleProvinceChange(e.currentTarget.value)}
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -640,7 +749,7 @@ function AddEstateScreen() {
                   name="city"
                   id="city"
                   value={selectedCity?.name}
-                  onChange={handleCityChange}
+                  onChange={(e) => handleCityChange(e.currentTarget.value)}
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -659,7 +768,9 @@ function AddEstateScreen() {
                   name="neighborhood"
                   id="neighborhood"
                   value={selectedNeighborhood?.name}
-                  onChange={handleNeighborhoodChange}
+                  onChange={(e) =>
+                    handleNeighborhoodChange(e.currentTarget.value)
+                  }
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -673,14 +784,14 @@ function AddEstateScreen() {
                   })}
                 </Form.Select>
               </form>
-              <form className="add-estate-form mt-2">
+              <form className="edit-estate-form mt-2">
                 <label htmlFor="delegationType">{Strings.delegationType}</label>
                 <Form.Select
                   className="form-select rounded-3"
                   name="delegationType"
                   id="delegationType"
                   value={selectedDelegationType.name}
-                  onChange={handleDelegationChange}
+                  disabled={true}
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -699,7 +810,7 @@ function AddEstateScreen() {
                   name="estateType"
                   id="estateType"
                   value={selectedEstateType.name}
-                  onChange={handleTypeChange}
+                  disabled={true}
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -787,4 +898,4 @@ function AddEstateScreen() {
   );
 }
 
-export default AddEstateScreen;
+export default EditEstateScreen;

@@ -4,6 +4,7 @@ class Strings {
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
   static addEstate = "ثبت ملک";
+  static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
   static delegationTypes = "نوع واگذاری‌ها";
