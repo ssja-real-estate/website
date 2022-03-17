@@ -66,9 +66,14 @@ class EstateService extends BaseService {
     return newEstate;
   }
 
-  async editEstate(formData: FormData) {
+  async editEstate(estateId: string, formData: FormData) {
     let editedEstate = undefined;
     try {
+      await this.Api.put(
+        `${this.estateUrl}/${estateId}`,
+        formData,
+        this.config
+      );
     } catch (error) {
       this.handleError(error);
     }

@@ -64,20 +64,21 @@ function EditEstateScreen() {
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     setServinceTokens();
     loadLocations();
-    if (screenType === ScreenType.Add) {
-      loadOptions();
-    }
+    // if (screenType === ScreenType.Add) {
+    //   loadOptions();
+    // }
     loadData();
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDelegationType, selectedEstateType, state.token]);
+  }, [selectedDelegationType, selectedEstateType, state.token, reload]);
 
   useEffect(() => {
     if (screenType === ScreenType.Edit) {
@@ -491,7 +492,7 @@ function EditEstateScreen() {
 
                   const data = new FormData();
                   selectedFiles.forEach((file, index) => {
-                    data.append("images", file);
+                    data.append("image", file);
                   });
                   setFormData(data);
                   // onFieldChange(data, form, sectionIndex, fieldIndex);
@@ -696,24 +697,25 @@ function EditEstateScreen() {
     let response: Estate | undefined;
 
     formData.append("estate", JSON.stringify(estate));
-    formData.append("deletedImages", JSON.stringify(deletedImages));
+    formData.append("deleteimage", JSON.stringify(deletedImages));
     if (screenType === ScreenType.Add) {
       response = await estateService.current.requestAddEtate(formData);
     } else {
-      response = await estateService.current.editEstate(formData);
+      response = await estateService.current.editEstate(estate.id, formData);
     }
 
     if (response) {
-      toast.success(Strings.addEstateRequestSuccess, {
-        duration: 5000,
-      });
-      setSelectedProvince(defaultProvince);
-      setSelectedCity(defaultCity);
-      setSelectedNeighborhood(defaultNeighborhood);
-      setSelectedDelegationType(defaultDelegationType);
-      setSelectedEstateType(defaultEstateType);
-      setFormData(new FormData());
-      setEstate(defaultEstate);
+      // toast.success(Strings.addEstateRequestSuccess, {
+      //   duration: 5000,
+      // });
+      // setSelectedProvince(defaultProvince);
+      // setSelectedCity(defaultCity);
+      // setSelectedNeighborhood(defaultNeighborhood);
+      // setSelectedDelegationType(defaultDelegationType);
+      // setSelectedEstateType(defaultEstateType);
+      // setFormData(new FormData());
+      // setEstate(defaultEstate);
+      setReload(!reload);
     }
     setLoading((prev) => false);
   }
