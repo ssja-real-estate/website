@@ -492,7 +492,7 @@ function EditEstateScreen() {
 
                   const data = new FormData();
                   selectedFiles.forEach((file, index) => {
-                    data.append("image", file);
+                    data.append("images", file);
                   });
                   setFormData(data);
                   // onFieldChange(data, form, sectionIndex, fieldIndex);
@@ -697,7 +697,7 @@ function EditEstateScreen() {
     let response: Estate | undefined;
 
     formData.append("estate", JSON.stringify(estate));
-    formData.append("deleteimage", JSON.stringify(deletedImages));
+    formData.append("deletedImages", JSON.stringify(deletedImages));
     if (screenType === ScreenType.Add) {
       response = await estateService.current.requestAddEtate(formData);
     } else {
