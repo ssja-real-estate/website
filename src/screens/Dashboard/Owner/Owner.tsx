@@ -30,8 +30,8 @@ function OwnerDashboard() {
           <Profile />
         ) : section === "users" ? (
           <UsersSection />
-        ) : section === "verified-estates" ? (
-          <EstatesSection status={EstateStatus.Verified} />
+        ) : section === "my-estates" ? (
+          <EstatesSection status={EstateStatus.Verified} isUserEstatesScreen />
         ) : section === "unverified-estates" ? (
           <EstatesSection status={EstateStatus.Unverified} />
         ) : section === "rejected-estates" ? (

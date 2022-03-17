@@ -5,27 +5,38 @@ import {
   defaultEstateInfoModalState,
   estateInfoModalAtom,
 } from "components/EstateInfoModal/EstateInfoModalState";
+import RejectEstateModal from "components/RejectEstateModal/RejectEstateModal";
+import {
+  defaultRejectEstate,
+  rejectEstateAtom,
+} from "components/RejectEstateModal/RejectEstateModalState";
 import Strings from "global/constants/strings";
+import { estateScreenAtom, ScreenType } from "global/states/EstateScreen";
 import { globalState } from "global/states/globalStates";
 import React, { useEffect, useRef, useState } from "react";
 import Tilt from "react-parallax-tilt";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useHistory } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import EstateService from "services/api/EstateService/EstateService";
 import EstateCard from "../../../../../components/EstateCard/EstateCard";
-import { Estate } from "../../../../../global/types/Estate";
+import { Estate, EstateStatus } from "../../../../../global/types/Estate";
 import "./Estates.css";
 
 const loadingItems = [1, 1, 1, 1, 1, 1, 1, 1];
 
 function EstatesSection() {
-  const [userEstates, setUserEstates] = useState<Estate[]>([]);
+  const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [estateInfoModalState, setEstateInfoModalState] =
     useRecoilState(estateInfoModalAtom);
+  const [rejectEstateState, setRejectEstateState] =
+    useRecoilState(rejectEstateAtom);
 
+  const setEstateScreenState = useSetRecoilState(estateScreenAtom);
   const state = useRecoilValue(globalState);
   const estateService = useRef(new EstateService());
   const mounted = useRef(true);
+  const history = useHistory();
 
   useEffect(() => {
     estateService.current.setToken(state.token);
@@ -35,6 +46,7 @@ function EstatesSection() {
     return () => {
       mounted.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 
   const loadData = async () => {
@@ -42,12 +54,41 @@ function EstatesSection() {
       return;
     }
     setLoading((prev) => true);
-    const userEstates = await estateService.current.getUserEstates();
+    const estates = await estateService.current.getUserEstates();
 
-    if (userEstates) {
-      setUserEstates(userEstates);
+    if (estates) {
+      setEstates(estates);
     }
 
+    setLoading((prev) => false);
+  };
+
+  const verifyEstate = async (estateId: string) => {
+    if (!mounted.current) return;
+    setLoading((prev) => true);
+
+    await estateService.current.updateEstateStatus(
+      estateId,
+      EstateStatus.Verified
+    );
+
+    await loadData();
+
+    setLoading((prev) => false);
+  };
+
+  const rejectEstate = async () => {
+    if (!mounted.current || !rejectEstateState.estateId) return;
+    setLoading((prev) => true);
+
+    await estateService.current.updateEstateStatus(
+      rejectEstateState.estateId,
+      EstateStatus.Rejected,
+      rejectEstateState.description
+    );
+
+    setRejectEstateState(defaultRejectEstate);
+    await loadData();
     setLoading((prev) => false);
   };
 
@@ -71,13 +112,23 @@ function EstatesSection() {
                 </Tilt>
               );
             })
-          : userEstates.map((estate, index) => {
+          : estates.map((estate, index) => {
+              const status = estate.estateStatus.status;
               return (
                 <React.Fragment key={index}>
                   <EstateCard
                     estate={estate}
-                    rejectButton
-                    onReject={() => {}}
+                    editButton={status === EstateStatus.Verified}
+                    showEstateInfoButton
+                    showBadge
+                    onEdit={() => {
+                      setEstateScreenState((prev) => ({
+                        ...prev,
+                        inputEstate: estate,
+                        screenType: ScreenType.Edit,
+                      }));
+                      history.push("/edit-estate");
+                    }}
                     onShowEstateInfo={() => {
                       setEstateInfoModalState({
                         estate,
@@ -98,6 +149,18 @@ function EstatesSection() {
         }}
       >
         <EstateInfoModal />
+      </CustomModal>
+      <CustomModal
+        show={rejectEstateState.showModal}
+        title={Strings.rejectEstate}
+        successTitle={Strings.save}
+        cancelTitle={Strings.cancel}
+        handleSuccess={rejectEstate}
+        handleClose={() => {
+          setRejectEstateState(defaultRejectEstate);
+        }}
+      >
+        <RejectEstateModal />
       </CustomModal>
     </div>
   );

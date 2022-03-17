@@ -23,12 +23,16 @@ import { Estate, EstateStatus } from "../../../../../global/types/Estate";
 import "./Estates.css";
 
 interface Props {
-  status: EstateStatus;
+  status?: EstateStatus;
+  isUserEstatesScreen?: boolean;
 }
 
 const loadingItems = [1, 1, 1, 1, 1, 1, 1, 1];
 
-function EstatesSection({ status = EstateStatus.Unverified }: Props) {
+function EstatesSection({
+  status = EstateStatus.Unverified,
+  isUserEstatesScreen,
+}: Props) {
   const [estates, setEstates] = useState<Estate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [estateInfoModalState, setEstateInfoModalState] =
@@ -65,10 +69,12 @@ function EstatesSection({ status = EstateStatus.Unverified }: Props) {
       return;
     }
     setLoading((prev) => true);
-    const estates = await estateService.current.getEstates(status);
+    let fetchedEstates = isUserEstatesScreen
+      ? await estateService.current.getUserEstates()
+      : await estateService.current.getEstates(status);
 
-    if (estates) {
-      setEstates(estates);
+    if (fetchedEstates) {
+      setEstates(fetchedEstates);
     }
 
     setLoading((prev) => false);
@@ -102,6 +108,7 @@ function EstatesSection({ status = EstateStatus.Unverified }: Props) {
     await loadData();
     setLoading((prev) => false);
   };
+  console.log(isUserEstatesScreen);
 
   return (
     <div className="estates-section">
@@ -128,10 +135,13 @@ function EstatesSection({ status = EstateStatus.Unverified }: Props) {
                 <React.Fragment key={index}>
                   <EstateCard
                     estate={estate}
-                    editButton={status === EstateStatus.Verified}
+                    editButton={
+                      status === EstateStatus.Verified && isUserEstatesScreen
+                    }
                     verifyButton={status !== EstateStatus.Verified}
                     rejectButton={status === EstateStatus.Unverified}
-                    showEstateInfoButton={true}
+                    showEstateInfoButton
+                    showBadge={isUserEstatesScreen}
                     onEdit={() => {
                       setEstateScreenState((prev) => ({
                         ...prev,

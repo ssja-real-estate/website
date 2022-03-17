@@ -15,6 +15,7 @@ import Province, { defaultProvince } from "global/types/Province";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import toast from "react-hot-toast";
+import { useHistory } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import MapScreen from "screens/Map/Map";
 import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
@@ -64,7 +65,7 @@ function EditEstateScreen() {
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
-  const [reload, setReload] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     setServinceTokens();
@@ -78,7 +79,7 @@ function EditEstateScreen() {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDelegationType, selectedEstateType, state.token, reload]);
+  }, [selectedDelegationType, selectedEstateType, state.token]);
 
   useEffect(() => {
     if (screenType === ScreenType.Edit) {
@@ -457,7 +458,7 @@ function EditEstateScreen() {
                     <Col>
                       <div key={idx}>
                         <img
-                          src={`${imagesBaseUrl}/${img}`}
+                          src={`${imagesBaseUrl}/${estate.id}/${img}`}
                           alt={`${imagesBaseUrl}/${img}`}
                           className="thumbnail rounded-3"
                         />
@@ -715,7 +716,8 @@ function EditEstateScreen() {
       // setSelectedEstateType(defaultEstateType);
       // setFormData(new FormData());
       // setEstate(defaultEstate);
-      setReload(!reload);
+      // setReload(!reload);
+      history.goBack();
     }
     setLoading((prev) => false);
   }

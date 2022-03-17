@@ -42,7 +42,7 @@ const EstateInfoModal = () => {
     if (includesImages) {
       const images: string[] = [];
       (firstField.value as string[]).forEach((image) => {
-        images.push(`${imagesBaseUrl}/${image}`);
+        images.push(`${imagesBaseUrl}/${estateInfo.estate.id}/${image}`);
       });
       setImages(images);
     }

@@ -1,8 +1,8 @@
 import Strings from "global/constants/strings";
 import { MouseEventHandler } from "react";
-import { Button } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import Tilt from "react-parallax-tilt";
-import { Estate } from "../../global/types/Estate";
+import { Estate, EstateStatus } from "../../global/types/Estate";
 
 interface EstateCardProps {
   estate: Estate;
@@ -10,6 +10,7 @@ interface EstateCardProps {
   verifyButton?: boolean;
   rejectButton?: boolean;
   showEstateInfoButton?: boolean;
+  showBadge?: boolean;
   onEdit?: MouseEventHandler;
   onVerify?: MouseEventHandler;
   onReject?: MouseEventHandler;
@@ -23,12 +24,21 @@ function EstateCard({
   verifyButton = false,
   rejectButton = false,
   showEstateInfoButton = false,
+  showBadge,
   onEdit,
   onVerify,
   onReject,
   onShowEstateInfo,
   onCloseEstateInfo,
 }: EstateCardProps) {
+  const status = estate.estateStatus.status;
+  const statusInfo =
+    status === EstateStatus.Verified
+      ? { label: Strings.verified, color: "success" }
+      : status === EstateStatus.Unverified
+      ? { label: Strings.unverified, color: "secondary" }
+      : { label: Strings.rejected, color: "danger" };
+
   return (
     <Tilt>
       <div className="estate card shadow p-4 rounded-3 d-flex flex-row justify-content-between align-items-start">
@@ -45,9 +55,10 @@ function EstateCard({
           <h6 className="fw-light text-secondary">
             {Strings.city} : {estate.city.name}
           </h6>
-          <h6 className="fw-light text-secondary">
+          <h6 className="fw-light text-secondary mb-4">
             {Strings.neighborhood} : {estate.neighborhood.name}
           </h6>
+          {showBadge && <Badge bg={statusInfo.color}>{statusInfo.label}</Badge>}
         </div>
         <div className="buttons gap-2 d-flex flex-column">
           {editButton && (

@@ -48,18 +48,14 @@ function OwnerSidebar() {
       <OverlayTrigger
         placement="left"
         overlay={
-          <Tooltip id="verified-estates-tooltip">
-            {Strings.myVerifiedEstatesTooltip}
-          </Tooltip>
+          <Tooltip id="my-estates-tooltip">{Strings.myEstatesTooltip}</Tooltip>
         }
       >
         <Button
           variant=""
-          className={
-            section === "verified-estates" ? "btn-purple" : "btn-light"
-          }
+          className={section === "my-estates" ? "btn-purple" : "btn-light"}
           onClick={() => {
-            setSection("verified-estates");
+            setSection("my-estates");
           }}
         >
           <i className="bi-grid-3x3-gap-fill"></i>
