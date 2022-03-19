@@ -4,6 +4,7 @@ class Strings {
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
   static addEstate = "ثبت ملک";
+  static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
   static delegationTypes = "نوع واگذاری‌ها";
@@ -132,6 +133,10 @@ class Strings {
   static profileTooltip = "پروفایل";
   static usersTooltip = "کاربران";
   static estatesTooltip = "املاک";
+  static myEstatesTooltip = "املاک من";
+  static myVerifiedEstatesTooltip = "املاک تاییدشده‌ی من";
+  static unverifiedEstatesTooltip = "املاک در انتظار تایید";
+  static rejectedEstatesTooltip = "املاک تایید نشده";
   static templatesTooltip = "قالب‌ها";
   static optionalField = "(اختیاری)";
   static imagesLimit = "حداکثر تعداد تصاویر انتخابی 10 عدد می باشد!";
@@ -148,7 +153,9 @@ class Strings {
   static description = "توضیحات";
   static rejectEstate = "عدم تایید ملک";
   static close = "بستن";
-  static rejected = "غیرقابل قبول";
+  static rejected = "تایید نشده";
+  static verified = "تاییده شده";
+  static unverified = "در انتظار تایید";
 }
 
 export default Strings;

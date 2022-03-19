@@ -34,14 +34,14 @@ function UserSidebar() {
       <OverlayTrigger
         placement="left"
         overlay={
-          <Tooltip id="estates-tooltip">{Strings.estatesTooltip}</Tooltip>
+          <Tooltip id="my-estates-tooltip">{Strings.myEstatesTooltip}</Tooltip>
         }
       >
         <Button
           variant=""
-          className={section === "estates" ? "btn-purple" : "btn-light"}
+          className={section === "my-estates" ? "btn-purple" : "btn-light"}
           onClick={() => {
-            setSection("estates");
+            setSection("my-estates");
           }}
         >
           <i className="bi-grid-3x3-gap-fill"></i>

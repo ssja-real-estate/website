@@ -10,22 +10,21 @@ const defaultLocation: EstateLocation = {
   name: "",
 };
 
-interface RejectionStatus {
-  description: string;
-  rejected: boolean;
+export enum EstateStatus {
+  Verified = 1,
+  Unverified = 2,
+  Rejected = 3,
 }
-
-const defaultRejectionStatus: RejectionStatus = {
-  description: "",
-  rejected: false,
-};
 
 interface Estate {
   id: string;
   province: EstateLocation;
   city: EstateLocation;
   neighborhood: EstateLocation;
-  rejectionStatus: RejectionStatus;
+  estateStatus: {
+    description: string;
+    status: EstateStatus;
+  };
   dataForm: EstateForm;
 }
 
@@ -34,9 +33,12 @@ const defaultEstate: Estate = {
   city: defaultLocation,
   province: defaultLocation,
   neighborhood: defaultLocation,
-  rejectionStatus: defaultRejectionStatus,
+  estateStatus: {
+    description: "",
+    status: EstateStatus.Unverified,
+  },
   dataForm: defaultForm,
 };
 
-export type { Estate, EstateLocation, RejectionStatus };
-export { defaultEstate, defaultLocation, defaultRejectionStatus };
+export type { Estate, EstateLocation };
+export { defaultEstate, defaultLocation };

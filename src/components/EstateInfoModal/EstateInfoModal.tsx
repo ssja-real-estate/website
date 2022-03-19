@@ -1,10 +1,11 @@
 import Strings from "global/constants/strings";
+import { imagesBaseUrl } from "global/states/GlobalState";
 import { FieldType } from "global/types/Field";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { estateInfoModalAtom } from "./EstateInfoModalState";
-
-const imagesBaseUrl = "https://ssja.ir/api/images";
+import "./EstateInfoModal.css";
+import { Col, Row } from "react-bootstrap";
 
 const EstateInfoModal = () => {
   const estateInfo = useRecoilValue(estateInfoModalAtom);
@@ -41,38 +42,40 @@ const EstateInfoModal = () => {
     if (includesImages) {
       const images: string[] = [];
       (firstField.value as string[]).forEach((image) => {
-        images.push(`${imagesBaseUrl}/${image}`);
+        images.push(`${imagesBaseUrl}/${estateInfo.estate.id}/${image}`);
       });
       setImages(images);
     }
   };
 
   return (
-    <div>
+    <Row>
+      <Col>
+        <h3 className="pt-3">{estateInfo.estate.dataForm.title}</h3>
+        <h5 className="pt-3">
+          {Strings.province} : {estateInfo.estate.province.name}
+        </h5>
+        <h5 className="pt-3">
+          {Strings.city} : {estateInfo.estate.city.name}
+        </h5>
+        <h5 className="pt-3">
+          {Strings.neighborhood} : {estateInfo.estate.neighborhood.name}
+        </h5>
+      </Col>
       {hasImageSection && (
-        <div>
-          <h3>{Strings.images}</h3>
-          <div>
-            {images.map((imageAddress) => (
-              <p>{imageAddress}</p>
-            ))}
-          </div>
-        </div>
+        <Row className="mt-3">
+          {images.map((imageAddress) => (
+            <Col>
+              <img
+                src={imageAddress}
+                alt={imageAddress}
+                className="thumbnail rounded-3"
+              />
+            </Col>
+          ))}
+        </Row>
       )}
-      <div>{estateInfo.estate.dataForm.title}</div>
-      <div>
-        <div>{Strings.province}</div>
-        <div>{estateInfo.estate.province.name}</div>
-      </div>
-      <div>
-        <div>{Strings.city}</div>
-        <div>{estateInfo.estate.city.name}</div>
-      </div>
-      <div>
-        <div>{Strings.neighborhood}</div>
-        <div>{estateInfo.estate.neighborhood.name}</div>
-      </div>
-    </div>
+    </Row>
   );
 };
 

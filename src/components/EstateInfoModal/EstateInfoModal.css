@@ -1,0 +1,10 @@
+.thumbnail {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin: 5px;
+}
+.thumbnail:hover {
+  filter: brightness(0.5);
+  cursor: pointer;
+}
