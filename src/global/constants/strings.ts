@@ -153,7 +153,7 @@ class Strings {
   static description = "توضیحات";
   static rejectEstate = "عدم تایید ملک";
   static close = "بستن";
-  static rejected = "غیرقابل قبول";
+  static rejected = "تایید نشده";
   static verified = "تاییده شده";
   static unverified = "در انتظار تایید";
 }

@@ -118,7 +118,7 @@ function EstatesSection() {
                 <React.Fragment key={index}>
                   <EstateCard
                     estate={estate}
-                    editButton={status === EstateStatus.Verified}
+                    editButton
                     showEstateInfoButton
                     showBadge
                     onEdit={() => {

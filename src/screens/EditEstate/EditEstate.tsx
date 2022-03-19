@@ -459,7 +459,7 @@ function EditEstateScreen() {
                       <div key={idx}>
                         <img
                           src={`${imagesBaseUrl}/${estate.id}/${img}`}
-                          alt={`${imagesBaseUrl}/${img}`}
+                          alt={`${imagesBaseUrl}/${estate.id}/${img}`}
                           className="thumbnail rounded-3"
                         />
                         <button
@@ -717,8 +717,8 @@ function EditEstateScreen() {
       // setFormData(new FormData());
       // setEstate(defaultEstate);
       // setReload(!reload);
-      history.goBack();
     }
+    history.goBack();
     setLoading((prev) => false);
   }
 
@@ -889,7 +889,7 @@ function EditEstateScreen() {
                     variant="purple"
                     onClick={submitEstate}
                   >
-                    {Strings.addEstate}
+                    {Strings.editEstate}
                   </Button>
                 )}
               </div>
