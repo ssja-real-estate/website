@@ -6,6 +6,8 @@ import Strings from "global/constants/strings";
 import {
   defaultField,
   Field,
+  FieldFilterableStatus,
+  FieldFilterableStatusLabel,
   FieldInputNecessity,
   FieldInputNecessityLabel,
   FieldType,
@@ -22,6 +24,9 @@ function NewField() {
   const [newFieldTitle, setNewFieldTitle] = useState<string>("");
   const [fieldInputNecessity, setFieldInputNecessity] = useState<number>(
     FieldInputNecessity.Obligatory
+  );
+  const [filterableStatus, setFilterableStatus] = useState(
+    FieldFilterableStatus.IsNotFilterable
   );
   const [options, setOptions] = useRecoilState(optionsAtom);
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
@@ -59,6 +64,8 @@ function NewField() {
                   type: selectedType,
                   optional:
                     fieldInputNecessity === FieldInputNecessity.Optional,
+                  filterable:
+                    filterableStatus === FieldFilterableStatus.IsFilterable,
                 };
 
                 if (newFieldTitle.trim() !== "") {
@@ -85,6 +92,7 @@ function NewField() {
                 }
                 setNewFieldTitle("");
                 setFieldInputNecessity(FieldInputNecessity.Obligatory);
+                setFilterableStatus(FieldFilterableStatus.IsNotFilterable);
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
@@ -101,6 +109,21 @@ function NewField() {
               </option>
               <option value={FieldInputNecessity.Optional}>
                 {FieldInputNecessityLabel.Optional}
+              </option>
+            </Form.Select>
+            <Form.Select
+              style={{ minWidth: 50, maxWidth: "10vw" }}
+              value={filterableStatus}
+              onChange={(e) => {
+                const value = +e.currentTarget.value;
+                setFilterableStatus(value as FieldFilterableStatus);
+              }}
+            >
+              <option value={FieldFilterableStatus.IsNotFilterable}>
+                {FieldFilterableStatusLabel.IsNotFilterable}
+              </option>
+              <option value={FieldFilterableStatus.IsFilterable}>
+                {FieldFilterableStatusLabel.IsFilterable}
               </option>
             </Form.Select>
             <Form.Select

@@ -28,6 +28,16 @@ enum FieldInputNecessityLabel {
   Optional = "اختیاری",
 }
 
+enum FieldFilterableStatus {
+  IsFilterable,
+  IsNotFilterable,
+}
+
+enum FieldFilterableStatusLabel {
+  IsFilterable = "قابل فیلتر",
+  IsNotFilterable = "غیرقابل فیلتر",
+}
+
 interface Field {
   id?: string;
   type: FieldType;
@@ -38,6 +48,7 @@ interface Field {
   min?: number;
   max?: number;
   optional?: boolean;
+  filterable?: boolean;
 }
 
 const defaultField: Field = {
@@ -52,5 +63,7 @@ export {
   FieldTypeTitle,
   FieldInputNecessity,
   FieldInputNecessityLabel,
+  FieldFilterableStatus,
+  FieldFilterableStatusLabel,
   defaultField,
 };

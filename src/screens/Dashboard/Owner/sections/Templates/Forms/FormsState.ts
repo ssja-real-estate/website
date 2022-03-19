@@ -13,6 +13,7 @@ export interface EditFieldModalData {
   newTitle: string;
   newType: number;
   newFieldInputNecessity?: FieldInputNecessity;
+  filterable?: boolean;
 }
 
 export type Modal<T> = {

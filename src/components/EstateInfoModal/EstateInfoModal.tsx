@@ -62,6 +62,23 @@ const EstateInfoModal = () => {
           {Strings.neighborhood} : {estateInfo.estate.neighborhood.name}
         </h5>
       </Col>
+      <Col>
+        {estateInfo.estate.dataForm.sections.map((section) => {
+          return (
+            <Row>
+              {section.fields
+                .filter((field) => field.filterable)
+                .map((field) => {
+                  return (
+                    <h5>
+                      {field.title} : {field.value}
+                    </h5>
+                  );
+                })}
+            </Row>
+          );
+        })}
+      </Col>
       {hasImageSection && (
         <Row className="mt-3">
           {images.map((imageAddress) => (
