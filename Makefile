@@ -54,7 +54,7 @@ build: ## build-image/params:stage,username
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
 # Build docker image on local machine
-build-local: ## build-local-image
+build-local: ## build-local-image/params:stage,username
 	docker build -f Dockerfile.$(stage) -t $(CONTAINER_NAME) .
 
 # Run docker container in development mode
