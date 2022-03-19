@@ -126,7 +126,7 @@ function AddEstateScreen() {
         setEstateTypes(estateTypes);
       })
       .catch((error) => {
-        console.log(error);
+        toast.error(Strings.loadingOptionsFailed);
       });
   }
 

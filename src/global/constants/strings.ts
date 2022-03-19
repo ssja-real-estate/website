@@ -157,6 +157,7 @@ class Strings {
   static rejected = "تایید نشده";
   static verified = "تاییده شده";
   static unverified = "در انتظار تایید";
+  static submitFilter = "فیلتر";
 }
 
 export default Strings;
