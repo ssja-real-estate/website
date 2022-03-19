@@ -15,10 +15,13 @@ import Strings from "global/constants/strings";
 import {
   defaultField,
   Field,
+  FieldInputNecessity,
+  FieldInputNecessityLabel,
   FieldType,
   FieldTypeTitle,
 } from "global/types/Field";
 import { innerFieldsAtom } from "./NewFieldStates";
+import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 function NewConditionalField() {
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
@@ -26,9 +29,17 @@ function NewConditionalField() {
   const [selectedType, setSelectedType] = useState<number>(0);
   const [newOptionTitle, setNewOptionTitle] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
+  const [fieldInputNecessity, setFieldInputNecessity] = useState<number>(
+    FieldInputNecessity.Obligatory
+  );
 
   function addNewInnerField(newField: Field) {
-    const newInnerFields = [newField, ...innerFields];
+    if (newField.type === FieldType.Bool) {
+      newField.value = false;
+    } else if (newField.type === FieldType.Number) {
+      newField.value = 0;
+    }
+    const newInnerFields = [...innerFields, newField];
     setInnerFields(newInnerFields);
   }
 
@@ -84,19 +95,7 @@ function NewConditionalField() {
                     </Col>
                     <Col>
                       <h6 className="d-inline text-muted">
-                        {field.type === FieldType.Text
-                          ? FieldTypeTitle.Text
-                          : field.type === FieldType.Number
-                          ? FieldTypeTitle.Number
-                          : field.type === FieldType.Select
-                          ? FieldTypeTitle.Select
-                          : field.type === FieldType.Bool
-                          ? FieldTypeTitle.Bool
-                          : field.type === FieldType.Conditional
-                          ? FieldTypeTitle.Conditional
-                          : field.type === FieldType.Image
-                          ? FieldTypeTitle.Image
-                          : "---"}
+                        {getFieldTypeAndNecessity(field)}
                       </h6>
                     </Col>
                     <CloseButton
@@ -124,6 +123,8 @@ function NewConditionalField() {
                   ...defaultField,
                   title: newInnerFieldTitle,
                   type: selectedType,
+                  optional:
+                    fieldInputNecessity === FieldInputNecessity.Optional,
                 };
                 if (newInnerFieldTitle.trim() !== "") {
                   if (selectedType === FieldType.Select) {
@@ -132,17 +133,32 @@ function NewConditionalField() {
                       return;
                     }
                   }
+                  newInnerField.options = options;
                   addNewInnerField(newInnerField);
-                  setNewInnerFieldTitle("");
                   setOptions([]);
                 } else {
-                  setNewInnerFieldTitle("");
                   alert(Strings.enterValidTitleForInput);
                 }
+                setNewInnerFieldTitle("");
+                setFieldInputNecessity(FieldInputNecessity.Obligatory);
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
+            <Form.Select
+              style={{ minWidth: 100, maxWidth: "15vw" }}
+              value={fieldInputNecessity}
+              onChange={(e) => {
+                setFieldInputNecessity(Number(e.currentTarget.value));
+              }}
+            >
+              <option value={FieldInputNecessity.Obligatory}>
+                {FieldInputNecessityLabel.Obligatory}
+              </option>
+              <option value={FieldInputNecessity.Optional}>
+                {FieldInputNecessityLabel.Optional}
+              </option>
+            </Form.Select>
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}

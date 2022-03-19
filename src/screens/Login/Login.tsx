@@ -1,20 +1,20 @@
-import './Login.css';
-import { Link, useHistory } from 'react-router-dom';
-import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { elevationEffect } from '../../animations/motionVariants';
-import { useSetRecoilState } from 'recoil';
-import { globalState } from '../../global/states/globalStates';
-import { Button, Form, InputGroup } from 'react-bootstrap';
-import Strings from 'global/constants/strings';
-import UserService from 'services/api/UserService/UserService';
-import RegexValidator from 'services/utilities/RegexValidator';
-import toast from 'react-hot-toast';
+import "./Login.css";
+import { Link, useHistory } from "react-router-dom";
+import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { elevationEffect } from "../../animations/motionVariants";
+import { useSetRecoilState } from "recoil";
+import { globalState } from "../../global/states/globalStates";
+import { Button, Form, InputGroup } from "react-bootstrap";
+import Strings from "global/constants/strings";
+import UserService from "services/api/UserService/UserService";
+import RegexValidator from "services/utilities/RegexValidator";
+import toast from "react-hot-toast";
 
 function LoginScreen() {
   const [visibility, setVisibility] = useState(false);
-  const [mobile, setMobile] = useState('');
-  const [password, setPassword] = useState('');
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
   const setGlobalState = useSetRecoilState(globalState);
 
   const history = useHistory();
@@ -37,7 +37,7 @@ function LoginScreen() {
 
     if (loginState) {
       setGlobalState(loginState!);
-      history.push('/dashboard');
+      history.push("/dashboard");
     }
   };
 
@@ -63,7 +63,7 @@ function LoginScreen() {
           />
           <Form.Control
             className="form-control rounded-3 py-2 my-3"
-            type={visibility ? 'text' : 'password'}
+            type={visibility ? "text" : "password"}
             name="password"
             placeholder={Strings.password}
             id="password"

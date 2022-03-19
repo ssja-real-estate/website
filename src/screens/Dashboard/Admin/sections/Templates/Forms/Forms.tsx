@@ -72,25 +72,18 @@ const Forms = () => {
   }, [isDefault, delegationType.name, estateType.name]);
 
   const loadOptions = async () => {
-    toast.promise(
-      delegationTypeService.current
-        .getAllDelegationTypes()
-        .then((delegationTypes) => {
-          setDelegationTypes(delegationTypes);
-        })
-        .then(() => estateTypeService.current.getAllEstateTypes())
-        .then((estateTypes) => {
-          setEstateTypes(estateTypes);
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingOptionsSuccess,
-        loading: Strings.loadingOptions,
-        error: Strings.loadingOptionsFailed,
-      }
-    );
+    delegationTypeService.current
+      .getAllDelegationTypes()
+      .then((delegationTypes) => {
+        setDelegationTypes(delegationTypes);
+      })
+      .then(() => estateTypeService.current.getAllEstateTypes())
+      .then((estateTypes) => {
+        setEstateTypes(estateTypes);
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   const loadData = async () => {
@@ -115,19 +108,6 @@ const Forms = () => {
   return (
     <>
       <h4 className="mt-4 ms-3 d-inline">{Strings.forms}</h4>
-      <Button
-        variant="dark"
-        className="refresh-btn d-inline rounded-circle"
-        onClick={async () => {
-          if (isDefault) {
-            await loadOptions();
-            return;
-          }
-          await loadData();
-        }}
-      >
-        <i className="bi-arrow-counterclockwise"></i>
-      </Button>
       <Row>
         <Col>
           <InputGroup className="my-4" style={{ direction: "ltr" }}>
@@ -191,7 +171,7 @@ const Forms = () => {
               <Spinner animation="border" variant="primary" className="my-5" />
             </Col>
           </Row>
-        ) : (
+        ) : form.id ? (
           <Col>
             <ListGroup style={{ userSelect: "none" }}>
               {form.sections.map((section, sectionIndex) => {
@@ -265,6 +245,10 @@ const Forms = () => {
               })}
             </ListGroup>
           </Col>
+        ) : (
+          <p className="center mt-2" style={{ fontSize: 20 }}>
+            {Strings.adminFormDoesNotExist}
+          </p>
         )}
       </Row>
     </>

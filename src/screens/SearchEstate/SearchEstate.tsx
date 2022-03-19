@@ -7,7 +7,8 @@ import {
   elevationEffect,
 } from "../../animations/motionVariants";
 import { Container, Form } from "react-bootstrap";
-import { delegationTypes, estateTypes } from "../../global/constants/estates";
+import DelegationType from "global/types/DelegationType";
+import EstateType from "global/types/EstateType";
 import { Estate } from "../../global/types/Estate";
 import Tilt from "react-parallax-tilt";
 import React from "react";
@@ -20,8 +21,6 @@ import EstateTypeService from "services/api/EstateTypeService/EstateTypeService"
 import EstateService from "services/api/EstateService/EstateService";
 import toast from "react-hot-toast";
 import Strings from "global/constants/strings";
-import DelegationType from "global/types/DelegationType";
-import EstateType from "global/types/EstateType";
 
 function SearchEstateScreen() {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -144,7 +143,7 @@ function SearchEstateScreen() {
             </option>
             {delegationTypes.map((option, index) => {
               return (
-                <option key={index} value={option.id}>
+                <option key={index} value={option.name}>
                   {option.name}
                 </option>
               );
@@ -163,7 +162,7 @@ function SearchEstateScreen() {
             </option>
             {estateTypes.map((option, index) => {
               return (
-                <option key={index} value={option.id}>
+                <option key={index} value={option.name}>
                   {option.name}
                 </option>
               );

@@ -38,7 +38,11 @@ class UnitService extends BaseService {
     if (unit.id === "") return;
     let updatedUnit = undefined;
     try {
-      const response = await this.Api.put(this.unitUrl, unit, this.config);
+      const response = await this.Api.put(
+        `${this.unitUrl}/${unit.id}`,
+        unit,
+        this.config
+      );
       if (response.data) {
         updatedUnit = response.data as Unit;
       }

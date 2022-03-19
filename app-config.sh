@@ -10,8 +10,6 @@ APP_NAME=`jq -rM .name package.json`
 VERSION=`jq -rM .version package.json`
 PORT=3000
 
-
-
 case ${1:-'name'} in
 	version)
 		echo $VERSION

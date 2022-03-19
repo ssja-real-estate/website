@@ -55,7 +55,6 @@ class FormService extends BaseService {
 
   updateForm = async (formId: string, form: EstateForm) => {
     try {
-      // console.log(form);
       await this.Api.put(`${this.formUrl}/${formId}`, form, this.config);
     } catch (error: any) {
       this.handleError(error);

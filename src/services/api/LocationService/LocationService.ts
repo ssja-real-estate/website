@@ -1,11 +1,13 @@
 import { AxiosResponse } from "axios";
 import City from "global/types/City";
+import Neighborhood from "global/types/Neighborhood";
 import Province from "global/types/Province";
 import BaseService from "../BaseService";
 
-class ProvinceCityService extends BaseService {
+class LocationService extends BaseService {
   private provinceUrl = "/province";
   private cityUrl = "/city";
+  private neighborhoodUrl = "/neighborhood";
 
   async getAllProvinces() {
     let provinces: Province[] = [];
@@ -45,7 +47,7 @@ class ProvinceCityService extends BaseService {
     let newProvince = undefined;
     try {
       const response = await this.Api.put(
-        this.provinceUrl,
+        `${this.provinceUrl}/${province.id}`,
         province,
         this.config
       );
@@ -89,7 +91,7 @@ class ProvinceCityService extends BaseService {
   async createCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.post(
-        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}`,
         { name: city.name },
         this.config
       );
@@ -104,7 +106,7 @@ class ProvinceCityService extends BaseService {
     let updatedCity = undefined;
     try {
       const response = await this.Api.put(
-        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${city.id}`,
         city,
         this.config
       );
@@ -121,19 +123,69 @@ class ProvinceCityService extends BaseService {
   async deleteCityInProvince(provinceId: string, city: City) {
     try {
       await this.Api.delete(
-        `${this.provinceUrl}${this.cityUrl}/${provinceId}`,
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${city.id}`,
         {
           ...this.config,
-          data: {
-            id: city.id,
-            name: city.name,
-          },
         }
       );
     } catch (error: any) {
       this.handleError(error);
     }
   }
+
+  async createNeighborhoodInCity(
+    provinceId: string,
+    cityId: string,
+    neighborhood: Neighborhood
+  ) {
+    try {
+      await this.Api.post(
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}`,
+        { name: neighborhood.name },
+        this.config
+      );
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async editNeighborhoodInCity(
+    provinceId: string,
+    cityId: string,
+    neighborhood: Neighborhood
+  ): Promise<Neighborhood | undefined> {
+    if (provinceId === "" || cityId === "" || neighborhood.id === "") return;
+    let updatedNeighborhood = undefined;
+    try {
+      let response = await this.Api.put(
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}/${neighborhood.id}`,
+        neighborhood,
+        this.config
+      );
+      if (response.data) {
+        updatedNeighborhood = response.data as Neighborhood;
+      }
+    } catch (error) {
+      this.handleError(error);
+    }
+
+    return updatedNeighborhood;
+  }
+
+  async deleteNeighborhoodInCity(
+    provinceId: string,
+    cityId: string,
+    neighborhoodId: string
+  ) {
+    try {
+      await this.Api.delete(
+        `${this.provinceUrl}/${provinceId}${this.cityUrl}/${cityId}${this.neighborhoodUrl}/${neighborhoodId}`,
+        this.config
+      );
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
 }
 
-export default ProvinceCityService;
+export default LocationService;

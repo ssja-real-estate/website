@@ -7,7 +7,7 @@ import editItemModalState, {
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
 import City from "global/types/City";
-import Province from "global/types/Province";
+import Province, { defaultProvince } from "global/types/Province";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
@@ -18,8 +18,9 @@ import {
   ListGroup,
   Spinner,
 } from "react-bootstrap";
+import toast from "react-hot-toast";
 import { useRecoilState, useRecoilValue } from "recoil";
-import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import LocationService from "services/api/LocationService/LocationService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function CityList() {
@@ -30,18 +31,19 @@ function CityList() {
   const [newCity, setNewCity] = useState<City>({
     id: "",
     name: "",
+    neighborhoods: [],
   });
   const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new ProvinceCityService());
+  const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 
   useEffect(() => {
-    service.current.setToken(state.token);
+    locationService.current.setToken(state.token);
     loadData();
 
     return () => {
@@ -61,22 +63,40 @@ function CityList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.editMap[EditItemType.City]]);
 
+  const loadProvinces = async () => {
+    locationService.current
+      .getAllProvinces()
+      .then((fetchedProvinces) => {
+        setProvinces(fetchedProvinces);
+        if (selectedProvince?.id) {
+          const province = fetchedProvinces.find(
+            (p) => p.id === selectedProvince.id
+          );
+          if (province) {
+            setSelectedProvince(province);
+            setCities((prev) => province.cities);
+          }
+        } else {
+          setSelectedProvince(defaultProvince);
+        }
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
+  };
+
   const loadData = async () => {
     if (!loading) {
       setLoading((prev) => true);
     }
-    const provinces = await service.current.getAllProvinces();
 
-    if (!mounted.current) return;
-
-    setProvinces(provinces);
-    if (selectedProvince) {
-      const province = provinces.find((p) => p.id === selectedProvince.id);
-      if (province) {
-        setSelectedProvince(province);
-        setCities(province.cities);
-      }
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
     }
+
+    await loadProvinces();
+
     setLoading((prev) => false);
   };
 
@@ -98,7 +118,7 @@ function CityList() {
     if (!provinceId) return;
     for (let i = 0; i < newItems.length; i++) {
       const city = newItems[i];
-      await service.current.createCityInProvince(provinceId, city);
+      await locationService.current.createCityInProvince(provinceId, city);
     }
   };
 
@@ -107,10 +127,15 @@ function CityList() {
     setLoading((prev) => true);
 
     let provinceId = selectedProvince?.id ?? "";
-    let updatedCity = await service.current.editCityInProvince(provinceId, {
-      id: modalState.id,
-      name: modalState.value,
-    });
+    let updatedCity = await locationService.current.editCityInProvince(
+      provinceId,
+      {
+        id: modalState.id,
+        name: modalState.value,
+        neighborhoods: [],
+        mapInfo: modalState.mapInfo,
+      }
+    );
     if (updatedCity) {
       setProvinces((prev) => {
         let prevProvince = prev.find((t) => t.id === provinceId);
@@ -120,6 +145,7 @@ function CityList() {
           );
           if (prevCity) {
             prevCity.name = updatedCity!.name;
+            prevCity.mapInfo = updatedCity?.mapInfo;
           }
         }
         return prev;
@@ -136,7 +162,7 @@ function CityList() {
     if (!provinceId) return;
     for (let i = 0; i < removedItems.length; i++) {
       const city = removedItems[i];
-      await service.current.deleteCityInProvince(provinceId, city);
+      await locationService.current.deleteCityInProvince(provinceId, city);
     }
   };
 
@@ -222,6 +248,15 @@ function CityList() {
                 );
               })}
             </Form.Select>
+            <Button
+              variant="dark"
+              className="align-items-center pt-lg-2"
+              onClick={async () => {
+                await loadProvinces();
+              }}
+            >
+              <i className="bi-arrow-counterclockwise"></i>
+            </Button>
           </InputGroup>
         </Col>
         <Col sm={"auto"}>
@@ -255,7 +290,6 @@ function CityList() {
                         }}
                         onEdit={() => {
                           const newMap = buildMap(EditItemType.City);
-                          if (!modalMounted.current) return;
                           setModalState({
                             ...defaultEditItemModalState,
                             id: city.id,

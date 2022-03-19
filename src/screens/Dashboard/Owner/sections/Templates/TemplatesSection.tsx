@@ -6,6 +6,7 @@ import EstateTypesList from "./EstateTypes/EstateTypesList";
 import TemplatesList from "./TemplatesList";
 import UnitList from "./UnitList/UnitList";
 import Forms from "screens/Dashboard/Owner/sections/Templates/Forms/Forms";
+import NeighborhoodList from "./NeighborhoodList/NeighborhoodList";
 
 function TemplatesSection() {
   return (
@@ -27,6 +28,9 @@ function TemplatesSection() {
             </Tab.Pane>
             <Tab.Pane eventKey="#cityList">
               <CityList />
+            </Tab.Pane>
+            <Tab.Pane eventKey="#neighborhoodList">
+              <NeighborhoodList />
             </Tab.Pane>
             <Tab.Pane eventKey="#units">
               <UnitList />

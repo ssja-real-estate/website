@@ -18,7 +18,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import ProvinceCityService from "services/api/ProvinceCityService/ProvinceCityService";
+import LocationService from "services/api/LocationService/LocationService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
 
 function ProvinceList() {
@@ -34,7 +34,7 @@ function ProvinceList() {
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new ProvinceCityService());
+  const service = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 
@@ -64,10 +64,11 @@ function ProvinceList() {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllProvinces();
-    console.log("before");
 
-    if (!mounted.current) return;
-    console.log("after");
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
+    }
 
     setProvinces(data);
     setLoading((prev) => false);
@@ -95,24 +96,33 @@ function ProvinceList() {
 
   const editProvince = async () => {
     if (modalState.id === "") return;
-    setLoading((prev) => true);
 
     let province = provinces.find((p) => p.id === modalState.id);
-    let newType = await service.current.editProvince({
-      id: modalState.id,
-      name: modalState.value,
-      cities: province !== undefined ? province.cities : [],
-    });
 
-    if (newType) {
-      setProvinces((prev) => {
-        let prevType = prev.find((t) => t.id === newType!.id);
-        if (prevType) {
-          prevType.name = newType!.name;
-        }
-        return prev;
+    setLoading((prev) => true);
+
+    if (province) {
+      let newType = await service.current.editProvince({
+        id: modalState.id,
+        name: modalState.value,
+        cities: province !== undefined ? province.cities : [],
+        mapInfo: modalState.mapInfo,
       });
+
+      if (newType) {
+        setProvinces((prev) => {
+          let prevType = prev.find((t) => t.id === newType!.id);
+
+          if (prevType) {
+            prevType.name = newType!.name;
+            prevType.mapInfo = newType?.mapInfo;
+          }
+
+          return prev;
+        });
+      }
     }
+
     if (modalMounted.current) {
       setModalState(defaultEditItemModalState);
     }
@@ -174,7 +184,7 @@ function ProvinceList() {
             </Button>
             <Form.Control
               type="text"
-              placeholder={Strings.addNewType}
+              placeholder={Strings.addNewProvince}
               value={newProvince.name}
               onChange={(e) => {
                 setNewProvince({
@@ -215,12 +225,12 @@ function ProvinceList() {
                       }}
                       onEdit={() => {
                         const newMap = buildMap(EditItemType.Province);
-                        if (!modalMounted.current) return;
                         setModalState({
                           ...defaultEditItemModalState,
                           id: province.id,
                           value: province.name,
                           displayMap: [...newMap],
+                          mapInfo: province.mapInfo,
                         });
                       }}
                     />

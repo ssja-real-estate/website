@@ -1,45 +1,71 @@
+.main-container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  max-width: 90vw;
+  max-height: 100wh;
+  height: 100wh;
+}
 .add-estate-container {
-    background-image: url("../../images/backgrounds/4.jpg");
-    background-position: center;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
 }
 .add-estate {
-    max-width: 100vw;
+  max-width: 100vw;
 }
 .add-estate-title {
-    font-weight: 200;
+  font-weight: 200;
 }
 .add-estate-form {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 0 15px;
-    gap: 10px;
-    width: 600px;
-    max-width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0 15px;
+  gap: 10px;
+  width: 600px;
+  max-width: 90vw;
 }
 .form-select {
-    max-width: 70%;
+  max-width: 70%;
 }
 label {
-    min-width: fit-content;
+  min-width: fit-content;
 }
 .items-container {
-    max-width: 90vw;
-    width: 400px;
+  max-width: 90vw;
+  width: 400px;
+}
+.map-container {
+  background-color: white;
+  width: 50vw;
+  position: sticky;
+  top: 100px;
+  padding: 10px;
+}
+.main-row {
+  background-image: url("../../images/backgrounds/4.jpg");
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  max-width: 99.5vw;
 }
 
 @media (max-width: 500px) {
-    .add-estate-form {
-        flex-direction: column;
-        padding: 0;
-    }
+  .add-estate-form {
+    flex-direction: column;
+    padding: 0;
+  }
+}
+@media (max-width: 1400px) {
+  .map-container {
+    width: 90vw;
+    margin: 40px;
+  }
 }

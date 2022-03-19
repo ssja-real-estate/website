@@ -64,7 +64,10 @@ function UnitList() {
     }
     const units = await service.current.getAllUnits();
 
-    if (!mounted.current) return;
+    if (!mounted.current) {
+      setLoading((prev) => false);
+      return;
+    }
     setUnits(units);
     setLoading((prev) => false);
   };
@@ -103,7 +106,7 @@ function UnitList() {
       setUnits((prev) => {
         let prevType = prev.find((t) => t.id === updatedUnit!.id);
         if (prevType) {
-          prevType.name = updatedUnit!.name;
+          prevType = updatedUnit;
         }
         return prev;
       });
@@ -209,7 +212,6 @@ function UnitList() {
                       }}
                       onEdit={() => {
                         const newMap = buildMap(EditItemType.Unit);
-                        if (!modalMounted.current) return;
                         setModalState({
                           ...defaultEditItemModalState,
                           id: unit.id,

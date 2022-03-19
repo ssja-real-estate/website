@@ -1,5 +1,5 @@
-import Strings from 'global/constants/strings';
-import { ListGroup } from 'react-bootstrap';
+import Strings from "global/constants/strings";
+import { ListGroup } from "react-bootstrap";
 
 interface TemplatesListProps {
   sticky: boolean;
@@ -7,7 +7,7 @@ interface TemplatesListProps {
 
 function TemplatesList({ sticky }: TemplatesListProps) {
   return (
-    <div className={`${sticky ? 'sticky-top' : ''} mb-3`}>
+    <div className={`${sticky ? "sticky-top" : ""} mb-3`}>
       <ListGroup className="my-3">
         <ListGroup.Item href="#delegationTypes" action>
           {Strings.delegationTypes}
@@ -20,6 +20,9 @@ function TemplatesList({ sticky }: TemplatesListProps) {
         </ListGroup.Item>
         <ListGroup.Item href="#cityList" action>
           {Strings.cities}
+        </ListGroup.Item>
+        <ListGroup.Item href="#neighborhoodList" action>
+          {Strings.neighborhoods}
         </ListGroup.Item>
         <ListGroup.Item href="#units" action>
           {Strings.units}

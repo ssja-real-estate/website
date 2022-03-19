@@ -90,25 +90,18 @@ const Forms = () => {
   }, [isDefault, delegationType.name, estateType.name]);
 
   const loadOptions = async () => {
-    toast.promise(
-      delegationTypeService.current
-        .getAllDelegationTypes()
-        .then((delegationTypes) => {
-          setDelegationTypes(delegationTypes);
-        })
-        .then(() => estateTypeService.current.getAllEstateTypes())
-        .then((estateTypes) => {
-          setEstateTypes(estateTypes);
-        })
-        .catch((error) => {
-          console.log(error);
-        }),
-      {
-        success: Strings.loadingOptionsSuccess,
-        loading: Strings.loadingOptions,
-        error: Strings.loadingOptionsFailed,
-      }
-    );
+    delegationTypeService.current
+      .getAllDelegationTypes()
+      .then((delegationTypes) => {
+        setDelegationTypes(delegationTypes);
+      })
+      .then(() => estateTypeService.current.getAllEstateTypes())
+      .then((estateTypes) => {
+        setEstateTypes(estateTypes);
+      })
+      .catch((_) => {
+        toast.error(Strings.loadingLocationsFailed);
+      });
   };
 
   const loadData = async () => {
@@ -172,6 +165,7 @@ const Forms = () => {
             type: FieldType.Image,
             title: Strings.chooseImages,
             value: [],
+            optional: true,
           },
         ],
       };
@@ -221,6 +215,7 @@ const Forms = () => {
         assignmentTypeId: delegationType.id,
         estateTypeId: estateType.id,
       };
+
       if (targetForm.id) {
         await formService.current.updateForm(targetForm.id, targetForm);
       } else {
