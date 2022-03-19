@@ -36,7 +36,9 @@ help: ## help(default)
 	echo "Usage: make [OPTIONS] TARGET"
 	echo "--------------------------------"
 	echo "Options:"
-	echo "stage: set Dockerfile stage values:(dev[default], prod)"
+	echo "stage: set Dockerfile stage (dev[default], prod)"
+	echo "username: set DockerHub username (sajaweb[default])"
+	echo "password: set DockerHub password"
 	echo "--------------------------------"
 	echo "Targets:"
 	grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -48,7 +50,7 @@ help: ## help(default)
 # Docker tasks
 
 # Build docker image 
-build: ## build-image 
+build: ## build-image/params:stage,username
 	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
 
 # Build docker image on local machine
@@ -101,7 +103,7 @@ rm-image: ## remove-image
 rm-local-image: ## remove-local-image
 	docker rmi $(CONTAINER_NAME)
 
-login: set-password ## login-to-docker-hub
+login: set-password ## login-to-docker-hub/params:username,password
 	cat pass | docker login -u $(username) --password-stdin
 	rm -f pass
 
@@ -112,7 +114,7 @@ set-password: ## set-password
 logout: ## logout-from-docker-hub
 	docker logout
 
-push: ## push-docker-image-to-registry
+push: ## push-docker-image-to-registry/params:stage,username
 	docker push $(IMAGE_TAG)
 
 push-local: ## push-local-docker-image-to-registry
