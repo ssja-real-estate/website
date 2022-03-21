@@ -1,4 +1,3 @@
-import Slider from "@mui/material/Slider";
 import EstateCard from "components/EstateCard/EstateCard";
 import { motion } from "framer-motion";
 import Strings from "global/constants/strings";
@@ -51,7 +50,7 @@ function SearchEstateScreen() {
     !selectedDelegationType.name || !selectedEstateType.name ? true : false;
   const [isAdvancedFilter, toggleAdvancedFilter] = useState(true);
   const [noFilterExists, setNoFilterExists] = useState(false);
-  const [form, setForm] = useState<EstateForm>(defaultForm);
+  const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
   const [estate, setEstate] = useState<Estate>(defaultEstate);
   const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
 
@@ -151,9 +150,8 @@ function SearchEstateScreen() {
     if (!loadedForm.id) {
       setNoFilterExists(true);
     } else {
-      setForm(loadedForm);
+      setDataForm(loadedForm);
     }
-    // setEstate({ ...estate, dataForm: loadedForm });
     setLoading((prev) => false);
   }
 
@@ -170,13 +168,6 @@ function SearchEstateScreen() {
     setCities(province.cities);
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
-    // setEstate({
-    //   ...estate,
-    //   province: {
-    //     id: provinceId,
-    //     name: province.name,
-    //   },
-    // });
   }
 
   function handleCityChange(cityId: string) {
@@ -192,13 +183,6 @@ function SearchEstateScreen() {
     });
     setNeighborhoods(city.neighborhoods);
     setSelectedNeighborhood(defaultNeighborhood);
-    // setEstate({
-    //   ...estate,
-    //   city: {
-    //     id: cityId,
-    //     name: city.name,
-    //   },
-    // });
   }
 
   function handleNeighborhoodChange(neighborhoodId: string) {
@@ -211,13 +195,6 @@ function SearchEstateScreen() {
       name: neighborhoodId,
       mapInfo: neighborhood.mapInfo,
     });
-    // setEstate({
-    //   ...estate,
-    //   neighborhood: {
-    //     id: neighborhoodId,
-    //     name: neighborhood.name,
-    //   },
-    // });
   }
 
   function handleDelegationTypeChange(value: string) {
@@ -236,25 +213,31 @@ function SearchEstateScreen() {
 
   function onFieldChange(
     targetValue: any,
-    form: EstateForm,
     sectionIndex: number,
     fieldIndex: number
   ) {
     const currentField = {
-      ...form.sections[sectionIndex].fields[fieldIndex],
-      value: targetValue,
+      ...dataForm.sections[sectionIndex].fields[fieldIndex],
     };
-    const sections = form.sections;
+    if (currentField.type === FieldType.Range) {
+      const value = +targetValue;
+      let range = currentField.value as [number, number];
+      if (value < range[0]) range[0] = value;
+      if (value > range[1]) range[1] = value;
+
+      currentField.value = range;
+    } else {
+      currentField.value = targetValue;
+    }
+
+    const sections = dataForm.sections;
     const fields = sections[sectionIndex].fields;
     fields[fieldIndex] = currentField;
     sections[sectionIndex].fields = fields;
 
-    setEstate({
-      ...estate,
-      dataForm: {
-        ...form,
-        sections: sections,
-      },
+    setDataForm({
+      ...dataForm,
+      sections,
     });
   }
 
@@ -277,58 +260,61 @@ function SearchEstateScreen() {
     innerFields[innerFieldIndex] = currentField;
     fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
     sections[sectionIndex].fields = fields;
-
-    // setEstate({
-    //   ...estate,
-    //   dataForm: {
-    //     ...form,
-    //     sections: sections,
-    //   },
-    // });
   }
 
   function mapFields(fields: Field[], form: EstateForm, sectionIndex: number) {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
-          <label>
-            {field.title} {field.optional ? Strings.optionalField : null}
-          </label>
+          <label className="mb-2">{field.title}</label>
           {field.type === FieldType.Text ? (
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, sectionIndex, fieldIndex);
               }}
             />
-          ) : field.type === FieldType.Number ? (
-            <Slider
-              value={[0, 100]}
-              onChange={(e, newValue) => {
-                // onFieldChange(newValue, form, sectionIndex, fieldIndex);
-              }}
-              valueLabelDisplay="auto"
-              min={0}
-              max={100}
-              getAriaLabel={() => "Min Max"}
-              getAriaValueText={(value) => value.toString()}
-            />
-          ) : // <Form.Control
-          //   type="number"
-          //   value={field.value ? Number(field.value) : ""}
-          //   onChange={(e) => {
-          //     const numberValue = Number(e.target.value);
-          //     onFieldChange(numberValue, form, sectionIndex, fieldIndex);
-          //   }}
-          // />
-          field.type === FieldType.Select ? (
+          ) : field.type === FieldType.Range ? (
+            <div className="d-flex flex-row justify-content-evenly align-items-center ">
+              <Form.Group>
+                <Form.Label>{Strings.minValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={
+                    (field.value as [number, number])
+                      ? +(field.value as [number, number])[0]
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, sectionIndex, fieldIndex);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>{Strings.maxValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={
+                    (field.value as [number, number])
+                      ? +(field.value as [number, number])[1]
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, sectionIndex, fieldIndex);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            </div>
+          ) : field.type === FieldType.Select ? (
             <Form.Select
               value={field.value ? String(field.value) : "default"}
               onChange={(e) => {
                 const numberValue = String(e.currentTarget.value);
-                onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, sectionIndex, fieldIndex);
               }}
             >
               <option value="default" disabled>
@@ -345,7 +331,7 @@ function SearchEstateScreen() {
               checked={field.value ? true : false}
               onChange={(e) => {
                 const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                onFieldChange(booleanValue, sectionIndex, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Conditional ? (
@@ -356,7 +342,7 @@ function SearchEstateScreen() {
                 checked={field.value ? true : false}
                 onChange={(e) => {
                   const booleanValue = e.target.checked;
-                  onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                  onFieldChange(booleanValue, sectionIndex, fieldIndex);
                 }}
               />
               {field.value &&
@@ -374,7 +360,7 @@ function SearchEstateScreen() {
               value={field.value ? String(field.value) : ""}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, sectionIndex, fieldIndex);
               }}
             />
           )}
@@ -392,10 +378,7 @@ function SearchEstateScreen() {
     return fields.map((innerField, innerFieldIndex) => {
       return (
         <div key={innerFieldIndex} className="input-item py-3">
-          <label>
-            {innerField.title}{" "}
-            {innerField.optional ? Strings.optionalField : null}
-          </label>
+          <label className="mb-2">{innerField.title}</label>
           {innerField.type === FieldType.Text ? (
             <Form.Control
               type="text"
@@ -412,32 +395,39 @@ function SearchEstateScreen() {
               }}
             />
           ) : innerField.type === FieldType.Number ? (
-            <Slider
-              value={innerField.value as number[]}
-              onChange={(e, newValue) => {
-                console.log(newValue);
-              }}
-              valueLabelDisplay="auto"
-              min={innerField.min ?? 0}
-              max={innerField.max ?? 100}
-              getAriaLabel={() => "Min Max"}
-              getAriaValueText={(value) => value.toString()}
-            />
-          ) : //     <Form.Control
-          //       type="number"
-          //       value={innerField.value ? Number(innerField.value) : ""}
-          //       onChange={(e) => {
-          //         const numberValue = Number(e.target.value);
-          //         onConditionalFieldChange(
-          //           numberValue,
-          //           sectionIndex,
-          //           fieldIndex,
-          //           innerFieldIndex,
-          //           form
-          //         );
-          //       }}
-          //     />
-          innerField.type === FieldType.Select ? (
+            <div className="d-flex flex-row justify-content-evenly align-items-center ">
+              <Form.Group>
+                <Form.Label>{Strings.minValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={
+                    (innerField.value as [number, number])
+                      ? +(innerField.value as [number, number])[0]
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, sectionIndex, fieldIndex);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>{Strings.maxValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={
+                    (innerField.value as [number, number])
+                      ? +(innerField.value as [number, number])[1]
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, sectionIndex, fieldIndex);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            </div>
+          ) : innerField.type === FieldType.Select ? (
             <Form.Select
               value={innerField.value ? String(innerField.value) : "default"}
               onChange={(e) => {
@@ -521,12 +511,9 @@ function SearchEstateScreen() {
   }
 
   function clearStates() {
-    // setSelectedProvince(defaultProvince);
-    // setSelectedCity(defaultCity);
-    // setSelectedNeighborhood(defaultNeighborhood);
     setSelectedDelegationType(defaultDelegationType);
     setSelectedEstateType(defaultEstateType);
-    setForm(defaultForm);
+    setDataForm(defaultForm);
     setEstate(defaultEstate);
   }
 
@@ -691,7 +678,7 @@ function SearchEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                {form.sections.map((section, sectionIndex) => {
+                {dataForm.sections.map((section, sectionIndex) => {
                   const fields = section.fields.filter((f) => f.filterable);
                   if (fields.length < 1) return <></>;
                   return (

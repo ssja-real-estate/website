@@ -162,6 +162,8 @@ class Strings {
   static advancedFilter = "فیلتر پیشرفته";
   static noFilterForThisForm = "فیلتری برای این فرم وجود ندارد";
   static clearAdvancedFilter = "پاک‌کردن فیلتر پیشرفته";
+  static minValue = "کمترین";
+  static maxValue = "بیشترین";
 }
 
 export default Strings;
