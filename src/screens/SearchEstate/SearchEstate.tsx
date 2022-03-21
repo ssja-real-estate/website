@@ -1,34 +1,38 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState, useRef } from "react";
-import "./SearchEstate.css";
+import Slider from "@mui/material/Slider";
+import EstateCard from "components/EstateCard/EstateCard";
 import { motion } from "framer-motion";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import City, { defaultCity } from "global/types/City";
+import DelegationType, {
+  defaultDelegationType,
+} from "global/types/DelegationType";
+import { defaultEstate, Estate } from "global/types/Estate";
+import EstateType, { defaultEstateType } from "global/types/EstateType";
+import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
+import Province, { defaultProvince } from "global/types/Province";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
+import Tilt from "react-parallax-tilt";
+import { useRecoilValue } from "recoil";
+import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
+import EstateService from "services/api/EstateService/EstateService";
+import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import FormService from "services/api/FormService/FormService";
+import LocationService from "services/api/LocationService/LocationService";
+import SearchService from "services/api/SearchService/SearchService";
 import {
   crossfadeAnimation,
   elevationEffect,
 } from "../../animations/motionVariants";
-import { Button, Container, Form } from "react-bootstrap";
-import DelegationType, {
-  defaultDelegationType,
-} from "global/types/DelegationType";
-import EstateType, { defaultEstateType } from "global/types/EstateType";
-import { Estate } from "../../global/types/Estate";
-import Tilt from "react-parallax-tilt";
-import React from "react";
-import EstateCard from "../../components/EstateCard/EstateCard";
-import { useRecoilValue } from "recoil";
-import { globalState } from "global/states/globalStates";
-import FormService from "services/api/FormService/FormService";
-import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
-import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
-import EstateService from "services/api/EstateService/EstateService";
-import toast from "react-hot-toast";
-import Strings from "global/constants/strings";
-import City, { defaultCity } from "global/types/City";
-import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
-import Province, { defaultProvince } from "global/types/Province";
-import LocationService from "services/api/LocationService/LocationService";
+import { defaultForm, EstateForm } from "../../global/types/EstateForm";
+import { Field, FieldType } from "../../global/types/Field";
+import "./SearchEstate.css";
 
 function SearchEstateScreen() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingEstates, setLoadingEstates] = useState(false);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -39,15 +43,20 @@ function SearchEstateScreen() {
   const [selectedCity, setSelectedCity] = useState<City>(defaultCity);
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<Neighborhood>(defaultNeighborhood);
-  const [delegationType, setDelegationType] = useState<DelegationType>(
-    defaultDelegationType
-  );
-  const [estateType, setEstateType] = useState<EstateType>(defaultEstateType);
-  const [estates, setEstates] = useState<Estate[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedDelegationType, setSelectedDelegationType] =
+    useState<DelegationType>(defaultDelegationType);
+  const [selectedEstateType, setSelectedEstateType] =
+    useState<EstateType>(defaultEstateType);
+  const isDefault: boolean =
+    !selectedDelegationType.name || !selectedEstateType.name ? true : false;
+  const [isAdvancedFilter, toggleAdvancedFilter] = useState(true);
+  const [noFilterExists, setNoFilterExists] = useState(false);
+  const [form, setForm] = useState<EstateForm>(defaultForm);
+  const [estate, setEstate] = useState<Estate>(defaultEstate);
+  const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
 
-  const isDefault: boolean = !!delegationType.name && !!estateType.name;
   const state = useRecoilValue(globalState);
+  const searchService = useRef(new SearchService());
   const formService = useRef(new FormService());
   const delegationTypeService = useRef(new DelegationTypeService());
   const estateTypeService = useRef(new EstateTypeService());
@@ -56,26 +65,21 @@ function SearchEstateScreen() {
   const mounted = useRef(true);
 
   useEffect(() => {
+    searchService.current.setToken(state.token);
     formService.current.setToken(state.token);
     delegationTypeService.current.setToken(state.token);
     estateTypeService.current.setToken(state.token);
     estateService.current.setToken(state.token);
     locationService.current.setToken(state.token);
 
-    loadOptions();
     loadLocations();
-    loadData();
+    loadOptions();
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.token]);
-
-  // useEffect(() => {
-  //   loadData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [delegationType, estateType]);
+  }, [selectedDelegationType, selectedEstateType, state.token]);
 
   const loadLocations = async () => {
     locationService.current
@@ -130,36 +134,27 @@ function SearchEstateScreen() {
       });
   }
 
-  async function loadData() {
+  async function loadForm() {
     if (!loading) {
       setLoading((prev) => true);
     }
 
-    if (!delegationType.id || !estateType.id) {
+    if (!selectedDelegationType.id || !selectedEstateType.id) {
+      setLoading((prev) => false);
       return;
     }
-    // const loadedForm = await formService.current.getForm(
-    //   delegationType.id,
-    //   estateType.id
-    // );
+    const loadedForm = await formService.current.getForm(
+      selectedDelegationType.id,
+      selectedEstateType.id
+    );
 
-    // setEstates(loadedForm);
-    await loadOptions();
+    if (!loadedForm.id) {
+      setNoFilterExists(true);
+    } else {
+      setForm(loadedForm);
+    }
+    // setEstate({ ...estate, dataForm: loadedForm });
     setLoading((prev) => false);
-  }
-
-  function handleDelegationTypeChange(value: string) {
-    setDelegationType({
-      id: value,
-      name: value,
-    });
-  }
-
-  function handleEstateTypeChange(value: string) {
-    setEstateType({
-      id: value,
-      name: value,
-    });
   }
 
   function handleProvinceChange(provinceId: string) {
@@ -172,9 +167,16 @@ function SearchEstateScreen() {
       cities: province.cities,
       mapInfo: province.mapInfo,
     });
+    setCities(province.cities);
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
-    setCities(province.cities);
+    // setEstate({
+    //   ...estate,
+    //   province: {
+    //     id: provinceId,
+    //     name: province.name,
+    //   },
+    // });
   }
 
   function handleCityChange(cityId: string) {
@@ -188,8 +190,15 @@ function SearchEstateScreen() {
       neighborhoods: city.neighborhoods,
       mapInfo: city.mapInfo,
     });
-    setSelectedNeighborhood(defaultNeighborhood);
     setNeighborhoods(city.neighborhoods);
+    setSelectedNeighborhood(defaultNeighborhood);
+    // setEstate({
+    //   ...estate,
+    //   city: {
+    //     id: cityId,
+    //     name: city.name,
+    //   },
+    // });
   }
 
   function handleNeighborhoodChange(neighborhoodId: string) {
@@ -202,166 +211,578 @@ function SearchEstateScreen() {
       name: neighborhoodId,
       mapInfo: neighborhood.mapInfo,
     });
+    // setEstate({
+    //   ...estate,
+    //   neighborhood: {
+    //     id: neighborhoodId,
+    //     name: neighborhood.name,
+    //   },
+    // });
   }
 
-  function submitFilter() {
-    console.log("submit filter");
+  function handleDelegationTypeChange(value: string) {
+    setSelectedDelegationType({
+      id: value,
+      name: value,
+    });
+  }
+
+  function handleEstateTypeChange(value: string) {
+    setSelectedEstateType({
+      id: value,
+      name: value,
+    });
+  }
+
+  function onFieldChange(
+    targetValue: any,
+    form: EstateForm,
+    sectionIndex: number,
+    fieldIndex: number
+  ) {
+    const currentField = {
+      ...form.sections[sectionIndex].fields[fieldIndex],
+      value: targetValue,
+    };
+    const sections = form.sections;
+    const fields = sections[sectionIndex].fields;
+    fields[fieldIndex] = currentField;
+    sections[sectionIndex].fields = fields;
+
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        sections: sections,
+      },
+    });
+  }
+
+  function onConditionalFieldChange(
+    targetValue: any,
+    sectionIndex: number,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm
+  ) {
+    const currentField = {
+      ...form.sections[sectionIndex].fields[fieldIndex].fields![
+        innerFieldIndex
+      ],
+      value: targetValue,
+    };
+    const sections = form.sections;
+    const fields = sections[sectionIndex].fields;
+    const innerFields = fields[fieldIndex].fields!;
+    innerFields[innerFieldIndex] = currentField;
+    fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
+    sections[sectionIndex].fields = fields;
+
+    // setEstate({
+    //   ...estate,
+    //   dataForm: {
+    //     ...form,
+    //     sections: sections,
+    //   },
+    // });
+  }
+
+  function mapFields(fields: Field[], form: EstateForm, sectionIndex: number) {
+    return fields.map((field, fieldIndex) => {
+      return (
+        <div key={fieldIndex} className="input-item py-3">
+          <label>
+            {field.title} {field.optional ? Strings.optionalField : null}
+          </label>
+          {field.type === FieldType.Text ? (
+            <Form.Control
+              type="text"
+              value={field.value ? String(field.value) : ""}
+              onChange={(e) => {
+                const stringValue = String(e.target.value);
+                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.Number ? (
+            <Slider
+              value={[0, 100]}
+              onChange={(e, newValue) => {
+                // onFieldChange(newValue, form, sectionIndex, fieldIndex);
+              }}
+              valueLabelDisplay="auto"
+              min={0}
+              max={100}
+              getAriaLabel={() => "Min Max"}
+              getAriaValueText={(value) => value.toString()}
+            />
+          ) : // <Form.Control
+          //   type="number"
+          //   value={field.value ? Number(field.value) : ""}
+          //   onChange={(e) => {
+          //     const numberValue = Number(e.target.value);
+          //     onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+          //   }}
+          // />
+          field.type === FieldType.Select ? (
+            <Form.Select
+              value={field.value ? String(field.value) : "default"}
+              onChange={(e) => {
+                const numberValue = String(e.currentTarget.value);
+                onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {field.options?.map((option, index) => {
+                return <option key={index}>{option}</option>;
+              })}
+            </Form.Select>
+          ) : field.type === FieldType.Bool ? (
+            <Form.Check
+              className="d-inline mx-3"
+              type="switch"
+              checked={field.value ? true : false}
+              onChange={(e) => {
+                const booleanValue = e.target.checked;
+                onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.Conditional ? (
+            <>
+              <Form.Check
+                className="d-inline mx-3"
+                type="switch"
+                checked={field.value ? true : false}
+                onChange={(e) => {
+                  const booleanValue = e.target.checked;
+                  onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                }}
+              />
+              {field.value &&
+                !!field.fields &&
+                mapConditionalFields(
+                  field.fields!.filter((f) => f.filterable),
+                  form,
+                  sectionIndex,
+                  fieldIndex
+                )}
+            </>
+          ) : (
+            <Form.Control
+              type="text"
+              value={field.value ? String(field.value) : ""}
+              onChange={(e) => {
+                const stringValue = String(e.target.value);
+                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+              }}
+            />
+          )}
+        </div>
+      );
+    });
+  }
+
+  function mapConditionalFields(
+    fields: Field[],
+    form: EstateForm,
+    sectionIndex: number,
+    fieldIndex: number
+  ) {
+    return fields.map((innerField, innerFieldIndex) => {
+      return (
+        <div key={innerFieldIndex} className="input-item py-3">
+          <label>
+            {innerField.title}{" "}
+            {innerField.optional ? Strings.optionalField : null}
+          </label>
+          {innerField.type === FieldType.Text ? (
+            <Form.Control
+              type="text"
+              value={innerField.value ? String(innerField.value) : ""}
+              onChange={(e) => {
+                const stringValue = String(e.target.value);
+                onConditionalFieldChange(
+                  stringValue,
+                  sectionIndex,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form
+                );
+              }}
+            />
+          ) : innerField.type === FieldType.Number ? (
+            <Slider
+              value={innerField.value as number[]}
+              onChange={(e, newValue) => {
+                console.log(newValue);
+              }}
+              valueLabelDisplay="auto"
+              min={innerField.min ?? 0}
+              max={innerField.max ?? 100}
+              getAriaLabel={() => "Min Max"}
+              getAriaValueText={(value) => value.toString()}
+            />
+          ) : //     <Form.Control
+          //       type="number"
+          //       value={innerField.value ? Number(innerField.value) : ""}
+          //       onChange={(e) => {
+          //         const numberValue = Number(e.target.value);
+          //         onConditionalFieldChange(
+          //           numberValue,
+          //           sectionIndex,
+          //           fieldIndex,
+          //           innerFieldIndex,
+          //           form
+          //         );
+          //       }}
+          //     />
+          innerField.type === FieldType.Select ? (
+            <Form.Select
+              value={innerField.value ? String(innerField.value) : "default"}
+              onChange={(e) => {
+                const numberValue = String(e.currentTarget.value);
+                onConditionalFieldChange(
+                  numberValue,
+                  sectionIndex,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form
+                );
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {innerField.options?.map((option, index) => {
+                return <option key={index}>{option}</option>;
+              })}
+            </Form.Select>
+          ) : innerField.type === FieldType.Bool ? (
+            <Form.Check
+              className="d-inline mx-3"
+              type="switch"
+              checked={innerField.value ? true : false}
+              onChange={(e) => {
+                const booleanValue = e.target.checked;
+                onConditionalFieldChange(
+                  booleanValue,
+                  sectionIndex,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form
+                );
+              }}
+            />
+          ) : innerField.type === FieldType.Conditional ? (
+            <>
+              <Form.Check
+                className="d-inline mx-3"
+                type="switch"
+                checked={innerField.value ? true : false}
+                onChange={(e) => {
+                  const booleanValue = e.target.checked;
+                  onConditionalFieldChange(
+                    booleanValue,
+                    sectionIndex,
+                    fieldIndex,
+                    innerFieldIndex,
+                    form
+                  );
+                }}
+              />
+              {innerField.value &&
+                mapConditionalFields(
+                  innerField.fields!.filter((f) => f.filterable),
+                  form,
+                  sectionIndex,
+                  fieldIndex
+                )}
+            </>
+          ) : (
+            <Form.Control
+              type="text"
+              value={innerField.value ? String(innerField.value) : ""}
+              onChange={(e) => {
+                const stringValue = String(e.target.value);
+                onConditionalFieldChange(
+                  stringValue,
+                  sectionIndex,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form
+                );
+              }}
+            />
+          )}
+        </div>
+      );
+    });
+  }
+
+  function clearStates() {
+    // setSelectedProvince(defaultProvince);
+    // setSelectedCity(defaultCity);
+    // setSelectedNeighborhood(defaultNeighborhood);
+    setSelectedDelegationType(defaultDelegationType);
+    setSelectedEstateType(defaultEstateType);
+    setForm(defaultForm);
+    setEstate(defaultEstate);
+  }
+
+  async function handleAdvancedFilter() {
+    if (isDefault) {
+      toast.error(Strings.chooseDelegationAndEstateTypes);
+      return;
+    }
+
+    if (!isAdvancedFilter) {
+      clearStates();
+      toggleAdvancedFilter(!isAdvancedFilter);
+      return;
+    }
+
+    loadForm();
+    toggleAdvancedFilter(!isAdvancedFilter);
+  }
+
+  async function searchEstate() {
+    setLoadingEstates((prev) => true);
+
+    if (isDefault) {
+    } else {
+    }
+
+    setSearchedEstates([]);
+    setLoadingEstates((prev) => false);
   }
 
   return (
-    <div className="search-estate-container">
-      <motion.div
-        variants={elevationEffect}
-        initial="first"
-        animate="second"
-        className="search-estate card glass shadow rounded-3 py-3 px-4 my-4"
-      >
-        <h2 className="search-estate-title text-center">
-          {Strings.searchEstate}
-        </h2>
-        <form className="search-estate-form py-3">
-          <label htmlFor="provinceSelector">{Strings.province}</label>
-          <Form.Select
-            className="form-select rounded-3 ms-3"
-            name="provinceSelector"
-            id="provinceSelector"
-            value={selectedProvince.name}
-            onChange={(e) => handleProvinceChange(e.currentTarget.value)}
-          >
-            <option value="" disabled>
-              {Strings.choose}
-            </option>
-            {provinces.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <label htmlFor="citySelector">{Strings.city}</label>
-          <Form.Select
-            className="form-select rounded-3 ms-3"
-            name="citySelector"
-            id="citySelector"
-            value={selectedCity.name}
-            onChange={(e) => handleCityChange(e.currentTarget.value)}
-          >
-            <option value="" disabled>
-              {Strings.choose}
-            </option>
-            {cities.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <label htmlFor="neighborhoodSelector">{Strings.neighborhood}</label>
-          <Form.Select
-            className="form-select rounded-3 ms-3"
-            name="neighborhoodSelector"
-            id="neighborhoodSelector"
-            value={selectedNeighborhood.name}
-            onChange={(e) => handleNeighborhoodChange(e.currentTarget.value)}
-          >
-            <option value="" disabled>
-              {Strings.choose}
-            </option>
-            {neighborhoods.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <label htmlFor="delegationType">{Strings.delegationType}</label>
-          <Form.Select
-            className="form-select rounded-3 ms-3"
-            name="delegationType"
-            id="delegationType"
-            value={delegationType.name}
-            onChange={(e) => handleDelegationTypeChange(e.currentTarget.value)}
-          >
-            <option value="" disabled>
-              {Strings.choose}
-            </option>
-            {delegationTypes.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <label htmlFor="delegationType">{Strings.estateType}</label>
-          <Form.Select
-            className="form-select rounded-3"
-            name="estateType"
-            id="estateType"
-            value={estateType.name}
-            onChange={(e) => handleEstateTypeChange(e.currentTarget.value)}
-          >
-            <option value="" disabled>
-              {Strings.choose}
-            </option>
-            {estateTypes.map((option, index) => {
-              return (
-                <option key={index} value={option.id}>
-                  {option.name}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={() => {
-              submitFilter();
-            }}
-          >
-            {Strings.submitFilter}
-          </Button>
-        </form>
-      </motion.div>
-      {
-        <Container>
-          <motion.div
-            variants={crossfadeAnimation}
-            initial="first"
-            animate="second"
-            className="estates-grid"
-          >
-            {loading
-              ? [0, 1, 2, 3].map((_, index) => {
+    <Row className="main-row">
+      <Col>
+        <div className="main-container">
+          <div className="search-estate-container">
+            <motion.div
+              variants={elevationEffect}
+              initial="first"
+              animate="second"
+              className="search-estate card glass shadow rounded-3 py-3 my-4"
+            >
+              <h2 className="search-estate-title text-center">
+                {Strings.searchEstate}
+              </h2>
+              <form className="search-estate-form">
+                <label htmlFor="province">{Strings.province}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="province"
+                  id="province"
+                  value={selectedProvince?.name}
+                  onChange={(e) => handleProvinceChange(e.currentTarget.value)}
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {provinces.map((province, index) => {
+                    return (
+                      <option key={index} value={province.id}>
+                        {province.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                <label htmlFor="city">{Strings.city}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="city"
+                  id="city"
+                  value={selectedCity?.name}
+                  onChange={(e) => handleCityChange(e.currentTarget.value)}
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {cities.map((city, index) => {
+                    return (
+                      <option key={index} value={city.id}>
+                        {city.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                <label htmlFor="neighborhood">{Strings.neighborhood}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="neighborhood"
+                  id="neighborhood"
+                  value={selectedNeighborhood?.name}
+                  onChange={(e) =>
+                    handleNeighborhoodChange(e.currentTarget.value)
+                  }
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {neighborhoods.map((neighborhood, index) => {
+                    return (
+                      <option key={index} value={neighborhood.id}>
+                        {neighborhood.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </form>
+              <form className="search-estate-form mt-2">
+                <label htmlFor="delegationType">{Strings.delegationType}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="delegationType"
+                  id="delegationType"
+                  value={selectedDelegationType.name}
+                  onChange={(e) =>
+                    handleDelegationTypeChange(e.currentTarget.value)
+                  }
+                  disabled={!isAdvancedFilter}
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {delegationTypes.map((option, index) => {
+                    return (
+                      <option key={index} value={option.id}>
+                        {option.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                <label htmlFor="delegationType">{Strings.estateType}</label>
+                <Form.Select
+                  className="form-select rounded-3"
+                  name="estateType"
+                  id="estateType"
+                  value={selectedEstateType.name}
+                  onChange={(e) =>
+                    handleEstateTypeChange(e.currentTarget.value)
+                  }
+                  disabled={!isAdvancedFilter}
+                >
+                  <option value="" disabled>
+                    {Strings.choose}
+                  </option>
+                  {estateTypes.map((option, index) => {
+                    return (
+                      <option key={index} value={option.id}>
+                        {option.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </form>
+            </motion.div>
+            {loading ? (
+              <Row>
+                <Col>
+                  <Spinner
+                    animation="border"
+                    variant="primary"
+                    className="my-5"
+                  />
+                </Col>
+              </Row>
+            ) : (
+              <div className="items-container">
+                {form.sections.map((section, sectionIndex) => {
+                  const fields = section.fields.filter((f) => f.filterable);
+                  if (fields.length < 1) return <></>;
                   return (
-                    <Tilt key={index}>
-                      <div className="estate card shadow rounded-3 p-4">
-                        <h4 className="card-title placeholder-glow d-flex flex-column justify-content-center align-items-start">
-                          <span className="placeholder col-6 py-3 rounded-3"></span>
-                        </h4>
-                        <h4 className="card-text placeholder-glow">
-                          <span className="placeholder col-4 my-4 rounded-3 d-block"></span>
-                          <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
-                          <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
-                        </h4>
-                      </div>
-                    </Tilt>
-                  );
-                })
-              : estates.map((estate, index) => {
-                  return (
-                    <React.Fragment key={index}>
-                      <EstateCard estate={estate} />
-                    </React.Fragment>
+                    <div
+                      className="section card glass shadow-sm py-2 px-4 my-2"
+                      key={sectionIndex}
+                    >
+                      <h3 className="section-title py-3">{section.title}</h3>
+                      {mapFields(fields, estate.dataForm, sectionIndex)}
+                    </div>
                   );
                 })}
-          </motion.div>
-        </Container>
-      }
-    </div>
+                {noFilterExists ? (
+                  <motion.div
+                    variants={crossfadeAnimation}
+                    initial="first"
+                    animate="second"
+                    className="card glass shadow rounded-3 glass p-5 align-items-center"
+                  >
+                    <h4 className="fw-light">{Strings.noFilterForThisForm}</h4>
+                  </motion.div>
+                ) : null}
+              </div>
+            )}
+            <Row className=" m-3">
+              <Col xl="6">
+                <Button
+                  className="btn-search-normal"
+                  variant="purple"
+                  onClick={searchEstate}
+                >
+                  {isAdvancedFilter
+                    ? Strings.normalSearch
+                    : Strings.submitFilter}
+                </Button>
+              </Col>
+              <Col xl="6">
+                <Button
+                  className="btn-search-advanced"
+                  variant="purple"
+                  onClick={handleAdvancedFilter}
+                >
+                  {isAdvancedFilter
+                    ? Strings.advancedFilter
+                    : Strings.clearAdvancedFilter}
+                </Button>
+              </Col>
+            </Row>
+          </div>
+        </div>
+      </Col>
+      <Col>
+        <div className="estates-container shadow-lg rounded-3 min-vh-100">
+          {
+            <Container>
+              <motion.div
+                variants={crossfadeAnimation}
+                initial="first"
+                animate="second"
+                className="estates-grid"
+              >
+                {loadingEstates
+                  ? [0, 1, 2, 3].map((_, index) => {
+                      return (
+                        <Tilt key={index}>
+                          <div className="estate card shadow rounded-3 p-4">
+                            <h4 className="card-title placeholder-glow d-flex flex-column justify-content-center align-items-start">
+                              <span className="placeholder col-6 py-3 rounded-3"></span>
+                            </h4>
+                            <h4 className="card-text placeholder-glow">
+                              <span className="placeholder col-4 my-4 rounded-3 d-block"></span>
+                              <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
+                              <span className="placeholder col-4 my-2 rounded-3 d-block"></span>
+                            </h4>
+                          </div>
+                        </Tilt>
+                      );
+                    })
+                  : searchedEstates.map((estate, index) => {
+                      return (
+                        <React.Fragment key={index}>
+                          <EstateCard estate={estate} />
+                        </React.Fragment>
+                      );
+                    })}
+              </motion.div>
+            </Container>
+          }
+        </div>
+      </Col>
+    </Row>
   );
 }
 

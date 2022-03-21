@@ -129,7 +129,7 @@ class Strings {
   static editInnerInputs = "ویرایش ورودی های داخلی";
   static editInnerInputTitle = "تغییر عنوان ورودی داخلی";
   static chooseDelegationAndEstateTypes =
-    "هر دو نوع واگذاری و نوع ملک را وارد کنید";
+    "«نوع واگذاری» و «نوع ملک» را انتخاب کنید";
   static resendCode = "ارسال مجدد";
   static profileTooltip = "پروفایل";
   static usersTooltip = "کاربران";
@@ -157,7 +157,11 @@ class Strings {
   static rejected = "تایید نشده";
   static verified = "تاییده شده";
   static unverified = "در انتظار تایید";
-  static submitFilter = "فیلتر";
+  static submitFilter = "اعمال فیلتر";
+  static normalSearch = "جستجوی عادی";
+  static advancedFilter = "فیلتر پیشرفته";
+  static noFilterForThisForm = "فیلتری برای این فرم وجود ندارد";
+  static clearAdvancedFilter = "پاک‌کردن فیلتر پیشرفته";
 }
 
 export default Strings;

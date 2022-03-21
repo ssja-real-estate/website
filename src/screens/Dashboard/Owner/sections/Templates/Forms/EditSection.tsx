@@ -282,6 +282,7 @@ function EditSection() {
               optional:
                 renameFieldModalData.newFieldInputNecessity ===
                 FieldInputNecessity.Optional,
+              filterable: renameFieldModalData.filterable,
             };
           }
 
