@@ -21,6 +21,7 @@ import EstateTypeService from "services/api/EstateTypeService/EstateTypeService"
 import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import SearchService from "services/api/SearchService/SearchService";
+import { validateForm } from "services/utilities/fieldValidations";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -535,6 +536,17 @@ function SearchEstateScreen() {
 
   async function searchEstate() {
     setLoadingEstates((prev) => true);
+
+    const errors = validateForm(dataForm);
+    if (errors.length > 0) {
+      for (let i = 0; i < errors.length; i++) {
+        const error = errors[i];
+        toast.error(error.message, {
+          duration: 2000,
+        });
+      }
+      return;
+    }
 
     if (isDefault) {
     } else {

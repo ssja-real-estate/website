@@ -10,7 +10,12 @@ const validateForm = (form: EstateForm): Error[] => {
     const section = form.sections[i];
     for (let j = 0; j < section.fields.length; j++) {
       const field = section.fields[j];
-      if (!field.optional) {
+      if (field.type === FieldType.Range) {
+        const range = field.value as [number, number];
+        if (range[0] <= range[1]) continue;
+
+        errorMessage = getRangeErrorMessage(field.title);
+      } else if (!field.optional) {
         if (field.type === FieldType.Bool) continue;
         else if (field.type === FieldType.Conditional) {
           if (!field.value) continue;
@@ -20,23 +25,16 @@ const validateForm = (form: EstateForm): Error[] => {
             if (!innerField.optional && innerField.type !== FieldType.Bool) {
               if (!innerField.value) {
                 errorMessage = getErrorMessage(innerField.title);
-                if (!!errorMessage) {
-                  errors.push({
-                    message: errorMessage,
-                  });
-                }
               }
             }
           }
         } else if (!field.value) {
           errorMessage = getErrorMessage(field.title);
-          if (!!errorMessage) {
-            errors.push({
-              message: errorMessage,
-            });
-          }
         }
       }
+
+      if (!errorMessage) continue;
+      errors.push({ message: errorMessage });
     }
   }
 
@@ -45,6 +43,10 @@ const validateForm = (form: EstateForm): Error[] => {
 
 const getErrorMessage = (fieldTitle: string) => {
   return `ورودی «${fieldTitle}» باید مقدار داشته باشد`;
+};
+
+const getRangeErrorMessage = (fieldTitle: string) => {
+  return `در ورودی «${fieldTitle}»، مقدار «کمترین» باید بیشتر از مقدار «بیشترین» باشد`;
 };
 
 export { validateForm };

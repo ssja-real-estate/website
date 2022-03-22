@@ -383,7 +383,6 @@ function AddEstateScreen() {
                   data.append("images", file);
                 });
                 setFormData(data);
-                // onFieldChange(data, form, sectionIndex, fieldIndex);
               }}
             />
           ) : (
