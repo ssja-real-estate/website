@@ -143,7 +143,7 @@ function SearchEstateScreen() {
       setLoading((prev) => false);
       return;
     }
-    const loadedForm = await formService.current.getForm(
+    const loadedForm = await searchService.current.getfilteredForm(
       selectedDelegationType.id,
       selectedEstateType.id
     );
@@ -215,18 +215,23 @@ function SearchEstateScreen() {
   function onFieldChange(
     targetValue: any,
     sectionIndex: number,
-    fieldIndex: number
+    fieldIndex: number,
+    min: boolean = false
   ) {
     const currentField = {
       ...dataForm.sections[sectionIndex].fields[fieldIndex],
     };
     if (currentField.type === FieldType.Range) {
       const value = +targetValue;
-      let range = currentField.value as [number, number];
-      if (value < range[0]) range[0] = value;
-      if (value > range[1]) range[1] = value;
+      let range = [currentField.min ?? 0, currentField.max ?? 0];
+      if (min) range[0] = value;
+      else range[1] = value;
+      // if (value < range[0]) range[0] = value;
+      // if (value > range[1]) range[1] = value;
 
-      currentField.value = range;
+      // currentField.value = range;
+      currentField.min = range[0];
+      currentField.max = range[1];
     } else {
       currentField.value = targetValue;
     }
@@ -283,14 +288,10 @@ function SearchEstateScreen() {
                 <Form.Label>{Strings.minValue}</Form.Label>
                 <Form.Control
                   type="number"
-                  value={
-                    (field.value as [number, number])
-                      ? +(field.value as [number, number])[0]
-                      : ""
-                  }
+                  value={field.min ?? ""}
                   onChange={(e) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, sectionIndex, fieldIndex);
+                    onFieldChange(value, sectionIndex, fieldIndex, true);
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -298,11 +299,7 @@ function SearchEstateScreen() {
                 <Form.Label>{Strings.maxValue}</Form.Label>
                 <Form.Control
                   type="number"
-                  value={
-                    (field.value as [number, number])
-                      ? +(field.value as [number, number])[1]
-                      : ""
-                  }
+                  value={field.max ?? ""}
                   onChange={(e) => {
                     const value = +e.currentTarget.value;
                     onFieldChange(value, sectionIndex, fieldIndex);
@@ -484,7 +481,7 @@ function SearchEstateScreen() {
               />
               {innerField.value &&
                 mapConditionalFields(
-                  innerField.fields!.filter((f) => f.filterable),
+                  innerField.fields!,
                   form,
                   sectionIndex,
                   fieldIndex
@@ -535,18 +532,18 @@ function SearchEstateScreen() {
   }
 
   async function searchEstate() {
-    setLoadingEstates((prev) => true);
-
     const errors = validateForm(dataForm);
     if (errors.length > 0) {
       for (let i = 0; i < errors.length; i++) {
         const error = errors[i];
         toast.error(error.message, {
-          duration: 2000,
+          duration: 3000,
         });
       }
       return;
     }
+
+    setLoadingEstates((prev) => true);
 
     if (isDefault) {
     } else {
@@ -691,15 +688,13 @@ function SearchEstateScreen() {
             ) : (
               <div className="items-container">
                 {dataForm.sections.map((section, sectionIndex) => {
-                  const fields = section.fields.filter((f) => f.filterable);
-                  if (fields.length < 1) return <></>;
                   return (
                     <div
                       className="section card glass shadow-sm py-2 px-4 my-2"
                       key={sectionIndex}
                     >
                       <h3 className="section-title py-3">{section.title}</h3>
-                      {mapFields(fields, estate.dataForm, sectionIndex)}
+                      {mapFields(section.fields, estate.dataForm, sectionIndex)}
                     </div>
                   );
                 })}
