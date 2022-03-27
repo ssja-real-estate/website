@@ -1,4 +1,10 @@
+import CustomModal from "components/CustomModal/CustomModal";
 import EstateCard from "components/EstateCard/EstateCard";
+import EstateInfoModal from "components/EstateInfoModal/EstateInfoModal";
+import {
+  estateInfoModalAtom,
+  defaultEstateInfoModalState,
+} from "components/EstateInfoModal/EstateInfoModalState";
 import { motion } from "framer-motion";
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
@@ -8,13 +14,14 @@ import DelegationType, {
 } from "global/types/DelegationType";
 import { defaultEstate, Estate } from "global/types/Estate";
 import EstateType, { defaultEstateType } from "global/types/EstateType";
+import SearchFilter from "global/types/Filter";
 import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
 import Province, { defaultProvince } from "global/types/Province";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import toast from "react-hot-toast";
 import Tilt from "react-parallax-tilt";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
 import EstateService from "services/api/EstateService/EstateService";
 import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
@@ -54,6 +61,8 @@ function SearchEstateScreen() {
   const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
   const [estate, setEstate] = useState<Estate>(defaultEstate);
   const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
+  const [estateInfoModalState, setEstateInfoModalState] =
+    useRecoilState(estateInfoModalAtom);
 
   const state = useRecoilValue(globalState);
   const searchService = useRef(new SearchService());
@@ -230,8 +239,8 @@ function SearchEstateScreen() {
       // if (value > range[1]) range[1] = value;
 
       // currentField.value = range;
-      currentField.min = range[0];
-      currentField.max = range[1];
+      if (min) currentField.min = range[0];
+      else currentField.max = range[1];
     } else {
       currentField.value = targetValue;
     }
@@ -531,6 +540,21 @@ function SearchEstateScreen() {
     toggleAdvancedFilter(!isAdvancedFilter);
   }
 
+  function buildFilter() {
+    let filter: SearchFilter = {
+      header: {
+        assignmentTypeId: selectedDelegationType.id,
+        estateTypeId: selectedEstateType.id,
+        provinceId: selectedProvince.id,
+        cityId: selectedCity.id,
+        neighbordhoodId: selectedNeighborhood.id,
+      },
+      form: dataForm.id ? dataForm : undefined,
+    };
+
+    return filter;
+  }
+
   async function searchEstate() {
     const errors = validateForm(dataForm);
     if (errors.length > 0) {
@@ -545,11 +569,10 @@ function SearchEstateScreen() {
 
     setLoadingEstates((prev) => true);
 
-    if (isDefault) {
-    } else {
-    }
+    const filter = buildFilter();
+    const fetchedEstates = await searchService.current.searchEstates(filter);
 
-    setSearchedEstates([]);
+    setSearchedEstates(fetchedEstates);
     setLoadingEstates((prev) => false);
   }
 
@@ -767,7 +790,16 @@ function SearchEstateScreen() {
                   : searchedEstates.map((estate, index) => {
                       return (
                         <React.Fragment key={index}>
-                          <EstateCard estate={estate} />
+                          <EstateCard
+                            estate={estate}
+                            showEstateInfoButton
+                            onShowEstateInfo={() => {
+                              setEstateInfoModalState({
+                                estate,
+                                showModal: true,
+                              });
+                            }}
+                          />
                         </React.Fragment>
                       );
                     })}
@@ -776,6 +808,17 @@ function SearchEstateScreen() {
           }
         </div>
       </Col>
+
+      <CustomModal
+        show={estateInfoModalState.showModal}
+        title={Strings.estateInfo}
+        cancelTitle={Strings.close}
+        handleClose={() => {
+          setEstateInfoModalState(defaultEstateInfoModalState);
+        }}
+      >
+        <EstateInfoModal />
+      </CustomModal>
     </Row>
   );
 }

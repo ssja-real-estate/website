@@ -11,7 +11,7 @@ const validateForm = (form: EstateForm): Error[] => {
     for (let j = 0; j < section.fields.length; j++) {
       const field = section.fields[j];
       if (field.type === FieldType.Range) {
-        const range = field.value as [number, number];
+        const range = [field.min ?? 0, field.max ?? 0];
         if (range[0] <= range[1]) continue;
 
         errorMessage = getRangeErrorMessage(field.title);
