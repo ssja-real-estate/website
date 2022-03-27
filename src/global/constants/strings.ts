@@ -8,6 +8,8 @@ class Strings {
   static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
+  static documentOriginality = "استعلام سند";
+  static attorneyOriginality = "استعلام وکالت‌نامه";
   static delegationTypes = "نوع واگذاری‌ها";
   static estateTypes = "نوع ملک‌ها";
   static provinces = "استان‌ها";

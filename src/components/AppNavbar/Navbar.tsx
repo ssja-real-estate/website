@@ -63,15 +63,31 @@ function AppNavbar() {
                 <i className="bi-box-arrow-in-left pe-2" />
               </Nav.Link>
             ) : (
-              <Nav.Link
-                className="fs-5"
-                onClick={() => {
-                  history.push("/dashboard");
-                }}
-              >
-                {Strings.dashboard}
-                <i className="bi-person-fill pe-2" />
-              </Nav.Link>
+              <>
+                <Nav.Link
+                  className="fs-5"
+                  href="https://my.ssaa.ir/portal/estate/originality-document/"
+                  target="_blank"
+                >
+                  {Strings.documentOriginality}
+                </Nav.Link>
+                <Nav.Link
+                  className="fs-5"
+                  href="https://my.ssaa.ir/portal/ssar/originality-document"
+                  target="_blank"
+                >
+                  {Strings.attorneyOriginality}
+                </Nav.Link>
+                <Nav.Link
+                  className="fs-5"
+                  onClick={() => {
+                    history.push("/dashboard");
+                  }}
+                >
+                  {Strings.dashboard}
+                  <i className="bi-person-fill pe-2" />
+                </Nav.Link>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
