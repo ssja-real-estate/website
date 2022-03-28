@@ -88,7 +88,7 @@ function SearchEstateScreen() {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDelegationType, selectedEstateType, state.token]);
+  }, [state.token]);
 
   const loadLocations = async () => {
     locationService.current
