@@ -9,7 +9,7 @@ class SearchService extends BaseService {
 
     try {
       const response = await this.Api.get(
-        `filterform/${assignmentId}/${estateTypeId}`,
+        `filter?assignmentTypeId=${assignmentId}&estateTypeId=${estateTypeId}`,
         this.config
       );
 

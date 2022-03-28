@@ -158,7 +158,7 @@ function SearchEstateScreen() {
     );
 
     if (!loadedForm.id) {
-      setNoFilterExists(true);
+      setNoFilterExists((prev) => true);
     } else {
       setDataForm(loadedForm);
     }
@@ -167,7 +167,13 @@ function SearchEstateScreen() {
 
   function handleProvinceChange(provinceId: string) {
     const province = provinces.find((p) => p.id === provinceId);
-    if (!province) return;
+    if (!province) {
+      setSelectedProvince(defaultProvince);
+      setSelectedCity(defaultCity);
+      setCities([]);
+      setSelectedNeighborhood(defaultNeighborhood);
+      return;
+    }
 
     setSelectedProvince({
       id: provinceId,
@@ -183,7 +189,12 @@ function SearchEstateScreen() {
   function handleCityChange(cityId: string) {
     const city = cities.find((c) => c.id === cityId);
 
-    if (!city) return;
+    if (!city) {
+      setSelectedCity(defaultCity);
+      setSelectedNeighborhood(defaultNeighborhood);
+      setNeighborhoods([]);
+      return;
+    }
 
     setSelectedCity({
       id: cityId,
@@ -198,7 +209,10 @@ function SearchEstateScreen() {
   function handleNeighborhoodChange(neighborhoodId: string) {
     const neighborhood = neighborhoods.find((n) => n.id === neighborhoodId);
 
-    if (!neighborhood) return;
+    if (!neighborhood) {
+      setSelectedNeighborhood(defaultNeighborhood);
+      return;
+    }
 
     setSelectedNeighborhood({
       id: neighborhoodId,
@@ -212,6 +226,7 @@ function SearchEstateScreen() {
       id: value,
       name: value,
     });
+    setNoFilterExists((prev) => false);
   }
 
   function handleEstateTypeChange(value: string) {
@@ -219,6 +234,7 @@ function SearchEstateScreen() {
       id: value,
       name: value,
     });
+    setNoFilterExists((prev) => false);
   }
 
   function onFieldChange(
@@ -533,10 +549,12 @@ function SearchEstateScreen() {
     if (!isAdvancedFilter) {
       clearStates();
       toggleAdvancedFilter(!isAdvancedFilter);
+      setNoFilterExists(false);
       return;
     }
 
     loadForm();
+    if (!noFilterExists) return;
     toggleAdvancedFilter(!isAdvancedFilter);
   }
 
@@ -599,9 +617,7 @@ function SearchEstateScreen() {
                   value={selectedProvince?.name}
                   onChange={(e) => handleProvinceChange(e.currentTarget.value)}
                 >
-                  <option value="" disabled>
-                    {Strings.choose}
-                  </option>
+                  <option value="">{Strings.choose}</option>
                   {provinces.map((province, index) => {
                     return (
                       <option key={index} value={province.id}>
@@ -618,9 +634,7 @@ function SearchEstateScreen() {
                   value={selectedCity?.name}
                   onChange={(e) => handleCityChange(e.currentTarget.value)}
                 >
-                  <option value="" disabled>
-                    {Strings.choose}
-                  </option>
+                  <option value="">{Strings.choose}</option>
                   {cities.map((city, index) => {
                     return (
                       <option key={index} value={city.id}>
@@ -639,9 +653,7 @@ function SearchEstateScreen() {
                     handleNeighborhoodChange(e.currentTarget.value)
                   }
                 >
-                  <option value="" disabled>
-                    {Strings.choose}
-                  </option>
+                  <option value="">{Strings.choose}</option>
                   {neighborhoods.map((neighborhood, index) => {
                     return (
                       <option key={index} value={neighborhood.id}>
@@ -663,9 +675,7 @@ function SearchEstateScreen() {
                   }
                   disabled={!isAdvancedFilter}
                 >
-                  <option value="" disabled>
-                    {Strings.choose}
-                  </option>
+                  <option value="">{Strings.choose}</option>
                   {delegationTypes.map((option, index) => {
                     return (
                       <option key={index} value={option.id}>
@@ -685,9 +695,7 @@ function SearchEstateScreen() {
                   }
                   disabled={!isAdvancedFilter}
                 >
-                  <option value="" disabled>
-                    {Strings.choose}
-                  </option>
+                  <option value="">{Strings.choose}</option>
                   {estateTypes.map((option, index) => {
                     return (
                       <option key={index} value={option.id}>
