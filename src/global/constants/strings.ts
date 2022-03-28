@@ -4,9 +4,12 @@ class Strings {
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
   static addEstate = "ثبت ملک";
+  static searchEstate = "جستجوی ملک";
   static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
+  static documentOriginality = "استعلام سند";
+  static attorneyOriginality = "استعلام وکالت‌نامه";
   static delegationTypes = "نوع واگذاری‌ها";
   static estateTypes = "نوع ملک‌ها";
   static provinces = "استان‌ها";
@@ -128,7 +131,7 @@ class Strings {
   static editInnerInputs = "ویرایش ورودی های داخلی";
   static editInnerInputTitle = "تغییر عنوان ورودی داخلی";
   static chooseDelegationAndEstateTypes =
-    "هر دو نوع واگذاری و نوع ملک را وارد کنید";
+    "«نوع واگذاری» و «نوع ملک» را انتخاب کنید";
   static resendCode = "ارسال مجدد";
   static profileTooltip = "پروفایل";
   static usersTooltip = "کاربران";
@@ -156,6 +159,13 @@ class Strings {
   static rejected = "تایید نشده";
   static verified = "تاییده شده";
   static unverified = "در انتظار تایید";
+  static submitFilter = "اعمال فیلتر";
+  static normalSearch = "جستجوی عادی";
+  static advancedFilter = "فیلتر پیشرفته";
+  static noFilterForThisForm = "فیلتری برای این فرم وجود ندارد";
+  static clearAdvancedFilter = "پاک‌کردن فیلتر پیشرفته";
+  static minValue = "کمترین";
+  static maxValue = "بیشترین";
 }
 
 export default Strings;

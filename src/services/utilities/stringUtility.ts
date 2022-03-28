@@ -1,5 +1,6 @@
 import {
   Field,
+  FieldFilterableStatusLabel,
   FieldInputNecessityLabel,
   FieldType,
   FieldTypeTitle,
@@ -24,7 +25,11 @@ function getFieldTypeAndNecessity(field: Field): string {
     ? FieldInputNecessityLabel.Obligatory
     : FieldInputNecessityLabel.Optional;
 
-  const result = `${fieldTypeTitle} (${fieldInputNecessityLabel})`;
+  const filterableFieldLabel = field.filterable
+    ? FieldFilterableStatusLabel.IsFilterable
+    : FieldFilterableStatusLabel.IsNotFilterable;
+
+  const result = `${fieldTypeTitle} (${filterableFieldLabel} - ${fieldInputNecessityLabel})`;
 
   return result;
 }

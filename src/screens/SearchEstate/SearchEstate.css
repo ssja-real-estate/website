@@ -1,52 +1,88 @@
+.main-container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  max-width: 90vw;
+  max-height: 100wh;
+  height: 100wh;
+}
 .search-estate-container {
-    background-image: url("../../images/backgrounds/5.jpg");
-    background-position: center;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 90vh;
 }
 .search-estate {
-    max-width: 100vw;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .search-estate-title {
-    font-weight: 200;
+  font-weight: 200;
 }
 .search-estate-form {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0 15px;
+  gap: 10px;
+  width: 600px;
+  max-width: 90vw;
 }
 .form-select {
-    max-width: 70%;
+  max-width: 70%;
 }
 label {
-    min-width: fit-content;
+  min-width: fit-content;
 }
-.estates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    grid-auto-rows: 250px;
-    gap: 10px;
+.items-container {
+  max-width: 90vw;
+  width: 400px;
+}
+.estates-container {
+  background-color: white;
+  width: 50vw;
+  position: sticky;
+  top: 100px;
+  padding: 10px;
+}
+.main-row {
+  background-image: url("../../images/backgrounds/4.jpg");
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  max-width: 99.5vw;
 }
 
-.estate {
-    height: 250px;
+.estates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-auto-rows: 250px;
+  gap: 10px;
 }
-.estate:hover .buttons {
-    opacity: 100;
-    animation: fadeIn 0.5s;
+
+.btn-search-normal {
+  min-width: max-content;
+}
+
+.btn-search-advanced {
+  min-width: max-content;
 }
 
 @media (max-width: 500px) {
-    .search-estate-form {
-        flex-direction: column;
-        width: 100vw;
-    }
+  .search-estate-form {
+    flex-direction: column;
+    padding: 0;
+  }
+}
+@media (max-width: 1400px) {
+  .estates-container {
+    width: 90vw;
+    margin: 40px;
+  }
 }

@@ -126,7 +126,7 @@ function AddEstateScreen() {
         setEstateTypes(estateTypes);
       })
       .catch((error) => {
-        console.log(error);
+        toast.error(Strings.loadingOptionsFailed);
       });
   }
 
@@ -383,7 +383,6 @@ function AddEstateScreen() {
                   data.append("images", file);
                 });
                 setFormData(data);
-                // onFieldChange(data, form, sectionIndex, fieldIndex);
               }}
             />
           ) : (

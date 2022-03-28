@@ -14,6 +14,8 @@ import CustomModal from "components/CustomModal/CustomModal";
 import Strings from "global/constants/strings";
 import {
   Field,
+  FieldFilterableStatus,
+  FieldFilterableStatusLabel,
   FieldInputNecessity,
   FieldInputNecessityLabel,
   FieldType,
@@ -42,6 +44,7 @@ function EditSection() {
       newTitle: "",
       newType: 0,
       newFieldInputNecessity: FieldInputNecessity.Obligatory,
+      filterable: false,
     });
   const [showEditInnerFieldsModal, setShowEditInnerFieldsModal] =
     useState<boolean>(false);
@@ -197,6 +200,7 @@ function EditSection() {
                         newFieldInputNecessity: field.optional
                           ? FieldInputNecessity.Optional
                           : FieldInputNecessity.Obligatory,
+                        filterable: field.filterable,
                       });
                       setShowRenameFieldModal(true);
                     }}
@@ -259,6 +263,7 @@ function EditSection() {
       </ListGroup>
       <CustomModal
         show={showRenameFieldModal}
+        isLarge
         title={Strings.changeInputTitle}
         cancelTitle={Strings.cancel}
         successTitle={Strings.save}
@@ -277,6 +282,7 @@ function EditSection() {
               optional:
                 renameFieldModalData.newFieldInputNecessity ===
                 FieldInputNecessity.Optional,
+              filterable: renameFieldModalData.filterable,
             };
           }
 
@@ -300,6 +306,28 @@ function EditSection() {
               });
             }}
           />
+          <Form.Select
+            style={{ minWidth: 50, maxWidth: "10vw" }}
+            value={
+              renameFieldModalData.filterable
+                ? FieldFilterableStatus.IsFilterable
+                : FieldFilterableStatus.IsNotFilterable
+            }
+            onChange={(e) => {
+              const value = +e.currentTarget.value;
+              setRenameFieldModalData({
+                ...renameFieldModalData!,
+                filterable: value === FieldFilterableStatus.IsFilterable,
+              });
+            }}
+          >
+            <option value={FieldFilterableStatus.IsNotFilterable}>
+              {FieldFilterableStatusLabel.IsNotFilterable}
+            </option>
+            <option value={FieldFilterableStatus.IsFilterable}>
+              {FieldFilterableStatusLabel.IsFilterable}
+            </option>
+          </Form.Select>
           <Form.Select
             style={{ minWidth: 50, maxWidth: "10vw" }}
             value={renameFieldModalData.newFieldInputNecessity}

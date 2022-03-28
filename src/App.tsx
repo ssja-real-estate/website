@@ -12,6 +12,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import AddEstateScreen from "screens/AddEstate/AddEstate";
 import CodeVerification from "screens/CodeVerification/CodeVerification";
 import EditEstateScreen from "screens/EditEstate/EditEstate";
+import SearchEstateScreen from "screens/SearchEstate/SearchEstate";
 import "./App.css";
 import AppNavbar from "./components/AppNavbar/Navbar";
 import { progressBarAtom } from "./global/states/loadingBar";
@@ -19,7 +20,6 @@ import DashboardScreen from "./screens/Dashboard/Dashboard";
 import HomeScreen from "./screens/Home/Home";
 import LoginScreen from "./screens/Login/Login";
 import NotFoundScreen from "./screens/NotFound/NotFound";
-import SearchEstateScreen from "./screens/SearchEstate/SearchEstate";
 import SignupScreen from "./screens/Signup/Signup";
 
 function App() {
