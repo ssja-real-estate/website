@@ -43,7 +43,11 @@ function App() {
         <Toaster />
         <Switch>
           <Route exact path="/" component={HomeScreen} />
-          <Route exact path="/search-estate" component={SearchEstateScreen} />
+          {state.loggedIn ? (
+            <Route exact path="/search-estate" component={SearchEstateScreen} />
+          ) : (
+            <Redirect exact from="/search-estate" to="/login" />
+          )}
           {state.loggedIn ? (
             <Route exact path="/add-estate" component={AddEstateScreen} />
           ) : (
