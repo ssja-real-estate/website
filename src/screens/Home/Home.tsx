@@ -13,14 +13,21 @@ function HomeScreen() {
         className="content"
       >
         <h1 className="fw-light">{Strings.sajaSystemCompleteName}</h1>
-        {/* <p className="app-description py-3">
-          لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با
-          استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در
-          ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و
-          کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی
-          در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می
-          طلبد.
-        </p> */}
+        <footer>
+          <a
+            referrerPolicy="origin"
+            target="_blank"
+            href="https://trustseal.enamad.ir/?id=272685&amp;Code=mpSx0xjRfdtYxeZVHICW"
+          >
+            <img
+              referrerPolicy="origin"
+              src="https://Trustseal.eNamad.ir/logo.aspx?id=272685&amp;Code=mpSx0xjRfdtYxeZVHICW"
+              alt=""
+              style={{ cursor: "pointer" }}
+              id="mpSx0xjRfdtYxeZVHICW"
+            />
+          </a>
+        </footer>
       </motion.div>
     </div>
   );
