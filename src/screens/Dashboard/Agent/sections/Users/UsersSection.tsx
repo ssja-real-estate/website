@@ -1,6 +1,5 @@
 import { Col, Row, Tab } from "react-bootstrap";
 import AgentList from "./AgentList/AgentList";
-import UsersList from "./UsersList/UsersList";
 import UsersSectionList from "./UsersSectionList";
 
 function UsersSection() {
@@ -14,9 +13,6 @@ function UsersSection() {
           <Tab.Content>
             <Tab.Pane eventKey="#agents">
               <AgentList />
-            </Tab.Pane>
-            <Tab.Pane eventKey="#users">
-              <UsersList />
             </Tab.Pane>
           </Tab.Content>
         </Col>

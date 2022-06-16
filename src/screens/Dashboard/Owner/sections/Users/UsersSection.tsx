@@ -1,8 +1,9 @@
-import { Col, Row, Tab } from 'react-bootstrap';
-import AdminList from './AdminList/AdminList';
-import UsersSectionList from './UsersSectionList';
-import UsersList from './UsersLists/UsersList';
-import OwnerList from './OwnerList/OwnerList';
+import { Col, Row, Tab } from "react-bootstrap";
+import AdminList from "./AdminList/AdminList";
+import UsersSectionList from "./UsersSectionList";
+import UsersList from "./UsersLists/UsersList";
+import OwnerList from "./OwnerList/OwnerList";
+import AgentList from "./AgentList/AgentList";
 
 function UsersSection() {
   return (
@@ -18,6 +19,9 @@ function UsersSection() {
             </Tab.Pane>
             <Tab.Pane eventKey="#admins">
               <AdminList />
+            </Tab.Pane>
+            <Tab.Pane eventKey="#agents">
+              <AgentList />
             </Tab.Pane>
             <Tab.Pane eventKey="#users">
               <UsersList />

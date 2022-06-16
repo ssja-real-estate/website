@@ -12,9 +12,6 @@ function UsersSectionList({ sticky }: UsersListProps) {
         <ListGroup.Item href="#agents" action>
           {Strings.agents}
         </ListGroup.Item>
-        <ListGroup.Item href="#users" action>
-          {Strings.users}
-        </ListGroup.Item>
       </ListGroup>
     </div>
   );
