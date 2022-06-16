@@ -20,14 +20,6 @@ const MapScreen = (props) => {
   const position = [latLang.lat, latLang.lng];
   const [, setMap] = useState();
   const [firstRender, setFirstRender] = useState(true);
-  const [defaultOptions, setDefaultOptions] = useState({
-    key: process.env.REACT_APP_MAP_WEB_API_KEY,
-    maptype: "osm-bright",
-    poi: true,
-    traffic: false,
-    center: position,
-    zoom: zoom,
-  });
   // const [defaultCircle, setDefaultCircle] = useState({
   //   color: "lightblue",
   //   fillColor: "blue",
@@ -78,8 +70,28 @@ const MapScreen = (props) => {
     // L.circle(position, defaultCircle).addTo(map);
   };
 
+  function getDefaultOptions() {
+    const latLang = props.latLang ?? defaultLatLang;
+    const zoom = props.zoom ?? defaultZoom;
+    const position = [latLang.lat, latLang.lng];
+    const options = {
+      key: process.env.REACT_APP_MAP_WEB_API_KEY,
+      maptype: "osm-bright",
+      poi: true,
+      traffic: false,
+      center: position,
+      zoom: zoom,
+    };
+
+    return options;
+  }
+
   return (
-    <NeshanMap style={defaultStyle} options={defaultOptions} onInit={onInit} />
+    <NeshanMap
+      style={defaultStyle}
+      options={getDefaultOptions()}
+      onInit={onInit}
+    />
   );
 };
 

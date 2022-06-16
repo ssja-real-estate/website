@@ -183,9 +183,7 @@ function EditEstateScreen() {
         };
         setOptions({ fetchedDelegationTypes, fetchedEstateTypes }, ids);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   }
 
   function setOptions(

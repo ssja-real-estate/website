@@ -95,7 +95,6 @@ class BaseService {
 
   private toastUnknownError(error: any) {
     toast.error(Strings.unknownError);
-    console.log(error.message);
   }
 }
 

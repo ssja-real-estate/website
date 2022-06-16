@@ -598,9 +598,6 @@ function AddEstateScreen() {
     setLoading((prev) => false);
   }
 
-  console.log("map info");
-  console.log(mapInfo);
-
   return (
     <Row className="main-row">
       <Col>

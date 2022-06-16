@@ -108,7 +108,6 @@ function EstatesSection({
     await loadData();
     setLoading((prev) => false);
   };
-  console.log(isUserEstatesScreen);
 
   return (
     <div className="estates-section">
