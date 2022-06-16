@@ -305,7 +305,6 @@ function AddEstateScreen() {
               value={field.value ? String(field.value) : ""}
               onChange={(e) => {
                 const stringValue = String(e.target.value);
-
                 onFieldChange(stringValue, form, sectionIndex, fieldIndex);
               }}
             />
@@ -598,6 +597,9 @@ function AddEstateScreen() {
     }
     setLoading((prev) => false);
   }
+
+  console.log("map info");
+  console.log(mapInfo);
 
   return (
     <Row className="main-row">
