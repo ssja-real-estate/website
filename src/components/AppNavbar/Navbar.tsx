@@ -1,7 +1,7 @@
 import "./Navbar.css";
 import { useHistory } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { globalState } from "global/states/globalStates";
 import Strings from "global/constants/strings";
 
@@ -33,7 +33,7 @@ function AppNavbar() {
         <Navbar.Collapse id="responsive-navbar">
           <Nav className="ms-auto">
             <Nav.Link
-              className="fs-5"
+              className="fs-5 m-2"
               onClick={() => {
                 history.push("/add-estate");
               }}
@@ -42,7 +42,7 @@ function AppNavbar() {
               <i className="bi-building pe-2" />
             </Nav.Link>
             <Nav.Link
-              className="ms-4 fs-5"
+              className="ms-4 fs-5 m-2"
               onClick={() => {
                 history.push("/search-estate");
               }}
@@ -54,7 +54,7 @@ function AppNavbar() {
           <Nav>
             {!state.loggedIn ? (
               <Nav.Link
-                className="fs-5"
+                className="fs-5 m-2"
                 onClick={() => {
                   history.push("/login");
                 }}
@@ -64,22 +64,27 @@ function AppNavbar() {
               </Nav.Link>
             ) : (
               <>
-                <Nav.Link
-                  className="fs-5"
-                  href="https://my.ssaa.ir/portal/estate/originality-document/"
-                  target="_blank"
-                >
-                  {Strings.documentOriginality}
+                <NavDropdown title={Strings.inquiries} className="fs-5 m-2">
+                  <NavDropdown.Item onClick={() => {}}>
+                    {Strings.documentInquiry}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => {}}>
+                    {Strings.proxyInquiry}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => {}}>
+                    {Strings.onlineChequeInquiry}
+                  </NavDropdown.Item>
+                </NavDropdown>
+                <Nav.Link className="fs-5 m-2" onClick={() => {}}>
+                  {Strings.contractSamples}
                 </Nav.Link>
+                <NavDropdown title={Strings.laws} className="fs-5 m-2">
+                  <NavDropdown.Item onClick={() => {}}>
+                    {Strings.civilLaw}
+                  </NavDropdown.Item>
+                </NavDropdown>
                 <Nav.Link
-                  className="fs-5"
-                  href="https://my.ssaa.ir/portal/ssar/originality-document"
-                  target="_blank"
-                >
-                  {Strings.attorneyOriginality}
-                </Nav.Link>
-                <Nav.Link
-                  className="fs-5"
+                  className="fs-5 m-2"
                   onClick={() => {
                     history.push("/dashboard");
                   }}

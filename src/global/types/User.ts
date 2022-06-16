@@ -1,9 +1,10 @@
-import Strings from 'global/constants/strings';
+import Strings from "global/constants/strings";
 
 enum Role {
   OWNER = 1,
   ADMIN = 2,
   USER = 3,
+  AGENT = 4,
 }
 
 interface User {
@@ -15,8 +16,8 @@ interface User {
 }
 
 const defaultUser = {
-  id: '',
-  mobile: '',
+  id: "",
+  mobile: "",
   role: Role.USER,
 };
 

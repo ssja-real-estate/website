@@ -15,7 +15,7 @@ function DashboardScreen() {
         <OwnerDashboard />
       ) : state.role === Role.ADMIN ? (
         <AdminDashboard />
-      ) : (
+      ) : state.role === Role.AGENT ? null : (
         <UserDashboard />
       )}
     </div>
