@@ -242,12 +242,9 @@ function EditEstateScreen() {
   }
 
   function setImages(form: EstateForm) {
-    if (!form.sections || form.sections.length < 1) return;
+    if (!form.fields || form.fields.length < 1) return;
 
-    const firstSection = form.sections[0];
-    if (!firstSection.fields || firstSection.fields.length < 1) return;
-
-    const firstField = firstSection.fields[0];
+    const firstField = form.fields[0];
     if (firstField.type !== FieldType.Image) return;
 
     setPreviousImages((firstField.value as string[]) ?? []);
@@ -324,61 +321,49 @@ function EditEstateScreen() {
     return sumOfFileSizes > 2048;
   }
 
-  function onFieldChange(
-    targetValue: any,
-    // form: EstateForm,
-    sectionIndex: number,
-    fieldIndex: number
-  ) {
+  function onFieldChange(targetValue: any, fieldIndex: number) {
     let currentField = {
-      ...estate.dataForm.sections[sectionIndex].fields[fieldIndex],
+      ...estate.dataForm.fields[fieldIndex],
       value: targetValue,
     };
-    let sections = [...estate.dataForm.sections];
-    let fields = sections[sectionIndex].fields;
+    let fields = estate.dataForm.fields;
     fields[fieldIndex] = { ...currentField };
     // fields[fieldIndex] = { ...fields[fieldIndex], value: targetValue };
-    sections[sectionIndex].fields = fields;
 
     setEstate({
       ...estate,
       dataForm: {
         ...estate.dataForm,
-        sections: sections,
+        fields,
       },
     });
   }
 
   function onConditionalFieldChange(
     targetValue: any,
-    sectionIndex: number,
     fieldIndex: number,
     innerFieldIndex: number,
     form: EstateForm
   ) {
     const currentField = {
-      ...form.sections[sectionIndex].fields[fieldIndex].fields![
-        innerFieldIndex
-      ],
+      ...form.fields[fieldIndex].fields![innerFieldIndex],
       value: targetValue,
     };
-    const sections = form.sections;
-    const fields = sections[sectionIndex].fields;
+    const fields = form.fields;
     const innerFields = fields[fieldIndex].fields!;
     innerFields[innerFieldIndex] = currentField;
     fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
-    sections[sectionIndex].fields = fields;
 
     setEstate({
       ...estate,
       dataForm: {
         ...form,
-        sections: sections,
+        fields,
       },
     });
   }
 
-  function mapFields(fields: Field[], form: EstateForm, sectionIndex: number) {
+  function mapFields(fields: Field[], form: EstateForm) {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
@@ -389,28 +374,28 @@ function EditEstateScreen() {
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Number ? (
             <Form.Control
               type="number"
               value={field.value ? Number(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const numberValue = Number(e.target.value);
 
-                onFieldChange(numberValue, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Select ? (
             <Form.Select
               value={field.value ? String(field.value) : "default"}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
 
-                onFieldChange(numberValue, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, fieldIndex);
               }}
             >
               <option value="default" disabled>
@@ -425,9 +410,9 @@ function EditEstateScreen() {
               className="d-inline mx-3"
               type="switch"
               checked={field.value ? true : false}
-              onChange={(e) => {
+              onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, sectionIndex, fieldIndex);
+                onFieldChange(booleanValue, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Conditional ? (
@@ -436,18 +421,13 @@ function EditEstateScreen() {
                 className="d-inline mx-3"
                 type="switch"
                 checked={field.value ? true : false}
-                onChange={(e) => {
+                onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
-                  onFieldChange(booleanValue, sectionIndex, fieldIndex);
+                  onFieldChange(booleanValue, fieldIndex);
                 }}
               />
               {field.value &&
-                mapConditionalFields(
-                  field.fields!,
-                  form,
-                  sectionIndex,
-                  fieldIndex
-                )}
+                mapConditionalFields(field.fields!, form, fieldIndex)}
             </>
           ) : field.type === FieldType.Image ? (
             <Row>
@@ -502,9 +482,9 @@ function EditEstateScreen() {
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, fieldIndex);
               }}
             />
           )}
@@ -516,7 +496,6 @@ function EditEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    sectionIndex: number,
     fieldIndex: number
   ) {
     return fields.map((innerField, innerFieldIndex) => {
@@ -530,12 +509,11 @@ function EditEstateScreen() {
             <Form.Control
               type="text"
               value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
 
                 onConditionalFieldChange(
                   stringValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -546,12 +524,11 @@ function EditEstateScreen() {
             <Form.Control
               type="number"
               value={innerField.value ? Number(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const numberValue = Number(e.target.value);
 
                 onConditionalFieldChange(
                   numberValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -561,12 +538,11 @@ function EditEstateScreen() {
           ) : innerField.type === FieldType.Select ? (
             <Form.Select
               value={innerField.value ? String(innerField.value) : "default"}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
 
                 onConditionalFieldChange(
                   numberValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -585,12 +561,11 @@ function EditEstateScreen() {
               className="d-inline mx-3"
               type="switch"
               checked={innerField.value ? true : false}
-              onChange={(e) => {
+              onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
 
                 onConditionalFieldChange(
                   booleanValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -603,12 +578,11 @@ function EditEstateScreen() {
                 className="d-inline mx-3"
                 type="switch"
                 checked={innerField.value ? true : false}
-                onChange={(e) => {
+                onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
 
                   onConditionalFieldChange(
                     booleanValue,
-                    sectionIndex,
                     fieldIndex,
                     innerFieldIndex,
                     form
@@ -616,12 +590,7 @@ function EditEstateScreen() {
                 }}
               />
               {innerField.value &&
-                mapConditionalFields(
-                  innerField.fields!,
-                  form,
-                  sectionIndex,
-                  fieldIndex
-                )}
+                mapConditionalFields(innerField.fields!, form, fieldIndex)}
             </>
           ) : innerField.type === FieldType.Image ? (
             <Form.Control
@@ -651,12 +620,11 @@ function EditEstateScreen() {
             <Form.Control
               type="text"
               value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
 
                 onConditionalFieldChange(
                   stringValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -743,7 +711,9 @@ function EditEstateScreen() {
                   name="province"
                   id="province"
                   value={selectedProvince?.name}
-                  onChange={(e) => handleProvinceChange(e.currentTarget.value)}
+                  onChange={(e: { currentTarget: { value: string } }) =>
+                    handleProvinceChange(e.currentTarget.value)
+                  }
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -762,7 +732,9 @@ function EditEstateScreen() {
                   name="city"
                   id="city"
                   value={selectedCity?.name}
-                  onChange={(e) => handleCityChange(e.currentTarget.value)}
+                  onChange={(e: { currentTarget: { value: string } }) =>
+                    handleCityChange(e.currentTarget.value)
+                  }
                 >
                   <option value="" disabled>
                     {Strings.choose}
@@ -781,7 +753,7 @@ function EditEstateScreen() {
                   name="neighborhood"
                   id="neighborhood"
                   value={selectedNeighborhood?.name}
-                  onChange={(e) =>
+                  onChange={(e: { currentTarget: { value: string } }) =>
                     handleNeighborhoodChange(e.currentTarget.value)
                   }
                 >
@@ -861,17 +833,9 @@ function EditEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                {estate.dataForm.sections.map((section, sectionIndex) => {
-                  return (
-                    <div
-                      className="section card glass shadow-sm py-2 px-4 my-2"
-                      key={sectionIndex}
-                    >
-                      <h3 className="section-title py-3">{section.title}</h3>
-                      {mapFields(section.fields, estate.dataForm, sectionIndex)}
-                    </div>
-                  );
-                })}
+                <div className="section card glass shadow-sm py-2 px-4 my-2">
+                  {mapFields(estate.dataForm.fields, estate.dataForm)}
+                </div>
                 {!estate.dataForm.id ? (
                   <motion.div
                     variants={crossfadeAnimation}

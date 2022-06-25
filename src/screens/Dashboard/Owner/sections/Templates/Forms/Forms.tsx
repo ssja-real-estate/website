@@ -7,7 +7,6 @@ import {
 } from "react-beautiful-dnd";
 import {
   Button,
-  CloseButton,
   Col,
   Form,
   InputGroup,
@@ -15,23 +14,23 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
 import toast from "react-hot-toast";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-import EditSection from "./EditSection";
-import DelegationType from "global/types/DelegationType";
-import EstateType from "global/types/EstateType";
-import { defaultModalSection, modalSectionAtom } from "./FormsState";
+import CustomModal from "components/CustomModal/CustomModal";
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import FormService from "services/api/FormService/FormService";
+import DelegationType from "global/types/DelegationType";
+import { defaultForm, EstateForm } from "global/types/EstateForm";
+import EstateType from "global/types/EstateType";
+import { defaultField, Field, FieldType } from "global/types/Field";
 import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
 import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
-import Section, { defaultSection } from "global/types/Section";
-import { defaultForm, EstateForm } from "global/types/EstateForm";
-import { defaultField, FieldType } from "global/types/Field";
-import CustomModal from "components/CustomModal/CustomModal";
+import FormService from "services/api/FormService/FormService";
 import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
+import { v4 } from "uuid";
+import EditSection from "./EditSection";
+import { defaultModalSection, modalSectionAtom } from "./FormsState";
 
 const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
@@ -54,9 +53,6 @@ const Forms = () => {
 
   const [form, setForm] = useState<EstateForm>(defaultForm);
   const [hasImage, setHasImage] = useState<boolean>(false);
-  const [showNewSectionModal, setShowNewSectionModal] =
-    useState<boolean>(false);
-  const [newSectionTitle, setNewSectionTitle] = useState<string>("");
   const [showEditSectionModal, setShowEditSectionModal] =
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -127,57 +123,42 @@ const Forms = () => {
     setLoading((prev) => false);
   };
 
-  const addNewSectionToForm = () => {
-    const newSection: Section = {
-      ...defaultSection,
-      title: newSectionTitle,
-    };
-    setForm({ ...form, sections: [...form.sections, newSection] });
-    setShowNewSectionModal((prev) => false);
-    setNewSectionTitle("");
-  };
-
-  const handleSectionDragEnd = (result: DropResult) => {
+  const handleFieldDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
 
-    const tempSections = [...form!.sections];
-    const [reorderedSection] = tempSections.splice(result.source.index, 1);
-    tempSections.splice(result.destination!.index, 0, reorderedSection);
+    const tempFields = [...form!.fields];
+    const [reorderedField] = tempFields.splice(result.source.index, 1);
+    tempFields.splice(result.destination!.index, 0, reorderedField);
 
-    setForm({ ...form!, sections: tempSections });
+    setForm({ ...form!, fields: tempFields });
   };
 
   const handleImagesSection = () => {
     if (!form) return;
 
-    let newSections = form.sections.slice();
+    let newFields = form.fields.slice();
     const hasImageSection = includesImageSection(form);
     if (hasImageSection) {
-      newSections.shift();
+      newFields.shift();
     } else {
-      const newSection: Section = {
-        title: Strings.images,
-        fields: [
-          {
-            ...defaultField,
-            type: FieldType.Image,
-            title: Strings.chooseImages,
-            value: [],
-            optional: true,
-          },
-        ],
+      const newField: Field = {
+        ...defaultField,
+        type: FieldType.Image,
+        title: Strings.chooseImages,
+        value: [],
+        optional: true,
       };
-      newSections.unshift(newSection);
+      newFields.unshift(newField);
     }
-    setForm({ ...form, sections: newSections });
+    setForm({ ...form, fields: newFields });
   };
 
   const includesImageSection = (estateForm: EstateForm) => {
-    if (!estateForm.sections.length) return false;
+    if (!estateForm.fields.length) return false;
 
-    const imageField = estateForm.sections[0].fields.find((field) => {
+    const imageField = estateForm.fields.find((field) => {
       return field.type === FieldType.Image;
     });
 
@@ -185,17 +166,7 @@ const Forms = () => {
   };
 
   const updateChangedSection = () => {
-    const sectionIndex = modalSection.index;
-    const section = form.sections[sectionIndex];
-    const changedSection: Section = {
-      ...section,
-      title: modalSection.data.title,
-      fields: modalSection.data.fields,
-    };
-    let sections = form.sections.slice();
-    sections.splice(sectionIndex, 1, changedSection);
-
-    setForm({ ...form, sections: sections });
+    setForm({ ...form, fields: modalSection.data.fields });
     setModalSection(defaultModalSection);
   };
 
@@ -242,29 +213,24 @@ const Forms = () => {
         <i className="bi-arrow-counterclockwise"></i>
       </Button>
       <CustomModal
-        title={Strings.addNewSection}
+        isFullscreen
+        show={showEditSectionModal}
+        title={Strings.editForm}
         cancelTitle={Strings.cancel}
-        successTitle={Strings.confirm}
-        show={showNewSectionModal}
+        successTitle={Strings.saveChanges}
         handleClose={() => {
-          setShowNewSectionModal(false);
+          setShowEditSectionModal(false);
+          setModalSection({
+            index: 0,
+            data: { fields: form.fields },
+          });
         }}
         handleSuccess={() => {
-          if (newSectionTitle.trim() !== "") {
-            addNewSectionToForm();
-          } else {
-            toast.error(Strings.sectionTitleCantBeEmpty);
-            setNewSectionTitle("");
-          }
+          updateChangedSection();
+          setShowEditSectionModal(false);
         }}
       >
-        <Form.Control
-          type="text"
-          value={newSectionTitle}
-          onChange={(e) => {
-            setNewSectionTitle(e.target.value);
-          }}
-        />
+        <EditSection />
       </CustomModal>
       <Row>
         <Col>
@@ -272,15 +238,15 @@ const Forms = () => {
             <Button
               variant="dark"
               onClick={() => {
-                setShowNewSectionModal(true);
+                setShowEditSectionModal(true);
               }}
               disabled={isDefault}
             >
-              <i className="bi-plus-lg fs-6"></i>
+              <i className="bi-pencil-square fs-6"></i>
             </Button>
             <Form.Select
               value={estateType.name}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setEstateType({
                   id: e.currentTarget.value,
                   name: e.currentTarget.value,
@@ -300,7 +266,7 @@ const Forms = () => {
             </Form.Select>
             <Form.Select
               value={delegationType.name}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setDelegationType({
                   id: e.currentTarget.value,
                   name: e.currentTarget.value,
@@ -356,28 +322,16 @@ const Forms = () => {
               style={{ maxWidth: 200 }}
               className="my-3"
               checked={hasImage}
-              onChange={(e) => {
+              onChange={(e: {
+                target: {
+                  checked: boolean | ((prevState: boolean) => boolean);
+                };
+              }) => {
                 handleImagesSection();
                 setHasImage(e.target.checked);
               }}
             />
-            <CustomModal
-              isFullscreen
-              show={showEditSectionModal}
-              title={modalSection.data.title}
-              cancelTitle={Strings.cancel}
-              successTitle={Strings.saveChanges}
-              handleClose={() => {
-                setShowEditSectionModal(false);
-              }}
-              handleSuccess={() => {
-                updateChangedSection();
-                setShowEditSectionModal(false);
-              }}
-            >
-              <EditSection />
-            </CustomModal>
-            <DragDropContext onDragEnd={handleSectionDragEnd}>
+            <DragDropContext onDragEnd={handleFieldDragEnd}>
               <Droppable droppableId="sections">
                 {(provided) => {
                   return (
@@ -386,139 +340,63 @@ const Forms = () => {
                       ref={provided.innerRef}
                       style={{ userSelect: "none" }}
                     >
-                      {form.sections.map((section, sectionIndex) => {
-                        let isImageSection = false;
-                        section.fields.forEach((field) => {
-                          if (field.type === FieldType.Image) {
-                            isImageSection = true;
-                          } else {
-                            isImageSection = false;
-                          }
-                        });
-                        if (isImageSection) {
-                          return (
-                            <ListGroup.Item key={sectionIndex} className="py-3">
-                              <h5 className="d-inline">{section.title}</h5>
-                              <ListGroup className="my-3">
-                                {section.fields.map((field, fieldIndex) => {
-                                  return (
-                                    <ListGroup.Item
-                                      variant="secondary"
-                                      key={fieldIndex}
-                                    >
-                                      <Row>
-                                        <Col>
-                                          <h6 className="d-inline">
-                                            {field.title}
-                                          </h6>
-                                        </Col>
-                                        <Col>
-                                          <h6 className="d-inline text-muted">
-                                            {getFieldTypeAndNecessity(field)}
-                                          </h6>
-                                        </Col>
-                                      </Row>
-                                    </ListGroup.Item>
-                                  );
+                      {hasImage ? (
+                        <ListGroup.Item variant="secondary" key={v4()}>
+                          <Row>
+                            <Col>
+                              <h6 className="d-inline">
+                                {Strings.chooseImages}
+                              </h6>
+                            </Col>
+                            <Col>
+                              <h6 className="d-inline text-muted">
+                                {getFieldTypeAndNecessity({
+                                  ...defaultField,
+                                  type: FieldType.Image,
+                                  title: Strings.chooseImages,
+                                  value: [],
+                                  optional: true,
                                 })}
-                              </ListGroup>
-                            </ListGroup.Item>
-                          );
-                        } else {
+                              </h6>
+                            </Col>
+                          </Row>
+                        </ListGroup.Item>
+                      ) : null}
+                      <Draggable draggableId={v4()} index={0}>
+                        {(provided) => {
                           return (
-                            <Draggable
-                              draggableId={`section-${sectionIndex}`}
-                              index={sectionIndex}
-                              key={sectionIndex}
+                            <ListGroup
+                              className="my-3"
+                              {...provided.dragHandleProps}
+                              {...provided.draggableProps}
+                              ref={provided.innerRef}
                             >
-                              {(provided) => {
+                              {form.fields.map((field, fieldIndex) => {
+                                if (field.type === FieldType.Image) return null;
                                 return (
                                   <ListGroup.Item
-                                    {...provided.dragHandleProps}
-                                    {...provided.draggableProps}
-                                    ref={provided.innerRef}
-                                    key={sectionIndex}
-                                    className="section py-3"
+                                    variant="secondary"
+                                    key={fieldIndex}
                                   >
-                                    <div className="d-flex flex-row justify-content-between align-items-center py-3">
-                                      <div>
-                                        <h5 className="d-inline ps-4">
-                                          {section.title}
-                                        </h5>
-                                      </div>
-                                      <div>
-                                        <i
-                                          className="bi-pencil-square edit-section-icon text-muted px-4 fs-5"
-                                          style={{ cursor: "pointer" }}
-                                          onClick={() => {
-                                            setModalSection({
-                                              index: sectionIndex,
-                                              data: {
-                                                ...section,
-                                                id: section.id,
-                                                title: section.title,
-                                                fields: section.fields,
-                                              },
-                                            });
-                                            setShowEditSectionModal(true);
-                                          }}
-                                        ></i>
-                                        <CloseButton
-                                          onClick={() => {
-                                            const sections = [...form.sections];
-                                            const filteredSections =
-                                              sections.filter(
-                                                (s, index) =>
-                                                  index !== sectionIndex
-                                              );
-                                            if (
-                                              window.confirm(
-                                                Strings.sectionDeleteConfirm
-                                              )
-                                            ) {
-                                              setForm({
-                                                ...form,
-                                                sections: filteredSections,
-                                              });
-                                            }
-                                          }}
-                                        />
-                                      </div>
-                                    </div>
-                                    <ListGroup className="my-3">
-                                      {section.fields.map(
-                                        (field, fieldIndex) => {
-                                          return (
-                                            <ListGroup.Item
-                                              variant="secondary"
-                                              key={fieldIndex}
-                                            >
-                                              <Row>
-                                                <Col>
-                                                  <h6 className="d-inline">
-                                                    {field.title}
-                                                  </h6>
-                                                </Col>
-                                                <Col>
-                                                  <h6 className="d-inline text-muted">
-                                                    {getFieldTypeAndNecessity(
-                                                      field
-                                                    )}
-                                                  </h6>
-                                                </Col>
-                                              </Row>
-                                            </ListGroup.Item>
-                                          );
-                                        }
-                                      )}
-                                    </ListGroup>
+                                    <Row>
+                                      <Col>
+                                        <h6 className="d-inline">
+                                          {field.title}
+                                        </h6>
+                                      </Col>
+                                      <Col>
+                                        <h6 className="d-inline text-muted">
+                                          {getFieldTypeAndNecessity(field)}
+                                        </h6>
+                                      </Col>
+                                    </Row>
                                   </ListGroup.Item>
                                 );
-                              }}
-                            </Draggable>
+                              })}
+                            </ListGroup>
                           );
-                        }
-                      })}
+                        }}
+                      </Draggable>
                       {provided.placeholder}
                     </ListGroup>
                   );

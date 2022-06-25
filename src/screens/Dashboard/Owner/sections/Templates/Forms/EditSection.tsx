@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  Button,
   CloseButton,
   Col,
   Form,
@@ -21,6 +20,7 @@ import {
   FieldType,
 } from "global/types/Field";
 import Section from "global/types/Section";
+import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 import EditConditionalField from "./EditField/EditConditionalField";
 import EditSelectField from "./EditField/EditSelectField";
 import {
@@ -31,11 +31,9 @@ import {
   modalSectionAtom,
 } from "./FormsState";
 import NewField from "./NewField/NewField";
-import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
-  const [sectionTitle, setSectionTitle] = useState<string>("");
   const [showRenameFieldModal, setShowRenameFieldModal] =
     useState<boolean>(false);
   const [renameFieldModalData, setRenameFieldModalData] =
@@ -58,10 +56,6 @@ function EditSection() {
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (mounted.current) {
-      modalSection && setSectionTitle(modalSection.data.title);
-    }
-
     return () => {
       mounted.current = false;
     };
@@ -136,36 +130,6 @@ function EditSection() {
 
   return (
     <>
-      <Row className="align-items-center my-3">
-        <Col sm="auto">
-          <Form.Label>{Strings.sectionTitle}</Form.Label>
-        </Col>
-        <InputGroup style={{ direction: "ltr" }}>
-          <Button
-            variant="dark"
-            onClick={() => {
-              if (sectionTitle.trim() === "") {
-                alert(Strings.enterValidTitleForSection);
-                setSectionTitle("");
-              } else {
-                setModalSection({
-                  ...modalSection,
-                  data: { ...modalSection.data, title: sectionTitle },
-                });
-              }
-            }}
-          >
-            {Strings.save}
-          </Button>
-          <Form.Control
-            type="text"
-            defaultValue={modalSection.data.title}
-            onChange={(e) => {
-              setSectionTitle(e.target.value);
-            }}
-          />
-        </InputGroup>
-      </Row>
       <ListGroup>
         {modalSection.data.fields.map((field, fieldIndex) => {
           return (
@@ -299,7 +263,7 @@ function EditSection() {
             type="text"
             placeholder={Strings.newTitle}
             value={renameFieldModalData.newTitle}
-            onChange={(e) => {
+            onChange={(e: { target: { value: any } }) => {
               setRenameFieldModalData({
                 ...renameFieldModalData!,
                 newTitle: e.target.value,
@@ -313,7 +277,7 @@ function EditSection() {
                 ? FieldFilterableStatus.IsFilterable
                 : FieldFilterableStatus.IsNotFilterable
             }
-            onChange={(e) => {
+            onChange={(e: { currentTarget: { value: string | number } }) => {
               const value = +e.currentTarget.value;
               setRenameFieldModalData({
                 ...renameFieldModalData!,
@@ -331,7 +295,7 @@ function EditSection() {
           <Form.Select
             style={{ minWidth: 50, maxWidth: "10vw" }}
             value={renameFieldModalData.newFieldInputNecessity}
-            onChange={(e) => {
+            onChange={(e: { currentTarget: { value: any } }) => {
               setRenameFieldModalData({
                 ...renameFieldModalData!,
                 newFieldInputNecessity: Number(e.currentTarget.value),

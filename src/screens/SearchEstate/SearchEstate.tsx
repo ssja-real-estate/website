@@ -239,61 +239,49 @@ function SearchEstateScreen() {
 
   function onFieldChange(
     targetValue: any,
-    sectionIndex: number,
     fieldIndex: number,
     min: boolean = false
   ) {
     const currentField = {
-      ...dataForm.sections[sectionIndex].fields[fieldIndex],
+      ...dataForm.fields[fieldIndex],
     };
     if (currentField.type === FieldType.Range) {
       const value = +targetValue;
       let range = [currentField.min ?? 0, currentField.max ?? 0];
       if (min) range[0] = value;
       else range[1] = value;
-      // if (value < range[0]) range[0] = value;
-      // if (value > range[1]) range[1] = value;
-
-      // currentField.value = range;
       if (min) currentField.min = range[0];
       else currentField.max = range[1];
     } else {
       currentField.value = targetValue;
     }
 
-    const sections = dataForm.sections;
-    const fields = sections[sectionIndex].fields;
+    const fields = dataForm.fields;
     fields[fieldIndex] = currentField;
-    sections[sectionIndex].fields = fields;
 
     setDataForm({
       ...dataForm,
-      sections,
+      fields,
     });
   }
 
   function onConditionalFieldChange(
     targetValue: any,
-    sectionIndex: number,
     fieldIndex: number,
     innerFieldIndex: number,
     form: EstateForm
   ) {
     const currentField = {
-      ...form.sections[sectionIndex].fields[fieldIndex].fields![
-        innerFieldIndex
-      ],
+      ...form.fields[fieldIndex].fields![innerFieldIndex],
       value: targetValue,
     };
-    const sections = form.sections;
-    const fields = sections[sectionIndex].fields;
+    const fields = form.fields;
     const innerFields = fields[fieldIndex].fields!;
     innerFields[innerFieldIndex] = currentField;
     fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
-    sections[sectionIndex].fields = fields;
   }
 
-  function mapFields(fields: Field[], form: EstateForm, sectionIndex: number) {
+  function mapFields(fields: Field[], form: EstateForm) {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
@@ -302,9 +290,9 @@ function SearchEstateScreen() {
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Range ? (
@@ -314,9 +302,11 @@ function SearchEstateScreen() {
                 <Form.Control
                   type="number"
                   value={field.min ?? ""}
-                  onChange={(e) => {
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, sectionIndex, fieldIndex, true);
+                    onFieldChange(value, fieldIndex, true);
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -325,9 +315,11 @@ function SearchEstateScreen() {
                 <Form.Control
                   type="number"
                   value={field.max ?? ""}
-                  onChange={(e) => {
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, sectionIndex, fieldIndex);
+                    onFieldChange(value, fieldIndex);
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -335,9 +327,9 @@ function SearchEstateScreen() {
           ) : field.type === FieldType.Select ? (
             <Form.Select
               value={field.value ? String(field.value) : "default"}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
-                onFieldChange(numberValue, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, fieldIndex);
               }}
             >
               <option value="default" disabled>
@@ -352,9 +344,9 @@ function SearchEstateScreen() {
               className="d-inline mx-3"
               type="switch"
               checked={field.value ? true : false}
-              onChange={(e) => {
+              onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, sectionIndex, fieldIndex);
+                onFieldChange(booleanValue, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Conditional ? (
@@ -363,9 +355,9 @@ function SearchEstateScreen() {
                 className="d-inline mx-3"
                 type="switch"
                 checked={field.value ? true : false}
-                onChange={(e) => {
+                onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
-                  onFieldChange(booleanValue, sectionIndex, fieldIndex);
+                  onFieldChange(booleanValue, fieldIndex);
                 }}
               />
               {field.value &&
@@ -373,7 +365,6 @@ function SearchEstateScreen() {
                 mapConditionalFields(
                   field.fields!.filter((f) => f.filterable),
                   form,
-                  sectionIndex,
                   fieldIndex
                 )}
             </>
@@ -381,9 +372,9 @@ function SearchEstateScreen() {
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, fieldIndex);
               }}
             />
           )}
@@ -395,7 +386,6 @@ function SearchEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    sectionIndex: number,
     fieldIndex: number
   ) {
     return fields.map((innerField, innerFieldIndex) => {
@@ -406,11 +396,10 @@ function SearchEstateScreen() {
             <Form.Control
               type="text"
               value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
                 onConditionalFieldChange(
                   stringValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -428,9 +417,11 @@ function SearchEstateScreen() {
                       ? +(innerField.value as [number, number])[0]
                       : ""
                   }
-                  onChange={(e) => {
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, sectionIndex, fieldIndex);
+                    onFieldChange(value, fieldIndex);
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -443,9 +434,11 @@ function SearchEstateScreen() {
                       ? +(innerField.value as [number, number])[1]
                       : ""
                   }
-                  onChange={(e) => {
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, sectionIndex, fieldIndex);
+                    onFieldChange(value, fieldIndex);
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -453,11 +446,10 @@ function SearchEstateScreen() {
           ) : innerField.type === FieldType.Select ? (
             <Form.Select
               value={innerField.value ? String(innerField.value) : "default"}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
                 onConditionalFieldChange(
                   numberValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -476,11 +468,10 @@ function SearchEstateScreen() {
               className="d-inline mx-3"
               type="switch"
               checked={innerField.value ? true : false}
-              onChange={(e) => {
+              onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
                 onConditionalFieldChange(
                   booleanValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -493,11 +484,10 @@ function SearchEstateScreen() {
                 className="d-inline mx-3"
                 type="switch"
                 checked={innerField.value ? true : false}
-                onChange={(e) => {
+                onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
                   onConditionalFieldChange(
                     booleanValue,
-                    sectionIndex,
                     fieldIndex,
                     innerFieldIndex,
                     form
@@ -505,22 +495,16 @@ function SearchEstateScreen() {
                 }}
               />
               {innerField.value &&
-                mapConditionalFields(
-                  innerField.fields!,
-                  form,
-                  sectionIndex,
-                  fieldIndex
-                )}
+                mapConditionalFields(innerField.fields!, form, fieldIndex)}
             </>
           ) : (
             <Form.Control
               type="text"
               value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
                 onConditionalFieldChange(
                   stringValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -615,7 +599,9 @@ function SearchEstateScreen() {
                   name="province"
                   id="province"
                   value={selectedProvince?.name}
-                  onChange={(e) => handleProvinceChange(e.currentTarget.value)}
+                  onChange={(e: { currentTarget: { value: string } }) =>
+                    handleProvinceChange(e.currentTarget.value)
+                  }
                 >
                   <option value="">{Strings.choose}</option>
                   {provinces.map((province, index) => {
@@ -632,7 +618,9 @@ function SearchEstateScreen() {
                   name="city"
                   id="city"
                   value={selectedCity?.name}
-                  onChange={(e) => handleCityChange(e.currentTarget.value)}
+                  onChange={(e: { currentTarget: { value: string } }) =>
+                    handleCityChange(e.currentTarget.value)
+                  }
                 >
                   <option value="">{Strings.choose}</option>
                   {cities.map((city, index) => {
@@ -649,7 +637,7 @@ function SearchEstateScreen() {
                   name="neighborhood"
                   id="neighborhood"
                   value={selectedNeighborhood?.name}
-                  onChange={(e) =>
+                  onChange={(e: { currentTarget: { value: string } }) =>
                     handleNeighborhoodChange(e.currentTarget.value)
                   }
                 >
@@ -670,7 +658,7 @@ function SearchEstateScreen() {
                   name="delegationType"
                   id="delegationType"
                   value={selectedDelegationType.name}
-                  onChange={(e) =>
+                  onChange={(e: { currentTarget: { value: string } }) =>
                     handleDelegationTypeChange(e.currentTarget.value)
                   }
                   disabled={!isAdvancedFilter}
@@ -690,7 +678,7 @@ function SearchEstateScreen() {
                   name="estateType"
                   id="estateType"
                   value={selectedEstateType.name}
-                  onChange={(e) =>
+                  onChange={(e: { currentTarget: { value: string } }) =>
                     handleEstateTypeChange(e.currentTarget.value)
                   }
                   disabled={!isAdvancedFilter}
@@ -718,17 +706,9 @@ function SearchEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                {dataForm.sections.map((section, sectionIndex) => {
-                  return (
-                    <div
-                      className="section card glass shadow-sm py-2 px-4 my-2"
-                      key={sectionIndex}
-                    >
-                      <h3 className="section-title py-3">{section.title}</h3>
-                      {mapFields(section.fields, estate.dataForm, sectionIndex)}
-                    </div>
-                  );
-                })}
+                <div className="section card glass shadow-sm py-2 px-4 my-2">
+                  {mapFields(estate.dataForm.fields, estate.dataForm)}
+                </div>
                 {noFilterExists ? (
                   <motion.div
                     variants={crossfadeAnimation}

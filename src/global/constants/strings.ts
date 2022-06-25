@@ -81,6 +81,7 @@ class Strings {
   static images = "تصاویر";
   static chooseImages = "انتخاب تصاویر";
   static addNewSection = "افزودن بخش جدید";
+  static editForm = "ویرایش فرم";
   static sectionTitleCantBeEmpty = "عنوان بخش نمی‌تواند خالی باشد";
   static chooseEstateType = "انتخاب نوع ملک";
   static chooseDelegationType = "انتخاب نوع واگذاری";
@@ -117,28 +118,28 @@ class Strings {
   static confirm = "ثبت";
   static sectionTitle = "عنوان بخش";
   static newTitle = "عنوان جدید";
-  static changeInputTitle = "تغییر عنوان ورودی";
-  static inputs = "ورودی‌ها";
-  static confirmDeleteInput = "آیا از حذف این ورودی مطمئن هستید؟";
+  static changeInputTitle = "تغییر عنوان فیلد";
+  static inputs = "فیلدها";
+  static confirmDeleteInput = "آیا از حذف این فیلد مطمئن هستید؟";
   static enterValidTitleForSection =
     "لطفاً یک عنوان معتبر برای بخش انتخاب کنید";
-  static enterValidTitleForInput = "لطفاً یک عنوان برای ورودی جدید انتخاب کنید";
-  static newInput = "ورودی جدید";
+  static enterValidTitleForInput = "لطفاً یک عنوان برای فیلد جدید انتخاب کنید";
+  static newInput = "فیلد جدید";
   static chooseAtLeastTwoOptionsForSelect =
-    "لطفاً حدأقل دو گزینه برای ورودی جدید اضافه کنید";
+    "لطفاً حدأقل دو گزینه برای فیلد جدید اضافه کنید";
   static conditionalShouldHaveAtLeastOneField =
-    "لطفاً حداقل یک ورودی داخلی برای ورودی شرطی اضافه کنید";
-  static newInputTitle = "عنوان ورودی جدید";
+    "لطفاً حداقل یک فیلد داخلی برای فیلد شرطی اضافه کنید";
+  static newInputTitle = "عنوان فیلد جدید";
   static enterValidInputForNewOption =
     "لطفاً یک عنوان معتبر برای گزینه جدید انتخاب کنید";
   static newOption = "گزینه جدید";
-  static newConditionalField = "ورودی شرطی جدید";
+  static newConditionalField = "فیلد شرطی جدید";
   static enterValidTitleForInnerInput =
-    "لطفاً یک عنوان برای ورودی داخلی جدید انتخاب کنید";
-  static newInnerInputTitle = "عنوان ورودی داخلی جدید";
-  static editOptions = "ویرایش گزینه های ورودی انتخابی";
-  static editInnerInputs = "ویرایش ورودی های داخلی";
-  static editInnerInputTitle = "تغییر عنوان ورودی داخلی";
+    "لطفاً یک عنوان برای فیلد داخلی جدید انتخاب کنید";
+  static newInnerInputTitle = "عنوان فیلد داخلی جدید";
+  static editOptions = "ویرایش گزینه های فیلد انتخابی";
+  static editInnerInputs = "ویرایش فیلد های داخلی";
+  static editInnerInputTitle = "تغییر عنوان فیلد داخلی";
   static chooseDelegationAndEstateTypes =
     "«نوع واگذاری» و «نوع ملک» را انتخاب کنید";
   static resendCode = "ارسال مجدد";
@@ -175,6 +176,7 @@ class Strings {
   static clearAdvancedFilter = "پاک‌کردن فیلتر پیشرفته";
   static minValue = "کمترین";
   static maxValue = "بیشترین";
+  static fields = "فیلدها";
 }
 
 export default Strings;
