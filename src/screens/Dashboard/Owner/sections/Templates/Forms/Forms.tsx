@@ -239,6 +239,10 @@ const Forms = () => {
               variant="dark"
               onClick={() => {
                 setShowEditSectionModal(true);
+                setModalSection({
+                  index: 0,
+                  data: { fields: form.fields },
+                });
               }}
               disabled={isDefault}
             >
