@@ -2,7 +2,7 @@ import { Field } from "./Field";
 
 interface Section {
   id?: string;
-  title: string;
+  title?: string;
   fields: Field[];
 }
 

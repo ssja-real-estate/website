@@ -1,33 +1,33 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import "./AddEstate.css";
 import { motion } from "framer-motion";
+import Strings from "global/constants/strings";
+import { globalState } from "global/states/globalStates";
+import City, { defaultCity } from "global/types/City";
+import DelegationType, {
+  defaultDelegationType,
+} from "global/types/DelegationType";
+import { defaultEstate, Estate } from "global/types/Estate";
+import EstateType, { defaultEstateType } from "global/types/EstateType";
+import MapInfo from "global/types/MapInfo";
+import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
+import Province, { defaultProvince } from "global/types/Province";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
+import { useRecoilValue } from "recoil";
+import MapScreen from "screens/Map/Map";
+import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
+import EstateService from "services/api/EstateService/EstateService";
+import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import FormService from "services/api/FormService/FormService";
+import LocationService from "services/api/LocationService/LocationService";
+import { validateForm } from "services/utilities/fieldValidations";
 import {
   crossfadeAnimation,
   elevationEffect,
 } from "../../animations/motionVariants";
-import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { EstateForm } from "../../global/types/EstateForm";
-import { FieldType, Field } from "../../global/types/Field";
-import Strings from "global/constants/strings";
-import EstateType, { defaultEstateType } from "global/types/EstateType";
-import { globalState } from "global/states/globalStates";
-import { useRecoilValue } from "recoil";
-import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
-import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
-import FormService from "services/api/FormService/FormService";
-import toast from "react-hot-toast";
-import DelegationType, {
-  defaultDelegationType,
-} from "global/types/DelegationType";
-import EstateService from "services/api/EstateService/EstateService";
-import MapScreen from "screens/Map/Map";
-import Province, { defaultProvince } from "global/types/Province";
-import Neighborhood, { defaultNeighborhood } from "global/types/Neighborhood";
-import City, { defaultCity } from "global/types/City";
-import LocationService from "services/api/LocationService/LocationService";
-import MapInfo from "global/types/MapInfo";
-import { defaultEstate, Estate } from "global/types/Estate";
-import { validateForm } from "services/utilities/fieldValidations";
+import { Field, FieldType } from "../../global/types/Field";
+import "./AddEstate.css";
 
 function AddEstateScreen() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -242,57 +242,49 @@ function AddEstateScreen() {
   function onFieldChange(
     targetValue: any,
     form: EstateForm,
-    sectionIndex: number,
     fieldIndex: number
   ) {
     const currentField = {
-      ...form.sections[sectionIndex].fields[fieldIndex],
+      ...form.fields[fieldIndex],
       value: targetValue,
     };
-    const sections = form.sections;
-    const fields = sections[sectionIndex].fields;
+    const fields = form.fields;
     fields[fieldIndex] = currentField;
-    sections[sectionIndex].fields = fields;
 
     setEstate({
       ...estate,
       dataForm: {
         ...form,
-        sections: sections,
+        fields: fields,
       },
     });
   }
 
   function onConditionalFieldChange(
     targetValue: any,
-    sectionIndex: number,
     fieldIndex: number,
     innerFieldIndex: number,
     form: EstateForm
   ) {
     const currentField = {
-      ...form.sections[sectionIndex].fields[fieldIndex].fields![
-        innerFieldIndex
-      ],
+      ...form.fields[fieldIndex].fields![innerFieldIndex],
       value: targetValue,
     };
-    const sections = form.sections;
-    const fields = sections[sectionIndex].fields;
+    const fields = form.fields;
     const innerFields = fields[fieldIndex].fields!;
     innerFields[innerFieldIndex] = currentField;
     fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
-    sections[sectionIndex].fields = fields;
 
     setEstate({
       ...estate,
       dataForm: {
         ...form,
-        sections: sections,
+        fields,
       },
     });
   }
 
-  function mapFields(fields: Field[], form: EstateForm, sectionIndex: number) {
+  function mapFields(fields: Field[], form: EstateForm) {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
@@ -303,28 +295,28 @@ function AddEstateScreen() {
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, form, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Number ? (
             <Form.Control
               type="number"
               value={field.value ? Number(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const numberValue = Number(e.target.value);
 
-                onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, form, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Select ? (
             <Form.Select
               value={field.value ? String(field.value) : "default"}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
 
-                onFieldChange(numberValue, form, sectionIndex, fieldIndex);
+                onFieldChange(numberValue, form, fieldIndex);
               }}
             >
               <option value="default" disabled>
@@ -339,9 +331,9 @@ function AddEstateScreen() {
               className="d-inline mx-3"
               type="switch"
               checked={field.value ? true : false}
-              onChange={(e) => {
+              onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                onFieldChange(booleanValue, form, fieldIndex);
               }}
             />
           ) : field.type === FieldType.Conditional ? (
@@ -350,18 +342,13 @@ function AddEstateScreen() {
                 className="d-inline mx-3"
                 type="switch"
                 checked={field.value ? true : false}
-                onChange={(e) => {
+                onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
-                  onFieldChange(booleanValue, form, sectionIndex, fieldIndex);
+                  onFieldChange(booleanValue, form, fieldIndex);
                 }}
               />
               {field.value &&
-                mapConditionalFields(
-                  field.fields!,
-                  form,
-                  sectionIndex,
-                  fieldIndex
-                )}
+                mapConditionalFields(field.fields!, form, fieldIndex)}
             </>
           ) : field.type === FieldType.Image ? (
             <Form.Control
@@ -388,10 +375,10 @@ function AddEstateScreen() {
             <Form.Control
               type="text"
               value={field.value ? String(field.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
 
-                onFieldChange(stringValue, form, sectionIndex, fieldIndex);
+                onFieldChange(stringValue, form, fieldIndex);
               }}
             />
           )}
@@ -403,7 +390,6 @@ function AddEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    sectionIndex: number,
     fieldIndex: number
   ) {
     return fields.map((innerField, innerFieldIndex) => {
@@ -417,12 +403,11 @@ function AddEstateScreen() {
             <Form.Control
               type="text"
               value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
 
                 onConditionalFieldChange(
                   stringValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -433,12 +418,11 @@ function AddEstateScreen() {
             <Form.Control
               type="number"
               value={innerField.value ? Number(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const numberValue = Number(e.target.value);
 
                 onConditionalFieldChange(
                   numberValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -448,12 +432,11 @@ function AddEstateScreen() {
           ) : innerField.type === FieldType.Select ? (
             <Form.Select
               value={innerField.value ? String(innerField.value) : "default"}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
 
                 onConditionalFieldChange(
                   numberValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -472,12 +455,11 @@ function AddEstateScreen() {
               className="d-inline mx-3"
               type="switch"
               checked={innerField.value ? true : false}
-              onChange={(e) => {
+              onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
 
                 onConditionalFieldChange(
                   booleanValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -490,12 +472,11 @@ function AddEstateScreen() {
                 className="d-inline mx-3"
                 type="switch"
                 checked={innerField.value ? true : false}
-                onChange={(e) => {
+                onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
 
                   onConditionalFieldChange(
                     booleanValue,
-                    sectionIndex,
                     fieldIndex,
                     innerFieldIndex,
                     form
@@ -503,12 +484,7 @@ function AddEstateScreen() {
                 }}
               />
               {innerField.value &&
-                mapConditionalFields(
-                  innerField.fields!,
-                  form,
-                  sectionIndex,
-                  fieldIndex
-                )}
+                mapConditionalFields(innerField.fields!, form, fieldIndex)}
             </>
           ) : innerField.type === FieldType.Image ? (
             <Form.Control
@@ -530,20 +506,17 @@ function AddEstateScreen() {
                 });
 
                 setFormData(data);
-
-                // onFieldChange(data, form, sectionIndex, fieldIndex);
               }}
             />
           ) : (
             <Form.Control
               type="text"
               value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 const stringValue = String(e.target.value);
 
                 onConditionalFieldChange(
                   stringValue,
-                  sectionIndex,
                   fieldIndex,
                   innerFieldIndex,
                   form
@@ -735,17 +708,9 @@ function AddEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                {estate.dataForm.sections.map((section, sectionIndex) => {
-                  return (
-                    <div
-                      className="section card glass shadow-sm py-2 px-4 my-2"
-                      key={sectionIndex}
-                    >
-                      <h3 className="section-title py-3">{section.title}</h3>
-                      {mapFields(section.fields, estate.dataForm, sectionIndex)}
-                    </div>
-                  );
-                })}
+                <div className="section card glass shadow-sm py-2 px-4 my-2">
+                  {mapFields(estate.dataForm.fields, estate.dataForm)}
+                </div>
                 {!estate.dataForm.id ? (
                   <motion.div
                     variants={crossfadeAnimation}

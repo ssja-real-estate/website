@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import {
   Button,
   CloseButton,
@@ -22,13 +22,13 @@ import {
   FieldType,
   FieldTypeTitle,
 } from "global/types/Field";
+import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 import {
   defaultEditSelectFieldModalData,
   EditFieldModalData,
   editSelectFieldModalDataAtom,
   innerFieldModalDataAtom,
 } from "../FormsState";
-import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 function EditConditionalField() {
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
@@ -239,7 +239,7 @@ function EditConditionalField() {
         <Form.Select
           style={{ minWidth: 100, maxWidth: "15vw" }}
           value={fieldInputNecessity}
-          onChange={(e) => {
+          onChange={(e: { currentTarget: { value: any } }) => {
             setFieldInputNecessity(Number(e.currentTarget.value));
           }}
         >
@@ -253,7 +253,7 @@ function EditConditionalField() {
         <Form.Select
           style={{ minWidth: 50, maxWidth: "10vw" }}
           value={filterableStatus}
-          onChange={(e) => {
+          onChange={(e: { currentTarget: { value: string | number } }) => {
             const value = +e.currentTarget.value;
             setFilterableStatus(value as FieldFilterableStatus);
           }}
@@ -268,7 +268,7 @@ function EditConditionalField() {
         <Form.Select
           style={{ minWidth: 100, maxWidth: "15vw" }}
           value={selectedType}
-          onChange={(e) => {
+          onChange={(e: { currentTarget: { value: any } }) => {
             setSelectedType(Number(e.currentTarget.value));
           }}
         >
@@ -282,7 +282,7 @@ function EditConditionalField() {
           placeholder={Strings.newInnerInputTitle}
           maxLength={30}
           value={newInnerFieldTitle}
-          onChange={(e) => {
+          onChange={(e: { target: { value: SetStateAction<string> } }) => {
             setNewInnerFieldTitle(e.target.value);
           }}
         />
@@ -308,7 +308,9 @@ function EditConditionalField() {
                 type="text"
                 placeholder={Strings.newOption}
                 value={newOptionTitle}
-                onChange={(e) => {
+                onChange={(e: {
+                  target: { value: SetStateAction<string> };
+                }) => {
                   setNewOptionTitle(e.target.value);
                 }}
               />
@@ -379,7 +381,7 @@ function EditConditionalField() {
             type="text"
             placeholder={Strings.newTitle}
             value={renameInnerFieldModalData.newTitle}
-            onChange={(e) => {
+            onChange={(e: { target: { value: any } }) => {
               setRenameInnerFieldModalData({
                 ...renameInnerFieldModalData!,
                 newTitle: e.target.value,
@@ -393,7 +395,7 @@ function EditConditionalField() {
                 ? FieldFilterableStatus.IsFilterable
                 : FieldFilterableStatus.IsNotFilterable
             }
-            onChange={(e) => {
+            onChange={(e: { currentTarget: { value: string | number } }) => {
               const value = +e.currentTarget.value;
               setRenameInnerFieldModalData({
                 ...renameInnerFieldModalData,
@@ -411,7 +413,7 @@ function EditConditionalField() {
           <Form.Select
             style={{ minWidth: 50, maxWidth: "10vw" }}
             value={renameInnerFieldModalData.newFieldInputNecessity}
-            onChange={(e) => {
+            onChange={(e: { currentTarget: { value: any } }) => {
               setRenameInnerFieldModalData({
                 ...renameInnerFieldModalData!,
                 newFieldInputNecessity: Number(e.currentTarget.value),
@@ -473,7 +475,9 @@ function EditConditionalField() {
                 type="text"
                 placeholder={Strings.newOption}
                 value={newOptionTitle}
-                onChange={(e) => {
+                onChange={(e: {
+                  target: { value: SetStateAction<string> };
+                }) => {
                   setNewOptionTitle(e.target.value);
                 }}
               />

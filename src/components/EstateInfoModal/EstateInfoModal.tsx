@@ -26,14 +26,10 @@ const EstateInfoModal = () => {
   }, []);
 
   const checkImageSection = () => {
-    const sections = estateInfo.estate.dataForm.sections;
-    if (sections.length < 1) return;
+    const fields = estateInfo.estate.dataForm.fields;
+    if (fields.length < 1) return;
 
-    const firstSection = sections[0];
-    const firstSectionFields = firstSection.fields;
-    if (firstSectionFields.length < 1) return;
-
-    const firstField = firstSectionFields[0];
+    const firstField = fields[0];
     if (!firstField || firstField.type !== FieldType.Image) return;
 
     const includesImages = (firstField.value as string[]).length > 0;
@@ -63,21 +59,17 @@ const EstateInfoModal = () => {
         </h5>
       </Col>
       <Col>
-        {estateInfo.estate.dataForm.sections.map((section) => {
-          return (
-            <Row>
-              {section.fields
-                .filter((field) => field.filterable)
-                .map((field) => {
-                  return (
-                    <h5>
-                      {field.title} : {field.value}
-                    </h5>
-                  );
-                })}
-            </Row>
-          );
-        })}
+        <Row>
+          {estateInfo.estate.dataForm.fields
+            .filter((field) => field.filterable)
+            .map((field) => {
+              return (
+                <h5>
+                  {field.title} : {field.value}
+                </h5>
+              );
+            })}
+        </Row>
       </Col>
       {hasImageSection && (
         <Row className="mt-3">

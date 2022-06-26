@@ -8,18 +8,16 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
 import toast from "react-hot-toast";
-
-import DelegationType from "global/types/DelegationType";
-import EstateType from "global/types/EstateType";
+import { useRecoilValue } from "recoil";
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import FormService from "services/api/FormService/FormService";
+import DelegationType from "global/types/DelegationType";
+import { defaultForm, EstateForm } from "global/types/EstateForm";
+import EstateType from "global/types/EstateType";
 import DelegationTypeService from "services/api/DelegationTypeService/DelegationTypeService";
 import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
-import { defaultForm, EstateForm } from "global/types/EstateForm";
-import { FieldType } from "global/types/Field";
+import FormService from "services/api/FormService/FormService";
 import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 
 const Forms = () => {
@@ -113,7 +111,7 @@ const Forms = () => {
           <InputGroup className="my-4" style={{ direction: "ltr" }}>
             <Form.Select
               value={estateType.name}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setEstateType({
                   id: e.currentTarget.value,
                   name: e.currentTarget.value,
@@ -133,7 +131,7 @@ const Forms = () => {
             </Form.Select>
             <Form.Select
               value={delegationType.name}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setDelegationType({
                   id: e.currentTarget.value,
                   name: e.currentTarget.value,
@@ -174,74 +172,21 @@ const Forms = () => {
         ) : form.id ? (
           <Col>
             <ListGroup style={{ userSelect: "none" }}>
-              {form.sections.map((section, sectionIndex) => {
-                let isImageSection = false;
-                section.fields.forEach((field) => {
-                  if (field.type === FieldType.Image) {
-                    isImageSection = true;
-                  } else {
-                    isImageSection = false;
-                  }
-                });
-                if (isImageSection) {
-                  return (
-                    <ListGroup.Item key={sectionIndex} className="py-3">
-                      <h5 className="d-inline">{section.title}</h5>
-                      <ListGroup className="my-3">
-                        {section.fields.map((field, fieldIndex) => {
-                          return (
-                            <ListGroup.Item
-                              variant="secondary"
-                              key={fieldIndex}
-                            >
-                              <Row>
-                                <Col>
-                                  <h6 className="d-inline">{field.title}</h6>
-                                </Col>
-                                <Col>
-                                  <h6 className="d-inline text-muted">
-                                    {getFieldTypeAndNecessity(field)}
-                                  </h6>
-                                </Col>
-                              </Row>
-                            </ListGroup.Item>
-                          );
-                        })}
-                      </ListGroup>
-                    </ListGroup.Item>
-                  );
-                } else {
-                  return (
-                    <ListGroup.Item key={sectionIndex} className="section py-3">
-                      <div className="d-flex flex-row justify-content-between align-items-center py-3">
-                        <div>
-                          <h5 className="d-inline ps-4">{section.title}</h5>
-                        </div>
-                      </div>
-                      <ListGroup className="my-3">
-                        {section.fields.map((field, fieldIndex) => {
-                          return (
-                            <ListGroup.Item
-                              variant="secondary"
-                              key={fieldIndex}
-                            >
-                              <Row>
-                                <Col>
-                                  <h6 className="d-inline">{field.title}</h6>
-                                </Col>
-                                <Col>
-                                  <h6 className="d-inline text-muted">
-                                    {getFieldTypeAndNecessity(field)}
-                                  </h6>
-                                </Col>
-                              </Row>
-                            </ListGroup.Item>
-                          );
-                        })}
-                      </ListGroup>
-                    </ListGroup.Item>
-                  );
-                }
+              {form.fields.map((field, fieldIndex) => {
+                return (
+                  <ListGroup.Item variant="secondary" key={fieldIndex}>
+                    <Row>
+                      <Col>
+                        <h6 className="d-inline">{field.title}</h6>
+                      </Col>
+                      <Col>
+                        <h6 className="d-inline text-muted">
+                          {getFieldTypeAndNecessity(field)}
+                        </h6>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                );
               })}
             </ListGroup>
           </Col>

@@ -1,11 +1,11 @@
-import Section from "./Section";
+import { Field } from "./Field";
 
 interface EstateForm {
   id?: string;
   title: string;
   assignmentTypeId: string;
   estateTypeId: string;
-  sections: Section[];
+  fields: Field[];
 }
 
 const defaultForm: EstateForm = {
@@ -13,7 +13,7 @@ const defaultForm: EstateForm = {
   title: "",
   assignmentTypeId: "",
   estateTypeId: "",
-  sections: [],
+  fields: [],
 };
 
 export type { EstateForm };
