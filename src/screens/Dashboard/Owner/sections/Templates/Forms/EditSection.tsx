@@ -153,22 +153,24 @@ function EditSection() {
                 </Col>
                 <Col>
                   <h6 className="d-inline">{field.title}</h6>
-                  <i
-                    className="bi-pencil-fill me-2"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      setRenameFieldModalData({
-                        index: fieldIndex,
-                        newTitle: field.title,
-                        newType: field.type,
-                        newFieldInputNecessity: field.optional
-                          ? FieldInputNecessity.Optional
-                          : FieldInputNecessity.Obligatory,
-                        filterable: field.filterable,
-                      });
-                      setShowRenameFieldModal(true);
-                    }}
-                  ></i>
+                  {field.type !== FieldType.Image ? (
+                    <i
+                      className="bi-pencil-fill me-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setRenameFieldModalData({
+                          index: fieldIndex,
+                          newTitle: field.title,
+                          newType: field.type,
+                          newFieldInputNecessity: field.optional
+                            ? FieldInputNecessity.Optional
+                            : FieldInputNecessity.Obligatory,
+                          filterable: field.filterable,
+                        });
+                        setShowRenameFieldModal(true);
+                      }}
+                    ></i>
+                  ) : null}
                 </Col>
                 <Col>
                   <h6 className="d-inline text-muted">
@@ -202,24 +204,26 @@ function EditSection() {
                     )
                   )}
                 </Col>
-                <CloseButton
-                  className="m-3"
-                  onClick={() => {
-                    const fields = modalSection.data.fields;
-                    const filteredFields = fields.filter((_, index) => {
-                      return fieldIndex !== index;
-                    });
-                    if (window.confirm(Strings.confirmDeleteInput)) {
-                      setModalSection({
-                        ...modalSection,
-                        data: {
-                          ...modalSection.data,
-                          fields: filteredFields,
-                        },
+                {field.type !== FieldType.Image ? (
+                  <CloseButton
+                    className="m-3"
+                    onClick={() => {
+                      const fields = modalSection.data.fields;
+                      const filteredFields = fields.filter((_, index) => {
+                        return fieldIndex !== index;
                       });
-                    }
-                  }}
-                />
+                      if (window.confirm(Strings.confirmDeleteInput)) {
+                        setModalSection({
+                          ...modalSection,
+                          data: {
+                            ...modalSection.data,
+                            fields: filteredFields,
+                          },
+                        });
+                      }
+                    }}
+                  />
+                ) : null}
               </Row>
             </ListGroup.Item>
           );
