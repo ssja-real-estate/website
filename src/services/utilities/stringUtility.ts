@@ -16,10 +16,14 @@ function getFieldTypeAndNecessity(field: Field): string {
       ? FieldTypeTitle.Select
       : field.type === FieldType.Bool
       ? FieldTypeTitle.Bool
-      : field.type === FieldType.Conditional
-      ? FieldTypeTitle.Conditional
+      : field.type === FieldType.BooleanConditional
+      ? FieldTypeTitle.BooleanConditional
       : field.type === FieldType.Image
       ? FieldTypeTitle.Image
+      : field.type === FieldType.SelectiveConditional
+      ? FieldTypeTitle.SelectiveCondition
+      : field.type === FieldType.MultiSelect
+      ? FieldTypeTitle.MultiSelect
       : "---";
   const fieldInputNecessityLabel = !field.optional
     ? FieldInputNecessityLabel.Obligatory

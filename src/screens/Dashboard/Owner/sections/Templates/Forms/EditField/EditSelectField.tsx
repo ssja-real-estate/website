@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import {
   InputGroup,
   Button,
@@ -10,6 +10,7 @@ import { useRecoilState } from "recoil";
 
 import Strings from "global/constants/strings";
 import { editSelectFieldModalDataAtom } from "../FormsState";
+import { FieldType } from "global/types/Field";
 
 function EditSelectField() {
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
@@ -26,11 +27,17 @@ function EditSelectField() {
               if (newOptionTitle.trim() !== "") {
                 const options = editSelectFieldModalData.data.options!;
                 const newOptions = [...options, newOptionTitle];
+                const fieldType = editSelectFieldModalData.data.type;
                 setEditSelectFieldModalData({
                   ...editSelectFieldModalData,
                   data: {
                     ...editSelectFieldModalData.data,
-                    options: newOptions,
+                    options:
+                      fieldType === FieldType.Select ? newOptions : undefined,
+                    keys:
+                      fieldType === FieldType.MultiSelect
+                        ? newOptions
+                        : undefined,
                   },
                 });
               } else {
@@ -45,13 +52,16 @@ function EditSelectField() {
             type="text"
             placeholder={Strings.newOption}
             value={newOptionTitle}
-            onChange={(e) => {
+            onChange={(e: { target: { value: SetStateAction<string> } }) => {
               setNewOptionTitle(e.target.value);
             }}
           />
         </InputGroup>
         <ListGroup>
-          {editSelectFieldModalData.data.options!.map((option, optionIndex) => {
+          {(editSelectFieldModalData.data.type === FieldType.Select
+            ? editSelectFieldModalData.data.options!
+            : editSelectFieldModalData.data.keys!
+          ).map((option, optionIndex) => {
             return (
               <ListGroup.Item
                 key={optionIndex}
@@ -64,11 +74,19 @@ function EditSelectField() {
                     const filteredOptions = newOptions.filter((_, index) => {
                       return optionIndex !== index;
                     });
+                    const fieldType = editSelectFieldModalData.data.type;
                     setEditSelectFieldModalData({
                       ...editSelectFieldModalData,
                       data: {
                         ...editSelectFieldModalData.data,
-                        options: filteredOptions,
+                        options:
+                          fieldType === FieldType.Select
+                            ? filteredOptions
+                            : undefined,
+                        keys:
+                          fieldType === FieldType.MultiSelect
+                            ? filteredOptions
+                            : undefined,
                       },
                     });
                   }}

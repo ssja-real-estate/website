@@ -370,53 +370,43 @@ function EditEstateScreen() {
           <label>
             {field.title} {field.optional ? Strings.optionalField : null}
           </label>
-          {field.type === FieldType.Text ? (
-            <Form.Control
-              type="text"
-              value={field.value ? String(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-                onFieldChange(stringValue, fieldIndex);
-              }}
-            />
-          ) : field.type === FieldType.Number ? (
-            <Form.Control
-              type="number"
-              value={field.value ? Number(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const numberValue = Number(e.target.value);
+          {
+            field.type === FieldType.Text ? (
+              <Form.Control
+                type="text"
+                value={field.value ? String(field.value) : ""}
+                onChange={(e: { target: { value: any } }) => {
+                  const stringValue = String(e.target.value);
+                  onFieldChange(stringValue, fieldIndex);
+                }}
+              />
+            ) : field.type === FieldType.Number ? (
+              <Form.Control
+                type="number"
+                value={field.value ? Number(field.value) : ""}
+                onChange={(e: { target: { value: any } }) => {
+                  const numberValue = Number(e.target.value);
 
-                onFieldChange(numberValue, fieldIndex);
-              }}
-            />
-          ) : field.type === FieldType.Select ? (
-            <Form.Select
-              value={field.value ? String(field.value) : "default"}
-              onChange={(e: { currentTarget: { value: any } }) => {
-                const numberValue = String(e.currentTarget.value);
+                  onFieldChange(numberValue, fieldIndex);
+                }}
+              />
+            ) : field.type === FieldType.Select ? (
+              <Form.Select
+                value={field.value ? String(field.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const numberValue = String(e.currentTarget.value);
 
-                onFieldChange(numberValue, fieldIndex);
-              }}
-            >
-              <option value="default" disabled>
-                {Strings.choose}
-              </option>
-              {field.options?.map((option, index) => {
-                return <option key={index}>{option}</option>;
-              })}
-            </Form.Select>
-          ) : field.type === FieldType.Bool ? (
-            <Form.Check
-              className="d-inline mx-3"
-              type="switch"
-              checked={field.value ? true : false}
-              onChange={(e: { target: { checked: any } }) => {
-                const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, fieldIndex);
-              }}
-            />
-          ) : field.type === FieldType.Conditional ? (
-            <>
+                  onFieldChange(numberValue, fieldIndex);
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {field.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
+                })}
+              </Form.Select>
+            ) : field.type === FieldType.Bool ? (
               <Form.Check
                 className="d-inline mx-3"
                 type="switch"
@@ -426,68 +416,103 @@ function EditEstateScreen() {
                   onFieldChange(booleanValue, fieldIndex);
                 }}
               />
-              {field.value &&
-                mapConditionalFields(field.fields!, form, fieldIndex)}
-            </>
-          ) : field.type === FieldType.Image ? (
-            <Row>
-              {previousImages.length > 0
-                ? previousImages.map((img, idx) => (
-                    <Col>
-                      <div key={idx}>
-                        <img
-                          src={`${imagesBaseUrl}/${estate.id}/${img}`}
-                          alt={`${imagesBaseUrl}/${estate.id}/${img}`}
-                          className="thumbnail rounded-3"
-                        />
-                        <button
-                          className="btn-remove"
-                          onClick={() => {
-                            let filteredImages = previousImages.filter(
-                              (i) => i !== img
-                            );
-                            setPreviousImages(filteredImages);
-                            setDeletedImages((prev) => [...prev, img]);
-                          }}
-                        >
-                          X
-                        </button>
-                      </div>
-                    </Col>
-                  ))
-                : null}
-              <Form.Control
-                type="file"
-                multiple
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  let selectedFiles = Array.from(e.target.files!);
-                  setImagesCount(selectedFiles.length);
+            ) : field.type === FieldType.BooleanConditional ? (
+              <>
+                <Form.Check
+                  className="d-inline mx-3"
+                  type="switch"
+                  checked={field.value ? true : false}
+                  onChange={(e: { target: { checked: any } }) => {
+                    const booleanValue = e.target.checked;
+                    onFieldChange(booleanValue, fieldIndex);
+                  }}
+                />
+                {field.value &&
+                  mapConditionalFields(field.fields!, form, fieldIndex)}
+              </>
+            ) : field.type === FieldType.Image ? (
+              <Row>
+                {previousImages.length > 0
+                  ? previousImages.map((img, idx) => (
+                      <Col>
+                        <div key={idx}>
+                          <img
+                            src={`${imagesBaseUrl}/${estate.id}/${img}`}
+                            alt={`${imagesBaseUrl}/${estate.id}/${img}`}
+                            className="thumbnail rounded-3"
+                          />
+                          <button
+                            className="btn-remove"
+                            onClick={() => {
+                              let filteredImages = previousImages.filter(
+                                (i) => i !== img
+                              );
+                              setPreviousImages(filteredImages);
+                              setDeletedImages((prev) => [...prev, img]);
+                            }}
+                          >
+                            X
+                          </button>
+                        </div>
+                      </Col>
+                    ))
+                  : null}
+                <Form.Control
+                  type="file"
+                  multiple
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    let selectedFiles = Array.from(e.target.files!);
+                    setImagesCount(selectedFiles.length);
 
-                  if (!checkFileSizes(selectedFiles)) {
-                    alert(Strings.imagesSizeLimit);
-                    e.target.value = "";
-                    selectedFiles = [];
-                  }
+                    if (!checkFileSizes(selectedFiles)) {
+                      alert(Strings.imagesSizeLimit);
+                      e.target.value = "";
+                      selectedFiles = [];
+                    }
 
-                  const data = new FormData();
-                  selectedFiles.forEach((file, index) => {
-                    data.append("images", file);
-                  });
-                  setFormData(data);
-                  // onFieldChange(data, form, sectionIndex, fieldIndex);
-                }}
-              />
-            </Row>
-          ) : (
-            <Form.Control
-              type="text"
-              value={field.value ? String(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-                onFieldChange(stringValue, fieldIndex);
-              }}
-            />
-          )}
+                    const data = new FormData();
+                    selectedFiles.forEach((file, index) => {
+                      data.append("images", file);
+                    });
+                    setFormData(data);
+                    // onFieldChange(data, form, sectionIndex, fieldIndex);
+                  }}
+                />
+              </Row>
+            ) : field.type === FieldType.SelectiveConditional ? (
+              <div></div>
+            ) : field.type === FieldType.MultiSelect ? (
+              <>
+                {field.keys!.map((key) => {
+                  const keyMap = field.value as { [key: string]: boolean };
+                  return (
+                    <>
+                      <label>{key}</label>
+                      <Form.Check
+                        className="d-inline mx-3"
+                        type="switch"
+                        checked={keyMap[key] ? true : false}
+                        onChange={(e: { target: { checked: any } }) => {
+                          const booleanValue = e.target.checked;
+                          onFieldChange(booleanValue, fieldIndex);
+                        }}
+                      />
+                    </>
+                  );
+                })}
+              </>
+            ) : null
+            // (
+            //   <Form.Control
+            //     type="text"
+            //     value={field.value ? String(field.value) : ""}
+            //     onChange={(e: { target: { value: any } }) => {
+            //       const stringValue = String(e.target.value);
+            //       onFieldChange(stringValue, fieldIndex);
+            //     }}
+            //   />
+            // )
+          }
         </div>
       );
     });
@@ -505,75 +530,59 @@ function EditEstateScreen() {
             {innerField.title}{" "}
             {innerField.optional ? Strings.optionalField : null}
           </label>
-          {innerField.type === FieldType.Text ? (
-            <Form.Control
-              type="text"
-              value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
+          {
+            innerField.type === FieldType.Text ? (
+              <Form.Control
+                type="text"
+                value={innerField.value ? String(innerField.value) : ""}
+                onChange={(e: { target: { value: any } }) => {
+                  const stringValue = String(e.target.value);
 
-                onConditionalFieldChange(
-                  stringValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          ) : innerField.type === FieldType.Number ? (
-            <Form.Control
-              type="number"
-              value={innerField.value ? Number(innerField.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const numberValue = Number(e.target.value);
+                  onConditionalFieldChange(
+                    stringValue,
+                    fieldIndex,
+                    innerFieldIndex,
+                    form
+                  );
+                }}
+              />
+            ) : innerField.type === FieldType.Number ? (
+              <Form.Control
+                type="number"
+                value={innerField.value ? Number(innerField.value) : ""}
+                onChange={(e: { target: { value: any } }) => {
+                  const numberValue = Number(e.target.value);
 
-                onConditionalFieldChange(
-                  numberValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          ) : innerField.type === FieldType.Select ? (
-            <Form.Select
-              value={innerField.value ? String(innerField.value) : "default"}
-              onChange={(e: { currentTarget: { value: any } }) => {
-                const numberValue = String(e.currentTarget.value);
+                  onConditionalFieldChange(
+                    numberValue,
+                    fieldIndex,
+                    innerFieldIndex,
+                    form
+                  );
+                }}
+              />
+            ) : innerField.type === FieldType.Select ? (
+              <Form.Select
+                value={innerField.value ? String(innerField.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const numberValue = String(e.currentTarget.value);
 
-                onConditionalFieldChange(
-                  numberValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            >
-              <option value="default" disabled>
-                {Strings.choose}
-              </option>
-              {innerField.options?.map((option, index) => {
-                return <option key={index}>{option}</option>;
-              })}
-            </Form.Select>
-          ) : innerField.type === FieldType.Bool ? (
-            <Form.Check
-              className="d-inline mx-3"
-              type="switch"
-              checked={innerField.value ? true : false}
-              onChange={(e: { target: { checked: any } }) => {
-                const booleanValue = e.target.checked;
-
-                onConditionalFieldChange(
-                  booleanValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          ) : innerField.type === FieldType.Conditional ? (
-            <>
+                  onConditionalFieldChange(
+                    numberValue,
+                    fieldIndex,
+                    innerFieldIndex,
+                    form
+                  );
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {innerField.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
+                })}
+              </Form.Select>
+            ) : innerField.type === FieldType.Bool ? (
               <Form.Check
                 className="d-inline mx-3"
                 type="switch"
@@ -589,49 +598,95 @@ function EditEstateScreen() {
                   );
                 }}
               />
-              {innerField.value &&
-                mapConditionalFields(innerField.fields!, form, fieldIndex)}
-            </>
-          ) : innerField.type === FieldType.Image ? (
-            <Form.Control
-              type="file"
-              multiple
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                let selectedFiles = Array.from(e.target.files!);
-                setImagesCount(selectedFiles.length);
+            ) : innerField.type === FieldType.BooleanConditional ? (
+              <>
+                <Form.Check
+                  className="d-inline mx-3"
+                  type="switch"
+                  checked={innerField.value ? true : false}
+                  onChange={(e: { target: { checked: any } }) => {
+                    const booleanValue = e.target.checked;
 
-                if (!checkFileSizes(selectedFiles)) {
-                  alert(Strings.imagesSizeLimit);
-                  e.target.value = "";
-                  selectedFiles = [];
-                }
+                    onConditionalFieldChange(
+                      booleanValue,
+                      fieldIndex,
+                      innerFieldIndex,
+                      form
+                    );
+                  }}
+                />
+                {innerField.value &&
+                  mapConditionalFields(innerField.fields!, form, fieldIndex)}
+              </>
+            ) : innerField.type === FieldType.Image ? (
+              <Form.Control
+                type="file"
+                multiple
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  let selectedFiles = Array.from(e.target.files!);
+                  setImagesCount(selectedFiles.length);
 
-                const data = new FormData();
-                selectedFiles.forEach((file, index) => {
-                  data.append("images", file);
-                });
+                  if (!checkFileSizes(selectedFiles)) {
+                    alert(Strings.imagesSizeLimit);
+                    e.target.value = "";
+                    selectedFiles = [];
+                  }
 
-                setFormData(data);
+                  const data = new FormData();
+                  selectedFiles.forEach((file, index) => {
+                    data.append("images", file);
+                  });
 
-                // onFieldChange(data, form, sectionIndex, fieldIndex);
-              }}
-            />
-          ) : (
-            <Form.Control
-              type="text"
-              value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
+                  setFormData(data);
 
-                onConditionalFieldChange(
-                  stringValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          )}
+                  // onFieldChange(data, form, sectionIndex, fieldIndex);
+                }}
+              />
+            ) : innerField.type === FieldType.SelectiveConditional ? (
+              <div></div>
+            ) : innerField.type === FieldType.MultiSelect ? (
+              <>
+                {innerField.keys!.map((key) => {
+                  const keyMap = innerField.value as { [key: string]: boolean };
+                  return (
+                    <>
+                      <label>{key}</label>
+                      <Form.Check
+                        className="d-inline mx-3"
+                        type="switch"
+                        checked={keyMap[key] ? true : false}
+                        onChange={(e: { target: { checked: any } }) => {
+                          const booleanValue = e.target.checked;
+                          onConditionalFieldChange(
+                            booleanValue,
+                            fieldIndex,
+                            innerFieldIndex,
+                            form
+                          );
+                        }}
+                      />
+                    </>
+                  );
+                })}
+              </>
+            ) : null
+            //  (
+            //   <Form.Control
+            //     type="text"
+            //     value={innerField.value ? String(innerField.value) : ""}
+            //     onChange={(e: { target: { value: any } }) => {
+            //       const stringValue = String(e.target.value);
+
+            //       onConditionalFieldChange(
+            //         stringValue,
+            //         fieldIndex,
+            //         innerFieldIndex,
+            //         form
+            //       );
+            //     }}
+            //   />
+            // )
+          }
         </div>
       );
     });

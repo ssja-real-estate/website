@@ -141,7 +141,7 @@ const Forms = () => {
     let newFields = form.fields.slice();
     const hasImageSection = includesImageSection(form);
     if (hasImageSection) {
-      newFields.shift();
+      newFields = newFields.slice(0, newFields.length - 1);
     } else {
       const newField: Field = {
         ...defaultField,
@@ -150,8 +150,11 @@ const Forms = () => {
         value: [],
         optional: true,
       };
-      newFields.unshift(newField);
+      newFields.push(newField);
     }
+    console.log("new fields");
+    console.log(newFields);
+
     setForm({ ...form, fields: newFields });
   };
 
@@ -344,28 +347,6 @@ const Forms = () => {
                       ref={provided.innerRef}
                       style={{ userSelect: "none" }}
                     >
-                      {hasImage ? (
-                        <ListGroup.Item variant="secondary" key={v4()}>
-                          <Row>
-                            <Col>
-                              <h6 className="d-inline">
-                                {Strings.chooseImages}
-                              </h6>
-                            </Col>
-                            <Col>
-                              <h6 className="d-inline text-muted">
-                                {getFieldTypeAndNecessity({
-                                  ...defaultField,
-                                  type: FieldType.Image,
-                                  title: Strings.chooseImages,
-                                  value: [],
-                                  optional: true,
-                                })}
-                              </h6>
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      ) : null}
                       <Draggable draggableId={v4()} index={0}>
                         {(provided) => {
                           return (
@@ -401,7 +382,28 @@ const Forms = () => {
                           );
                         }}
                       </Draggable>
-                      {provided.placeholder}
+                      {hasImage ? (
+                        <ListGroup.Item variant="secondary" key={v4()}>
+                          <Row>
+                            <Col>
+                              <h6 className="d-inline">
+                                {Strings.chooseImages}
+                              </h6>
+                            </Col>
+                            <Col>
+                              <h6 className="d-inline text-muted">
+                                {getFieldTypeAndNecessity({
+                                  ...defaultField,
+                                  type: FieldType.Image,
+                                  title: Strings.chooseImages,
+                                  value: [],
+                                  optional: true,
+                                })}
+                              </h6>
+                            </Col>
+                          </Row>
+                        </ListGroup.Item>
+                      ) : null}
                     </ListGroup>
                   );
                 }}

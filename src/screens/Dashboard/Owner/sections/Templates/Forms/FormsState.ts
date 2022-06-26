@@ -30,7 +30,7 @@ export const defaultInnerFieldModalData: Modal<Field> = {
   index: -1,
   data: {
     ...defaultField,
-    type: FieldType.Conditional,
+    type: FieldType.BooleanConditional,
     value: false,
     fields: [],
   },

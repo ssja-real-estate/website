@@ -127,6 +127,7 @@ class Strings {
   static newInput = "فیلد جدید";
   static chooseAtLeastTwoOptionsForSelect =
     "لطفاً حدأقل دو گزینه برای فیلد جدید اضافه کنید";
+  static chooseAtLeastTwoKeysForMultiSelect = "باید حداقل دو کلید اضافه کنید";
   static conditionalShouldHaveAtLeastOneField =
     "لطفاً حداقل یک فیلد داخلی برای فیلد شرطی اضافه کنید";
   static newInputTitle = "عنوان فیلد جدید";

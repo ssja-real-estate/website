@@ -118,7 +118,8 @@ function EditSection() {
       title: data.title,
       type: data.type,
       value: data.value,
-      options: data.options!,
+      options: data.options,
+      keys: data.keys,
     };
     fields.splice(fieldIndex, 1, changedField);
 
@@ -176,7 +177,8 @@ function EditSection() {
                   <h6 className="d-inline text-muted">
                     {getFieldTypeAndNecessity(field)}
                   </h6>
-                  {field.type === FieldType.Conditional ? (
+
+                  {field.type === FieldType.BooleanConditional && (
                     <i
                       className="bi-list-ul fs-4 me-3"
                       style={{ cursor: "pointer" }}
@@ -188,20 +190,20 @@ function EditSection() {
                         setShowEditInnerFieldsModal(true);
                       }}
                     ></i>
-                  ) : (
-                    field.type === FieldType.Select && (
-                      <i
-                        className="bi-list fs-4 me-3"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setEditSelectFieldModalData({
-                            index: fieldIndex,
-                            data: { ...field },
-                          });
-                          setShowEditSelectFieldModal(true);
-                        }}
-                      ></i>
-                    )
+                  )}
+                  {(field.type === FieldType.Select ||
+                    field.type === FieldType.MultiSelect) && (
+                    <i
+                      className="bi-list fs-4 me-3"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setEditSelectFieldModalData({
+                          index: fieldIndex,
+                          data: { ...field },
+                        });
+                        setShowEditSelectFieldModal(true);
+                      }}
+                    ></i>
                   )}
                 </Col>
                 {field.type !== FieldType.Image ? (
@@ -341,7 +343,14 @@ function EditSection() {
           setEditSelectFieldModalData(defaultEditSelectFieldModalData);
         }}
         handleSuccess={() => {
-          if (editSelectFieldModalData.data.options!.length > 1) {
+          const selectField = editSelectFieldModalData.data;
+          let validToUpdate =
+            (selectField.type === FieldType.Select &&
+              selectField.options!.length > 1) ||
+            (selectField.type === FieldType.MultiSelect &&
+              selectField.keys!.length > 1);
+
+          if (validToUpdate) {
             updateChangedSelectField();
             setShowEditSelectFieldModal(false);
           } else {
