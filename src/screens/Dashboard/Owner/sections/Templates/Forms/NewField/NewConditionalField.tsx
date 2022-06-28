@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import {
   Accordion,
   Button,
@@ -156,7 +156,7 @@ function NewConditionalField() {
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={fieldInputNecessity}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setFieldInputNecessity(Number(e.currentTarget.value));
               }}
             >
@@ -170,7 +170,7 @@ function NewConditionalField() {
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={filterableStatus}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: string | number } }) => {
                 setFilterableStatus(+e.currentTarget.value);
               }}
             >
@@ -184,7 +184,7 @@ function NewConditionalField() {
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setSelectedType(Number(e.currentTarget.value));
               }}
             >
@@ -198,7 +198,7 @@ function NewConditionalField() {
               placeholder={Strings.newInnerInputTitle}
               maxLength={30}
               value={newInnerFieldTitle}
-              onChange={(e) => {
+              onChange={(e: { target: { value: SetStateAction<string> } }) => {
                 setNewInnerFieldTitle(e.target.value);
               }}
             />
@@ -225,7 +225,9 @@ function NewConditionalField() {
                     type="text"
                     placeholder={Strings.newOption}
                     value={newOptionTitle}
-                    onChange={(e) => {
+                    onChange={(e: {
+                      target: { value: SetStateAction<string> };
+                    }) => {
                       setNewOptionTitle(e.target.value);
                     }}
                   />

@@ -17,6 +17,7 @@ import { modalSectionAtom } from "../FormsState";
 import NewConditionalField from "./NewConditionalField";
 import { optionsAtom, innerFieldsAtom } from "./NewFieldStates";
 import NewSelectField from "./NewSelectField";
+import NewSelectiveConditionalField from "./NewSelectiveConditionalField";
 
 function NewField() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -169,7 +170,9 @@ function NewField() {
       </Row>
       {selectedType === FieldType.Select && <NewSelectField />}
       {selectedType === FieldType.BooleanConditional && <NewConditionalField />}
-      {selectedType === FieldType.SelectiveConditional && <div></div>}
+      {selectedType === FieldType.SelectiveConditional && (
+        <NewSelectiveConditionalField />
+      )}
       {selectedType === FieldType.MultiSelect && <NewSelectField />}
     </>
   );
