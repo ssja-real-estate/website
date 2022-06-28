@@ -15,7 +15,11 @@ import {
 } from "global/types/Field";
 import { modalSectionAtom } from "../FormsState";
 import NewConditionalField from "./NewConditionalField";
-import { optionsAtom, innerFieldsAtom } from "./NewFieldStates";
+import {
+  optionsAtom,
+  innerFieldsAtom,
+  selectiveInnerFieldsAtom,
+} from "./NewFieldStates";
 import NewSelectField from "./NewSelectField";
 import NewSelectiveConditionalField from "./NewSelectiveConditionalField";
 
@@ -31,6 +35,9 @@ function NewField() {
   );
   const [options, setOptions] = useRecoilState(optionsAtom);
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
+  const [selectiveInnerFields, setSelectiveInnerFields] = useRecoilState(
+    selectiveInnerFieldsAtom
+  );
 
   function addNewField(newField: Field) {
     if (
@@ -85,6 +92,14 @@ function NewField() {
                     newField.fields = innerFields;
                     setInnerFields(innerFields);
                   } else if (selectedType === FieldType.SelectiveConditional) {
+                    if (options.length < 1) {
+                      alert(Strings.addAtLeastOneOption);
+                      return;
+                    }
+                    newField.fieldMap = selectiveInnerFields;
+                    newField.options = options;
+                    setOptions(options);
+                    setSelectiveInnerFields(selectiveInnerFields);
                   } else if (selectedType === FieldType.MultiSelect) {
                     if (options.length < 2) {
                       alert(Strings.chooseAtLeastTwoKeysForMultiSelect);
@@ -96,6 +111,7 @@ function NewField() {
                   addNewField(newField);
                   setOptions([]);
                   setInnerFields([]);
+                  setSelectiveInnerFields({});
                 } else {
                   alert(Strings.enterValidTitleForInput);
                 }

@@ -46,6 +46,17 @@ export const defaultEditSelectFieldModalData: Modal<Field> = {
   },
 };
 
+export const defaultSelectiveInnerFieldModalData: Modal<Field> = {
+  index: -1,
+  data: {
+    ...defaultField,
+    type: FieldType.SelectiveConditional,
+    value: {},
+    options: [],
+    fieldMap: {},
+  },
+};
+
 export const modalSectionAtom = atom<Modal<Section>>({
   key: "ownerModalSectionState",
   default: defaultModalSection,
@@ -59,4 +70,9 @@ export const innerFieldModalDataAtom = atom<Modal<Field>>({
 export const editSelectFieldModalDataAtom = atom<Modal<Field>>({
   key: "ownerEditSelectFieldModalState",
   default: defaultEditSelectFieldModalData,
+});
+
+export const selectiveInnerFieldModalDataAtom = atom<Modal<Field>>({
+  key: "ownerSelectiveInnerFieldModalDataState",
+  default: defaultSelectiveInnerFieldModalData,
 });

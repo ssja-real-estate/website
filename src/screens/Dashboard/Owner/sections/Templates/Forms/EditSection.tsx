@@ -87,8 +87,7 @@ function EditSection() {
   }
 
   function updateChangedConditionalField() {
-    const section: Section = { ...modalSection.data };
-    const fields: Field[] = section.fields.slice();
+    const fields: Field[] = modalSection.data.fields.slice();
     const fieldIndex = innerFieldModalData.index;
     const data = innerFieldModalData.data;
 
@@ -177,7 +176,6 @@ function EditSection() {
                   <h6 className="d-inline text-muted">
                     {getFieldTypeAndNecessity(field)}
                   </h6>
-
                   {field.type === FieldType.BooleanConditional && (
                     <i
                       className="bi-list-ul fs-4 me-3"
@@ -202,6 +200,19 @@ function EditSection() {
                           data: { ...field },
                         });
                         setShowEditSelectFieldModal(true);
+                      }}
+                    ></i>
+                  )}
+                  {field.type === FieldType.SelectiveConditional && (
+                    <i
+                      className="bi-list-ul fs-4 me-3"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setInnerFieldModalData({
+                          index: fieldIndex,
+                          data: { ...field },
+                        });
+                        setShowEditInnerFieldsModal(true);
                       }}
                     ></i>
                   )}

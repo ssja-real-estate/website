@@ -43,8 +43,6 @@ function NewSelectiveConditionalField() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [options, setOptions] = useRecoilState(optionsAtom);
 
-  console.log(options);
-
   useEffect(() => {}, [options]);
 
   function addNewInnerField(newField: Field, key: string) {
@@ -92,7 +90,7 @@ function NewSelectiveConditionalField() {
       {options.map((option, index) => {
         return (
           <>
-            <h3>{option}</h3>
+            <h3 className="mt-4">{option}</h3>
             <Accordion.Item eventKey={index.toString()}>
               <Accordion.Header>
                 <span className="ms-3">{Strings.newConditionalField}</span>
