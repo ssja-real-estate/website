@@ -86,7 +86,6 @@ function NewSelectiveConditionalField() {
   return (
     <Accordion className="mt-3">
       <NewSelectField />
-
       {options.map((option, index) => {
         return (
           <>

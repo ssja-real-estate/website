@@ -29,8 +29,10 @@ import {
   editSelectFieldModalDataAtom,
   innerFieldModalDataAtom,
   modalSectionAtom,
+  selectiveInnerFieldModalDataAtom,
 } from "./FormsState";
 import NewField from "./NewField/NewField";
+import EditSelectiveConditionalField from "./EditField/EditSelectiveConditionalField";
 
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -46,8 +48,15 @@ function EditSection() {
     });
   const [showEditInnerFieldsModal, setShowEditInnerFieldsModal] =
     useState<boolean>(false);
+  const [
+    showEditSelectiveInnerFieldModal,
+    setShowEditSelectiveInnerFieldModal,
+  ] = useState(false);
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
     innerFieldModalDataAtom
+  );
+  const [selectiveInnerField, setSelectiveInnerFieldData] = useRecoilState(
+    selectiveInnerFieldModalDataAtom
   );
   const [showEditSelectFieldModal, setShowEditSelectFieldModal] =
     useState<boolean>(false);
@@ -97,6 +106,28 @@ function EditSection() {
       type: data.type,
       value: data.value,
       fields: data.fields!,
+    };
+    fields.splice(fieldIndex, 1, changedField);
+
+    setModalSection({
+      ...modalSection,
+      data: { ...modalSection.data, fields: fields },
+    });
+  }
+
+  function updateChangedSelectiveConditionalField() {
+    const fields: Field[] = modalSection.data.fields.slice();
+    const fieldIndex = selectiveInnerField.index;
+    const data = selectiveInnerField.data;
+
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      fields: data.fields!,
+      fieldMap: data.fieldMap!,
+      options: data.options!,
     };
     fields.splice(fieldIndex, 1, changedField);
 
@@ -208,11 +239,15 @@ function EditSection() {
                       className="bi-list-ul fs-4 me-3"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                        setInnerFieldModalData({
+                        setSelectiveInnerFieldData({
                           index: fieldIndex,
                           data: { ...field },
                         });
-                        setShowEditInnerFieldsModal(true);
+                        setEditSelectFieldModalData({
+                          index: fieldIndex,
+                          data: { ...field, options: field.options },
+                        });
+                        setShowEditSelectiveInnerFieldModal(true);
                       }}
                     ></i>
                   )}
@@ -370,6 +405,22 @@ function EditSection() {
         }}
       >
         <EditSelectField />
+      </CustomModal>
+      <CustomModal
+        isFullscreen
+        show={showEditSelectiveInnerFieldModal}
+        title={Strings.editInnerInputs}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
+        handleClose={() => {
+          setShowEditSelectiveInnerFieldModal(false);
+        }}
+        handleSuccess={() => {
+          updateChangedSelectiveConditionalField();
+          setShowEditSelectiveInnerFieldModal(false);
+        }}
+      >
+        <EditSelectiveConditionalField />
       </CustomModal>
       <div className="d-flex flex-column justify-content-center align-items-stretch my-3">
         <h5>{Strings.inputs}</h5>
