@@ -29,12 +29,17 @@ class SearchService extends BaseService {
     try {
       let response = await this.Api.post("/estate/search", filter, this.config);
 
+      console.log("response");
+      console.log(response);
+
       if (response.data) {
         estates = response.data as Estate[];
       }
     } catch (error) {
       this.handleError(error);
     }
+    console.log("search estate");
+    console.log(estates);
 
     return estates;
   }

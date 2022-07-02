@@ -237,24 +237,34 @@ function SearchEstateScreen() {
     setNoFilterExists((prev) => false);
   }
 
+  function handleRangeFieldValue(
+    field: Field,
+    targetValue: any,
+    min: boolean = false
+  ) {
+    if (field.type === FieldType.Range) {
+      const value = +targetValue;
+      let range = [field.min ?? 0, field.max ?? 0];
+      if (min) range[0] = value;
+      else range[1] = value;
+      if (min) field.min = range[0];
+      else field.max = range[1];
+    } else {
+      field.value = targetValue;
+    }
+    return { ...field };
+  }
+
   function onFieldChange(
     targetValue: any,
     fieldIndex: number,
     min: boolean = false
   ) {
-    const currentField = {
+    let currentField = {
       ...dataForm.fields[fieldIndex],
     };
-    if (currentField.type === FieldType.Range) {
-      const value = +targetValue;
-      let range = [currentField.min ?? 0, currentField.max ?? 0];
-      if (min) range[0] = value;
-      else range[1] = value;
-      if (min) currentField.min = range[0];
-      else currentField.max = range[1];
-    } else {
-      currentField.value = targetValue;
-    }
+
+    currentField = handleRangeFieldValue(currentField, targetValue, min);
 
     const fields = dataForm.fields;
     fields[fieldIndex] = currentField;
@@ -265,16 +275,63 @@ function SearchEstateScreen() {
     });
   }
 
+  function onSelectiveConditionalFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm,
+    selectiveKey: string,
+    min: boolean = false
+  ) {
+    const fieldMap = form.fields[fieldIndex].fieldMap ?? {};
+    const selectiveFields = fieldMap[selectiveKey];
+    if (!selectiveFields.length || selectiveFields.length < innerFieldIndex + 1)
+      return;
+
+    let currentField = {
+      ...selectiveFields[innerFieldIndex],
+    };
+    currentField = handleRangeFieldValue(currentField, targetValue, min);
+
+    selectiveFields[innerFieldIndex] = currentField;
+    fieldMap[selectiveKey] = selectiveFields;
+    const fields = form.fields;
+    fields[fieldIndex] = { ...fields[fieldIndex], fieldMap };
+
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        fields,
+      },
+    });
+  }
+
   function onConditionalFieldChange(
     targetValue: any,
     fieldIndex: number,
     innerFieldIndex: number,
-    form: EstateForm
+    form: EstateForm,
+    selectiveKey?: string,
+    min: boolean = false
   ) {
-    const currentField = {
+    const field = form.fields[fieldIndex];
+    if (!field) return;
+    if (field.type === FieldType.SelectiveConditional) {
+      onSelectiveConditionalFieldChange(
+        targetValue,
+        fieldIndex,
+        innerFieldIndex,
+        form,
+        selectiveKey!,
+        min
+      );
+      return;
+    }
+    let currentField = {
       ...form.fields[fieldIndex].fields![innerFieldIndex],
-      value: targetValue,
     };
+    currentField = handleRangeFieldValue(currentField, targetValue, min);
     const fields = form.fields;
     const innerFields = fields[fieldIndex].fields!;
     innerFields[innerFieldIndex] = currentField;
@@ -286,61 +343,71 @@ function SearchEstateScreen() {
       return (
         <div key={fieldIndex} className="input-item py-3">
           <label className="mb-2">{field.title}</label>
-          {
-            field.type === FieldType.Text ? (
-              <Form.Control
-                type="text"
-                value={field.value ? String(field.value) : ""}
-                onChange={(e: { target: { value: any } }) => {
-                  const stringValue = String(e.target.value);
-                  onFieldChange(stringValue, fieldIndex);
-                }}
-              />
-            ) : field.type === FieldType.Range ? (
-              <div className="d-flex flex-row justify-content-evenly align-items-center ">
-                <Form.Group>
-                  <Form.Label>{Strings.minValue}</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={field.min ?? ""}
-                    onChange={(e: {
-                      currentTarget: { value: string | number };
-                    }) => {
-                      const value = +e.currentTarget.value;
-                      onFieldChange(value, fieldIndex, true);
-                    }}
-                  ></Form.Control>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>{Strings.maxValue}</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={field.max ?? ""}
-                    onChange={(e: {
-                      currentTarget: { value: string | number };
-                    }) => {
-                      const value = +e.currentTarget.value;
-                      onFieldChange(value, fieldIndex);
-                    }}
-                  ></Form.Control>
-                </Form.Group>
-              </div>
-            ) : field.type === FieldType.Select ? (
-              <Form.Select
-                value={field.value ? String(field.value) : "default"}
-                onChange={(e: { currentTarget: { value: any } }) => {
-                  const numberValue = String(e.currentTarget.value);
-                  onFieldChange(numberValue, fieldIndex);
-                }}
-              >
-                <option value="default" disabled>
-                  {Strings.choose}
-                </option>
-                {field.options?.map((option, index) => {
-                  return <option key={index}>{option}</option>;
-                })}
-              </Form.Select>
-            ) : field.type === FieldType.Bool ? (
+          {field.type === FieldType.Text ? (
+            <Form.Control
+              type="text"
+              value={field.value ? String(field.value) : ""}
+              onChange={(e: { target: { value: any } }) => {
+                const stringValue = String(e.target.value);
+                onFieldChange(stringValue, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.Range ? (
+            <div className="d-flex flex-row justify-content-evenly align-items-center ">
+              <Form.Group>
+                <Form.Label>{Strings.minValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={field.min ?? ""}
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, fieldIndex, true);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>{Strings.maxValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={field.max ?? ""}
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, fieldIndex);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            </div>
+          ) : field.type === FieldType.Select ? (
+            <Form.Select
+              value={field.value ? String(field.value) : "default"}
+              onChange={(e: { currentTarget: { value: any } }) => {
+                const numberValue = String(e.currentTarget.value);
+                onFieldChange(numberValue, fieldIndex);
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {field.options?.map((option, index) => {
+                return <option key={index}>{option}</option>;
+              })}
+            </Form.Select>
+          ) : field.type === FieldType.Bool ? (
+            <Form.Check
+              className="d-inline mx-3"
+              type="switch"
+              checked={field.value ? true : false}
+              onChange={(e: { target: { checked: any } }) => {
+                const booleanValue = e.target.checked;
+                onFieldChange(booleanValue, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.BooleanConditional ? (
+            <>
               <Form.Check
                 className="d-inline mx-3"
                 type="switch"
@@ -350,59 +417,59 @@ function SearchEstateScreen() {
                   onFieldChange(booleanValue, fieldIndex);
                 }}
               />
-            ) : field.type === FieldType.BooleanConditional ? (
-              <>
-                <Form.Check
-                  className="d-inline mx-3"
-                  type="switch"
-                  checked={field.value ? true : false}
-                  onChange={(e: { target: { checked: any } }) => {
-                    const booleanValue = e.target.checked;
-                    onFieldChange(booleanValue, fieldIndex);
-                  }}
-                />
-                {field.value &&
-                  !!field.fields &&
-                  mapConditionalFields(
-                    field.fields!.filter((f) => f.filterable),
-                    form,
-                    fieldIndex
-                  )}
-              </>
-            ) : field.type === FieldType.SelectiveConditional ? (
-              <div></div>
-            ) : field.type === FieldType.MultiSelect ? (
-              <>
-                {field.keys!.map((key) => {
-                  const keyMap = field.value as { [key: string]: boolean };
-                  return (
-                    <>
-                      <label>{key}</label>
-                      <Form.Check
-                        className="d-inline mx-3"
-                        type="switch"
-                        checked={keyMap[key] ? true : false}
-                        onChange={(e: { target: { checked: any } }) => {
-                          const booleanValue = e.target.checked;
-                          onFieldChange(booleanValue, fieldIndex);
-                        }}
-                      />
-                    </>
-                  );
+              {field.value &&
+                !!field.fields &&
+                mapConditionalFields(
+                  field.fields!.filter((f) => f.filterable),
+                  form,
+                  fieldIndex
+                )}
+            </>
+          ) : field.type === FieldType.SelectiveConditional ? (
+            <>
+              <Form.Select
+                value={field.value ? String(field.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const selectValue = String(e.currentTarget.value);
+                  onFieldChange(selectValue, fieldIndex);
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {field.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
                 })}
-              </>
-            ) : null
-            // (
-            //   <Form.Control
-            //     type="text"
-            //     value={field.value ? String(field.value) : ""}
-            //     onChange={(e: { target: { value: any } }) => {
-            //       const stringValue = String(e.target.value);
-            //       onFieldChange(stringValue, fieldIndex);
-            //     }}
-            //   />
-            // )
-          }
+              </Form.Select>
+              {field.value &&
+                mapConditionalFields(
+                  field.fieldMap ? field.fieldMap[field.value as string] : [],
+                  form,
+                  fieldIndex,
+                  field.value as string
+                )}
+            </>
+          ) : field.type === FieldType.MultiSelect ? (
+            <>
+              {field.keys!.map((key) => {
+                const keyMap = field.value as { [key: string]: boolean };
+                return (
+                  <>
+                    <label>{key}</label>
+                    <Form.Check
+                      className="d-inline mx-3"
+                      type="switch"
+                      checked={keyMap[key] ? true : false}
+                      onChange={(e: { target: { checked: any } }) => {
+                        const booleanValue = e.target.checked;
+                        onFieldChange(booleanValue, fieldIndex);
+                      }}
+                    />
+                  </>
+                );
+              })}
+            </>
+          ) : null}
         </div>
       );
     });
@@ -411,162 +478,116 @@ function SearchEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    fieldIndex: number
+    fieldIndex: number,
+    selectiveKey?: string
   ) {
     return fields.map((innerField, innerFieldIndex) => {
       return (
         <div key={innerFieldIndex} className="input-item py-3">
           <label className="mb-2">{innerField.title}</label>
-          {
-            innerField.type === FieldType.Text ? (
-              <Form.Control
-                type="text"
-                value={innerField.value ? String(innerField.value) : ""}
-                onChange={(e: { target: { value: any } }) => {
-                  const stringValue = String(e.target.value);
-                  onConditionalFieldChange(
-                    stringValue,
-                    fieldIndex,
-                    innerFieldIndex,
-                    form
-                  );
-                }}
-              />
-            ) : innerField.type === FieldType.Number ? (
-              <div className="d-flex flex-row justify-content-evenly align-items-center ">
-                <Form.Group>
-                  <Form.Label>{Strings.minValue}</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={
-                      (innerField.value as [number, number])
-                        ? +(innerField.value as [number, number])[0]
-                        : ""
-                    }
-                    onChange={(e: {
-                      currentTarget: { value: string | number };
-                    }) => {
-                      const value = +e.currentTarget.value;
-                      onFieldChange(value, fieldIndex);
-                    }}
-                  ></Form.Control>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>{Strings.maxValue}</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={
-                      (innerField.value as [number, number])
-                        ? +(innerField.value as [number, number])[1]
-                        : ""
-                    }
-                    onChange={(e: {
-                      currentTarget: { value: string | number };
-                    }) => {
-                      const value = +e.currentTarget.value;
-                      onFieldChange(value, fieldIndex);
-                    }}
-                  ></Form.Control>
-                </Form.Group>
-              </div>
-            ) : innerField.type === FieldType.Select ? (
-              <Form.Select
-                value={innerField.value ? String(innerField.value) : "default"}
-                onChange={(e: { currentTarget: { value: any } }) => {
-                  const numberValue = String(e.currentTarget.value);
-                  onConditionalFieldChange(
-                    numberValue,
-                    fieldIndex,
-                    innerFieldIndex,
-                    form
-                  );
-                }}
-              >
-                <option value="default" disabled>
-                  {Strings.choose}
-                </option>
-                {innerField.options?.map((option, index) => {
-                  return <option key={index}>{option}</option>;
-                })}
-              </Form.Select>
-            ) : innerField.type === FieldType.Bool ? (
-              <Form.Check
-                className="d-inline mx-3"
-                type="switch"
-                checked={innerField.value ? true : false}
-                onChange={(e: { target: { checked: any } }) => {
-                  const booleanValue = e.target.checked;
-                  onConditionalFieldChange(
-                    booleanValue,
-                    fieldIndex,
-                    innerFieldIndex,
-                    form
-                  );
-                }}
-              />
-            ) : innerField.type === FieldType.BooleanConditional ? (
-              <>
-                <Form.Check
-                  className="d-inline mx-3"
-                  type="switch"
-                  checked={innerField.value ? true : false}
-                  onChange={(e: { target: { checked: any } }) => {
-                    const booleanValue = e.target.checked;
+          {innerField.type === FieldType.Text ? (
+            <Form.Control
+              type="text"
+              value={innerField.value ? String(innerField.value) : ""}
+              onChange={(e: { target: { value: any } }) => {
+                const stringValue = String(e.target.value);
+                onConditionalFieldChange(
+                  stringValue,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form,
+                  selectiveKey
+                );
+              }}
+            />
+          ) : innerField.type === FieldType.Number ? (
+            <div className="d-flex flex-row justify-content-evenly align-items-center ">
+              <Form.Group>
+                <Form.Label>{Strings.minValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={
+                    (innerField.value as [number, number])
+                      ? +(innerField.value as [number, number])[0]
+                      : ""
+                  }
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
                     onConditionalFieldChange(
-                      booleanValue,
+                      value,
                       fieldIndex,
                       innerFieldIndex,
-                      form
+                      form,
+                      selectiveKey,
+                      true
                     );
                   }}
-                />
-                {innerField.value &&
-                  mapConditionalFields(innerField.fields!, form, fieldIndex)}
-              </>
-            ) : innerField.type === FieldType.SelectiveConditional ? (
-              <div></div>
-            ) : innerField.type === FieldType.MultiSelect ? (
-              <>
-                {innerField.keys!.map((key) => {
-                  const keyMap = innerField.value as { [key: string]: boolean };
-                  return (
-                    <>
-                      <label>{key}</label>
-                      <Form.Check
-                        className="d-inline mx-3"
-                        type="switch"
-                        checked={keyMap[key] ? true : false}
-                        onChange={(e: { target: { checked: any } }) => {
-                          const booleanValue = e.target.checked;
-                          onConditionalFieldChange(
-                            booleanValue,
-                            fieldIndex,
-                            innerFieldIndex,
-                            form
-                          );
-                        }}
-                      />
-                    </>
-                  );
-                })}
-              </>
-            ) : null
-            // (
-            //   <Form.Control
-            //     type="text"
-            //     value={innerField.value ? String(innerField.value) : ""}
-            //     onChange={(e: { target: { value: any } }) => {
-            //       const stringValue = String(e.target.value);
-            //       onConditionalFieldChange(
-            //         stringValue,
-            //         fieldIndex,
-            //         innerFieldIndex,
-            //         form
-            //       );
-            //     }}
-            //   />
-            // )
-          }
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>{Strings.maxValue}</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={
+                    (innerField.value as [number, number])
+                      ? +(innerField.value as [number, number])[1]
+                      : ""
+                  }
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onConditionalFieldChange(
+                      value,
+                      fieldIndex,
+                      innerFieldIndex,
+                      form,
+                      selectiveKey
+                    );
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            </div>
+          ) : innerField.type === FieldType.Select ? (
+            <Form.Select
+              value={innerField.value ? String(innerField.value) : "default"}
+              onChange={(e: { currentTarget: { value: any } }) => {
+                const numberValue = String(e.currentTarget.value);
+                onConditionalFieldChange(
+                  numberValue,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form,
+                  selectiveKey
+                );
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {innerField.options?.map((option, index) => {
+                return <option key={index}>{option}</option>;
+              })}
+            </Form.Select>
+          ) : innerField.type === FieldType.Bool ? (
+            <Form.Check
+              className="d-inline mx-3"
+              type="switch"
+              checked={innerField.value ? true : false}
+              onChange={(e: { target: { checked: any } }) => {
+                const booleanValue = e.target.checked;
+                onConditionalFieldChange(
+                  booleanValue,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form,
+                  selectiveKey
+                );
+              }}
+            />
+          ) : null}
         </div>
       );
     });
@@ -761,9 +782,11 @@ function SearchEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                <div className="section card glass shadow-sm py-2 px-4 my-2">
-                  {mapFields(estate.dataForm.fields, estate.dataForm)}
-                </div>
+                {dataForm.fields.length > 0 && (
+                  <div className="section card glass shadow-sm py-2 px-4 my-2">
+                    {mapFields(dataForm.fields, dataForm)}
+                  </div>
+                )}
                 {noFilterExists ? (
                   <motion.div
                     variants={crossfadeAnimation}
