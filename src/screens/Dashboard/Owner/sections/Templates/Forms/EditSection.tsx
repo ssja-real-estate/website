@@ -228,7 +228,11 @@ function EditSection() {
                       onClick={() => {
                         setEditSelectFieldModalData({
                           index: fieldIndex,
-                          data: { ...field },
+                          data: {
+                            ...field,
+                            options: field.options ?? [],
+                            keys: field.keys ?? [],
+                          },
                         });
                         setShowEditSelectFieldModal(true);
                       }}
@@ -245,7 +249,11 @@ function EditSection() {
                         });
                         setEditSelectFieldModalData({
                           index: fieldIndex,
-                          data: { ...field, options: field.options },
+                          data: {
+                            ...field,
+                            type: FieldType.Select,
+                            options: field.options,
+                          },
                         });
                         setShowEditSelectiveInnerFieldModal(true);
                       }}
@@ -413,6 +421,8 @@ function EditSection() {
         cancelTitle={Strings.cancel}
         successTitle={Strings.save}
         handleClose={() => {
+          setSelectiveInnerFieldData(defaultEditSelectFieldModalData);
+          setEditSelectFieldModalData(defaultEditSelectFieldModalData);
           setShowEditSelectiveInnerFieldModal(false);
         }}
         handleSuccess={() => {
