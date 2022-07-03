@@ -345,10 +345,13 @@ function EditEstateScreen() {
     form: EstateForm,
     selectiveKey: string
   ) {
-    const fieldMap = form.fields[fieldIndex].fieldMap ?? {};
-    const selectiveFields = fieldMap[selectiveKey];
-    if (!selectiveFields.length || selectiveFields.length < innerFieldIndex + 1)
-      return;
+    const fieldMaps = form.fields[fieldIndex].fieldMaps ?? [];
+    const selectiveFieldMapIndex = fieldMaps.findIndex(
+      (f) => f.key === selectiveKey
+    );
+    const selectiveFields =
+      fieldMaps.find((f) => f.key === selectiveKey)?.fields ?? [];
+    if (selectiveFields.length < innerFieldIndex + 1) return;
 
     const currentField = {
       ...selectiveFields[innerFieldIndex],
@@ -356,9 +359,11 @@ function EditEstateScreen() {
     };
 
     selectiveFields[innerFieldIndex] = currentField;
-    fieldMap[selectiveKey] = selectiveFields;
+    if (selectiveFieldMapIndex !== -1) {
+      fieldMaps[selectiveFieldMapIndex].fields = selectiveFields;
+    }
     const fields = form.fields;
-    fields[fieldIndex] = { ...fields[fieldIndex], fieldMap };
+    fields[fieldIndex] = { ...fields[fieldIndex], fieldMaps };
 
     setEstate({
       ...estate,
@@ -539,7 +544,8 @@ function EditEstateScreen() {
               </Form.Select>
               {field.value &&
                 mapConditionalFields(
-                  field.fieldMap ? field.fieldMap[field.value as string] : [],
+                  field.fieldMaps?.find((f) => f.key === field.value)?.fields ??
+                    [],
                   form,
                   fieldIndex,
                   field.value as string

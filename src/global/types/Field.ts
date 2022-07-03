@@ -42,6 +42,11 @@ enum FieldFilterableStatusLabel {
   IsNotFilterable = "غیرقابل فیلتر",
 }
 
+interface FieldMap {
+  key: string;
+  fields: Field[];
+}
+
 interface Field {
   id?: string;
   type: FieldType;
@@ -59,7 +64,7 @@ interface Field {
   max?: number;
   optional?: boolean;
   filterable?: boolean;
-  fieldMap?: { [key: string]: Field[] };
+  fieldMaps?: FieldMap[];
   keys?: string[];
 }
 
@@ -69,7 +74,7 @@ const defaultField: Field = {
   value: "",
 };
 
-export type { Field };
+export type { Field, FieldMap };
 export {
   FieldType,
   FieldTypeTitle,

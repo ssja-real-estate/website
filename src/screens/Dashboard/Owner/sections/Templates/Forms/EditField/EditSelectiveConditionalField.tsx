@@ -57,14 +57,23 @@ function EditSelectiveConditionalField() {
 
     const innerFields = getInnerFieldsByKey(key);
     const newInnerFields = [...(innerFields ?? []), newField];
+    const fieldMaps = selectiveInnerFields.data.fieldMaps ?? []
+    const fieldMapIndex = fieldMaps.findIndex(f => f.key === key)
+
+    if (fieldMapIndex !== -1) {
+      fieldMaps.push({key, fields: newInnerFields})
+    } else {
+      fieldMaps[fieldMapIndex].fields = [...newInnerFields]
+    }
+
     setInnerFields({
       ...selectiveInnerFields,
       data: {
         ...selectiveInnerFields.data,
-        fieldMap: {
+        fieldMap: [ 
           ...selectiveInnerFields.data.fieldMap,
-          [key]: newInnerFields,
-        },
+          0: newInnerFields,
+      ],
       },
     });
   }

@@ -53,7 +53,7 @@ export const defaultSelectiveInnerFieldModalData: Modal<Field> = {
     type: FieldType.SelectiveConditional,
     value: {},
     options: [],
-    fieldMap: {},
+    fieldMaps: [],
   },
 };
 

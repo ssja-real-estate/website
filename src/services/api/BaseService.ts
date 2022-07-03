@@ -15,7 +15,7 @@ class BaseService {
       baseURL: this.baseUrl,
       timeout: 10000,
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
       },
     });
     this.MapApi = axios.create({
@@ -32,6 +32,7 @@ class BaseService {
     this.config = {
       headers: {
         Authorization: token,
+        "Content-Type": "application/json; charset=utf-8",
       },
     };
   }

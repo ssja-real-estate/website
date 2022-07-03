@@ -152,8 +152,6 @@ const Forms = () => {
       };
       newFields.push(newField);
     }
-    console.log("new fields");
-    console.log(newFields);
 
     setForm({ ...form, fields: newFields });
   };
