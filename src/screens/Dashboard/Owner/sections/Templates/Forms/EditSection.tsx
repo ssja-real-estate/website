@@ -126,7 +126,7 @@ function EditSection() {
       type: data.type,
       value: data.value,
       fields: data.fields!,
-      fieldMap: data.fieldMap!,
+      fieldMaps: data.fieldMaps!,
       options: data.options!,
     };
     fields.splice(fieldIndex, 1, changedField);

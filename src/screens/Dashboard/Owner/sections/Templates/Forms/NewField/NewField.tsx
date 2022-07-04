@@ -96,7 +96,7 @@ function NewField() {
                       alert(Strings.addAtLeastOneOption);
                       return;
                     }
-                    newField.fieldMap = selectiveInnerFields;
+                    newField.fieldMaps = selectiveInnerFields.fieldMaps ?? [];
                     newField.options = options;
                     setOptions(options);
                     setSelectiveInnerFields(selectiveInnerFields);
@@ -111,7 +111,7 @@ function NewField() {
                   addNewField(newField);
                   setOptions([]);
                   setInnerFields([]);
-                  setSelectiveInnerFields({});
+                  setSelectiveInnerFields(defaultField);
                 } else {
                   alert(Strings.enterValidTitleForInput);
                 }

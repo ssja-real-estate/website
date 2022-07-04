@@ -25,9 +25,10 @@ import {
 import { optionsAtom, selectiveInnerFieldsAtom } from "./NewFieldStates";
 import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
 import NewSelectField from "./NewSelectField";
+import { v4 } from "uuid";
 
 function NewSelectiveConditionalField() {
-  const [selectiveInnerFields, setInnerFields] = useRecoilState(
+  const [selectiveField, setInnerFields] = useRecoilState(
     selectiveInnerFieldsAtom
   );
   const [newInnerFieldTitle, setNewInnerFieldTitle] = useState<string>("");
@@ -51,35 +52,80 @@ function NewSelectiveConditionalField() {
     } else if (newField.type === FieldType.Number) {
       newField.value = 0;
     }
-    const newInnerFields = [...(selectiveInnerFields[key] ?? []), newField];
+
+    const fieldMaps = [...(selectiveField.fieldMaps ?? [])];
+    const fieldMap = fieldMaps.find((f) => f.key === key);
+    const newInnerFields = [...(fieldMap?.fields ?? []), newField];
+    const innerFieldMapIndex = fieldMaps.findIndex((f) => f.key === key);
+
+    if (innerFieldMapIndex === -1) {
+      fieldMaps.push({ key, fields: newInnerFields });
+    } else {
+      fieldMaps[innerFieldMapIndex] = {
+        ...fieldMaps[innerFieldMapIndex],
+        fields: newInnerFields,
+      };
+    }
     setInnerFields({
-      ...selectiveInnerFields,
-      [key]: newInnerFields,
+      ...selectiveField,
+      fieldMaps,
     });
   }
 
+  function getInnerFieldsByKey(key: string): Field[] {
+    const innerFieldsMap = (selectiveField.fieldMaps ?? []).find(
+      (f) => f.key === key
+    );
+    if (!innerFieldsMap || !innerFieldsMap.fields.length) return [];
+
+    return innerFieldsMap.fields ?? [];
+  }
+
   function moveItemUp(fieldIndex: number, key: string) {
-    const tempInnerFields = Object.assign([], selectiveInnerFields[key]);
+    const innerFields = getInnerFieldsByKey(key);
+
+    const tempInnerFields = Object.assign([], innerFields);
     const indexToMoveTo = fieldIndex === 0 ? 0 : fieldIndex - 1;
     const [reorderedItem] = tempInnerFields.splice(fieldIndex, 1);
     tempInnerFields.splice(indexToMoveTo, 0, reorderedItem);
+
+    const fieldMaps = [...(selectiveField.fieldMaps ?? [])];
+    const fieldMapIndex = fieldMaps.findIndex((fm) => fm.key === key);
+
+    if (fieldMapIndex === -1) {
+      fieldMaps.push({ key, fields: tempInnerFields });
+    } else {
+      fieldMaps[fieldMapIndex].fields = tempInnerFields;
+    }
+
     setInnerFields({
-      ...selectiveInnerFields,
-      [key]: tempInnerFields,
+      ...selectiveField,
+      fieldMaps,
     });
   }
 
   function moveItemDown(fieldIndex: number, key: string) {
-    const tempInnerFields = Object.assign([], selectiveInnerFields[key]);
+    const innerFields = getInnerFieldsByKey(key);
+    const tempInnerFields = Object.assign([], innerFields);
     const indexToMoveTo =
       fieldIndex === tempInnerFields.length - 1
         ? tempInnerFields.length - 1
         : fieldIndex + 1;
     const [reorderedItem] = tempInnerFields.splice(fieldIndex, 1);
     tempInnerFields.splice(indexToMoveTo, 0, reorderedItem);
+
+    const fieldMaps = [...(selectiveField.fieldMaps ?? [])];
+    const fieldMapIndex = fieldMaps.findIndex((fm) => fm.key === key);
+
+    if (fieldMapIndex === -1) {
+      fieldMaps.push({ key, fields: tempInnerFields });
+    } else {
+      fieldMaps[fieldMapIndex].fields = tempInnerFields;
+    }
+
     setInnerFields({
-      ...selectiveInnerFields,
-      [key]: tempInnerFields,
+      ...selectiveField,
+      fieldMaps,
     });
   }
 
@@ -96,58 +142,79 @@ function NewSelectiveConditionalField() {
               </Accordion.Header>
               <Accordion.Body>
                 <ListGroup>
-                  {selectiveInnerFields[option] &&
-                    selectiveInnerFields[option].map((field, fieldIndex) => {
-                      return (
-                        <ListGroup.Item key={fieldIndex} variant="warning">
-                          <Row className="align-items-center">
-                            <Col xs="auto">
-                              <i
-                                className="bi-chevron-up d-block"
-                                style={{ cursor: "pointer" }}
+                  {selectiveField.fieldMaps &&
+                  selectiveField.fieldMaps.length > 0
+                    ? (
+                        selectiveField.fieldMaps.find((f) => f.key === option)
+                          ?.fields ?? []
+                      ).map((field, fieldIndex) => {
+                        return (
+                          <ListGroup.Item
+                            key={fieldIndex + v4()}
+                            variant="warning"
+                          >
+                            <Row className="align-items-center">
+                              <Col xs="auto">
+                                <i
+                                  className="bi-chevron-up d-block"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    moveItemUp(fieldIndex, option);
+                                  }}
+                                ></i>
+                                <i
+                                  className="bi-chevron-down d-block"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    moveItemDown(fieldIndex, option);
+                                  }}
+                                ></i>
+                              </Col>
+                              <Col>
+                                <h6 className="d-inline">{field.title}</h6>
+                              </Col>
+                              <Col>
+                                <h6 className="d-inline text-muted">
+                                  {getFieldTypeAndNecessity(field)}
+                                </h6>
+                              </Col>
+                              <CloseButton
+                                className="m-3"
                                 onClick={() => {
-                                  moveItemUp(fieldIndex, option);
-                                }}
-                              ></i>
-                              <i
-                                className="bi-chevron-down d-block"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => {
-                                  moveItemDown(fieldIndex, option);
-                                }}
-                              ></i>
-                            </Col>
-                            <Col>
-                              <h6 className="d-inline">{field.title}</h6>
-                            </Col>
-                            <Col>
-                              <h6 className="d-inline text-muted">
-                                {getFieldTypeAndNecessity(field)}
-                              </h6>
-                            </Col>
-                            <CloseButton
-                              className="m-3"
-                              onClick={() => {
-                                const fields = selectiveInnerFields[option];
-                                const filteredFields = fields.filter(
-                                  (_, index) => {
-                                    return fieldIndex !== index;
+                                  const fields =
+                                    selectiveField.fieldMaps?.find(
+                                      (f) => f.key === option
+                                    )?.fields ?? [];
+                                  const filteredFields = fields.filter(
+                                    (_, index) => {
+                                      return fieldIndex !== index;
+                                    }
+                                  );
+                                  const fieldMaps =
+                                    selectiveField.fieldMaps ?? [];
+                                  const fieldMapIndex =
+                                    selectiveField.fieldMaps?.findIndex(
+                                      (f) => f.key === option
+                                    ) ?? -1;
+                                  if (fieldMapIndex !== -1) {
+                                    fieldMaps[fieldMapIndex].fields =
+                                      filteredFields;
                                   }
-                                );
-                                if (
-                                  window.confirm(Strings.confirmDeleteInput)
-                                ) {
-                                  setInnerFields({
-                                    ...selectiveInnerFields,
-                                    [option]: filteredFields,
-                                  });
-                                }
-                              }}
-                            />
-                          </Row>
-                        </ListGroup.Item>
-                      );
-                    })}
+                                  if (
+                                    window.confirm(Strings.confirmDeleteInput)
+                                  ) {
+                                    setInnerFields({
+                                      ...selectiveField,
+                                      fieldMaps,
+                                    });
+                                  }
+                                }}
+                              />
+                            </Row>
+                          </ListGroup.Item>
+                        );
+                      })
+                    : null}
                 </ListGroup>
                 <InputGroup className="mt-3" style={{ direction: "ltr" }}>
                   <Button
@@ -283,7 +350,7 @@ function NewSelectiveConditionalField() {
                         {innerOptions.map((innerOption, innerOptionIndex) => {
                           return (
                             <ListGroup.Item
-                              key={innerOptionIndex}
+                              key={innerOptionIndex + v4()}
                               className="d-flex flex-row justify-content-between align-items-center"
                             >
                               {innerOption}
