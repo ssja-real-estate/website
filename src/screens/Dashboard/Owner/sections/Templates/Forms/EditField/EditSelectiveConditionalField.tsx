@@ -86,7 +86,7 @@ function EditSelectiveConditionalField() {
     const fieldMaps = selectiveInnerFields.data.fieldMaps ?? [];
     const innerFieldIndex = fieldMaps.findIndex((f) => f.key === key);
 
-    if (innerFieldIndex !== -1) {
+    if (innerFieldIndex === -1) {
       fieldMaps.push({ key, fields: tempInnerFields });
     } else {
       fieldMaps[innerFieldIndex].fields = tempInnerFields;
