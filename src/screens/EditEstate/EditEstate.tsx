@@ -24,6 +24,7 @@ import EstateTypeService from "services/api/EstateTypeService/EstateTypeService"
 import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import { validateForm } from "services/utilities/fieldValidations";
+import { v4 } from "uuid";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -321,11 +322,21 @@ function EditEstateScreen() {
     return sumOfFileSizes > 2048;
   }
 
-  function onFieldChange(targetValue: any, fieldIndex: number) {
-    let currentField = {
+  function onFieldChange(targetValue: any, fieldIndex: number, key?: string) {
+    const currentField = {
       ...estate.dataForm.fields[fieldIndex],
-      value: targetValue,
     };
+
+    if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
+    } else {
+      currentField.value = targetValue;
+    }
+
     let fields = estate.dataForm.fields;
     fields[fieldIndex] = { ...currentField };
 
@@ -556,18 +567,18 @@ function EditEstateScreen() {
               {field.keys!.map((key) => {
                 const keyMap = field.value as { [key: string]: boolean };
                 return (
-                  <>
+                  <div className="d-block" key={v4()}>
                     <label>{key}</label>
                     <Form.Check
                       className="d-inline mx-3"
                       type="switch"
-                      checked={keyMap[key] ? true : false}
+                      checked={keyMap[key]}
                       onChange={(e: { target: { checked: any } }) => {
                         const booleanValue = e.target.checked;
-                        onFieldChange(booleanValue, fieldIndex);
+                        onFieldChange(booleanValue, fieldIndex, key);
                       }}
                     />
-                  </>
+                  </div>
                 );
               })}
             </>

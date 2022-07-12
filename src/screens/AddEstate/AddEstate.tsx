@@ -21,6 +21,7 @@ import EstateTypeService from "services/api/EstateTypeService/EstateTypeService"
 import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import { validateForm } from "services/utilities/fieldValidations";
+import { v4 } from "uuid";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -242,12 +243,23 @@ function AddEstateScreen() {
   function onFieldChange(
     targetValue: any,
     form: EstateForm,
-    fieldIndex: number
+    fieldIndex: number,
+    key?: string
   ) {
     const currentField = {
       ...form.fields[fieldIndex],
-      value: targetValue,
     };
+
+    if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
+    } else {
+      currentField.value = targetValue;
+    }
+
     const fields = form.fields;
     fields[fieldIndex] = currentField;
 
@@ -338,7 +350,7 @@ function AddEstateScreen() {
       return (
         <div key={fieldIndex} className="input-item py-3">
           <label>
-            {field.title} {field.optional ? Strings.optionalField : null}
+            {field.title} {field.optional ? Strings.optionalField : ""}
           </label>
           {field.type === FieldType.Text ? (
             <Form.Control
@@ -388,11 +400,13 @@ function AddEstateScreen() {
           ) : field.type === FieldType.BooleanConditional ? (
             <>
               <Form.Check
-                className="d-inline mx-3"
+                className="d-inline  mx-3"
                 type="switch"
+                disabled={false}
                 checked={field.value ? true : false}
                 onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
+
                   onFieldChange(booleanValue, form, fieldIndex);
                 }}
               />
@@ -448,20 +462,21 @@ function AddEstateScreen() {
           ) : field.type === FieldType.MultiSelect ? (
             <>
               {field.keys!.map((key) => {
-                const keyMap = field.value as { [key: string]: boolean };
+                // const keyMap = field.value as { [key: string]: boolean };
                 return (
-                  <>
+                  <div className="d-block" key={v4()}>
                     <label>{key}</label>
                     <Form.Check
                       className="d-inline mx-3"
                       type="switch"
-                      checked={keyMap[key] ? true : false}
+                      disabled={false}
+                      checked={(field.value as { [key: string]: boolean })[key]}
                       onChange={(e: { target: { checked: any } }) => {
                         const booleanValue = e.target.checked;
-                        onFieldChange(booleanValue, form, fieldIndex);
+                        onFieldChange(booleanValue, form, fieldIndex, key);
                       }}
                     />
-                  </>
+                  </div>
                 );
               })}
             </>
@@ -482,7 +497,7 @@ function AddEstateScreen() {
         <div key={innerFieldIndex} className="input-item py-3">
           <label>
             {`${innerField.title} ${
-              innerField.optional ? Strings.optionalField : null
+              innerField.optional ? Strings.optionalField : ""
             }`}
           </label>
           {innerField.type === FieldType.Text ? (

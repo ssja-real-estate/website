@@ -29,6 +29,7 @@ import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import SearchService from "services/api/SearchService/SearchService";
 import { validateForm } from "services/utilities/fieldValidations";
+import { v4 } from "uuid";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -258,13 +259,24 @@ function SearchEstateScreen() {
   function onFieldChange(
     targetValue: any,
     fieldIndex: number,
-    min: boolean = false
+    min: boolean = false,
+    key?: string
   ) {
     let currentField = {
       ...dataForm.fields[fieldIndex],
     };
 
-    currentField = handleRangeFieldValue(currentField, targetValue, min);
+    if (currentField.type === FieldType.Range) {
+      currentField = handleRangeFieldValue(currentField, targetValue, min);
+    } else if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
+    } else {
+      currentField.value = targetValue;
+    }
 
     const fields = dataForm.fields;
     fields[fieldIndex] = currentField;
@@ -460,18 +472,18 @@ function SearchEstateScreen() {
               {field.keys!.map((key) => {
                 const keyMap = field.value as { [key: string]: boolean };
                 return (
-                  <>
+                  <div className="d-block" key={v4()}>
                     <label>{key}</label>
                     <Form.Check
                       className="d-inline mx-3"
                       type="switch"
-                      checked={keyMap[key] ? true : false}
+                      checked={keyMap[key]}
                       onChange={(e: { target: { checked: any } }) => {
                         const booleanValue = e.target.checked;
-                        onFieldChange(booleanValue, fieldIndex);
+                        onFieldChange(booleanValue, fieldIndex, false, key);
                       }}
                     />
-                  </>
+                  </div>
                 );
               })}
             </>
@@ -861,7 +873,7 @@ function SearchEstateScreen() {
                     })
                   : searchedEstates.map((estate, index) => {
                       return (
-                        <React.Fragment key={index}>
+                        <React.Fragment key={index + v4()}>
                           <EstateCard
                             estate={estate}
                             showEstateInfoButton
@@ -882,6 +894,7 @@ function SearchEstateScreen() {
       </Col>
 
       <CustomModal
+        isFullscreen
         show={estateInfoModalState.showModal}
         title={Strings.estateInfo}
         cancelTitle={Strings.close}

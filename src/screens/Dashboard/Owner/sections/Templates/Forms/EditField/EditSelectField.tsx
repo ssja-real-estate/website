@@ -15,7 +15,7 @@ import { FieldType } from "global/types/Field";
 function EditSelectField() {
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
     useRecoilState(editSelectFieldModalDataAtom);
-  const [newOptionTitle, setNewOptionTitle] = useState<string>("");
+  const [newItemTitle, setNewItemTitle] = useState<string>("");
 
   return (
     <div className="w-100 d-flex flex-row justify-content-center">
@@ -24,26 +24,26 @@ function EditSelectField() {
           <Button
             variant="dark"
             onClick={() => {
-              if (newOptionTitle.trim() !== "") {
-                const options = editSelectFieldModalData.data.options!;
-                const newOptions = [...options, newOptionTitle];
+              if (newItemTitle.trim() !== "") {
                 const fieldType = editSelectFieldModalData.data.type;
+                const field = editSelectFieldModalData.data;
+                const items =
+                  fieldType === FieldType.Select
+                    ? field.options ?? []
+                    : field.keys ?? [];
+                const newItems = [...items, newItemTitle];
                 setEditSelectFieldModalData({
                   ...editSelectFieldModalData,
                   data: {
                     ...editSelectFieldModalData.data,
-                    options:
-                      fieldType === FieldType.Select ? newOptions : undefined,
-                    keys:
-                      fieldType === FieldType.MultiSelect
-                        ? newOptions
-                        : undefined,
+                    options: fieldType === FieldType.Select ? newItems : [],
+                    keys: fieldType === FieldType.MultiSelect ? newItems : [],
                   },
                 });
               } else {
                 alert(Strings.enterValidInputForNewOption);
               }
-              setNewOptionTitle("");
+              setNewItemTitle("");
             }}
           >
             <i className="bi-plus-lg fs-6"></i>
@@ -51,9 +51,9 @@ function EditSelectField() {
           <Form.Control
             type="text"
             placeholder={Strings.newOption}
-            value={newOptionTitle}
+            value={newItemTitle}
             onChange={(e: { target: { value: SetStateAction<string> } }) => {
-              setNewOptionTitle(e.target.value);
+              setNewItemTitle(e.target.value);
             }}
           />
         </InputGroup>
@@ -70,22 +70,30 @@ function EditSelectField() {
                 {option}
                 <CloseButton
                   onClick={() => {
-                    const newOptions = editSelectFieldModalData.data.options!;
-                    const filteredOptions = newOptions.filter((_, index) => {
+                    console.log("edit select field modal data");
+                    console.log(editSelectFieldModalData);
+
+                    const fieldType = editSelectFieldModalData.data.type;
+                    const field = editSelectFieldModalData.data;
+                    const items =
+                      (fieldType === FieldType.Select
+                        ? field.options
+                        : field.keys) ?? [];
+                    // const newOptions = editSelectFieldModalData.data.options!;
+                    const filteredItems = items.filter((_, index) => {
                       return optionIndex !== index;
                     });
-                    const fieldType = editSelectFieldModalData.data.type;
                     setEditSelectFieldModalData({
                       ...editSelectFieldModalData,
                       data: {
                         ...editSelectFieldModalData.data,
                         options:
                           fieldType === FieldType.Select
-                            ? filteredOptions
+                            ? filteredItems
                             : undefined,
                         keys:
                           fieldType === FieldType.MultiSelect
-                            ? filteredOptions
+                            ? filteredItems
                             : undefined,
                       },
                     });

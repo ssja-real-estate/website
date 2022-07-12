@@ -19,6 +19,7 @@ import {
   FieldFilterableStatusLabel,
   FieldInputNecessity,
   FieldInputNecessityLabel,
+  FieldMap,
   FieldType,
   FieldTypeTitle,
 } from "global/types/Field";
@@ -57,13 +58,18 @@ function EditSelectiveConditionalField() {
 
     const innerFields = getInnerFieldsByKey(key);
     const newInnerFields = [...(innerFields ?? []), newField];
-    const fieldMaps = selectiveInnerFields.data.fieldMaps ?? [];
+    const fieldMaps = [...(selectiveInnerFields.data.fieldMaps ?? [])];
     const fieldMapIndex = fieldMaps.findIndex((f) => f.key === key);
 
     if (fieldMapIndex === -1) {
       fieldMaps.push({ key, fields: newInnerFields });
     } else {
-      fieldMaps[fieldMapIndex].fields = newInnerFields;
+      let fields = [...fieldMaps[fieldMapIndex].fields];
+      fields.push(newField);
+      fieldMaps[fieldMapIndex] = {
+        key,
+        fields,
+      };
     }
 
     setInnerFields({
@@ -195,12 +201,32 @@ function EditSelectiveConditionalField() {
                                     return fieldIndex !== index;
                                   }
                                 );
+
+                                let newFieldMaps: FieldMap[] =
+                                  field.fieldMaps ?? [];
+                                const fieldMapIndex = (
+                                  field.fieldMaps ?? []
+                                ).findIndex((f) => f.key === option);
+
+                                if (fieldMapIndex === -1) {
+                                  newFieldMaps.push({
+                                    key: option,
+                                    fields: filteredFields,
+                                  });
+                                } else {
+                                  newFieldMaps[fieldMapIndex].fields =
+                                    filteredFields;
+                                }
+
                                 if (
                                   window.confirm(Strings.confirmDeleteInput)
                                 ) {
                                   setInnerFields({
                                     ...selectiveInnerFields,
-                                    [option]: filteredFields,
+                                    data: {
+                                      ...selectiveInnerFields.data,
+                                      fieldMaps: [...newFieldMaps],
+                                    },
                                   });
                                 }
                               }}
