@@ -97,20 +97,30 @@ function UnitList() {
     if (modalState.id === "") return;
     setLoading((prev) => true);
 
+    console.log("modal state");
+    console.log(modalState);
+
     let updatedUnit = await service.current.editUnit({
       id: modalState.id,
       name: modalState.value,
     });
 
     if (updatedUnit) {
+      console.log("updated unit");
+      console.log(updatedUnit);
+
       setUnits((prev) => {
-        let prevType = prev.find((t) => t.id === updatedUnit!.id);
-        if (prevType) {
-          prevType = updatedUnit;
+        let prevTypeIndex = prev.findIndex((t) => t.id === updatedUnit!.id);
+        if (prevTypeIndex !== -1) {
+          let prevType = prev[prevTypeIndex];
+          if (prevType) {
+            prevType.name = updatedUnit?.name ?? prevType.name;
+          }
         }
         return prev;
       });
     }
+
     if (modalMounted.current) {
       setModalState(defaultEditItemModalState);
     }
@@ -173,7 +183,7 @@ function UnitList() {
               type="text"
               placeholder={Strings.addNewUnit}
               value={newUnit.name}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 setNewUnit({
                   ...newUnit,
                   name: e.target.value,

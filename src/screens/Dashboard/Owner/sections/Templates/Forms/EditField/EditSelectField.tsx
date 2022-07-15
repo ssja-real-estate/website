@@ -70,9 +70,6 @@ function EditSelectField() {
                 {option}
                 <CloseButton
                   onClick={() => {
-                    console.log("edit select field modal data");
-                    console.log(editSelectFieldModalData);
-
                     const fieldType = editSelectFieldModalData.data.type;
                     const field = editSelectFieldModalData.data;
                     const items =

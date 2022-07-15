@@ -177,7 +177,7 @@ function EstateTypesList() {
               type="text"
               placeholder={Strings.addNewEstateType}
               value={newEstateType.name}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 setNewEstateType({
                   ...newEstateType,
                   name: e.target.value,

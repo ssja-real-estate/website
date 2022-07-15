@@ -18,7 +18,7 @@ interface EditItemModalState {
   mapInfo?: MapInfo;
 }
 
-const defaultMap = [false, false, false, false, false];
+const defaultMap = [false, false, false, false, false, false];
 
 const defaultEditItemModalState: EditItemModalState = {
   id: "",

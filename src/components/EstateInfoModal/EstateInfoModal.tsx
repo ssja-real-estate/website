@@ -46,8 +46,6 @@ const EstateInfoModal = () => {
   };
 
   function displayFieldValues(field: Field) {
-    console.log("field title: " + field.title);
-
     let displayText = `${field.title}: `;
     let value: any;
     let innerFieldValues: string[] = [];
@@ -81,9 +79,6 @@ const EstateInfoModal = () => {
     } else {
       displayText += field.value;
     }
-
-    console.log("display text");
-    console.log(displayText);
 
     return [displayText, ...innerFieldValues];
   }
