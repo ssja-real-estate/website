@@ -21,6 +21,7 @@ class Strings {
   static cities = "شهر‌ها";
   static neighborhoods = "منطقه‌ها";
   static units = "واحدها";
+  static payment = "اعتبار";
   static forms = "فرم‌ها";
   static owners = "مدیران سایت";
   static admins = "نماینده‌های سایت";
