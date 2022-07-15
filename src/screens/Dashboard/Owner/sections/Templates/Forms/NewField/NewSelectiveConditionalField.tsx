@@ -190,15 +190,18 @@ function NewSelectiveConditionalField() {
                                       return fieldIndex !== index;
                                     }
                                   );
-                                  const fieldMaps =
-                                    selectiveField.fieldMaps ?? [];
+                                  let fieldMaps = [
+                                    ...(selectiveField.fieldMaps ?? []),
+                                  ];
                                   const fieldMapIndex =
                                     selectiveField.fieldMaps?.findIndex(
                                       (f) => f.key === option
                                     ) ?? -1;
                                   if (fieldMapIndex !== -1) {
-                                    fieldMaps[fieldMapIndex].fields =
-                                      filteredFields;
+                                    fieldMaps[fieldMapIndex] = {
+                                      key: option,
+                                      fields: filteredFields,
+                                    };
                                   }
                                   if (
                                     window.confirm(Strings.confirmDeleteInput)

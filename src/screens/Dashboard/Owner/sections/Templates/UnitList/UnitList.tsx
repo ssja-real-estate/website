@@ -106,9 +106,6 @@ function UnitList() {
     });
 
     if (updatedUnit) {
-      console.log("updated unit");
-      console.log(updatedUnit);
-
       setUnits((prev) => {
         let prevTypeIndex = prev.findIndex((t) => t.id === updatedUnit!.id);
         if (prevTypeIndex !== -1) {
