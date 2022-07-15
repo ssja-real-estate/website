@@ -1,11 +1,12 @@
 import Strings from "global/constants/strings";
 import { imagesBaseUrl } from "global/states/GlobalState";
-import { FieldType } from "global/types/Field";
+import { Field, FieldType } from "global/types/Field";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { estateInfoModalAtom } from "./EstateInfoModalState";
 import "./EstateInfoModal.css";
 import { Col, Row } from "react-bootstrap";
+import { v4 } from "uuid";
 
 const EstateInfoModal = () => {
   const estateInfo = useRecoilValue(estateInfoModalAtom);
@@ -44,6 +45,44 @@ const EstateInfoModal = () => {
     }
   };
 
+  function displayFieldValues(field: Field) {
+    let displayText = `${field.title}: `;
+    let value: any;
+    let innerFieldValues: string[] = [];
+    if (field.type === FieldType.Bool) {
+      value = field.value as boolean;
+      displayText += `${value ? "دارد" : "ندارد"}`;
+    } else if (field.type === FieldType.BooleanConditional) {
+      value = field.value as boolean;
+
+      displayText += `${value ? "دارد" : "ندارد"}`;
+      innerFieldValues = [];
+      for (const innerField of field.fields ?? []) {
+        innerFieldValues.push(...displayFieldValues(innerField));
+      }
+    } else if (field.type === FieldType.SelectiveConditional) {
+      value = field.value as string;
+      displayText += value;
+
+      innerFieldValues = [];
+      let innerFields =
+        field.fieldMaps?.find((fm) => fm.key === value)?.fields ?? [];
+      for (const innerField of innerFields) {
+        innerFieldValues.push(...displayFieldValues(innerField));
+      }
+    } else if (field.type === FieldType.MultiSelect) {
+      value = field.value as { [key: string]: boolean };
+      innerFieldValues = [];
+      for (const key of Object.keys(value)) {
+        innerFieldValues.push(`${key}: ${value[key] ? "دارد" : "ندارد"}`);
+      }
+    } else {
+      displayText += field.value;
+    }
+
+    return [displayText, ...innerFieldValues];
+  }
+
   return (
     <Row>
       <Col>
@@ -63,11 +102,12 @@ const EstateInfoModal = () => {
           {estateInfo.estate.dataForm.fields
             .filter((field) => field.filterable)
             .map((field) => {
-              return (
-                <h5>
-                  {field.title} : {field.value}
+              const displayTexts = displayFieldValues(field);
+              return displayTexts.map((text) => (
+                <h5 className="pt-3" key={v4()}>
+                  {text}
                 </h5>
-              );
+              ));
             })}
         </Row>
       </Col>

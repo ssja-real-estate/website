@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { InputGroup, Button, Form, Col, Row } from "react-bootstrap";
 import { useRecoilState } from "recoil";
 
@@ -15,8 +15,13 @@ import {
 } from "global/types/Field";
 import { modalSectionAtom } from "../FormsState";
 import NewConditionalField from "./NewConditionalField";
-import { optionsAtom, innerFieldsAtom } from "./NewFieldStates";
+import {
+  optionsAtom,
+  innerFieldsAtom,
+  selectiveInnerFieldsAtom,
+} from "./NewFieldStates";
 import NewSelectField from "./NewSelectField";
+import NewSelectiveConditionalField from "./NewSelectiveConditionalField";
 
 function NewField() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -30,11 +35,14 @@ function NewField() {
   );
   const [options, setOptions] = useRecoilState(optionsAtom);
   const [innerFields, setInnerFields] = useRecoilState(innerFieldsAtom);
+  const [selectiveInnerFields, setSelectiveInnerFields] = useRecoilState(
+    selectiveInnerFieldsAtom
+  );
 
   function addNewField(newField: Field) {
     if (
       newField.type === FieldType.Bool ||
-      newField.type === FieldType.Conditional
+      newField.type === FieldType.BooleanConditional
     ) {
       newField.value = false;
     } else if (newField.type === FieldType.Number) {
@@ -76,17 +84,34 @@ function NewField() {
                     }
                     newField.options = options;
                     setOptions(options);
-                  } else if (selectedType === FieldType.Conditional) {
+                  } else if (selectedType === FieldType.BooleanConditional) {
                     if (innerFields.length === 0) {
                       alert(Strings.conditionalShouldHaveAtLeastOneField);
                       return;
                     }
                     newField.fields = innerFields;
                     setInnerFields(innerFields);
+                  } else if (selectedType === FieldType.SelectiveConditional) {
+                    if (options.length < 1) {
+                      alert(Strings.addAtLeastOneOption);
+                      return;
+                    }
+                    newField.fieldMaps = selectiveInnerFields.fieldMaps ?? [];
+                    newField.options = options;
+                    setOptions(options);
+                    setSelectiveInnerFields(selectiveInnerFields);
+                  } else if (selectedType === FieldType.MultiSelect) {
+                    if (options.length < 2) {
+                      alert(Strings.chooseAtLeastTwoKeysForMultiSelect);
+                      return;
+                    }
+                    newField.keys = options;
+                    setOptions(options);
                   }
                   addNewField(newField);
                   setOptions([]);
                   setInnerFields([]);
+                  setSelectiveInnerFields(defaultField);
                 } else {
                   alert(Strings.enterValidTitleForInput);
                 }
@@ -100,7 +125,7 @@ function NewField() {
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={fieldInputNecessity}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setFieldInputNecessity(Number(e.currentTarget.value));
               }}
             >
@@ -114,7 +139,7 @@ function NewField() {
             <Form.Select
               style={{ minWidth: 50, maxWidth: "10vw" }}
               value={filterableStatus}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: string | number } }) => {
                 const value = +e.currentTarget.value;
                 setFilterableStatus(value as FieldFilterableStatus);
               }}
@@ -129,7 +154,7 @@ function NewField() {
             <Form.Select
               style={{ minWidth: 100, maxWidth: "15vw" }}
               value={selectedType}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 setSelectedType(Number(e.currentTarget.value));
               }}
             >
@@ -137,8 +162,14 @@ function NewField() {
               <option value={FieldType.Number}>{FieldTypeTitle.Number}</option>
               <option value={FieldType.Select}>{FieldTypeTitle.Select}</option>
               <option value={FieldType.Bool}>{FieldTypeTitle.Bool}</option>
-              <option value={FieldType.Conditional}>
-                {FieldTypeTitle.Conditional}
+              <option value={FieldType.BooleanConditional}>
+                {FieldTypeTitle.BooleanConditional}
+              </option>
+              <option value={FieldType.SelectiveConditional}>
+                {FieldTypeTitle.SelectiveCondition}
+              </option>
+              <option value={FieldType.MultiSelect}>
+                {FieldTypeTitle.MultiSelect}
               </option>
             </Form.Select>
             <Form.Control
@@ -146,18 +177,19 @@ function NewField() {
               placeholder={Strings.newInputTitle}
               maxLength={30}
               value={newFieldTitle}
-              onChange={(e) => {
+              onChange={(e: { target: { value: SetStateAction<string> } }) => {
                 setNewFieldTitle(e.target.value);
               }}
             />
           </InputGroup>
         </Col>
       </Row>
-      {selectedType === FieldType.Select ? (
-        <NewSelectField />
-      ) : (
-        selectedType === FieldType.Conditional && <NewConditionalField />
+      {selectedType === FieldType.Select && <NewSelectField />}
+      {selectedType === FieldType.BooleanConditional && <NewConditionalField />}
+      {selectedType === FieldType.SelectiveConditional && (
+        <NewSelectiveConditionalField />
       )}
+      {selectedType === FieldType.MultiSelect && <NewSelectField />}
     </>
   );
 }

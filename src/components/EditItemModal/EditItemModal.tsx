@@ -1,6 +1,6 @@
 import Strings from "global/constants/strings";
 import MapInfo, { defaultMapInfo } from "global/types/MapInfo";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
@@ -77,7 +77,9 @@ const EditItemModal: React.FC<Props> = (props) => {
               <Form.Control
                 type="text"
                 value={newValue}
-                onChange={(e) => {
+                onChange={(e: {
+                  currentTarget: { value: SetStateAction<string> };
+                }) => {
                   setNewValue(e.currentTarget.value);
                 }}
               />
@@ -91,7 +93,9 @@ const EditItemModal: React.FC<Props> = (props) => {
                   <Form.Control
                     type="text"
                     value={mapInfo.latitude}
-                    onChange={(e) => {
+                    onChange={(e: {
+                      currentTarget: { value: string | number };
+                    }) => {
                       setMapInfo({
                         ...mapInfo,
                         latitude: +e.currentTarget.value,
@@ -104,7 +108,9 @@ const EditItemModal: React.FC<Props> = (props) => {
                   <Form.Control
                     type="text"
                     value={mapInfo.longitude}
-                    onChange={(e) => {
+                    onChange={(e: {
+                      currentTarget: { value: string | number };
+                    }) => {
                       setMapInfo({
                         ...mapInfo,
                         longitude: +e.currentTarget.value,
@@ -117,7 +123,9 @@ const EditItemModal: React.FC<Props> = (props) => {
                   <Form.Control
                     type="float"
                     value={zoom}
-                    onChange={(e) => {
+                    onChange={(e: {
+                      currentTarget: { value: SetStateAction<string> };
+                    }) => {
                       setZoom(e.currentTarget.value);
                     }}
                   />

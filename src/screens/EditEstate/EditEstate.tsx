@@ -24,6 +24,7 @@ import EstateTypeService from "services/api/EstateTypeService/EstateTypeService"
 import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import { validateForm } from "services/utilities/fieldValidations";
+import { v4 } from "uuid";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -321,14 +322,23 @@ function EditEstateScreen() {
     return sumOfFileSizes > 2048;
   }
 
-  function onFieldChange(targetValue: any, fieldIndex: number) {
-    let currentField = {
+  function onFieldChange(targetValue: any, fieldIndex: number, key?: string) {
+    const currentField = {
       ...estate.dataForm.fields[fieldIndex],
-      value: targetValue,
     };
+
+    if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
+    } else {
+      currentField.value = targetValue;
+    }
+
     let fields = estate.dataForm.fields;
     fields[fieldIndex] = { ...currentField };
-    // fields[fieldIndex] = { ...fields[fieldIndex], value: targetValue };
 
     setEstate({
       ...estate,
@@ -339,12 +349,61 @@ function EditEstateScreen() {
     });
   }
 
+  function onSelectiveConditionalFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm,
+    selectiveKey: string
+  ) {
+    const fieldMaps = form.fields[fieldIndex].fieldMaps ?? [];
+    const selectiveFieldMapIndex = fieldMaps.findIndex(
+      (f) => f.key === selectiveKey
+    );
+    const selectiveFields =
+      fieldMaps.find((f) => f.key === selectiveKey)?.fields ?? [];
+    if (selectiveFields.length < innerFieldIndex + 1) return;
+
+    const currentField = {
+      ...selectiveFields[innerFieldIndex],
+      value: targetValue,
+    };
+
+    selectiveFields[innerFieldIndex] = currentField;
+    if (selectiveFieldMapIndex !== -1) {
+      fieldMaps[selectiveFieldMapIndex].fields = selectiveFields;
+    }
+    const fields = form.fields;
+    fields[fieldIndex] = { ...fields[fieldIndex], fieldMaps };
+
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        fields,
+      },
+    });
+  }
+
   function onConditionalFieldChange(
     targetValue: any,
     fieldIndex: number,
     innerFieldIndex: number,
-    form: EstateForm
+    form: EstateForm,
+    selectiveKey?: string
   ) {
+    const field = form.fields[fieldIndex];
+    if (!field) return;
+    if (field.type === FieldType.SelectiveConditional) {
+      onSelectiveConditionalFieldChange(
+        targetValue,
+        fieldIndex,
+        innerFieldIndex,
+        form,
+        selectiveKey!
+      );
+      return;
+    }
     const currentField = {
       ...form.fields[fieldIndex].fields![innerFieldIndex],
       value: targetValue,
@@ -415,7 +474,7 @@ function EditEstateScreen() {
                 onFieldChange(booleanValue, fieldIndex);
               }}
             />
-          ) : field.type === FieldType.Conditional ? (
+          ) : field.type === FieldType.BooleanConditional ? (
             <>
               <Form.Check
                 className="d-inline mx-3"
@@ -478,16 +537,52 @@ function EditEstateScreen() {
                 }}
               />
             </Row>
-          ) : (
-            <Form.Control
-              type="text"
-              value={field.value ? String(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-                onFieldChange(stringValue, fieldIndex);
-              }}
-            />
-          )}
+          ) : field.type === FieldType.SelectiveConditional ? (
+            <>
+              <Form.Select
+                value={field.value ? String(field.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const selectValue = String(e.currentTarget.value);
+                  onFieldChange(selectValue, fieldIndex);
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {field.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
+                })}
+              </Form.Select>
+              {field.value &&
+                mapConditionalFields(
+                  field.fieldMaps?.find((f) => f.key === field.value)?.fields ??
+                    [],
+                  form,
+                  fieldIndex,
+                  field.value as string
+                )}
+            </>
+          ) : field.type === FieldType.MultiSelect ? (
+            <>
+              {field.keys!.map((key) => {
+                const keyMap = field.value as { [key: string]: boolean };
+                return (
+                  <div className="d-block" key={v4()}>
+                    <label>{key}</label>
+                    <Form.Check
+                      className="d-inline mx-3"
+                      type="switch"
+                      checked={keyMap[key]}
+                      onChange={(e: { target: { checked: any } }) => {
+                        const booleanValue = e.target.checked;
+                        onFieldChange(booleanValue, fieldIndex, key);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </>
+          ) : null}
         </div>
       );
     });
@@ -496,7 +591,8 @@ function EditEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    fieldIndex: number
+    fieldIndex: number,
+    selectiveKey?: string
   ) {
     return fields.map((innerField, innerFieldIndex) => {
       return (
@@ -516,7 +612,8 @@ function EditEstateScreen() {
                   stringValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
@@ -531,7 +628,8 @@ function EditEstateScreen() {
                   numberValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
@@ -545,7 +643,8 @@ function EditEstateScreen() {
                   numberValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             >
@@ -568,70 +667,12 @@ function EditEstateScreen() {
                   booleanValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
-          ) : innerField.type === FieldType.Conditional ? (
-            <>
-              <Form.Check
-                className="d-inline mx-3"
-                type="switch"
-                checked={innerField.value ? true : false}
-                onChange={(e: { target: { checked: any } }) => {
-                  const booleanValue = e.target.checked;
-
-                  onConditionalFieldChange(
-                    booleanValue,
-                    fieldIndex,
-                    innerFieldIndex,
-                    form
-                  );
-                }}
-              />
-              {innerField.value &&
-                mapConditionalFields(innerField.fields!, form, fieldIndex)}
-            </>
-          ) : innerField.type === FieldType.Image ? (
-            <Form.Control
-              type="file"
-              multiple
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                let selectedFiles = Array.from(e.target.files!);
-                setImagesCount(selectedFiles.length);
-
-                if (!checkFileSizes(selectedFiles)) {
-                  alert(Strings.imagesSizeLimit);
-                  e.target.value = "";
-                  selectedFiles = [];
-                }
-
-                const data = new FormData();
-                selectedFiles.forEach((file, index) => {
-                  data.append("images", file);
-                });
-
-                setFormData(data);
-
-                // onFieldChange(data, form, sectionIndex, fieldIndex);
-              }}
-            />
-          ) : (
-            <Form.Control
-              type="text"
-              value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-
-                onConditionalFieldChange(
-                  stringValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          )}
+          ) : null}
         </div>
       );
     });

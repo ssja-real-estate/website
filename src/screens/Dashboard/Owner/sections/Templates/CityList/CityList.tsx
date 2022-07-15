@@ -216,7 +216,7 @@ function CityList() {
               type="text"
               placeholder={Strings.addNewCity}
               value={newCity.name}
-              onChange={(e) => {
+              onChange={(e: { target: { value: any } }) => {
                 setNewCity({
                   ...newCity,
                   name: e.target.value,
@@ -226,7 +226,7 @@ function CityList() {
             <Form.Select
               defaultValue="default"
               value={selectedProvince?.id}
-              onChange={(e) => {
+              onChange={(e: { currentTarget: { value: any } }) => {
                 const provinceId = e.currentTarget.value;
                 if (provinceId) {
                   const province = provinces.find((p) => p.id === provinceId);

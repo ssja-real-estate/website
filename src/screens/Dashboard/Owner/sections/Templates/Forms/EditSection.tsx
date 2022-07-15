@@ -29,8 +29,10 @@ import {
   editSelectFieldModalDataAtom,
   innerFieldModalDataAtom,
   modalSectionAtom,
+  selectiveInnerFieldModalDataAtom,
 } from "./FormsState";
 import NewField from "./NewField/NewField";
+import EditSelectiveConditionalField from "./EditField/EditSelectiveConditionalField";
 
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
@@ -46,8 +48,15 @@ function EditSection() {
     });
   const [showEditInnerFieldsModal, setShowEditInnerFieldsModal] =
     useState<boolean>(false);
+  const [
+    showEditSelectiveInnerFieldModal,
+    setShowEditSelectiveInnerFieldModal,
+  ] = useState(false);
   const [innerFieldModalData, setInnerFieldModalData] = useRecoilState(
     innerFieldModalDataAtom
+  );
+  const [selectiveInnerField, setSelectiveInnerFieldData] = useRecoilState(
+    selectiveInnerFieldModalDataAtom
   );
   const [showEditSelectFieldModal, setShowEditSelectFieldModal] =
     useState<boolean>(false);
@@ -87,8 +96,7 @@ function EditSection() {
   }
 
   function updateChangedConditionalField() {
-    const section: Section = { ...modalSection.data };
-    const fields: Field[] = section.fields.slice();
+    const fields: Field[] = modalSection.data.fields.slice();
     const fieldIndex = innerFieldModalData.index;
     const data = innerFieldModalData.data;
 
@@ -98,6 +106,28 @@ function EditSection() {
       type: data.type,
       value: data.value,
       fields: data.fields!,
+    };
+    fields.splice(fieldIndex, 1, changedField);
+
+    setModalSection({
+      ...modalSection,
+      data: { ...modalSection.data, fields: fields },
+    });
+  }
+
+  function updateChangedSelectiveConditionalField() {
+    const fields: Field[] = modalSection.data.fields.slice();
+    const fieldIndex = selectiveInnerField.index;
+    const data = selectiveInnerField.data;
+
+    const changedField: Field = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      value: data.value,
+      fields: data.fields!,
+      fieldMaps: data.fieldMaps!,
+      options: data.options!,
     };
     fields.splice(fieldIndex, 1, changedField);
 
@@ -118,7 +148,8 @@ function EditSection() {
       title: data.title,
       type: data.type,
       value: data.value,
-      options: data.options!,
+      options: data.options,
+      keys: data.keys,
     };
     fields.splice(fieldIndex, 1, changedField);
 
@@ -176,7 +207,7 @@ function EditSection() {
                   <h6 className="d-inline text-muted">
                     {getFieldTypeAndNecessity(field)}
                   </h6>
-                  {field.type === FieldType.Conditional ? (
+                  {field.type === FieldType.BooleanConditional && (
                     <i
                       className="bi-list-ul fs-4 me-3"
                       style={{ cursor: "pointer" }}
@@ -188,20 +219,45 @@ function EditSection() {
                         setShowEditInnerFieldsModal(true);
                       }}
                     ></i>
-                  ) : (
-                    field.type === FieldType.Select && (
-                      <i
-                        className="bi-list fs-4 me-3"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setEditSelectFieldModalData({
-                            index: fieldIndex,
-                            data: { ...field },
-                          });
-                          setShowEditSelectFieldModal(true);
-                        }}
-                      ></i>
-                    )
+                  )}
+                  {(field.type === FieldType.Select ||
+                    field.type === FieldType.MultiSelect) && (
+                    <i
+                      className="bi-list fs-4 me-3"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setEditSelectFieldModalData({
+                          index: fieldIndex,
+                          data: {
+                            ...field,
+                            options: field.options ?? [],
+                            keys: field.keys ?? [],
+                          },
+                        });
+                        setShowEditSelectFieldModal(true);
+                      }}
+                    ></i>
+                  )}
+                  {field.type === FieldType.SelectiveConditional && (
+                    <i
+                      className="bi-list-ul fs-4 me-3"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setSelectiveInnerFieldData({
+                          index: fieldIndex,
+                          data: { ...field },
+                        });
+                        setEditSelectFieldModalData({
+                          index: fieldIndex,
+                          data: {
+                            ...field,
+                            type: FieldType.Select,
+                            options: field.options,
+                          },
+                        });
+                        setShowEditSelectiveInnerFieldModal(true);
+                      }}
+                    ></i>
                   )}
                 </Col>
                 {field.type !== FieldType.Image ? (
@@ -341,7 +397,14 @@ function EditSection() {
           setEditSelectFieldModalData(defaultEditSelectFieldModalData);
         }}
         handleSuccess={() => {
-          if (editSelectFieldModalData.data.options!.length > 1) {
+          const selectField = editSelectFieldModalData.data;
+          let validToUpdate =
+            (selectField.type === FieldType.Select &&
+              selectField.options!.length > 1) ||
+            (selectField.type === FieldType.MultiSelect &&
+              selectField.keys!.length > 1);
+
+          if (validToUpdate) {
             updateChangedSelectField();
             setShowEditSelectFieldModal(false);
           } else {
@@ -350,6 +413,24 @@ function EditSection() {
         }}
       >
         <EditSelectField />
+      </CustomModal>
+      <CustomModal
+        isFullscreen
+        show={showEditSelectiveInnerFieldModal}
+        title={Strings.editInnerInputs}
+        cancelTitle={Strings.cancel}
+        successTitle={Strings.save}
+        handleClose={() => {
+          setSelectiveInnerFieldData(defaultEditSelectFieldModalData);
+          setEditSelectFieldModalData(defaultEditSelectFieldModalData);
+          setShowEditSelectiveInnerFieldModal(false);
+        }}
+        handleSuccess={() => {
+          updateChangedSelectiveConditionalField();
+          setShowEditSelectiveInnerFieldModal(false);
+        }}
+      >
+        <EditSelectiveConditionalField />
       </CustomModal>
       <div className="d-flex flex-column justify-content-center align-items-stretch my-3">
         <h5>{Strings.inputs}</h5>

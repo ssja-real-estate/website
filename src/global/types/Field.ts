@@ -3,9 +3,11 @@ enum FieldType {
   Number = 1,
   Select = 2,
   Bool = 3,
-  Conditional = 4,
+  BooleanConditional = 4,
   Image = 5,
   Range = 6,
+  SelectiveConditional = 7,
+  MultiSelect = 8,
 }
 
 enum FieldTypeTitle {
@@ -13,9 +15,11 @@ enum FieldTypeTitle {
   Number = "عدد",
   Select = "انتخابی",
   Bool = "کلید",
-  Conditional = "شرطی",
+  BooleanConditional = "شرطی کلید",
   Image = "تصویر",
   Range = "بازه",
+  SelectiveCondition = "شرطی چندگزینه‌ای",
+  MultiSelect = "کلید چندگزینه‌ای",
 }
 
 enum FieldInputNecessity {
@@ -38,17 +42,30 @@ enum FieldFilterableStatusLabel {
   IsNotFilterable = "غیرقابل فیلتر",
 }
 
+interface FieldMap {
+  key: string;
+  fields: Field[];
+}
+
 interface Field {
   id?: string;
   type: FieldType;
   title: string;
-  value: string | number | boolean | string[] | [number, number];
+  value:
+    | string
+    | number
+    | boolean
+    | string[]
+    | [number, number]
+    | { [key: string]: boolean };
   options?: string[];
   fields?: Field[];
   min?: number;
   max?: number;
   optional?: boolean;
   filterable?: boolean;
+  fieldMaps?: FieldMap[];
+  keys?: string[];
 }
 
 const defaultField: Field = {
@@ -57,7 +74,7 @@ const defaultField: Field = {
   value: "",
 };
 
-export type { Field };
+export type { Field, FieldMap };
 export {
   FieldType,
   FieldTypeTitle,

@@ -29,6 +29,7 @@ import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import SearchService from "services/api/SearchService/SearchService";
 import { validateForm } from "services/utilities/fieldValidations";
+import { v4 } from "uuid";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -237,21 +238,42 @@ function SearchEstateScreen() {
     setNoFilterExists((prev) => false);
   }
 
+  function handleRangeFieldValue(
+    field: Field,
+    targetValue: any,
+    min: boolean = false
+  ) {
+    if (field.type === FieldType.Range) {
+      const value = +targetValue;
+      let range = [field.min ?? 0, field.max ?? 0];
+      if (min) range[0] = value;
+      else range[1] = value;
+      if (min) field.min = range[0];
+      else field.max = range[1];
+    } else {
+      field.value = targetValue;
+    }
+    return { ...field };
+  }
+
   function onFieldChange(
     targetValue: any,
     fieldIndex: number,
-    min: boolean = false
+    min: boolean = false,
+    key?: string
   ) {
-    const currentField = {
+    let currentField = {
       ...dataForm.fields[fieldIndex],
     };
+
     if (currentField.type === FieldType.Range) {
-      const value = +targetValue;
-      let range = [currentField.min ?? 0, currentField.max ?? 0];
-      if (min) range[0] = value;
-      else range[1] = value;
-      if (min) currentField.min = range[0];
-      else currentField.max = range[1];
+      currentField = handleRangeFieldValue(currentField, targetValue, min);
+    } else if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
     } else {
       currentField.value = targetValue;
     }
@@ -265,16 +287,68 @@ function SearchEstateScreen() {
     });
   }
 
+  function onSelectiveConditionalFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm,
+    selectiveKey: string,
+    min: boolean = false
+  ) {
+    const fieldMaps = form.fields[fieldIndex].fieldMaps ?? [];
+    const selectiveFieldMapIndex = fieldMaps.findIndex(
+      (f) => f.key === selectiveKey
+    );
+    const selectiveFields =
+      fieldMaps.find((f) => f.key === selectiveKey)?.fields ?? [];
+    if (selectiveFields.length < innerFieldIndex + 1) return;
+
+    const currentField = {
+      ...selectiveFields[innerFieldIndex],
+      value: targetValue,
+    };
+
+    selectiveFields[innerFieldIndex] = currentField;
+    if (selectiveFieldMapIndex !== -1) {
+      fieldMaps[selectiveFieldMapIndex].fields = selectiveFields;
+    }
+    const fields = form.fields;
+    fields[fieldIndex] = { ...fields[fieldIndex], fieldMaps };
+
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        fields,
+      },
+    });
+  }
+
   function onConditionalFieldChange(
     targetValue: any,
     fieldIndex: number,
     innerFieldIndex: number,
-    form: EstateForm
+    form: EstateForm,
+    selectiveKey?: string,
+    min: boolean = false
   ) {
-    const currentField = {
+    const field = form.fields[fieldIndex];
+    if (!field) return;
+    if (field.type === FieldType.SelectiveConditional) {
+      onSelectiveConditionalFieldChange(
+        targetValue,
+        fieldIndex,
+        innerFieldIndex,
+        form,
+        selectiveKey!,
+        min
+      );
+      return;
+    }
+    let currentField = {
       ...form.fields[fieldIndex].fields![innerFieldIndex],
-      value: targetValue,
     };
+    currentField = handleRangeFieldValue(currentField, targetValue, min);
     const fields = form.fields;
     const innerFields = fields[fieldIndex].fields!;
     innerFields[innerFieldIndex] = currentField;
@@ -349,7 +423,7 @@ function SearchEstateScreen() {
                 onFieldChange(booleanValue, fieldIndex);
               }}
             />
-          ) : field.type === FieldType.Conditional ? (
+          ) : field.type === FieldType.BooleanConditional ? (
             <>
               <Form.Check
                 className="d-inline mx-3"
@@ -368,16 +442,52 @@ function SearchEstateScreen() {
                   fieldIndex
                 )}
             </>
-          ) : (
-            <Form.Control
-              type="text"
-              value={field.value ? String(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-                onFieldChange(stringValue, fieldIndex);
-              }}
-            />
-          )}
+          ) : field.type === FieldType.SelectiveConditional ? (
+            <>
+              <Form.Select
+                value={field.value ? String(field.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const selectValue = String(e.currentTarget.value);
+                  onFieldChange(selectValue, fieldIndex);
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {field.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
+                })}
+              </Form.Select>
+              {field.value &&
+                mapConditionalFields(
+                  field.fieldMaps?.find((f) => f.key === field.value)?.fields ??
+                    [],
+                  form,
+                  fieldIndex,
+                  field.value as string
+                )}
+            </>
+          ) : field.type === FieldType.MultiSelect ? (
+            <>
+              {field.keys!.map((key) => {
+                const keyMap = field.value as { [key: string]: boolean };
+                return (
+                  <div className="d-block" key={v4()}>
+                    <label>{key}</label>
+                    <Form.Check
+                      className="d-inline mx-3"
+                      type="switch"
+                      checked={keyMap[key]}
+                      onChange={(e: { target: { checked: any } }) => {
+                        const booleanValue = e.target.checked;
+                        onFieldChange(booleanValue, fieldIndex, false, key);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </>
+          ) : null}
         </div>
       );
     });
@@ -386,7 +496,8 @@ function SearchEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    fieldIndex: number
+    fieldIndex: number,
+    selectiveKey?: string
   ) {
     return fields.map((innerField, innerFieldIndex) => {
       return (
@@ -402,7 +513,8 @@ function SearchEstateScreen() {
                   stringValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
@@ -421,7 +533,14 @@ function SearchEstateScreen() {
                     currentTarget: { value: string | number };
                   }) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, fieldIndex);
+                    onConditionalFieldChange(
+                      value,
+                      fieldIndex,
+                      innerFieldIndex,
+                      form,
+                      selectiveKey,
+                      true
+                    );
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -438,7 +557,13 @@ function SearchEstateScreen() {
                     currentTarget: { value: string | number };
                   }) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, fieldIndex);
+                    onConditionalFieldChange(
+                      value,
+                      fieldIndex,
+                      innerFieldIndex,
+                      form,
+                      selectiveKey
+                    );
                   }}
                 ></Form.Control>
               </Form.Group>
@@ -452,7 +577,8 @@ function SearchEstateScreen() {
                   numberValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             >
@@ -474,44 +600,12 @@ function SearchEstateScreen() {
                   booleanValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
-          ) : innerField.type === FieldType.Conditional ? (
-            <>
-              <Form.Check
-                className="d-inline mx-3"
-                type="switch"
-                checked={innerField.value ? true : false}
-                onChange={(e: { target: { checked: any } }) => {
-                  const booleanValue = e.target.checked;
-                  onConditionalFieldChange(
-                    booleanValue,
-                    fieldIndex,
-                    innerFieldIndex,
-                    form
-                  );
-                }}
-              />
-              {innerField.value &&
-                mapConditionalFields(innerField.fields!, form, fieldIndex)}
-            </>
-          ) : (
-            <Form.Control
-              type="text"
-              value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-                onConditionalFieldChange(
-                  stringValue,
-                  fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          )}
+          ) : null}
         </div>
       );
     });
@@ -706,9 +800,11 @@ function SearchEstateScreen() {
               </Row>
             ) : (
               <div className="items-container">
-                <div className="section card glass shadow-sm py-2 px-4 my-2">
-                  {mapFields(estate.dataForm.fields, estate.dataForm)}
-                </div>
+                {dataForm.fields.length > 0 && (
+                  <div className="section card glass shadow-sm py-2 px-4 my-2">
+                    {mapFields(dataForm.fields, dataForm)}
+                  </div>
+                )}
                 {noFilterExists ? (
                   <motion.div
                     variants={crossfadeAnimation}
@@ -777,7 +873,7 @@ function SearchEstateScreen() {
                     })
                   : searchedEstates.map((estate, index) => {
                       return (
-                        <React.Fragment key={index}>
+                        <React.Fragment key={index + v4()}>
                           <EstateCard
                             estate={estate}
                             showEstateInfoButton
@@ -798,6 +894,7 @@ function SearchEstateScreen() {
       </Col>
 
       <CustomModal
+        isFullscreen
         show={estateInfoModalState.showModal}
         title={Strings.estateInfo}
         cancelTitle={Strings.close}

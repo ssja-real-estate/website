@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import {
   InputGroup,
   Button,
@@ -37,7 +37,7 @@ function NewSelectField() {
             type="text"
             placeholder={Strings.newOption}
             value={newOptionTitle}
-            onChange={(e) => {
+            onChange={(e: { target: { value: SetStateAction<string> } }) => {
               setNewOptionTitle(e.target.value);
             }}
           />

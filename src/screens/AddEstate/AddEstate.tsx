@@ -21,6 +21,7 @@ import EstateTypeService from "services/api/EstateTypeService/EstateTypeService"
 import FormService from "services/api/FormService/FormService";
 import LocationService from "services/api/LocationService/LocationService";
 import { validateForm } from "services/utilities/fieldValidations";
+import { v4 } from "uuid";
 import {
   crossfadeAnimation,
   elevationEffect,
@@ -242,12 +243,23 @@ function AddEstateScreen() {
   function onFieldChange(
     targetValue: any,
     form: EstateForm,
-    fieldIndex: number
+    fieldIndex: number,
+    key?: string
   ) {
     const currentField = {
       ...form.fields[fieldIndex],
-      value: targetValue,
     };
+
+    if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
+    } else {
+      currentField.value = targetValue;
+    }
+
     const fields = form.fields;
     fields[fieldIndex] = currentField;
 
@@ -260,12 +272,61 @@ function AddEstateScreen() {
     });
   }
 
+  function onSelectiveConditionalFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm,
+    selectiveKey: string
+  ) {
+    const fieldMaps = form.fields[fieldIndex].fieldMaps ?? [];
+    const selectiveFieldMapIndex = fieldMaps.findIndex(
+      (f) => f.key === selectiveKey
+    );
+    const selectiveFields =
+      fieldMaps.find((f) => f.key === selectiveKey)?.fields ?? [];
+    if (selectiveFields.length < innerFieldIndex + 1) return;
+
+    const currentField = {
+      ...selectiveFields[innerFieldIndex],
+      value: targetValue,
+    };
+
+    selectiveFields[innerFieldIndex] = currentField;
+    if (selectiveFieldMapIndex !== -1) {
+      fieldMaps[selectiveFieldMapIndex].fields = selectiveFields;
+    }
+    const fields = form.fields;
+    fields[fieldIndex] = { ...fields[fieldIndex], fieldMaps };
+
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        fields,
+      },
+    });
+  }
+
   function onConditionalFieldChange(
     targetValue: any,
     fieldIndex: number,
     innerFieldIndex: number,
-    form: EstateForm
+    form: EstateForm,
+    selectiveKey?: string
   ) {
+    const field = form.fields[fieldIndex];
+    if (!field) return;
+    if (field.type === FieldType.SelectiveConditional) {
+      onSelectiveConditionalFieldChange(
+        targetValue,
+        fieldIndex,
+        innerFieldIndex,
+        form,
+        selectiveKey!
+      );
+      return;
+    }
     const currentField = {
       ...form.fields[fieldIndex].fields![innerFieldIndex],
       value: targetValue,
@@ -289,7 +350,7 @@ function AddEstateScreen() {
       return (
         <div key={fieldIndex} className="input-item py-3">
           <label>
-            {field.title} {field.optional ? Strings.optionalField : null}
+            {field.title} {field.optional ? Strings.optionalField : ""}
           </label>
           {field.type === FieldType.Text ? (
             <Form.Control
@@ -336,14 +397,16 @@ function AddEstateScreen() {
                 onFieldChange(booleanValue, form, fieldIndex);
               }}
             />
-          ) : field.type === FieldType.Conditional ? (
+          ) : field.type === FieldType.BooleanConditional ? (
             <>
               <Form.Check
-                className="d-inline mx-3"
+                className="d-inline  mx-3"
                 type="switch"
+                disabled={false}
                 checked={field.value ? true : false}
                 onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
+
                   onFieldChange(booleanValue, form, fieldIndex);
                 }}
               />
@@ -371,17 +434,53 @@ function AddEstateScreen() {
                 setFormData(data);
               }}
             />
-          ) : (
-            <Form.Control
-              type="text"
-              value={field.value ? String(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-
-                onFieldChange(stringValue, form, fieldIndex);
-              }}
-            />
-          )}
+          ) : field.type === FieldType.SelectiveConditional ? (
+            <>
+              <Form.Select
+                value={field.value ? String(field.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const selectValue = String(e.currentTarget.value);
+                  onFieldChange(selectValue, form, fieldIndex);
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {field.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
+                })}
+              </Form.Select>
+              {field.value &&
+                mapConditionalFields(
+                  field.fieldMaps?.find((f) => f.key === field.value)?.fields ??
+                    [],
+                  form,
+                  fieldIndex,
+                  field.value as string
+                )}
+            </>
+          ) : field.type === FieldType.MultiSelect ? (
+            <>
+              {field.keys!.map((key) => {
+                // const keyMap = field.value as { [key: string]: boolean };
+                return (
+                  <div className="d-block" key={v4()}>
+                    <label>{key}</label>
+                    <Form.Check
+                      className="d-inline mx-3"
+                      type="switch"
+                      disabled={false}
+                      checked={(field.value as { [key: string]: boolean })[key]}
+                      onChange={(e: { target: { checked: any } }) => {
+                        const booleanValue = e.target.checked;
+                        onFieldChange(booleanValue, form, fieldIndex, key);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </>
+          ) : null}
         </div>
       );
     });
@@ -390,14 +489,16 @@ function AddEstateScreen() {
   function mapConditionalFields(
     fields: Field[],
     form: EstateForm,
-    fieldIndex: number
+    fieldIndex: number,
+    selectiveKey?: string
   ) {
     return fields.map((innerField, innerFieldIndex) => {
       return (
         <div key={innerFieldIndex} className="input-item py-3">
           <label>
-            {innerField.title}{" "}
-            {innerField.optional ? Strings.optionalField : null}
+            {`${innerField.title} ${
+              innerField.optional ? Strings.optionalField : ""
+            }`}
           </label>
           {innerField.type === FieldType.Text ? (
             <Form.Control
@@ -410,7 +511,8 @@ function AddEstateScreen() {
                   stringValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
@@ -425,7 +527,8 @@ function AddEstateScreen() {
                   numberValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
@@ -439,7 +542,8 @@ function AddEstateScreen() {
                   numberValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             >
@@ -462,11 +566,12 @@ function AddEstateScreen() {
                   booleanValue,
                   fieldIndex,
                   innerFieldIndex,
-                  form
+                  form,
+                  selectiveKey
                 );
               }}
             />
-          ) : innerField.type === FieldType.Conditional ? (
+          ) : innerField.type === FieldType.BooleanConditional ? (
             <>
               <Form.Check
                 className="d-inline mx-3"
@@ -479,51 +584,20 @@ function AddEstateScreen() {
                     booleanValue,
                     fieldIndex,
                     innerFieldIndex,
-                    form
+                    form,
+                    selectiveKey
                   );
                 }}
               />
               {innerField.value &&
-                mapConditionalFields(innerField.fields!, form, fieldIndex)}
-            </>
-          ) : innerField.type === FieldType.Image ? (
-            <Form.Control
-              type="file"
-              multiple
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                let selectedFiles = Array.from(e.target.files!);
-                setImagesCount(selectedFiles.length);
-
-                if (!checkFileSizes(selectedFiles)) {
-                  alert(Strings.imagesSizeLimit);
-                  e.target.value = "";
-                  selectedFiles = [];
-                }
-
-                const data = new FormData();
-                selectedFiles.forEach((file, index) => {
-                  data.append("images", file);
-                });
-
-                setFormData(data);
-              }}
-            />
-          ) : (
-            <Form.Control
-              type="text"
-              value={innerField.value ? String(innerField.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
-                const stringValue = String(e.target.value);
-
-                onConditionalFieldChange(
-                  stringValue,
+                mapConditionalFields(
+                  innerField.fields!,
+                  form,
                   fieldIndex,
-                  innerFieldIndex,
-                  form
-                );
-              }}
-            />
-          )}
+                  selectiveKey
+                )}
+            </>
+          ) : null}
         </div>
       );
     });
