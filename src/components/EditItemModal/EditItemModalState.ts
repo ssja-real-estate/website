@@ -8,6 +8,7 @@ enum EditItemType {
   City = 3,
   Neighborhood = 4,
   Unit = 5,
+  Payment = 6,
 }
 
 interface EditItemModalState {
@@ -16,15 +17,21 @@ interface EditItemModalState {
   displayMap: boolean[];
   editMap: boolean[];
   mapInfo?: MapInfo;
+  title?: string;
+  credit?: number;
+  duration?: number;
 }
 
-const defaultMap = [false, false, false, false, false, false];
+const defaultMap = [false, false, false, false, false, false, false];
 
 const defaultEditItemModalState: EditItemModalState = {
   id: "",
   value: "",
   displayMap: [...defaultMap],
   editMap: [...defaultMap],
+  title: "",
+  credit: 0,
+  duration: 0,
 };
 
 const buildMap = (type: EditItemType, flag: boolean = true) => {

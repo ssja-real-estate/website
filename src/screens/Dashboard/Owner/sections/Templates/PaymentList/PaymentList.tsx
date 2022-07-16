@@ -6,39 +6,32 @@ import editItemModalState, {
 } from "components/EditItemModal/EditItemModalState";
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import EstateType from "global/types/EstateType";
-import { Payment } from "global/types/Payment";
-import React, { useRef } from "react";
-import { useEffect, useState } from "react";
+import { defaultPayment, Payment } from "global/types/Payment";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  Row,
-  Col,
   Button,
-  InputGroup,
+  Col,
   Form,
+  InputGroup,
   ListGroup,
+  Row,
   Spinner,
 } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import EstateTypeService from "services/api/EstateTypeService/EstateTypeService";
+import PaymentService from "services/api/PaymentService/PaymentService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
-import "./EstateTypesList.css";
+import "./PaymentList.css";
 
 function PaymentList() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [removedItems, setRemovedItems] = useState<Payment[]>([]);
   const [newItems, setNewItems] = useState<Payment[]>([]);
-  const [newPayment, setNewPayment] = useState<Payment>({
-    id: "",
-    title: "",
-    credit: 0,
-    duration: 0,
-  });
+  const [newPayment, setNewPayment] = useState<Payment>(defaultPayment);
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new EstateTypeService());
+  const service = useRef(new PaymentService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 
@@ -53,87 +46,90 @@ function PaymentList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (modalState.editMap[EditItemType.EstateType]) {
-      editEstateType();
+    if (modalState.editMap[EditItemType.Payment]) {
+      editPayment();
     }
 
     return () => {
       modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editMap[EditItemType.EstateType]]);
+  }, [modalState.editMap[EditItemType.Payment]]);
 
   const loadData = async () => {
     if (!loading) {
       setLoading((prev) => true);
     }
-    const data = await service.current.getAllEstateTypes();
+    const data = await service.current.getAllPayments();
     if (!mounted.current) {
       setLoading((prev) => false);
       return;
     }
-
-    setEstateTypes(data);
+    setPayments(data);
     setLoading((prev) => false);
   };
 
-  const selectItemAsDeleted = (estateType: EstateType) => {
+  const selectItemAsDeleted = (payment: Payment) => {
     setRemovedItems((prev) => {
-      const type = prev.find((item) => item.id === estateType.id);
+      const type = prev.find((item) => item.id === payment.id);
+      let newRemovedItems = [];
       if (type) {
-        const newRemovedItems = prev.filter(
-          (item) => item.id !== estateType.id
-        );
-        return newRemovedItems;
+        newRemovedItems = prev.filter((item) => item.id !== payment.id);
       } else {
-        const newRemovedItems = [...prev, estateType];
-        return newRemovedItems;
+        newRemovedItems = [...prev, payment];
       }
+      return newRemovedItems;
     });
   };
 
-  const createNewEstateTypes = async () => {
+  const createNewPayments = async () => {
     for (let i = 0; i < newItems.length; i++) {
       const element = newItems[i];
-      await service.current.createEstateType(element);
+      await service.current.createPayment(element);
     }
   };
 
-  const editEstateType = async () => {
+  const editPayment = async () => {
     if (modalState.id === "") return;
 
     setLoading((prev) => true);
-    let newType = await service.current.editEstateType({
-      id: modalState.id,
-      name: modalState.value,
-    });
+    let editedPayment =
+      (await service.current.editPayment(modalState.id, {
+        id: modalState.id,
+        title: modalState.title ?? "",
+        credit: modalState.credit ?? 0,
+        duration: modalState.duration ?? 0,
+      })) ?? defaultPayment;
 
-    if (newType) {
-      setEstateTypes((types) => {
-        let prevType = types.find((t) => t.id === newType!.id);
+    if (editedPayment) {
+      setPayments((payments) => {
+        let prevType = payments.find((p) => p.id === editedPayment!.id);
         if (prevType) {
-          prevType.name = newType!.name;
+          prevType.title = editedPayment.title;
+          prevType.credit = editedPayment.credit;
+          prevType.duration = editedPayment.duration;
         }
-        return types;
+        return payments;
       });
     }
     if (modalMounted.current) {
       setModalState(defaultEditItemModalState);
     }
+    setNewPayment(defaultPayment);
     setLoading((prev) => false);
   };
 
-  const deleteEstateTypes = async () => {
+  const deletePayments = async () => {
     for (let i = 0; i < removedItems.length; i++) {
       const element = removedItems[i];
-      await service.current.deleteEstateType(element.id);
+      await service.current.deletePayment(element.id);
     }
   };
 
   const saveChanges = async () => {
     setLoading((prev) => true);
-    await deleteEstateTypes();
-    await createNewEstateTypes();
+    await deletePayments();
+    await createNewPayments();
     await loadData();
   };
 
@@ -141,10 +137,10 @@ function PaymentList() {
     <>
       <EditItemModal
         title={Strings.edit}
-        placeholder={Strings.estateType}
-        editItemType={EditItemType.EstateType}
+        placeholder={Strings.payment}
+        editItemType={EditItemType.Payment}
       />
-      <h4 className="mt-4 ms-3 d-inline">{Strings.estateTypes}</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.payments}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
@@ -160,30 +156,52 @@ function PaymentList() {
             <Button
               variant="dark"
               onClick={() => {
-                newEstateType.name.trim() !== "" &&
+                if (newPayment.title.trim() !== "") {
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      ...newEstateType,
-                      name: newEstateType.name.trim(),
+                      ...newPayment,
+                      title: newPayment.title.trim(),
                     },
                   ]);
-                setNewEstateType({
-                  ...newEstateType,
-                  name: "",
-                });
+                  setNewPayment(defaultPayment);
+                }
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
             <Form.Control
-              type="text"
-              placeholder={Strings.addNewEstateType}
-              value={newEstateType.name}
+              type="number"
+              placeholder={Strings.paymentDuration}
+              value={
+                newPayment.duration === 0 ? undefined : newPayment.duration
+              }
               onChange={(e: { target: { value: any } }) => {
-                setNewEstateType({
-                  ...newEstateType,
-                  name: e.target.value,
+                setNewPayment({
+                  ...newPayment,
+                  duration: +e.target.value,
+                });
+              }}
+            />
+            <Form.Control
+              type="number"
+              placeholder={Strings.creditAmount}
+              value={newPayment.credit === 0 ? undefined : newPayment.credit}
+              onChange={(e: { target: { value: any } }) => {
+                setNewPayment({
+                  ...newPayment,
+                  credit: +e.target.value,
+                });
+              }}
+            />
+            <Form.Control
+              type="text"
+              placeholder={Strings.newPaymentTitle}
+              value={newPayment.title}
+              onChange={(e: { target: { value: any } }) => {
+                setNewPayment({
+                  ...newPayment,
+                  title: e.target.value,
                 });
               }}
             />
@@ -197,6 +215,7 @@ function PaymentList() {
               await saveChanges();
               setNewItems([]);
               setRemovedItems([]);
+              setNewPayment(defaultPayment);
             }}
           >
             {Strings.saveChanges}
@@ -209,20 +228,23 @@ function PaymentList() {
             <Spinner animation="border" variant="primary" className="my-5" />
           ) : (
             <ListGroup>
-              {estateTypes.map((estateType, index) => {
+              {payments.map((payment, index) => {
                 return (
                   <React.Fragment key={index}>
                     <ListItem
-                      title={estateType.name}
+                      title={payment.title}
                       onRemove={() => {
-                        selectItemAsDeleted(estateType);
+                        selectItemAsDeleted(payment);
                       }}
                       onEdit={() => {
-                        const newMap = buildMap(EditItemType.EstateType);
+                        const newMap = buildMap(EditItemType.Payment);
                         setModalState({
                           ...defaultEditItemModalState,
-                          id: estateType.id,
-                          value: estateType.name,
+                          id: payment.id,
+                          value: payment.title,
+                          title: payment.title,
+                          credit: payment.credit,
+                          duration: payment.duration,
                           displayMap: [...newMap],
                         });
                       }}
@@ -243,7 +265,7 @@ function PaymentList() {
                   action
                   className="new-item d-flex flex-row justify-content-between align-items-center"
                 >
-                  {newItem.name}
+                  {newItem.title}
                   <i
                     className="bi-x-lg remove-icon"
                     onClick={() => {

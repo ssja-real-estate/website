@@ -21,7 +21,7 @@ class Strings {
   static cities = "شهر‌ها";
   static neighborhoods = "منطقه‌ها";
   static units = "واحدها";
-  static payment = "اعتبار";
+  static payments = "‌اشتراک‌ها";
   static forms = "فرم‌ها";
   static owners = "مدیران سایت";
   static admins = "نماینده‌های سایت";
@@ -30,6 +30,9 @@ class Strings {
   static addNewType = "افزودن نوع جدید";
   static addNewDelegationType = "افزودن نوع واگذاری جدید";
   static addNewEstateType = "افزودن نوع ملک جدید";
+  static newPaymentTitle = "افزودن اشتراک جدید";
+  static creditAmount = "مبلغ (تومان)";
+  static paymentDuration = "مدت اعتبار (روز)";
   static saveChanges = "ذخیره تغییرات";
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
@@ -97,6 +100,7 @@ class Strings {
   static city = "شهر";
   static neighborhood = "منطقه";
   static unit = "واحد";
+  static payment = "اشتراک";
   static clientUnknownError = "خطای سمت کاربر";
   static unknownServerError = "خطای سمت سرور";
   static client400Error = "درخواست موردنظر اشتباه است";

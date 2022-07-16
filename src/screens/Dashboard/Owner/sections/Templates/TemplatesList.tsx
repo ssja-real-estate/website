@@ -27,8 +27,8 @@ function TemplatesList({ sticky }: TemplatesListProps) {
         <ListGroup.Item href="#units" action>
           {Strings.units}
         </ListGroup.Item>
-        <ListGroup.Item href="#payment" action>
-          {Strings.payment}
+        <ListGroup.Item href="#payments" action>
+          {Strings.payments}
         </ListGroup.Item>
         <ListGroup.Item href="#forms" action>
           {Strings.forms}

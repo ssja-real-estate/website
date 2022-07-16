@@ -21,6 +21,8 @@ const EditItemModal: React.FC<Props> = (props) => {
   const [newValue, setNewValue] = useState("");
   const [mapInfo, setMapInfo] = useState<MapInfo>(defaultMapInfo);
   const [zoom, setZoom] = useState<string>("0");
+  const [credit, setCredit] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
 
   useEffect(() => {
     setNewValue(modalState.value);
@@ -28,6 +30,8 @@ const EditItemModal: React.FC<Props> = (props) => {
       setMapInfo(modalState.mapInfo);
       setZoom(modalState.mapInfo.zoom.toString());
     }
+    setCredit(modalState.credit ?? 0);
+    setDuration(modalState.duration ?? 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalState.displayMap[props.editItemType]]);
 
@@ -52,6 +56,9 @@ const EditItemModal: React.FC<Props> = (props) => {
       displayMap: displayMap,
       editMap: editMap,
       mapInfo: { ...mapInfo, zoom: parseFloat(zoom) },
+      title: newValue.trim(),
+      credit,
+      duration,
     });
     setNewValue("");
     setMapInfo(defaultMapInfo);
@@ -127,6 +134,34 @@ const EditItemModal: React.FC<Props> = (props) => {
                       currentTarget: { value: SetStateAction<string> };
                     }) => {
                       setZoom(e.currentTarget.value);
+                    }}
+                  />
+                </Form.Group>
+              </>
+            ) : null}
+            {props.editItemType === EditItemType.Payment ? (
+              <>
+                <Form.Group className="mt-3" controlId="fgCredit">
+                  <Form.Label>{Strings.creditAmount}</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={credit}
+                    onChange={(e: {
+                      currentTarget: { value: string | number };
+                    }) => {
+                      setCredit(+e.currentTarget.value);
+                    }}
+                  />
+                </Form.Group>
+                <Form.Group className="mt-3" controlId="fgLongitude">
+                  <Form.Label>{Strings.paymentDuration}</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={duration}
+                    onChange={(e: {
+                      currentTarget: { value: string | number };
+                    }) => {
+                      setDuration(+e.currentTarget.value);
                     }}
                   />
                 </Form.Group>

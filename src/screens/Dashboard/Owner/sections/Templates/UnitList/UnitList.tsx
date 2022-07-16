@@ -97,9 +97,6 @@ function UnitList() {
     if (modalState.id === "") return;
     setLoading((prev) => true);
 
-    console.log("modal state");
-    console.log(modalState);
-
     let updatedUnit = await service.current.editUnit({
       id: modalState.id,
       name: modalState.value,

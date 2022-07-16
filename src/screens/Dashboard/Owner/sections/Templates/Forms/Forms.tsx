@@ -113,7 +113,7 @@ const Forms = () => {
       estateType.id
     );
 
-    if (!loadedForm.fields) {
+    if (!loadedForm) {
       setLoading((prev) => false);
       setForm(defaultForm);
       setHasImage(false);
