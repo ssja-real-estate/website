@@ -33,6 +33,9 @@ class Strings {
   static newPaymentTitle = "افزودن اشتراک جدید";
   static creditAmount = "مبلغ (تومان)";
   static paymentDuration = "مدت اعتبار (روز)";
+  static remainingDuration = "زمان باقی‌مانده تا پایان اعتبار";
+  static day = "روز";
+  static noCreditForThisUser = "حساب کاربری شما فاقد اشتراک است";
   static saveChanges = "ذخیره تغییرات";
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
@@ -62,6 +65,7 @@ class Strings {
   static invalidRepeatPassword = "گذرواژه‌های واردشده یکسان نیستند";
   static editProfile = "ویرایش حساب کاربری";
   static changePassword = "تغییر گذرواژه";
+  static buyCredit = "خرید اشتراک";
   static logout = "خروج از حساب کاربری";
   static fullName = "نام و نام خانوادگی";
   static cancel = "لغو";
@@ -184,6 +188,8 @@ class Strings {
   static minValue = "کمترین";
   static maxValue = "بیشترین";
   static fields = "فیلدها";
+  static toman = "تومان";
+  static pay = "پرداخت";
 }
 
 export default Strings;

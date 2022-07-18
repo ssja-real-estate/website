@@ -3,6 +3,7 @@ export interface Payment {
   title: string;
   credit: number;
   duration: number;
+  remainingDuration?: number;
 }
 
 export const defaultPayment: Payment = {
@@ -10,4 +11,5 @@ export const defaultPayment: Payment = {
   title: "",
   credit: 0,
   duration: 0,
+  remainingDuration: 0,
 };

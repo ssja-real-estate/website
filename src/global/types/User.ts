@@ -1,4 +1,5 @@
 import Strings from "global/constants/strings";
+import { Payment } from "./Payment";
 
 enum Role {
   OWNER = 1,
@@ -13,6 +14,7 @@ interface User {
   password?: string;
   mobile: string;
   role: Role;
+  credit?: Payment;
 }
 
 const defaultUser = {

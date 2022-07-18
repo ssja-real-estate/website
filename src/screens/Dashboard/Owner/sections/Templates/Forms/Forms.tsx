@@ -148,7 +148,8 @@ const Forms = () => {
     let newFields = form.fields.slice();
     const hasImageSection = includesImageSection(form);
     if (hasImageSection) {
-      newFields = newFields.slice(0, newFields.length - 1);
+      const length = newFields.length;
+      newFields = newFields.slice(0, length - 1);
     } else {
       const newField: Field = {
         ...defaultField,
@@ -174,7 +175,13 @@ const Forms = () => {
   };
 
   const updateChangedSection = () => {
-    setForm({ ...form, fields: modalSection.data.fields });
+    const fields = [...modalSection.data.fields];
+    if (hasImage) {
+      const imageField = { ...fields[0] };
+      fields.shift();
+      fields.push(imageField);
+    }
+    setForm({ ...form, fields });
     setModalSection(defaultModalSection);
   };
 
