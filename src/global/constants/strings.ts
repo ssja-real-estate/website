@@ -33,7 +33,9 @@ class Strings {
   static newPaymentTitle = "افزودن اشتراک جدید";
   static creditAmount = "مبلغ (تومان)";
   static paymentDuration = "مدت اعتبار (روز)";
-  static remainingDuration = "زمان باقی‌مانده تا پایان اعتبار";
+  static remainingDuration = "روز تا پایان اعتبار";
+  static lastDay = "کمتر از یک روز تا پایان اعتبار";
+  static creditType = "نوع اشتراک";
   static day = "روز";
   static noCreditForThisUser = "حساب کاربری شما فاقد اشتراک است";
   static saveChanges = "ذخیره تغییرات";

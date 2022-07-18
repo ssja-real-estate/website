@@ -87,9 +87,15 @@ const Profile = () => {
           <br></br>
           {user.credit?.id ? (
             <>
-              <h5>{user.credit?.title}</h5>
               <h5>
-                {`${Strings.remainingDuration}: ${user.credit?.remainingDuration} ${Strings.day}`}
+                {Strings.creditType} : {user.credit.title}
+              </h5>
+              <hr></hr>
+              <h5>
+                {user.credit?.remainingDuration &&
+                user.credit?.remainingDuration > 0
+                  ? `${user.credit?.remainingDuration} ${Strings.remainingDuration}`
+                  : `${Strings.lastDay}`}
               </h5>
             </>
           ) : (
