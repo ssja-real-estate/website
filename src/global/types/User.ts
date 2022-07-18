@@ -33,6 +33,10 @@ const roleMap = [
     roleName: Strings.adminUser,
   },
   {
+    role: Role.AGENT,
+    roleName: Strings.agentUser,
+  },
+  {
     role: Role.USER,
     roleName: Strings.normalUser,
   },

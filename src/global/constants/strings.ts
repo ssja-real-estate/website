@@ -8,6 +8,10 @@ class Strings {
   static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
+  static commissionCalculation = "محاسبه‌ی کمیسیون";
+  static commissionPercent = "درصد کمیسیون";
+  static commission = "کمیسیون";
+  static taxPercent = "درصد مالیات بر ارزش افزوده";
   static inquiries = "استعلام‌ها";
   static documentInquiry = "استعلام سند";
   static proxyInquiry = "استعلام وکالت‌نامه";
@@ -32,6 +36,11 @@ class Strings {
   static addNewEstateType = "افزودن نوع ملک جدید";
   static newPaymentTitle = "افزودن اشتراک جدید";
   static creditAmount = "مبلغ (تومان)";
+  static price = "مبلغ (تومان)";
+  static rentPrice = "مبلغ اجاره (تومان)";
+  static mortgagePrice = "مبلغ رهن (تومان)";
+  static mortgageCoefficient = "ضریب تبدیل رهن (تومان)";
+  static tradeType = "نوع معامله";
   static paymentDuration = "مدت اعتبار (روز)";
   static remainingDuration = "روز تا پایان اعتبار";
   static lastDay = "کمتر از یک روز تا پایان اعتبار";

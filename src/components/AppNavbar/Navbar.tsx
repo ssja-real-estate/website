@@ -1,11 +1,14 @@
 import "./Navbar.css";
 import { useHistory } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { globalState } from "global/states/globalStates";
 import Strings from "global/constants/strings";
+import commissionModalState from "components/CommissionModal/CommissionModalState";
+import CommissionModal from "components/CommissionModal/CommissionModal";
 
 function AppNavbar() {
+  const [modalState, setModalState] = useRecoilState(commissionModalState);
   const state = useRecoilValue(globalState);
   const history = useHistory();
 
@@ -83,6 +86,18 @@ function AppNavbar() {
                     {Strings.civilLaw}
                   </NavDropdown.Item>
                 </NavDropdown>
+                <CommissionModal />
+                <Nav.Link
+                  className="fs-5 m-2"
+                  onClick={() => {
+                    setModalState({
+                      ...modalState,
+                      showCommissionModal: true,
+                    });
+                  }}
+                >
+                  {Strings.commissionCalculation}
+                </Nav.Link>
                 <Nav.Link
                   className="fs-5 m-2"
                   onClick={() => {
