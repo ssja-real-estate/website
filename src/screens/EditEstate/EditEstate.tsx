@@ -139,13 +139,19 @@ function EditEstateScreen() {
     if (!provinceId) return;
     const province = fetchedProvinces.find((p) => p.id === provinceId);
     if (!province) return;
-    setSelectedProvince(province);
+    setSelectedProvince({
+      ...province,
+      name: province.id,
+    });
 
     setCities((prev) => province.cities);
     if (!cityId) return;
     const city = province.cities.find((c) => c.id === cityId);
     if (!city) return;
-    setSelectedCity(city);
+    setSelectedCity({
+      ...city,
+      name: city.id,
+    });
 
     setNeighborhoods((prev) => city.neighborhoods);
     if (!neighborhoodId) return;
@@ -153,7 +159,10 @@ function EditEstateScreen() {
       (n) => n.id === neighborhoodId
     );
     if (!neighborhood) return;
-    setSelectedNeighborhood(neighborhood);
+    setSelectedNeighborhood({
+      ...neighborhood,
+      name: neighborhood.id,
+    });
     setMapInfo(neighborhood.mapInfo);
   }
 
