@@ -2,22 +2,31 @@ import Strings from "global/constants/strings";
 import { imagesBaseUrl } from "global/states/GlobalState";
 import { Field, FieldType } from "global/types/Field";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { estateInfoModalAtom } from "./EstateInfoModalState";
-import "./EstateInfoModal.css";
 import { Col, Row } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
 import { v4 } from "uuid";
+import "./EstateInfoModal.css";
+import { estateInfoModalAtom } from "./EstateInfoModalState";
 
 const EstateInfoModal = () => {
   const estateInfo = useRecoilValue(estateInfoModalAtom);
   const [hasImageSection, setHasImageSection] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [displayProperties, setDisplayProperties] = useState<string[]>([]);
 
   const mounted = useRef(true);
 
   useEffect(() => {
     if (mounted) {
       checkImageSection();
+      let displayTexts: string[] = [];
+      estateInfo.estate.dataForm.fields
+        .filter((f) => f.type !== FieldType.Image)
+        .forEach((field) => {
+          const texts = displayFieldValues(field);
+          displayTexts.push(...texts);
+        });
+      setDisplayProperties([...displayProperties, ...displayTexts]);
     }
 
     return () => {
@@ -30,15 +39,15 @@ const EstateInfoModal = () => {
     const fields = estateInfo.estate.dataForm.fields;
     if (fields.length < 1) return;
 
-    const firstField = fields[0];
-    if (!firstField || firstField.type !== FieldType.Image) return;
+    const lastField = fields[fields.length - 1];
+    if (!lastField || lastField.type !== FieldType.Image) return;
 
-    const includesImages = (firstField.value as string[]).length > 0;
+    const includesImages = (lastField.value as string[]).length > 0;
     setHasImageSection(includesImages);
 
     if (includesImages) {
       const images: string[] = [];
-      (firstField.value as string[]).forEach((image) => {
+      (lastField.value as string[]).forEach((image) => {
         images.push(`${imagesBaseUrl}/${estateInfo.estate.id}/${image}`);
       });
       setImages(images);
@@ -46,7 +55,7 @@ const EstateInfoModal = () => {
   };
 
   function displayFieldValues(field: Field) {
-    let displayText = `${field.title}: `;
+    let displayText = `${field.title} : `;
     let value: any;
     let innerFieldValues: string[] = [];
     if (field.type === FieldType.Bool) {
@@ -74,7 +83,7 @@ const EstateInfoModal = () => {
       value = field.value as { [key: string]: boolean };
       innerFieldValues = [];
       for (const key of Object.keys(value)) {
-        innerFieldValues.push(`${key}: ${value[key] ? "دارد" : "ندارد"}`);
+        innerFieldValues.push(`${key} : ${value[key] ? "دارد" : "ندارد"}`);
       }
     } else {
       displayText += field.value;
@@ -96,34 +105,30 @@ const EstateInfoModal = () => {
         <h5 className="pt-3">
           {Strings.neighborhood} : {estateInfo.estate.neighborhood.name}
         </h5>
+        {hasImageSection && (
+          <div className="row row-cols-5 m-5">
+            {images.map((imageAddress) => (
+              <Col>
+                <img
+                  src={imageAddress}
+                  alt={imageAddress}
+                  className="thumbnail rounded-3"
+                  key={v4()}
+                />
+              </Col>
+            ))}
+          </div>
+        )}
       </Col>
       <Col>
         <Row>
-          {estateInfo.estate.dataForm.fields
-            .filter((field) => field.filterable)
-            .map((field) => {
-              const displayTexts = displayFieldValues(field);
-              return displayTexts.map((text) => (
-                <h5 className="pt-3" key={v4()}>
-                  {text}
-                </h5>
-              ));
-            })}
-        </Row>
-      </Col>
-      {hasImageSection && (
-        <Row className="mt-3">
-          {images.map((imageAddress) => (
-            <Col>
-              <img
-                src={imageAddress}
-                alt={imageAddress}
-                className="thumbnail rounded-3"
-              />
-            </Col>
+          {displayProperties.map((text) => (
+            <h5 className="pt-3" key={v4()}>
+              {text}
+            </h5>
           ))}
         </Row>
-      )}
+      </Col>
     </Row>
   );
 };

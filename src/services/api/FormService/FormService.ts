@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { defaultForm, EstateForm } from "global/types/EstateForm";
+import { FieldType } from "global/types/Field";
 import BaseService from "../BaseService";
 
 class FormService extends BaseService {
@@ -38,10 +39,23 @@ class FormService extends BaseService {
       });
       if (response.data) {
         form = response.data as EstateForm;
+        for (let i = 0; i < form.fields.length; i++) {
+          const field = form.fields[i];
+          if (field.type === FieldType.MultiSelect) {
+            if (!field.value) field.value = {};
+            const fieldValue = field.value as { [key: string]: boolean };
+            (field.keys ?? []).forEach((key) => {
+              if (!fieldValue[key]) fieldValue[key] = false;
+            });
+            field.value = { ...fieldValue };
+          }
+        }
       }
     } catch (error: any) {
       this.handleError(error);
     }
+
+    console.log(form);
     return form;
   };
 

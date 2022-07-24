@@ -8,7 +8,7 @@ const CheckField: React.FC<FieldProps<boolean>> = (props) => {
     <FieldContainer label={props.label} {...props.baseContainerStyle}>
       <Form.Check
         className={props.fieldStyle}
-        type="switch"
+        type="checkbox"
         checked={props?.value}
         onChange={(e) => {
           if (!props.onChangeValue) return;
