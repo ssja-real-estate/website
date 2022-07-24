@@ -748,7 +748,7 @@ function SearchEstateScreen() {
                 </Form.Select>
               </form>
               <form className="search-estate-form mt-2">
-                <label htmlFor="delegationType">{Strings.delegationType}</label>
+                <label htmlFor="delegationType">{Strings.requestType}</label>
                 <Form.Select
                   className="form-select rounded-3"
                   name="delegationType"

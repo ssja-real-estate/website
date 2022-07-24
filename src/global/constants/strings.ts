@@ -110,6 +110,7 @@ class Strings {
   static sectionDeleteConfirm = "آیا از حذف این بخش مطمئن هستید؟";
   static edit = "ویرایش";
   static delegationType = "نوع واگذاری";
+  static requestType = "نوع درخواست";
   static estateType = "نوع ملک";
   static province = "استان";
   static city = "شهر";
