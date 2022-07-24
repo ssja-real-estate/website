@@ -1,6 +1,6 @@
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Button, Container, Form, InputGroup, Modal } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -77,7 +77,9 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
               placeholder={Strings.currentPassword}
               className="mt-4"
               value={currentPassword}
-              onChange={(e) => {
+              onChange={(e: {
+                currentTarget: { value: SetStateAction<string> };
+              }) => {
                 setCurrentPassword(e.currentTarget.value);
               }}
             />
@@ -88,7 +90,9 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
               placeholder={Strings.newPassword}
               className="mt-4"
               value={newPassword}
-              onChange={(e) => {
+              onChange={(e: {
+                currentTarget: { value: SetStateAction<string> };
+              }) => {
                 setNewPassword(e.currentTarget.value);
               }}
             />
@@ -99,7 +103,9 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
               placeholder={Strings.repeatNewPassword}
               className="mt-4"
               value={confirmationPassword}
-              onChange={(e) => {
+              onChange={(e: {
+                currentTarget: { value: SetStateAction<string> };
+              }) => {
                 setConfirmationPassword(e.currentTarget.value);
               }}
             />
@@ -109,7 +115,7 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
                 id="visCheck"
                 className="px-1 my-3"
                 checked={visibility}
-                onChange={(e) => {
+                onChange={() => {
                   setVisibility(!visibility);
                 }}
                 label={Strings.showPassword}

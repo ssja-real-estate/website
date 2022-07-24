@@ -7,6 +7,7 @@ import TemplatesList from "./TemplatesList";
 import UnitList from "./UnitList/UnitList";
 import Forms from "screens/Dashboard/Owner/sections/Templates/Forms/Forms";
 import NeighborhoodList from "./NeighborhoodList/NeighborhoodList";
+import PaymentList from "./PaymentList/PaymentList";
 
 function TemplatesSection() {
   return (
@@ -34,6 +35,9 @@ function TemplatesSection() {
             </Tab.Pane>
             <Tab.Pane eventKey="#units">
               <UnitList />
+            </Tab.Pane>
+            <Tab.Pane eventKey="#payments">
+              <PaymentList />
             </Tab.Pane>
             <Tab.Pane eventKey="#forms">
               <Forms />

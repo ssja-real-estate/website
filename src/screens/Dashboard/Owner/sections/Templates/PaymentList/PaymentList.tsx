@@ -6,34 +6,32 @@ import editItemModalState, {
 } from "components/EditItemModal/EditItemModalState";
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
-import Unit from "global/types/Unit";
-import React, { useState, useEffect, useRef } from "react";
+import { defaultPayment, Payment } from "global/types/Payment";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
-  Row,
   Col,
-  InputGroup,
   Form,
+  InputGroup,
   ListGroup,
+  Row,
   Spinner,
 } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import UnitService from "services/api/UnitService/UnitService";
+import PaymentService from "services/api/PaymentService/PaymentService";
 import ListItem from "../../../../../../components/ListItem/ListItem";
+import "./PaymentList.css";
 
-function UnitList() {
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [removedItems, setRemovedItems] = useState<Unit[]>([]);
-  const [newItems, setNewItems] = useState<Unit[]>([]);
-  const [newUnit, setNewUnit] = useState<Unit>({
-    id: "",
-    name: "",
-  });
+function PaymentList() {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [removedItems, setRemovedItems] = useState<Payment[]>([]);
+  const [newItems, setNewItems] = useState<Payment[]>([]);
+  const [newPayment, setNewPayment] = useState<Payment>(defaultPayment);
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new UnitService());
+  const service = useRef(new PaymentService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 
@@ -48,88 +46,90 @@ function UnitList() {
   }, [state.token]);
 
   useEffect(() => {
-    if (modalState.editMap[EditItemType.Unit]) {
-      editUnit();
+    if (modalState.editMap[EditItemType.Payment]) {
+      editPayment();
     }
 
     return () => {
       modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editMap[EditItemType.Unit]]);
+  }, [modalState.editMap[EditItemType.Payment]]);
 
   const loadData = async () => {
     if (!loading) {
       setLoading((prev) => true);
     }
-    const units = await service.current.getAllUnits();
-
+    const data = await service.current.getAllPayments();
     if (!mounted.current) {
       setLoading((prev) => false);
       return;
     }
-    setUnits(units);
+    setPayments(data);
     setLoading((prev) => false);
   };
 
-  const selectItemAsDeleted = (unit: Unit) => {
+  const selectItemAsDeleted = (payment: Payment) => {
     setRemovedItems((prev) => {
-      const existingItem = prev.find((e) => e.id === unit.id);
-
-      if (existingItem) {
-        const newRemovedItems = prev.filter((item) => item.id !== unit.id);
-        return newRemovedItems;
+      const type = prev.find((item) => item.id === payment.id);
+      let newRemovedItems = [];
+      if (type) {
+        newRemovedItems = prev.filter((item) => item.id !== payment.id);
       } else {
-        const newRemovedItems = [...prev, unit];
-        return newRemovedItems;
+        newRemovedItems = [...prev, payment];
       }
+      return newRemovedItems;
     });
   };
 
-  const createNewUnits = async () => {
+  const createNewPayments = async () => {
     for (let i = 0; i < newItems.length; i++) {
-      const unit = newItems[i];
-      await service.current.createUnit(unit);
+      const element = newItems[i];
+      await service.current.createPayment(element);
     }
   };
 
-  const editUnit = async () => {
+  const editPayment = async () => {
     if (modalState.id === "") return;
+
     setLoading((prev) => true);
+    let editedPayment =
+      (await service.current.editPayment(modalState.id, {
+        id: modalState.id,
+        title: modalState.title ?? "",
+        credit: modalState.credit ?? 0,
+        duration: modalState.duration ?? 0,
+      })) ?? defaultPayment;
 
-    let updatedUnit = await service.current.editUnit({
-      id: modalState.id,
-      name: modalState.value,
-    });
-
-    if (updatedUnit) {
-      setUnits((prev) => {
-        let prevTypeIndex = prev.findIndex((t) => t.id === updatedUnit!.id);
-        if (prevTypeIndex !== -1) {
-          let prevType = prev[prevTypeIndex];
-          if (prevType) {
-            prevType.name = updatedUnit?.name ?? prevType.name;
-          }
+    if (editedPayment) {
+      setPayments((payments) => {
+        let prevType = payments.find((p) => p.id === editedPayment!.id);
+        if (prevType) {
+          prevType.title = editedPayment.title;
+          prevType.credit = editedPayment.credit;
+          prevType.duration = editedPayment.duration;
         }
-        return prev;
+        return payments;
       });
     }
-
     if (modalMounted.current) {
       setModalState(defaultEditItemModalState);
     }
+    setNewPayment(defaultPayment);
     setLoading((prev) => false);
   };
 
-  const deleteUnits = async () => {
+  const deletePayments = async () => {
     for (let i = 0; i < removedItems.length; i++) {
-      const unit = removedItems[i];
-      await service.current.deleteUnit(unit.id);
+      const element = removedItems[i];
+      await service.current.deletePayment(element.id);
     }
   };
+
   const saveChanges = async () => {
-    await deleteUnits();
-    await createNewUnits();
+    setLoading((prev) => true);
+    await deletePayments();
+    await createNewPayments();
     await loadData();
   };
 
@@ -137,11 +137,10 @@ function UnitList() {
     <>
       <EditItemModal
         title={Strings.edit}
-        placeholder={Strings.unit}
-        editItemType={EditItemType.Unit}
+        placeholder={Strings.payment}
+        editItemType={EditItemType.Payment}
       />
-
-      <h4 className="mt-4 ms-3 d-inline">{Strings.units}</h4>
+      <h4 className="mt-4 ms-3 d-inline">{Strings.payments}</h4>
       <Button
         variant="dark"
         className="refresh-btn d-inline rounded-circle"
@@ -149,7 +148,7 @@ function UnitList() {
           await loadData();
         }}
       >
-        <i className="bi-arrow-counterclockwise"></i>
+        <i className="refresh-icon bi-arrow-counterclockwise"></i>
       </Button>
       <Row>
         <Col>
@@ -157,30 +156,52 @@ function UnitList() {
             <Button
               variant="dark"
               onClick={() => {
-                newUnit.name.trim() !== "" &&
+                if (newPayment.title.trim() !== "") {
                   setNewItems((prev) => [
                     ...prev,
                     {
-                      ...newUnit,
-                      name: newUnit.name.trim(),
+                      ...newPayment,
+                      title: newPayment.title.trim(),
                     },
                   ]);
-                setNewUnit({
-                  ...newUnit,
-                  name: "",
-                });
+                  setNewPayment(defaultPayment);
+                }
               }}
             >
               <i className="bi-plus-lg fs-6"></i>
             </Button>
             <Form.Control
-              type="text"
-              placeholder={Strings.addNewUnit}
-              value={newUnit.name}
+              type="number"
+              placeholder={Strings.paymentDuration}
+              value={
+                newPayment.duration === 0 ? undefined : newPayment.duration
+              }
               onChange={(e: { target: { value: any } }) => {
-                setNewUnit({
-                  ...newUnit,
-                  name: e.target.value,
+                setNewPayment({
+                  ...newPayment,
+                  duration: +e.target.value,
+                });
+              }}
+            />
+            <Form.Control
+              type="number"
+              placeholder={Strings.creditAmount}
+              value={newPayment.credit === 0 ? undefined : newPayment.credit}
+              onChange={(e: { target: { value: any } }) => {
+                setNewPayment({
+                  ...newPayment,
+                  credit: +e.target.value,
+                });
+              }}
+            />
+            <Form.Control
+              type="text"
+              placeholder={Strings.newPaymentTitle}
+              value={newPayment.title}
+              onChange={(e: { target: { value: any } }) => {
+                setNewPayment({
+                  ...newPayment,
+                  title: e.target.value,
                 });
               }}
             />
@@ -194,6 +215,7 @@ function UnitList() {
               await saveChanges();
               setNewItems([]);
               setRemovedItems([]);
+              setNewPayment(defaultPayment);
             }}
           >
             {Strings.saveChanges}
@@ -206,20 +228,23 @@ function UnitList() {
             <Spinner animation="border" variant="primary" className="my-5" />
           ) : (
             <ListGroup>
-              {units.map((unit, index) => {
+              {payments.map((payment, index) => {
                 return (
                   <React.Fragment key={index}>
                     <ListItem
-                      title={unit.name}
+                      title={payment.title}
                       onRemove={() => {
-                        selectItemAsDeleted(unit);
+                        selectItemAsDeleted(payment);
                       }}
                       onEdit={() => {
-                        const newMap = buildMap(EditItemType.Unit);
+                        const newMap = buildMap(EditItemType.Payment);
                         setModalState({
                           ...defaultEditItemModalState,
-                          id: unit.id,
-                          value: unit.name,
+                          id: payment.id,
+                          value: payment.title,
+                          title: payment.title,
+                          credit: payment.credit,
+                          duration: payment.duration,
                           displayMap: [...newMap],
                         });
                       }}
@@ -240,7 +265,7 @@ function UnitList() {
                   action
                   className="new-item d-flex flex-row justify-content-between align-items-center"
                 >
-                  {newItem.name}
+                  {newItem.title}
                   <i
                     className="bi-x-lg remove-icon"
                     onClick={() => {
@@ -259,4 +284,4 @@ function UnitList() {
   );
 }
 
-export default UnitList;
+export default PaymentList;

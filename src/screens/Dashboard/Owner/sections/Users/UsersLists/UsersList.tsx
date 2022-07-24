@@ -1,7 +1,7 @@
 import Strings from "global/constants/strings";
 import { globalState } from "global/states/globalStates";
 import User, { defaultUser, Role, roleMap } from "global/types/User";
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -81,7 +81,9 @@ function UsersList() {
                   className="mb-3"
                   placeholder={Strings.searchUsers}
                   value={searchValue}
-                  onChange={(event) => {
+                  onChange={(event: {
+                    target: { value: SetStateAction<string> };
+                  }) => {
                     setSearchValue(event.target.value);
                   }}
                 ></Form.Control>
@@ -150,7 +152,9 @@ function UsersList() {
                             </Button>
                             <Form.Select
                               value={selectedUser.role}
-                              onChange={(e) => {
+                              onChange={(e: {
+                                currentTarget: { value: any };
+                              }) => {
                                 const roleString = e.currentTarget.value;
                                 if (roleString) {
                                   const role = Number(roleString) as Role;

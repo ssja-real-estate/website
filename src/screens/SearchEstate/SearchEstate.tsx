@@ -359,7 +359,9 @@ function SearchEstateScreen() {
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
-          <label className="mb-2">{field.title}</label>
+          {field.type !== FieldType.Image ? (
+            <label className="mb-2">{field.title}</label>
+          ) : null}
           {field.type === FieldType.Text ? (
             <Form.Control
               type="text"

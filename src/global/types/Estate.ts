@@ -26,6 +26,7 @@ interface Estate {
     status: EstateStatus;
   };
   dataForm: EstateForm;
+  phone?: number;
 }
 
 const defaultEstate: Estate = {
@@ -38,6 +39,7 @@ const defaultEstate: Estate = {
     status: EstateStatus.Unverified,
   },
   dataForm: defaultForm,
+  phone: undefined
 };
 
 export type { Estate, EstateLocation };

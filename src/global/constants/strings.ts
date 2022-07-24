@@ -8,6 +8,10 @@ class Strings {
   static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
   static dashboard = "داشبورد";
+  static commissionCalculation = "محاسبه‌ی کمیسیون";
+  static commissionPercent = "درصد کمیسیون";
+  static commission = "کمیسیون";
+  static taxPercent = "درصد مالیات بر ارزش افزوده";
   static inquiries = "استعلام‌ها";
   static documentInquiry = "استعلام سند";
   static proxyInquiry = "استعلام وکالت‌نامه";
@@ -21,6 +25,7 @@ class Strings {
   static cities = "شهر‌ها";
   static neighborhoods = "منطقه‌ها";
   static units = "واحدها";
+  static payments = "‌اشتراک‌ها";
   static forms = "فرم‌ها";
   static owners = "مدیران سایت";
   static admins = "نماینده‌های سایت";
@@ -29,6 +34,19 @@ class Strings {
   static addNewType = "افزودن نوع جدید";
   static addNewDelegationType = "افزودن نوع واگذاری جدید";
   static addNewEstateType = "افزودن نوع ملک جدید";
+  static newPaymentTitle = "افزودن اشتراک جدید";
+  static creditAmount = "مبلغ (تومان)";
+  static price = "مبلغ (تومان)";
+  static rentPrice = "مبلغ اجاره (تومان)";
+  static mortgagePrice = "مبلغ رهن (تومان)";
+  static mortgageCoefficient = "ضریب تبدیل رهن (تومان)";
+  static tradeType = "نوع معامله";
+  static paymentDuration = "مدت اعتبار (روز)";
+  static remainingDuration = "روز تا پایان اعتبار";
+  static lastDay = "کمتر از یک روز تا پایان اعتبار";
+  static creditType = "نوع اشتراک";
+  static day = "روز";
+  static noCreditForThisUser = "حساب کاربری شما فاقد اشتراک است";
   static saveChanges = "ذخیره تغییرات";
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
@@ -58,6 +76,7 @@ class Strings {
   static invalidRepeatPassword = "گذرواژه‌های واردشده یکسان نیستند";
   static editProfile = "ویرایش حساب کاربری";
   static changePassword = "تغییر گذرواژه";
+  static buyCredit = "خرید اشتراک";
   static logout = "خروج از حساب کاربری";
   static fullName = "نام و نام خانوادگی";
   static cancel = "لغو";
@@ -96,6 +115,7 @@ class Strings {
   static city = "شهر";
   static neighborhood = "منطقه";
   static unit = "واحد";
+  static payment = "اشتراک";
   static clientUnknownError = "خطای سمت کاربر";
   static unknownServerError = "خطای سمت سرور";
   static client400Error = "درخواست موردنظر اشتباه است";
@@ -179,6 +199,8 @@ class Strings {
   static minValue = "کمترین";
   static maxValue = "بیشترین";
   static fields = "فیلدها";
+  static toman = "تومان";
+  static pay = "پرداخت";
 }
 
 export default Strings;

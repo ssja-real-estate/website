@@ -51,6 +51,7 @@ class UserService extends BaseService {
           name: data.name,
           mobile: data.mobile,
           role: data.role,
+          credit: data.credit,
         };
       }
     } catch (error: any) {
