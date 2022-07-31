@@ -14,7 +14,8 @@ const validateForm = (form: EstateForm): Error[] => {
 
       errorMessage = getRangeErrorMessage(field.title);
     } else if (!field.optional) {
-      if (field.type === FieldType.Bool) continue;
+      if (field.type === FieldType.Bool || field.type === FieldType.MultiSelect)
+        continue;
       else if (field.type === FieldType.BooleanConditional) {
         if (!field.value) continue;
 

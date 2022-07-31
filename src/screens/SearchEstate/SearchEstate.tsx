@@ -418,7 +418,7 @@ function SearchEstateScreen() {
           ) : field.type === FieldType.Bool ? (
             <Form.Check
               className="d-inline mx-3"
-              type="switch"
+              type="checkbox"
               checked={field.value ? true : false}
               onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
@@ -429,7 +429,7 @@ function SearchEstateScreen() {
             <>
               <Form.Check
                 className="d-inline mx-3"
-                type="switch"
+                type="checkbox"
                 checked={field.value ? true : false}
                 onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
@@ -478,7 +478,7 @@ function SearchEstateScreen() {
                     <label>{key}</label>
                     <Form.Check
                       className="d-inline mx-3"
-                      type="switch"
+                      type="checkbox"
                       checked={keyMap[key]}
                       onChange={(e: { target: { checked: any } }) => {
                         const booleanValue = e.target.checked;
@@ -594,7 +594,7 @@ function SearchEstateScreen() {
           ) : innerField.type === FieldType.Bool ? (
             <Form.Check
               className="d-inline mx-3"
-              type="switch"
+              type="checkbox"
               checked={innerField.value ? true : false}
               onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
@@ -748,7 +748,7 @@ function SearchEstateScreen() {
                 </Form.Select>
               </form>
               <form className="search-estate-form mt-2">
-                <label htmlFor="delegationType">{Strings.delegationType}</label>
+                <label htmlFor="delegationType">{Strings.requestType}</label>
                 <Form.Select
                   className="form-select rounded-3"
                   name="delegationType"

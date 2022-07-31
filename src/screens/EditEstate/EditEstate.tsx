@@ -476,7 +476,7 @@ function EditEstateScreen() {
           ) : field.type === FieldType.Bool ? (
             <Form.Check
               className="d-inline mx-3"
-              type="switch"
+              type="checkbox"
               checked={field.value ? true : false}
               onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
@@ -487,7 +487,7 @@ function EditEstateScreen() {
             <>
               <Form.Check
                 className="d-inline mx-3"
-                type="switch"
+                type="checkbox"
                 checked={field.value ? true : false}
                 onChange={(e: { target: { checked: any } }) => {
                   const booleanValue = e.target.checked;
@@ -580,7 +580,7 @@ function EditEstateScreen() {
                     <label>{key}</label>
                     <Form.Check
                       className="d-inline mx-3"
-                      type="switch"
+                      type="checkbox"
                       checked={keyMap[key]}
                       onChange={(e: { target: { checked: any } }) => {
                         const booleanValue = e.target.checked;
@@ -667,7 +667,7 @@ function EditEstateScreen() {
           ) : innerField.type === FieldType.Bool ? (
             <Form.Check
               className="d-inline mx-3"
-              type="switch"
+              type="checkbox"
               checked={innerField.value ? true : false}
               onChange={(e: { target: { checked: any } }) => {
                 const booleanValue = e.target.checked;
