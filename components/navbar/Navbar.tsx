@@ -88,9 +88,9 @@ function Navbar() {
               <li>
                 <Link href="/">{Strings.commissionCalculation}</Link>
               </li>
-              {/* <li>
-              <Link href="/">{Strings.searchEstates}</Link>
-            </li> */}
+              <li>
+                <Link href="/">{Strings.commissionCalculation}</Link>
+              </li>
             </ul>
           </div>
         </div>
