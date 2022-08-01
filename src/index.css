@@ -1,7 +1,0 @@
-@import "./fonts/IRANSans.css";
-@import "./fonts/Inter.css";
-
-* {
-  font-family: "IRANSans", "Inter";
-  direction: rtl;
-}
