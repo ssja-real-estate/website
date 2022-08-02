@@ -3,7 +3,6 @@ import * as FaIcon from "react-icons/fa";
 import * as BiIcon from "react-icons/bi";
 import * as IoIcon from "react-icons/io";
 import * as ImIcon from "react-icons/im";
-import * as HiIcon from "react-icons/hi";
 import Strings from "../../data/strings";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -45,7 +44,7 @@ function Navbar() {
       <div
         className={`${
           scrolled && "fixed w-full "
-        } sm:static w-full h-10 text-white bg-black/20  z-10`}
+        } sm:static w-full h-12 text-white bg-black/20  z-10`}
       >
         <div className="container flex flex-row justify-between items-center h-full">
           <div
@@ -101,6 +100,10 @@ function Navbar() {
                     </h1>
                   </div>
                 </div>
+                <div className="flex flex-row items-center gap-2 bg-black/20 h-10 px-2 text-sm">
+                  <MdIcon.MdPhoneEnabled className="w-5 h-5" />
+                  <span dir="ltr"> {Strings.phoneNumber}</span>
+                </div>
                 <div className="flex flex-row gap-2">
                   <FaIcon.FaTelegram className="w-6 h-6" />
                   <FaIcon.FaInstagram className="w-6 h-6" />
@@ -109,16 +112,17 @@ function Navbar() {
               </div>
             </div>
           </div>
-          <div className="flex flex-row items-center gap-2 bg-black/30 h-full px-2 text-sm">
+          <div className="hidden sm:flex flex-row items-center gap-2 bg-black/30 h-full px-2 text-sm">
             <MdIcon.MdPhoneEnabled className="w-5 h-5" />
             <span dir="ltr"> {Strings.phoneNumber}</span>
           </div>
+
           <div className="h-full hidden sm:flex flex-row items-center gap-3">
             <FaIcon.FaTelegram className="w-6 h-6" />
             <FaIcon.FaInstagram className="w-6 h-6" />
             <FaIcon.FaWhatsapp className="w-6 h-6" />
           </div>
-          <div className="hidden sm:flex flex-row h-full items-center gap-2">
+          <div className="flex flex-row h-full items-center gap-2">
             <BiIcon.BiUser className="w-5 h-5" />
             <span>{Strings.loginOrSignup}</span>
           </div>
@@ -128,7 +132,7 @@ function Navbar() {
         className={`hidden z-10 fixed transition-all duration-300 ${
           scrolled
             ? "top-0 h-20 bg-white text-gray-600 w-full px-4 shadow-md"
-            : "top-10 text-white bg-transparent container h-28"
+            : "top-12 text-white bg-transparent container h-28"
         } inset-0 sm:flex flex-row justify-between items-center`}
       >
         <div
