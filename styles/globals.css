@@ -27,5 +27,6 @@
   body {
     @apply font-vazir;
     direction: rtl;
+    background-color: #f6f6f6;
   }
 }

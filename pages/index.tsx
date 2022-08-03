@@ -1,9 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Header from "../components/header/Header";
+
+import MortgageRentSale from "../components/home/mortgage-rent-sale/MortgageRentSale";
+import Ourmoto from "../components/our-moto/Ourmoto";
 import Strings from "../data/strings";
 
 const Home: NextPage = () => {
+  const width: string = "w-[280px]";
   return (
     <div>
       <Head>
@@ -14,86 +17,11 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
-      <main className="bg-red-400">
-        <br />
-        <h1>به سامانه ثحا خوش آمدید1235658</h1>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-      </main>
+      <Ourmoto />
+      <MortgageRentSale />
 
-      <footer></footer>
+      {/* <Header />
+      <main className="bg-red-400"></main> */}
     </div>
   );
 };

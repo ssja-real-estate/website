@@ -6,15 +6,19 @@ import * as ImIcon from "react-icons/im";
 import Strings from "../../data/strings";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 function Navbar() {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isShowMobileMenu, setIsShowMobile] = useState(false);
+  const bgTopNavbar =
+    scrolled || router.pathname !== "/" ? "bg-[#0ba]" : "bg-black/20";
 
   const handleScroll = () => {
     let offsetY = window.scrollY;
 
     // console.log(offset);
-    if (offsetY > 10) {
+    if (offsetY > 500) {
       setScrolled(true);
     } else if (offsetY < 10) {
       setScrolled(false);
@@ -34,22 +38,29 @@ function Navbar() {
     } else {
       document.body.style.overflow = "";
     }
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
     };
   }, [isShowMobileMenu]);
+
+  const goto = (path: string): void => {
+    setIsShowMobile(false);
+    router.push(path);
+  };
+
   return (
     <div className="absolute top-0 w-full select-none">
       <div
         className={`${
           scrolled && "fixed w-full "
-        } sm:static w-full h-12 text-white bg-black/20  z-10`}
+        } sm:static w-full h-12 text-white ${bgTopNavbar}  z-10`}
       >
         <div className="container flex flex-row justify-between items-center h-full">
           <div
             onClick={() => setIsShowMobile(true)}
-            className="flex h-full items-center sm:hidden"
+            className="flex h-full items-center sm:hidden cursor-pointer"
           >
             <IoIcon.IoIosMenu className="w-8 h-8" />
           </div>
@@ -67,27 +78,45 @@ function Navbar() {
             <div className="flex flex-col items-start justify-between h-full py-2">
               <div className="w-full">
                 <IoIcon.IoMdCloseCircle
-                  className="bg-[#0ba] w-10 h-10 mr-4"
+                  className="bg-[#0ba] w-10 h-10 mr-4 cursor-pointer"
                   onClick={() => setIsShowMobile(false)}
                 />
                 <ul className="flex flex-col mt-4 w-full divide-y">
-                  <li className="flex items-center h-full w-full px-4 py-2">
-                    <Link href="/">{Strings.addEstates}</Link>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
+                    {Strings.addEstates}
                   </li>
-                  <li className="flex items-center h-full w-full px-4 py-2">
-                    <Link href="/">{Strings.searchEstates}</Link>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
+                    {Strings.searchEstates}
                   </li>
-                  <li className="flex items-center h-full w-full px-4 py-2">
-                    <Link href="/">{Strings.inquiries}</Link>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
+                    {Strings.inquiries}
                   </li>
-                  <li className="flex items-center h-full w-full px-4 py-2">
-                    <Link href="/">{Strings.contractSamples}</Link>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
+                    {Strings.contractSamples}
                   </li>
-                  <li className="flex items-center h-full w-full px-4 py-2">
-                    <Link href="/">{Strings.laws}</Link>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
+                    {Strings.laws}
                   </li>
-                  <li className="flex items-center h-full w-full px-4 py-2">
-                    <Link href="/">{Strings.commissionCalculation}</Link>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
+                    {Strings.commissionCalculation}
                   </li>
                 </ul>
               </div>
@@ -129,10 +158,18 @@ function Navbar() {
         </div>
       </div>
       <div
-        className={`hidden z-10 fixed transition-all duration-300 ${
+        className={`hidden z-50  transition-all duration-300 ${
           scrolled
-            ? "top-0 h-20 bg-white text-gray-600 w-full px-4 shadow-md"
-            : "top-12 text-white bg-transparent container h-28"
+            ? `fixed top-0 h-20 ${
+                router.pathname === "/"
+                  ? "bg-white text-gray-600"
+                  : "bg-[#f6f6f6] text-gray-600"
+              }  w-full px-4 shadow-md`
+            : `top-12 ${
+                router.pathname === "/"
+                  ? "text-white bg-transparent "
+                  : "bg-[#f6f6f6] text-gray-600"
+              } container h-28`
         } inset-0 sm:flex flex-row justify-between items-center`}
       >
         <div
