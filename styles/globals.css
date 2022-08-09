@@ -30,3 +30,18 @@
     background-color: #f6f6f6;
   }
 }
+@layer components {
+  .submitButton {
+    @apply bg-[#f3bc65] h-12 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221];
+  }
+  .inputDecoration {
+    @apply px-4 h-12 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input;
+  }
+}
+.swiper .swiper-pagination-bullet-active {
+  background: #0ba !important;
+}
+.swiper-button-next,
+.swiper-button-prev {
+  color: #0ba !important;
+}

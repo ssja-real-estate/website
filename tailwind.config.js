@@ -12,7 +12,14 @@ module.exports = {
     fontFamily: {
       vazir: "Vazirmatn",
     },
-    extend: {},
+    extend: {
+      boxShadow: {
+        "1input": "0 5px 10px 1px rgba(0, 187, 170, 0.2)",
+      },
+      backgroundImage: {
+        "login-pattern": "url('/image/bg/bg.jpg')",
+      },
+    },
   },
   plugins: [],
 };

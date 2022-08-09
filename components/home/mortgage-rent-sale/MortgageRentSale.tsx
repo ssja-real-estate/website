@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import allRealState from "../../../data/all-realEastate";
+import RealEastate from "../../../data/models/real-estate";
 import Strings from "../../../data/strings";
 import NewViewHouses from "../view-houses/NewViewHouses";
-import ViweHouses from "../view-houses/ViweHouses";
 
 function MortgageRentSale() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -9,25 +10,25 @@ function MortgageRentSale() {
   const indexHandler = (index: number) => {
     setActiveIndex(index);
   };
+  const allRealEsates: RealEastate[] = allRealState;
   return (
     <>
       <div className="container flex flex-row justify-center items-center gap-10 sm:gap-20 pt-20 pb-10 text-[#2c3e50]">
         {tabData.map((data: string, index: number) => (
           <div
-            onClick={() => setActiveIndex(index)}
+            onClick={() => indexHandler(index)}
             key={index}
             className={`${
               activeIndex === index
                 ? "border-[#2c3e50]"
                 : "border-none text-[#b5b5b5]"
-            } text-lg border-b-2  py-1 cursor-pointer`}
+            } text-lg border-b-4  py-1 cursor-pointer`}
           >
             {data}
           </div>
         ))}
       </div>
-      {/* <ViweHouses /> */}
-      <NewViewHouses />
+      <NewViewHouses all={allRealEsates} />
     </>
   );
 }

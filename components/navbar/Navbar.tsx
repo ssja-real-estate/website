@@ -7,12 +7,12 @@ import Strings from "../../data/strings";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+
 function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isShowMobileMenu, setIsShowMobile] = useState(false);
-  const bgTopNavbar =
-    scrolled || router.pathname !== "/" ? "bg-[#0ba]" : "bg-black/20";
+  const bgTopNavbar = "bg-[#0ba]";
 
   const handleScroll = () => {
     let offsetY = window.scrollY;
@@ -51,7 +51,7 @@ function Navbar() {
   };
 
   return (
-    <div className="absolute top-0 w-full select-none">
+    <div className="w-full select-none">
       <div
         className={`${
           scrolled && "fixed w-full "
@@ -82,12 +82,6 @@ function Navbar() {
                   onClick={() => setIsShowMobile(false)}
                 />
                 <ul className="flex flex-col mt-4 w-full divide-y">
-                  <li
-                    onClick={() => goto("/")}
-                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
-                  >
-                    {Strings.addEstates}
-                  </li>
                   <li
                     onClick={() => goto("/")}
                     className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
@@ -151,26 +145,22 @@ function Navbar() {
             <FaIcon.FaInstagram className="w-6 h-6" />
             <FaIcon.FaWhatsapp className="w-6 h-6" />
           </div>
-          <div className="flex flex-row h-full items-center gap-2">
+          <div
+            onClick={() => router.push("/login")}
+            className="flex flex-row h-full items-center gap-2 cursor-pointer"
+          >
             <BiIcon.BiUser className="w-5 h-5" />
             <span>{Strings.loginOrSignup}</span>
           </div>
         </div>
       </div>
       <div
-        className={`hidden z-50  transition-all duration-300 ${
+        className={`hidden z-50  transition-all duration-300 inset-0 sm:flex flex-row justify-between items-center ${
           scrolled
-            ? `fixed top-0 h-20 ${
-                router.pathname === "/"
-                  ? "bg-white text-gray-600"
-                  : "bg-[#f6f6f6] text-gray-600"
-              }  w-full px-4 shadow-md`
-            : `top-12 ${
-                router.pathname === "/"
-                  ? "text-white bg-transparent "
-                  : "bg-[#f6f6f6] text-gray-600"
-              } container h-28`
-        } inset-0 sm:flex flex-row justify-between items-center`}
+            ? "fixed top-0 h-20 bg-white text-gray-600 w-full  shadow-md"
+            : "top-12 bg-[#f6f6f6] text-gray-600 container h-28"
+        }
+        `}
       >
         <div
           className={`${
@@ -185,9 +175,6 @@ function Navbar() {
           </div>
           <div className="flex-1">
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
-              <li>
-                <Link href="/">{Strings.addEstates}</Link>
-              </li>
               <li>
                 <Link href="/">{Strings.searchEstates}</Link>
               </li>

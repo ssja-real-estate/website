@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import CarsoulSlider from "../components/home/CarsoulSlider/CarsoulSlider";
 
 import MortgageRentSale from "../components/home/mortgage-rent-sale/MortgageRentSale";
 import Ourmoto from "../components/our-moto/Ourmoto";
 import Strings from "../data/strings";
 
 const Home: NextPage = () => {
-  const width: string = "w-[280px]";
   return (
     <div>
       <Head>
@@ -17,6 +17,7 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <CarsoulSlider />
       <Ourmoto />
       <MortgageRentSale />
 
