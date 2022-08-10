@@ -37,6 +37,9 @@
   .inputDecoration {
     @apply px-4 h-12 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input;
   }
+  .labelForm {
+    @apply leading-6 text-[15px] text-[#2c3e50] block w-full my-2 font-bold;
+  }
 }
 .swiper .swiper-pagination-bullet-active {
   background: #0ba !important;

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import * as GoIcon from "react-icons/go";
-import * as MdIcon from "react-icons/md";
 import * as FiIcon from "react-icons/fi";
+import * as MdIcon from "react-icons/md";
+import * as TbIcon from "react-icons/tb";
 const Sidebar: React.FC = () => {
   return (
     <div className="px-4 h-full flex flex-col justify-between">
@@ -21,6 +22,12 @@ const Sidebar: React.FC = () => {
             </span>
           </li>
           <li className="flex flex-row items-center gap-2 py-1 pr-4 cursor-pointer group">
+            <TbIcon.TbLayoutGridAdd className="w-5 h-6 text-[#2c3e50]" />
+            <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
+              قالب ها
+            </span>
+          </li>
+          <li className="flex flex-row items-center gap-2 py-1 pr-4 cursor-pointer group">
             <FiIcon.FiUsers className="w-5 h-6 text-[#2c3e50]" />
             <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
               کاربران
@@ -29,7 +36,7 @@ const Sidebar: React.FC = () => {
         </ul>
       </div>
       <div className="">
-        <ul>
+        <ul className="mt-4">
           <li className="flex flex-row items-center gap-2 py-1 pr-4 cursor-pointer group">
             <MdIcon.MdOutlineExitToApp className="w-5 h-6 text-[#2c3e50]" />
             <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
