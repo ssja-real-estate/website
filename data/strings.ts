@@ -3,6 +3,9 @@ class Strings {
     "سامانه ثجا، فروش ملک، رهن ملک، اجاره ملک، فروش زمین";
   static phoneNumber = "+98 044 4244 5555";
   static sajaSystemCompleteName = "سامانه ثبت و جستجوی املاک";
+  static mortgage = "رهن";
+  static rent = "اجاره";
+  static sale = "فروش";
   static sajaSystem = "سامانه ثجا";
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
