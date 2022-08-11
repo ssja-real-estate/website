@@ -36,6 +36,7 @@ function CarsoulSlider() {
               layout="responsive"
               width={2000}
               height={500}
+              priority={true}
             />
           </div>
         </SwiperSlide>
@@ -47,6 +48,7 @@ function CarsoulSlider() {
               layout="responsive"
               width={2000}
               height={500}
+              priority={true}
             />
           </div>
         </SwiperSlide>
@@ -58,6 +60,7 @@ function CarsoulSlider() {
               layout="responsive"
               width={2000}
               height={500}
+              priority={true}
             />
           </div>
         </SwiperSlide>
@@ -69,6 +72,7 @@ function CarsoulSlider() {
               layout="responsive"
               width={2000}
               height={500}
+              priority={true}
             />
           </div>
         </SwiperSlide>
