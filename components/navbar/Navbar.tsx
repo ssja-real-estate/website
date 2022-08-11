@@ -86,6 +86,12 @@ function Navbar() {
                     onClick={() => goto("/")}
                     className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
                   >
+                    {Strings.home}
+                  </li>
+                  <li
+                    onClick={() => goto("/search-estate")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
                     {Strings.searchEstates}
                   </li>
                   <li
@@ -176,7 +182,7 @@ function Navbar() {
           <div className="flex-1">
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
               <li>
-                <Link href="/">{Strings.searchEstates}</Link>
+                <Link href="/search-estate">{Strings.searchEstates}</Link>
               </li>
               <li>
                 <Link href="/">{Strings.inquiries}</Link>

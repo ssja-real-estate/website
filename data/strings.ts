@@ -6,6 +6,7 @@ class Strings {
   static mortgage = "رهن";
   static rent = "اجاره";
   static sale = "فروش";
+  static home = "خانه";
   static sajaSystem = "سامانه ثجا";
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
