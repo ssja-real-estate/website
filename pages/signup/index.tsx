@@ -43,11 +43,11 @@ const Signup: NextPage = () => {
               />
             </div>
             <div className="text-[#2c3e50] space-y-1">
-              <label htmlFor="password" className="text-[#2c3e50]">
+              <label htmlFor="repassword" className="text-[#2c3e50]">
                 تکرار رمز عبور
               </label>
               <input
-                id="password"
+                id="repassword"
                 className="inputDecoration focus:shadow-1input"
                 type="password"
                 placeholder="تکرار رمز عبور"

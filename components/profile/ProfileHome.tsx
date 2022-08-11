@@ -22,6 +22,7 @@ const ProfileHome: React.FC<{ onEdit: () => void }> = (props) => {
               width={500}
               height={480}
               alt="user"
+              priority={true}
             />
           </div>
           <div className="text-[#2c3e50] flex flex-col space-y-2 divide-y-2 divide-dotted w-full">
