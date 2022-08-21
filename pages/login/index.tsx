@@ -45,7 +45,7 @@ const Login: NextPage = () => {
         console.log(loginState);
 
         setGlobalState(loginState!);
-        router.push("/dashboard");
+        router.push("/");
       }
     } catch (e: any) {
       console.log(e.response.data.error);
