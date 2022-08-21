@@ -180,15 +180,15 @@ function Navbar() {
             onClick={() => {
               loginHanler();
             }}
-            className="flex flex-row h-full items-center gap-2 group relativ"
+            className="flex flex-row h-full items-center gap-2 group"
           >
-            <div className="flex flex-row items-center gap-2 cursor-pointer">
+            <div className="flex flex-row items-center gap-2 cursor-pointer relativ">
               <BiIcon.BiUser className="w-5 h-5" />
               <span>{username}</span>
             </div>
             {isUserValide && (
-              <div className="absolute hidden group-hover:block top-12 w-32 bg-white text-gray-700 z-30 rounded-br-md rounded-bl-md shadow-md">
-                <ul className="px-2">
+              <div className="absolute left-4 hidden w-[120px] group-hover:block top-12 bg-white text-gray-700 z-30 rounded-br-md rounded-bl-md shadow-md">
+                <ul className="">
                   <li
                     onClick={() => router.push("/dashboard")}
                     className="flex flex-row items-center gap-2 py-2 pr-4 cursor-pointer"

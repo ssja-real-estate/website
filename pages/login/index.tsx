@@ -48,7 +48,7 @@ const Login: NextPage = () => {
         router.push("/");
       }
     } catch (e: any) {
-      console.log(e.response.data.error);
+      // console.log(e.response.data.error);
       setServerError(e.response.data.error);
     }
   };
