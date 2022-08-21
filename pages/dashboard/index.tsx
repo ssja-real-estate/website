@@ -74,9 +74,6 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
 
   return (
     <div className="container">
-      <h2 className="text-center text-[#2c3e50] text-[30px] font-bold mb-10">
-        داشبورد
-      </h2>
       <div className="flex flex-row mb-10 gap-5">
         <div className="hidden md:block pt-8 pb-8 bg-white w-52">
           <Sidebar dataSidebar={sidebarMenu} />

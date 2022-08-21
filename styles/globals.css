@@ -37,8 +37,14 @@
   .inputDecoration {
     @apply px-4 h-12 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input;
   }
+  .inputErroeDecoration {
+    @apply px-4 h-12 transition-all duration-300 border border-red-700  focus:border-red-700 w-full outline-none focus:shadow-1inputError;
+  }
   .labelForm {
     @apply leading-6 text-[15px] text-[#2c3e50] block w-full my-2 font-bold;
+  }
+  .selectbox {
+    @apply text-sm px-4 h-9 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input appearance-none bg-arrow-down bg-no-repeat bg-[left_top_.70rem] bg-[length:15px_15px] bg-origin-content;
   }
 }
 .swiper .swiper-pagination-bullet-active {

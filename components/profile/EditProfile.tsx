@@ -1,6 +1,6 @@
 import { FC } from "react";
-import Select from "react-select";
-import SelectBox from "../formcomponent/SelectBox";
+
+import SsjaMap from "../map-component/SsjaMap";
 
 const EditProfile: FC<{ onExitEdit: () => void }> = (props) => {
   const options = [
@@ -42,18 +42,50 @@ const EditProfile: FC<{ onExitEdit: () => void }> = (props) => {
                   />
                 </div>
               </div>
+
               <div className="">
-                <label className="labelForm" htmlFor="agencyName">
+                <label className="labelForm" htmlFor="province">
                   انتخاب استان
                 </label>
-                <SelectBox options={options} placehodler="انتخاب استان..." />
+                <select className="selectbox" id="province">
+                  <option
+                    selected
+                    disabled
+                    className="accent-gray-900 py-2"
+                    value="1"
+                  >
+                    انتخاب کنید
+                  </option>
+                  <option className="accent-gray-900" value="2">
+                    آذربایجان شرقی
+                  </option>
+                  <option className="accent-gray-900" value="3">
+                    کردستان
+                  </option>
+                </select>
               </div>
               <div className="">
-                <label className="labelForm" htmlFor="agencyName">
-                  انتخاب شهرستان
+                <label className="labelForm" htmlFor="county">
+                  انتخاب استان
                 </label>
-                <SelectBox options={options2} placehodler="انتخاب شهرستان..." />
+                <select className="selectbox" id="county">
+                  <option
+                    selected
+                    disabled
+                    className="accent-gray-900 py-2"
+                    value="1"
+                  >
+                    انتخاب کنید
+                  </option>
+                  <option className="accent-gray-900" value="2">
+                    مهاباد
+                  </option>
+                  <option className="accent-gray-900" value="3">
+                    سنندج
+                  </option>
+                </select>
               </div>
+
               <div className="">
                 <label className="labelForm" htmlFor="street">
                   خیابان
