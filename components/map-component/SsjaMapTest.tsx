@@ -83,7 +83,9 @@ const SsjaMapTest: FC<{ lng: number; lat: number }> = (props) => {
     // });
 
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
-    const mapmarker = new mapboxgl.Marker()
+    const mapmarker = new mapboxgl.Marker({
+      draggable: true,
+    })
       .setLngLat([props.lng, props.lat])
       .setPopup(
         new mapboxgl.Popup({ offset: 20 }).setHTML(

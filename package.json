@@ -12,6 +12,7 @@
     "@types/mapbox-gl": "^1.13.4",
     "axios": "^0.27.2",
     "framer-motion": "^6.5.1",
+    "keen-slider": "^6.7.0",
     "mapbox-gl": "^2.9.2",
     "next": "12.2.3",
     "react": "18.2.0",
