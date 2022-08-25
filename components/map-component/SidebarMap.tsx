@@ -1,9 +1,109 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import * as FiIcon from "react-icons/fi";
 import * as CgIcon from "react-icons/cg";
+import Province, { defaultProvince } from "../../global/types/Province";
+
+import { globalState } from "../../global/states/globalStates";
+import LocationService from "../../services/api/LocationService/LocationService";
+import { useRecoilValue } from "recoil";
+import Strings from "../../data/strings";
+import Select from "../formComponent/Select";
+import City, { defaultCity } from "../../global/types/City";
+import Neighborhood, {
+  defaultNeighborhood,
+} from "../../global/types/Neighborhood";
+
 const SidebarMap: FC = () => {
   const [showAdvanceFilter, setShowAdvanceFilter] = useState<boolean>(false);
   const [isHideSideBar, setIsHideSidebar] = useState<boolean>(false);
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [selectedProvince, setSelectedProvince] =
+    useState<Province>(defaultProvince);
+  const [selectedCity, setSelectedCity] = useState<City>(defaultCity);
+  const [cities, setCities] = useState<City[]>([]);
+  const [selectedNeighborhood, setSelectedNeighborhood] =
+    useState<Neighborhood>(defaultNeighborhood);
+  const state = useRecoilValue(globalState);
+  const locationService = useRef(new LocationService());
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    //  searchService.current.setToken(state.token);
+    //  formService.current.setToken(state.token);
+    //  delegationTypeService.current.setToken(state.token);
+    //  estateTypeService.current.setToken(state.token);
+    //  estateService.current.setToken(state.token);
+    locationService.current.setToken(state.token);
+
+    loadLocations();
+    // loadOptions();
+
+    return () => {
+      mounted.current = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.token]);
+  const loadLocations = async () => {
+    locationService.current
+      .getAllProvinces()
+      .then((fetchedProvinces) => {
+        setProvinces(fetchedProvinces);
+        console.log(fetchedProvinces);
+
+        // if (selectedProvince?.id) {
+        //   const province = fetchedProvinces.find(
+        //     (p) => p.id === selectedProvince.id
+        //   );
+        //   if (province) {
+        //     setSelectedProvince({ ...province });
+        //     setCities((prev) => province.cities);
+        //     if (selectedCity?.id) {
+        //       const city = province.cities.find(
+        //         (c) => c.id === selectedCity.id
+        //       );
+        //       if (city) {
+        //         setSelectedCity({ ...city });
+        //         const neighborhoods = city.neighborhoods;
+        //         setNeighborhoods((prev) => neighborhoods);
+        //         if (selectedNeighborhood?.id) {
+        //           const neighborhood = neighborhoods.find(
+        //             (n) => n.id === selectedNeighborhood.id
+        //           );
+        //           if (neighborhood) {
+        //             setSelectedNeighborhood(neighborhood);
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+      })
+      .catch((_) => {
+        console.log(Strings.loadingLocationsFailed);
+
+        // toast.error(Strings.loadingLocationsFailed);
+      });
+    function handleProvinceChange(provinceId: string) {
+      const province = provinces.find((p) => p.id === provinceId);
+      if (!province) {
+        setSelectedProvince(defaultProvince);
+        setSelectedCity(defaultCity);
+        setCities([]);
+        setSelectedNeighborhood(defaultNeighborhood);
+        return;
+      }
+
+      setSelectedProvince({
+        id: provinceId,
+        name: provinceId,
+        cities: province.cities,
+        mapInfo: province.mapInfo,
+      });
+      setCities(province.cities);
+      setSelectedCity(defaultCity);
+      setSelectedNeighborhood(defaultNeighborhood);
+    }
+  };
   return (
     <div
       className={`relative transition-all duration-150 ease-out  ${
@@ -24,25 +124,34 @@ const SidebarMap: FC = () => {
       </div>
       <div className={`space-y-4 ${isHideSideBar ? "hidden" : "block"}`}>
         <div className="flex flex-col gap-1">
-          <label htmlFor="province" className="text-white">
+          <Select
+            options={provinces}
+            label={{
+              htmlForLabler: "provinces",
+              titleLabel: "استان",
+              labelColor: "white",
+            }}
+          />
+          {/* <label htmlFor="province" className="text-white">
             استان
           </label>
           <select name="" id="province" defaultValue="1">
             <option value="1" disabled>
               انتخاب کنید
             </option>
-            <option value="">آذربایجان غربی</option>
-            <option value="">آذربایجان شرقی</option>
-            <option value="">کردستان</option>
-            <option value="">کرمانشاه</option>
-          </select>
+            {provinces.map((province) => (
+              <option key={province.id} value={province.id}>
+                {province.name}
+              </option>
+            ))}
+          </select> */}
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="county" className="text-white">
             شهرستان
           </label>
-          <select name="" id="county" defaultValue="1">
-            <option value="1" disabled>
+          <select name="" id="county" defaultValue="2">
+            <option value="2" disabled>
               انتخاب کنید
             </option>
             <option value="">مهاباد</option>
@@ -54,8 +163,8 @@ const SidebarMap: FC = () => {
           <label htmlFor="region" className="text-white">
             منطقه
           </label>
-          <select name="" id="region" defaultValue="1">
-            <option value="1" disabled>
+          <select name="" id="region" defaultValue="3">
+            <option value="3" disabled>
               انتخاب کنید
             </option>
             <option value="">پشت تپ</option>
@@ -63,7 +172,7 @@ const SidebarMap: FC = () => {
             <option value="">تپه قاضی</option>
           </select>
         </div>
-        <div className="flex flex-col gap-1" defaultValue="1">
+        <div className="flex flex-col gap-1" defaultValue="">
           <label htmlFor="request" className="text-white">
             نوع درخواست
           </label>

@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect, useState, useMemo, memo } from "react";
+import React, { FC, useRef, useEffect, useState } from "react";
 import mapboxgl, {
   LngLat,
   LngLatLike,
@@ -10,7 +10,9 @@ import * as BiIcon from "react-icons/bi";
 import * as MdIcom from "react-icons/md";
 import SearchSideBar from "./SearchSideBar";
 
-const SsjaMapTest: FC<{ lng: number; lat: number }> = (props) => {
+const SsjaMapTest: FC<{ lng: number; lat: number; isDragable: boolean }> = (
+  props
+) => {
   const [loaded, setLoaded] = useState(false);
   const [sidebar, setSideBar] = useState<JSX.Element>(<div className=""></div>);
   useEffect(() => {
@@ -62,7 +64,7 @@ const SsjaMapTest: FC<{ lng: number; lat: number }> = (props) => {
       doubleClickZoom: true,
     });
     map.flyTo({
-      zoom: zoom,
+      zoom: 5,
       center: [props.lng, props.lat],
     });
 
@@ -84,14 +86,14 @@ const SsjaMapTest: FC<{ lng: number; lat: number }> = (props) => {
 
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
     const mapmarker = new mapboxgl.Marker({
-      draggable: true,
+      draggable: props.isDragable,
     })
       .setLngLat([props.lng, props.lat])
       .setPopup(
         new mapboxgl.Popup({ offset: 20 }).setHTML(
           `<a
           target="_blank"
-          href="/productid"
+          href="/estate/126"
           style="display:block;width:150px;background-color:red"
           >
           1

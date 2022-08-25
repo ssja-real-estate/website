@@ -47,13 +47,8 @@ const EditProfile: FC<{ onExitEdit: () => void }> = (props) => {
                 <label className="labelForm" htmlFor="province">
                   انتخاب استان
                 </label>
-                <select className="selectbox" id="province">
-                  <option
-                    selected
-                    disabled
-                    className="accent-gray-900 py-2"
-                    value="1"
-                  >
+                <select className="selectbox" id="province" defaultValue="1">
+                  <option disabled className="accent-gray-900 py-2" value="1">
                     انتخاب کنید
                   </option>
                   <option className="accent-gray-900" value="2">
@@ -65,16 +60,9 @@ const EditProfile: FC<{ onExitEdit: () => void }> = (props) => {
                 </select>
               </div>
               <div className="">
-                <label className="labelForm" htmlFor="county">
-                  انتخاب استان
-                </label>
-                <select className="selectbox" id="county">
-                  <option
-                    selected
-                    disabled
-                    className="accent-gray-900 py-2"
-                    value="1"
-                  >
+                <label className="labelForm">انتخاب استان</label>
+                <select className="selectbox" defaultValue="2">
+                  <option disabled className="accent-gray-900 py-2" value="2">
                     انتخاب کنید
                   </option>
                   <option className="accent-gray-900" value="2">
