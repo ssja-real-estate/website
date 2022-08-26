@@ -1,4 +1,4 @@
-import { FC } from "react";
+import React, { FC } from "react";
 
 interface LabelSelectBox {
   htmlForLabler?: string;
@@ -13,6 +13,8 @@ interface OptionSelectBox {
 const Select: FC<{
   options: OptionSelectBox[];
   label?: LabelSelectBox;
+  defaultValue?: string;
+  onChange: (pro: string) => void;
 }> = (props) => {
   return (
     <>
@@ -25,12 +27,16 @@ const Select: FC<{
         </label>
       )}
       <select
-        onChange={(e) => console.log(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          // console.log(e.target.value)
+
+          props.onChange(e.target.value)
+        }
         className=""
         id={props.label?.htmlForLabler}
-        defaultValue="2"
+        defaultValue="choice"
       >
-        <option disabled className="accent-gray-900 py-2" value="2">
+        <option disabled className="accent-gray-900 py-2" value="choice">
           انتخاب کنید
         </option>
         {props.options.map((option) => (

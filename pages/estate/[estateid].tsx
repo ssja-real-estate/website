@@ -5,6 +5,7 @@ import * as AiIcon from "react-icons/ai";
 import * as BiIcon from "react-icons/bi";
 import SingleEstateSlider from "../../components/estate/SingleEstateSlider";
 import SsjaMapTest from "../../components/map-component/SsjaMapTest";
+import { defaultMapInfo } from "../../global/types/MapInfo";
 const Property: NextPage = () => {
   const router = useRouter();
   console.log(router.query);
@@ -73,7 +74,7 @@ const Property: NextPage = () => {
       </div>
       <div className="h-64 mt-14">
         <h2 className="text-[#2c3e50] font-bold text-lg my-2">نقشه ملک</h2>
-        <SsjaMapTest lat={35.4316} lng={51.613134} isDragable={false} />
+        <SsjaMapTest cordinate={defaultMapInfo} isDragable={false} />
       </div>
     </div>
   );

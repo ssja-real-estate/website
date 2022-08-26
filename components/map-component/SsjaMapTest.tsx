@@ -9,20 +9,23 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcom from "react-icons/md";
 import SearchSideBar from "./SearchSideBar";
+import MapInfo from "../../global/types/MapInfo";
 
-const SsjaMapTest: FC<{ lng: number; lat: number; isDragable: boolean }> = (
-  props
-) => {
-  const [loaded, setLoaded] = useState(false);
-  const [sidebar, setSideBar] = useState<JSX.Element>(<div className=""></div>);
-  useEffect(() => {
-    const sidebar: JSX.Element = (
-      // <div className="absolute top-0 bottom-0 right-0 w-80 bg-black/50 z-30 rounded-2xl m-2"></div>
-      <SearchSideBar />
-    );
-    setLoaded(true);
-    setSideBar(sidebar);
-  }, [loaded]);
+const SsjaMapTest: FC<{
+  cordinate: MapInfo;
+  isDragable: boolean;
+}> = (props) => {
+  // const [loaded, setLoaded] = useState(false);
+  const mounted = useRef(true);
+  // const [sidebar, setSideBar] = useState<JSX.Element>(<div className=""></div>);
+
+  // useEffect(() => {
+  //   setLoaded(true);
+  //   return () => {
+  //     mounted.current = false;
+  //     setLoaded(false);
+  //   };
+  // }, []);
   // const [lng, setLng] = useState<number>(props.lng);
   // const [lat, setLat] = useState<number>(props.lat);
   // const [marketPoint, setMarkerPoint] = useState<LngLatLike>([lng, lat]);
@@ -64,8 +67,9 @@ const SsjaMapTest: FC<{ lng: number; lat: number; isDragable: boolean }> = (
       doubleClickZoom: true,
     });
     map.flyTo({
-      zoom: 5,
-      center: [props.lng, props.lat],
+      zoom: props.cordinate.zoom,
+
+      center: [props.cordinate.longitude, props.cordinate.latitude],
     });
 
     // map.on("dblclick", (e) => {
@@ -88,7 +92,7 @@ const SsjaMapTest: FC<{ lng: number; lat: number; isDragable: boolean }> = (
     const mapmarker = new mapboxgl.Marker({
       draggable: props.isDragable,
     })
-      .setLngLat([props.lng, props.lat])
+      .setLngLat([props.cordinate.longitude, props.cordinate.latitude])
       .setPopup(
         new mapboxgl.Popup({ offset: 20 }).setHTML(
           `<a
@@ -119,11 +123,11 @@ const SsjaMapTest: FC<{ lng: number; lat: number; isDragable: boolean }> = (
     //   .addTo(map);
   });
 
-  if (!loaded) {
-    return (
-      <div className="flex justify-center items-center w-full border-[10px] border-white bg-gray-400 rounded-2xl animate-pulse"></div>
-    );
-  }
+  // if (!loaded) {
+  //   return (
+  //     <div className="flex justify-center items-center w-full border-[10px] border-white bg-gray-400 rounded-2xl animate-pulse"></div>
+  //   );
+  // }
   return (
     <div className="h-full w-full ">
       <div className="h-full w-full" ref={mapNode}></div>

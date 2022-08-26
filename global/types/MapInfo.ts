@@ -5,9 +5,9 @@ interface MapInfo {
 }
 
 const defaultMapInfo: MapInfo = {
-  latitude: 51.3339107163427,
-  longitude: 335.783841870180055,
-  zoom: 7,
+  latitude: 35.68957425,
+  longitude: 51.39440926,
+  zoom: 5,
 };
 
 export default MapInfo;
