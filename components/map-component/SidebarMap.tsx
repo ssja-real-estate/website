@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import * as FiIcon from "react-icons/fi";
-import * as CgIcon from "react-icons/cg";
+
 import Province, { defaultProvince } from "../../global/types/Province";
 
 import { globalState } from "../../global/states/globalStates";
@@ -23,13 +23,25 @@ import DelegationTypeService from "../../services/api/DelegationTypeService/Dele
 import EstateTypeService from "../../services/api/EstateTypeService/EstateTypeService";
 import EstateService from "../../services/api/EstateService/EstateService";
 import SearchService from "../../services/api/SearchService/SearchService";
+import { validateForm } from "../../services/utilities/fieldValidations";
+import { defaultForm, EstateForm } from "../../global/types/EstateForm";
+import { useRouter } from "next/router";
+import { Field, FieldType } from "../../global/types/Field";
+import SearchFilter from "../../global/types/Filter";
+
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
+  onSetEstate: (estates: Estate[]) => void;
+  width: string;
+  closeModalHandler?: (close: boolean) => void;
 }
+
 const SidebarMap: FC<Props> = (props) => {
   const [showAdvanceFilter, setShowAdvanceFilter] = useState<boolean>(false);
-  const [isHideSideBar, setIsHideSidebar] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingEstates, setLoadingEstates] = useState(false);
+  const [noFilterExists, setNoFilterExists] = useState(false);
+  const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -59,7 +71,8 @@ const SidebarMap: FC<Props> = (props) => {
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
-
+  const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
+  const router = useRouter();
   useEffect(() => {
     searchService.current.setToken(state.token);
     formService.current.setToken(state.token);
@@ -110,8 +123,8 @@ const SidebarMap: FC<Props> = (props) => {
           }
         }
       })
-      .catch((_) => {
-        console.log(Strings.loadingLocationsFailed);
+      .catch((e) => {
+        console.log(e);
 
         // toast.error(Strings.loadingLocationsFailed);
       });
@@ -133,11 +146,32 @@ const SidebarMap: FC<Props> = (props) => {
         // toast.error(Strings.loadingOptionsFailed);
       });
   }
-  function handleProvinceChange(provinceId: string) {
-    // console.log(provinceId);
 
+  async function loadForm() {
+    if (!loading) {
+      setLoading((prev) => true);
+    }
+
+    if (!selectedDelegationType.id || !selectedEstateType.id) {
+      setLoading((prev) => false);
+      return;
+    }
+    const loadedForm = await searchService.current.getfilteredForm(
+      selectedDelegationType.id,
+      selectedEstateType.id
+    );
+
+    if (!loadedForm.id) {
+      setNoFilterExists((prev) => true);
+    } else {
+      setDataForm(loadedForm);
+    }
+    setLoading((prev) => false);
+  }
+
+  function handleProvinceChange(provinceId: string) {
     const province = provinces.find((p) => p.id === provinceId);
-    console.log(province);
+
     if (!province) {
       setSelectedProvince(defaultProvince);
       setSelectedCity(defaultCity);
@@ -200,33 +234,117 @@ const SidebarMap: FC<Props> = (props) => {
     }
   }
 
-  function handleDelegationChange(event: string) {
+  function handleDelegationChange(data: string) {
     // console.log(event.currentTarget.value);
 
     setSelectedDelegationType({
-      id: event,
-      name: event,
+      id: data,
+      name: data,
+    });
+  }
+
+  function handleTypeChange(data: string) {
+    setSelectedEstateType({
+      id: data,
+      name: data,
+    });
+  }
+  async function searchEstate() {
+    console.log(dataForm);
+
+    const errors = validateForm(dataForm);
+    if (errors.length > 0) {
+      for (let i = 0; i < errors.length; i++) {
+        const error = errors[i];
+        console.log(error);
+
+        // toast.error(error.message, {
+        //   duration: 3000,
+        // });
+      }
+      return;
+    }
+    setLoadingEstates((prev) => true);
+
+    const filter = buildFilter();
+    const fetchedEstates = await searchService.current.searchEstates(filter);
+    console.log(fetchedEstates);
+
+    setSearchedEstates(fetchedEstates);
+    setLoadingEstates((prev) => false);
+    props.onSetEstate(fetchedEstates);
+    if (props.closeModalHandler !== undefined) {
+      props.closeModalHandler(false);
+    }
+  }
+
+  function buildFilter() {
+    let filter: SearchFilter = {
+      header: {
+        assignmentTypeId: selectedDelegationType.id,
+        estateTypeId: selectedEstateType.id,
+        provinceId: selectedProvince.id,
+        cityId: selectedCity.id,
+        neighbordhoodId: selectedNeighborhood.id,
+      },
+      form: dataForm.id ? dataForm : undefined,
+    };
+
+    return filter;
+  }
+  function handleRangeFieldValue(
+    field: Field,
+    targetValue: any,
+    min: boolean = false
+  ) {
+    if (field.type === FieldType.Range) {
+      const value = +targetValue;
+      let range = [field.min ?? 0, field.max ?? 0];
+      if (min) range[0] = value;
+      else range[1] = value;
+      if (min) field.min = range[0];
+      else field.max = range[1];
+    } else {
+      field.value = targetValue;
+    }
+    return { ...field };
+  }
+  function onFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    min: boolean = false,
+    key?: string
+  ) {
+    let currentField = {
+      ...dataForm.fields[fieldIndex],
+    };
+
+    if (currentField.type === FieldType.Range) {
+      currentField = handleRangeFieldValue(currentField, targetValue, min);
+    } else if (currentField.type === FieldType.MultiSelect) {
+      const fieldValue = currentField.value as { [key: string]: boolean };
+      if (key && fieldValue) {
+        fieldValue[key] = targetValue;
+        currentField.value = fieldValue;
+      }
+    } else {
+      currentField.value = targetValue;
+    }
+
+    const fields = dataForm.fields;
+    fields[fieldIndex] = currentField;
+
+    setDataForm({
+      ...dataForm,
+      fields,
     });
   }
   return (
     <div
-      className={`relative transition-all duration-150 ease-out  ${
-        isHideSideBar ? "w-10 px-0" : "w-56 md:w-80 px-5 md:px-14"
-      }  h-full bg-[rgba(44,62,80,.85)] z-20 -top-[100%] py-5   text-sm  overflow-y-auto `}
+      className={`h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto`}
     >
-      <div
-        className={`flex flex-row  ${
-          isHideSideBar ? "justify-center" : "justify-end"
-        }  items-center`}
-      >
-        <button
-          onClick={() => setIsHideSidebar((prev) => !prev)}
-          className="border"
-        >
-          <CgIcon.CgArrowsShrinkH className="text-white w-6 h-6" />
-        </button>
-      </div>
-      <div className={`space-y-4 ${isHideSideBar ? "hidden" : "block"}`}>
+      <div className={`flex flex-row  justify-end  items-center`}></div>
+      <div className={`space-y-4 }`}>
         <div className="flex flex-col gap-1">
           <Select
             options={provinces}
@@ -238,19 +356,6 @@ const SidebarMap: FC<Props> = (props) => {
             }}
             onChange={handleProvinceChange}
           />
-          {/* <label htmlFor="province" className="text-white">
-            استان
-          </label>
-          <select name="" id="province" defaultValue="1">
-            <option value="1" disabled>
-              انتخاب کنید
-            </option>
-            {provinces.map((province) => (
-              <option key={province.id} value={province.id}>
-                {province.name}
-              </option>
-            ))}
-          </select> */}
         </div>
         <div className="flex flex-col gap-1">
           <Select
@@ -263,17 +368,6 @@ const SidebarMap: FC<Props> = (props) => {
             }}
             onChange={handleCityChange}
           />
-          {/* <label htmlFor="county" className="text-white">
-            شهرستان
-          </label>
-          <select name="" id="county" defaultValue="2">
-            <option value="2" disabled>
-              انتخاب کنید
-            </option>
-            <option value="">مهاباد</option>
-            <option value="">سنندج</option>
-            <option value="">سقز</option>
-          </select> */}
         </div>
         <div className="flex flex-col gap-1">
           <Select
@@ -286,81 +380,31 @@ const SidebarMap: FC<Props> = (props) => {
             }}
             onChange={handleNeighborhoodChange}
           />
-          {/* <label htmlFor="county" className="text-white">
-            شهرستان
-          </label>
-          <select name="" id="county" defaultValue="2">
-            <option value="2" disabled>
-              انتخاب کنید
-            </option>
-            <option value="">مهاباد</option>
-            <option value="">سنندج</option>
-            <option value="">سقز</option>
-          </select> */}
         </div>
         <div className="flex flex-col gap-1">
           <Select
             options={delegationTypes}
             defaultValue=""
             label={{
-              htmlForLabler: "neighborhoods",
+              htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",
               labelColor: "white",
             }}
             onChange={handleDelegationChange}
           />
-          {/* <label htmlFor="county" className="text-white">
-            شهرستان
-          </label>
-          <select name="" id="county" defaultValue="2">
-            <option value="2" disabled>
-              انتخاب کنید
-            </option>
-            <option value="">مهاباد</option>
-            <option value="">سنندج</option>
-            <option value="">سقز</option>
-          </select> */}
         </div>
-        {/* <div className="flex flex-col gap-1">
-          <label htmlFor="region" className="text-white">
-            منطقه
-          </label>
-          <select name="" id="region" defaultValue="3">
-            <option value="3" disabled>
-              انتخاب کنید
-            </option>
-            <option value="">پشت تپ</option>
-            <option value="">زمینهای شهرداری</option>
-            <option value="">تپه قاضی</option>
-          </select>
-        </div> */}
-        {/* <div className="flex flex-col gap-1" defaultValue="">
-          <label htmlFor="request" className="text-white">
-            نوع درخواست
-          </label>
-          <select name="" id="request" defaultValue="1">
-            <option value="1" disabled>
-              انتخاب کنید
-            </option>
-            <option value="">رهن</option>
-            <option value="">اجاره</option>
-            <option value="">فروش</option>
-          </select>
-        </div> */}
-        <div className="flex flex-col gap-1" defaultValue="1">
-          <label htmlFor="property" className="text-white">
-            نوع ملک
-          </label>
-          <select name="" id="property" defaultValue="1">
-            <option value="1" disabled>
-              انتخاب کنید
-            </option>
-            <option value="">آپارتمان</option>
-            <option value="">ویلایی</option>
-            <option value="">باغ</option>
-          </select>
+        <div className="flex flex-col gap-1">
+          <Select
+            options={estateTypes}
+            defaultValue=""
+            label={{
+              htmlForLabler: "delegationTypes",
+              titleLabel: "نوع ملک",
+              labelColor: "white",
+            }}
+            onChange={handleTypeChange}
+          />
         </div>
-
         <button
           onClick={() => setShowAdvanceFilter((prev) => !prev)}
           className="border border-white w-full h-10 px-3 flex flex-row items-center justify-center text-white gap-2 transition-all duration-200 hover:shadow-lg active:pt-2"
@@ -371,7 +415,10 @@ const SidebarMap: FC<Props> = (props) => {
         {showAdvanceFilter && (
           <div className="w-full h-[500px] bg-red-600 z-20"></div>
         )}
-        <button className="bg-[#f3bc65] h-10 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221] mt-3">
+        <button
+          onClick={searchEstate}
+          className="bg-[#f3bc65] h-10 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221] mt-3"
+        >
           جستجو
         </button>
       </div>

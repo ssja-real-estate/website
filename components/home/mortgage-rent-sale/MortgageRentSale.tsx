@@ -28,7 +28,7 @@ function MortgageRentSale() {
           </div>
         ))}
       </div>
-      <NewViewHouses all={allRealEsates} />
+      {/* <NewViewHouses all={allRealEsates} /> */}
     </>
   );
 }

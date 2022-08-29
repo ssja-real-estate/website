@@ -5,6 +5,7 @@ import mapboxgl, {
   MapMouseEvent,
   NavigationControl,
 } from "mapbox-gl";
+import * as TbIcon from "react-icons/tb";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcom from "react-icons/md";
@@ -129,9 +130,19 @@ const SsjaMapTest: FC<{
   //   );
   // }
   return (
-    <div className="h-full w-full ">
-      <div className="h-full w-full" ref={mapNode}></div>
-    </div>
+    // <div className="relative h-full w-full rounded-lg ">
+    //   <div className="absolute bg-white z-30 flex top-6 right-2 text-[#2c3e50] rounded-lg shadow-2xl">
+    //     <button
+    //       onClick={props.toggle}
+    //       className="flex flex-row  gap-2 border shadow-2xl py-1 px-1 text-sm"
+    //     >
+    //       <TbIcon.TbListSearch className="w-6 h-6" />
+    //       <span>فهرست</span>
+    //     </button>
+    //   </div>
+
+    // </div>
+    <div className="h-full w-full" ref={mapNode}></div>
   );
 };
 

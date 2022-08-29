@@ -14,7 +14,7 @@ const Select: FC<{
   options: OptionSelectBox[];
   label?: LabelSelectBox;
   defaultValue?: string;
-  onChange: (pro: string) => void;
+  onChange: Function;
 }> = (props) => {
   return (
     <>
@@ -27,11 +27,11 @@ const Select: FC<{
         </label>
       )}
       <select
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-          // console.log(e.target.value)
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          console.log(e.target.value);
 
-          props.onChange(e.target.value)
-        }
+          props.onChange(e.target.value);
+        }}
         className=""
         id={props.label?.htmlForLabler}
         defaultValue="choice"

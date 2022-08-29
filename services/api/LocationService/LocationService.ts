@@ -24,7 +24,9 @@ class LocationService extends BaseService {
         });
       }
     } catch (error: any) {
-      this.handleError(error);
+      console.log(error);
+      throw error;
+      // this.handleError(error);
     }
 
     return provinces;
