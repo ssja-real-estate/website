@@ -1,5 +1,6 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import * as FiIcon from "react-icons/fi";
+import * as RiIcon from "react-icons/ri";
 
 import Province, { defaultProvince } from "../../global/types/Province";
 
@@ -277,7 +278,11 @@ const SidebarMap: FC<Props> = (props) => {
       props.closeModalHandler(false);
     }
   }
-
+  function closeModal() {
+    if (props.closeModalHandler !== undefined) {
+      props.closeModalHandler(false);
+    }
+  }
   function buildFilter() {
     let filter: SearchFilter = {
       header: {
@@ -341,9 +346,8 @@ const SidebarMap: FC<Props> = (props) => {
   }
   return (
     <div
-      className={`h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto`}
+      className={`h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
     >
-      <div className={`flex flex-row  justify-end  items-center`}></div>
       <div className={`space-y-4 }`}>
         <div className="flex flex-col gap-1">
           <Select
@@ -420,6 +424,15 @@ const SidebarMap: FC<Props> = (props) => {
           className="bg-[#f3bc65] h-10 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221] mt-3"
         >
           جستجو
+        </button>
+      </div>
+      <div className="">
+        <button
+          onClick={closeModal}
+          className="border border-white w-full h-10 px-3 flex flex-row items-center justify-center text-white gap-2 transition-all duration-200 hover:shadow-lg active:pt-2"
+        >
+          <RiIcon.RiCloseCircleFill className="w-5 h-5" />
+          <span>بستن</span>
         </button>
       </div>
     </div>

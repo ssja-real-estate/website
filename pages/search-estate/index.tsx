@@ -77,7 +77,7 @@ const SearchEstate: NextPage = () => {
                 className="flex flex-row items-center justify-center gap-1 shadow-2xl py-1 px-2 text-sm"
               >
                 <AiIcon.AiOutlineSearch className="w-6 h-6" />
-                <span className="text-lg">جستجو</span>
+                {/* <span className="text-lg">جستجو</span> */}
               </button>
             </div>
             {!toggleShowMapndList ? (
@@ -103,7 +103,7 @@ const SearchEstate: NextPage = () => {
         </div>
       </div>
       {isShowMenuInMobileDevice && (
-        <div className="flex justify-center items-center">
+        <div className="flex md:hidden justify-center items-center">
           <div
             onClick={closeOverlayModal}
             ref={ref}
