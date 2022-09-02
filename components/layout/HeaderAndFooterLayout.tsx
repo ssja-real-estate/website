@@ -15,7 +15,6 @@ interface Props {
 const HeaderAndFooterLayout = ({ children }: Props) => {
   const state = useRecoilValue(globalState);
   const [loaded, setLoaded] = useState(false);
-  console.log(loaded);
 
   const router = useRouter();
   useEffect(() => {

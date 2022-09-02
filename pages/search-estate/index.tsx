@@ -90,9 +90,9 @@ const SearchEstate: NextPage = () => {
                   </div>
                 ))} */}
 
-                {fetchEsteate?.length === 0 || fetchEsteate === undefined ? (
+                {fetchEsteate === undefined ? (
                   <div className="h-full flex items-center justify-center text-gray-500">
-                    نتیجه ای یافت نشد
+                    جستجویی انجام نشده است
                   </div>
                 ) : (
                   <NewViewHouses allestates={fetchEsteate} />

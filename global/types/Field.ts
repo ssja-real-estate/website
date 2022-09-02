@@ -8,6 +8,7 @@ enum FieldType {
   Range = 6,
   SelectiveConditional = 7,
   MultiSelect = 8,
+  Price = 9,
 }
 
 enum FieldTypeTitle {
@@ -20,6 +21,7 @@ enum FieldTypeTitle {
   Range = "بازه",
   SelectiveCondition = "شرطی چندگزینه‌ای",
   MultiSelect = "کلید چندگزینه‌ای",
+  Price = "قیمت",
 }
 
 enum FieldInputNecessity {

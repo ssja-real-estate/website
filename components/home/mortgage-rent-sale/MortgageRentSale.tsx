@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import allRealState from "../../../data/all-realEastate";
+// import allRealState from "../../../data/all-realEastate";
 import RealEastate from "../../../data/models/real-estate";
 import Strings from "../../../data/strings";
 import NewViewHouses from "../view-houses/NewViewHouses";
@@ -10,7 +10,7 @@ function MortgageRentSale() {
   const indexHandler = (index: number) => {
     setActiveIndex(index);
   };
-  const allRealEsates: RealEastate[] = allRealState;
+  // const allRealEsates: RealEastate[] = allRealState;
   return (
     <>
       <div className="container flex flex-row justify-center items-center gap-10 sm:gap-20 pt-20 pb-10 text-[#2c3e50]">

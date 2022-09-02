@@ -252,7 +252,7 @@ const SidebarMap: FC<Props> = (props) => {
   }
   async function searchEstate() {
     console.log(dataForm);
-
+    props.onSetEstate([]);
     const errors = validateForm(dataForm);
     if (errors.length > 0) {
       for (let i = 0; i < errors.length; i++) {
@@ -426,7 +426,7 @@ const SidebarMap: FC<Props> = (props) => {
           جستجو
         </button>
       </div>
-      <div className="">
+      <div className="block md:hidden">
         <button
           onClick={closeModal}
           className="border border-white w-full h-10 px-3 flex flex-row items-center justify-center text-white gap-2 transition-all duration-200 hover:shadow-lg active:pt-2"

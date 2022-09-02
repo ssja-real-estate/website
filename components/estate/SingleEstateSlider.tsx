@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useState } from "react";
+import { FC, MutableRefObject, useEffect, useState } from "react";
 import {
   useKeenSlider,
   KeenSliderPlugin,
@@ -6,6 +6,7 @@ import {
 } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import Image from "next/image";
+import * as IoIcon from "react-icons/io5";
 
 function ThumbnailPlugin(
   mainRef: MutableRefObject<KeenSliderInstance | null>
@@ -65,9 +66,11 @@ function Arrow(props: {
     </svg>
   );
 }
-const SingleEstateSlider: FC = () => {
+const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [images, setImages] = useState<string[]>([""]);
+
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
     {
       slideChanged(slider) {
@@ -120,11 +123,31 @@ const SingleEstateSlider: FC = () => {
     },
     [ThumbnailPlugin(instanceRef)]
   );
+
+  if (props.images === undefined || props.images.length === 0) {
+    return (
+      <div className="w-[500px] h-[300px] flex flex-col items-center justify-center border-[10px] border-white rounded-2xl shadow-xl">
+        <IoIcon.IoImageOutline className="w-[500px] h-[300xp] text-8xl text-gray-300" />
+        <div className="text-gray-300">هیج عکسی درج نشده است</div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="navigation-wrapper  border-[10px] border-white rounded-2xl shadow-xl">
         <div ref={sliderRef} className="keen-slider">
-          <div className="keen-slider__slide number-slide1">
+          {props.images.map((img, index) => (
+            <div key={index} className="keen-slider__slide number-slide1">
+              <Image
+                src={`https://ssja.ir/api/images/${props.id}/${img}`}
+                alt="photo"
+                width={1280}
+                height={720}
+                layout="responsive"
+              />
+            </div>
+          ))}
+          {/* <div className="keen-slider__slide number-slide1">
             <Image
               src="/image/estate/t1.jpg"
               alt="photo"
@@ -132,47 +155,25 @@ const SingleEstateSlider: FC = () => {
               height={720}
               layout="responsive"
             />
-          </div>
-          <div className="keen-slider__slide number-slide2">
-            <Image
-              src="/image/estate/t2.jpg"
-              alt="photo"
-              width={1280}
-              height={720}
-              layout="responsive"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide3">
-            <Image
-              src="/image/estate/t3.jpg"
-              alt="photo"
-              width={1280}
-              height={720}
-              layout="responsive"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide4">
-            <Image
-              src="/image/estate/t4.jpg"
-              alt="photo"
-              width={1280}
-              height={720}
-              layout="responsive"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide5">
-            <Image
-              src="/image/estate/t5.jpg"
-              alt="photo"
-              width={1280}
-              height={720}
-              layout="responsive"
-            />
-          </div>
+          </div> */}
         </div>
 
         <div ref={thumbnailRef} className="keen-slider thumbnail mt-1 h-16">
-          <div className="keen-slider__slide number-slide1 cursor-pointer ">
+          {props.images.map((img, index) => (
+            <div
+              key={index}
+              className="keen-slider__slide number-slide1 cursor-pointer "
+            >
+              <Image
+                src={`https://ssja.ir/api/images/${props.id}/${img}`}
+                alt="photo"
+                objectFit="cover"
+                objectPosition="center"
+                layout="fill"
+              />
+            </div>
+          ))}
+          {/* <div className="keen-slider__slide number-slide1 cursor-pointer ">
             <Image
               src="/image/estate/t1.jpg"
               alt="photo"
@@ -216,7 +217,7 @@ const SingleEstateSlider: FC = () => {
               objectPosition="center"
               layout="fill"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </>
