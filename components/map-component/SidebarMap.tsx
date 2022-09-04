@@ -1,6 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import * as FiIcon from "react-icons/fi";
 import * as RiIcon from "react-icons/ri";
+import * as BSIcon from "react-icons/bs";
 
 import Province, { defaultProvince } from "../../global/types/Province";
 
@@ -29,6 +30,10 @@ import { defaultForm, EstateForm } from "../../global/types/EstateForm";
 import { useRouter } from "next/router";
 import { Field, FieldType } from "../../global/types/Field";
 import SearchFilter from "../../global/types/Filter";
+import Spiner from "../spinner/Spiner";
+import ReactDOM from "react-dom";
+import Modal from "../modal/Modal";
+import ModalOption from "../../global/types/ModalOption";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
@@ -39,9 +44,10 @@ interface Props {
 
 const SidebarMap: FC<Props> = (props) => {
   const [showAdvanceFilter, setShowAdvanceFilter] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [loadingEstates, setLoadingEstates] = useState(false);
   const [noFilterExists, setNoFilterExists] = useState(false);
+  const [isAdvancedFilter, toggleAdvancedFilter] = useState(true);
   const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
@@ -73,7 +79,8 @@ const SidebarMap: FC<Props> = (props) => {
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
   const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
-  const router = useRouter();
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [modalOptiong, setModalOption] = useState<ModalOption>();
   useEffect(() => {
     searchService.current.setToken(state.token);
     formService.current.setToken(state.token);
@@ -148,6 +155,12 @@ const SidebarMap: FC<Props> = (props) => {
       });
   }
 
+  function clearStates() {
+    setSelectedDelegationType(defaultDelegationType);
+    setSelectedEstateType(defaultEstateType);
+    setDataForm(defaultForm);
+    setEstate(defaultEstate);
+  }
   async function loadForm() {
     if (!loading) {
       setLoading((prev) => true);
@@ -249,8 +262,14 @@ const SidebarMap: FC<Props> = (props) => {
       id: data,
       name: data,
     });
+    console.log(selectedEstateType);
+
+    setNoFilterExists((prev) => false);
   }
   async function searchEstate() {
+    console.log(selectedDelegationType.id, selectedEstateType.id);
+
+    console.log("dataForm:");
     console.log(dataForm);
     props.onSetEstate([]);
     const errors = validateForm(dataForm);
@@ -258,7 +277,7 @@ const SidebarMap: FC<Props> = (props) => {
       for (let i = 0; i < errors.length; i++) {
         const error = errors[i];
         console.log(error);
-
+        alert(error.message);
         // toast.error(error.message, {
         //   duration: 3000,
         // });
@@ -296,6 +315,329 @@ const SidebarMap: FC<Props> = (props) => {
     };
 
     return filter;
+  }
+
+  function mapFields(fields: Field[], form: EstateForm) {
+    return fields.map((field, fieldIndex) => {
+      return (
+        <div key={fieldIndex} className="input-item py-3">
+          {field.type !== FieldType.Image ? (
+            <label className="mb-2">{field.title}</label>
+          ) : null}
+          {field.type === FieldType.Text ? (
+            <input
+              type="text"
+              value={field.value ? String(field.value) : ""}
+              onChange={(e: { target: { value: any } }) => {
+                const stringValue = String(e.target.value);
+                onFieldChange(stringValue, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.Range ? (
+            <div className="flex flex-row gap-1 items-center ">
+              <div className="">
+                <label>{Strings.minValue}</label>
+                <input
+                  type="number"
+                  value={field.min ?? ""}
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, fieldIndex, true);
+                  }}
+                />
+              </div>
+              <div>
+                <label>{Strings.maxValue}</label>
+                <input
+                  type="number"
+                  value={field.max ?? ""}
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onFieldChange(value, fieldIndex);
+                  }}
+                />
+              </div>
+            </div>
+          ) : field.type === FieldType.Select ? (
+            <select
+              value={field.value ? String(field.value) : "default"}
+              onChange={(e: { currentTarget: { value: any } }) => {
+                const numberValue = String(e.currentTarget.value);
+                onFieldChange(numberValue, fieldIndex);
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {field.options?.map((option, index) => {
+                return <option key={index}>{option}</option>;
+              })}
+            </select>
+          ) : field.type === FieldType.Bool ? (
+            <input
+              className="d-inline mx-3"
+              type="checkbox"
+              checked={field.value ? true : false}
+              onChange={(e: { target: { checked: any } }) => {
+                const booleanValue = e.target.checked;
+                onFieldChange(booleanValue, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.BooleanConditional ? (
+            <>
+              <input
+                className="d-inline mx-3"
+                type="checkbox"
+                checked={field.value ? true : false}
+                onChange={(e: { target: { checked: any } }) => {
+                  const booleanValue = e.target.checked;
+                  onFieldChange(booleanValue, fieldIndex);
+                }}
+              />
+              {field.value &&
+                !!field.fields &&
+                mapConditionalFields(
+                  field.fields!.filter((f) => f.filterable),
+                  form,
+                  fieldIndex
+                )}
+            </>
+          ) : field.type === FieldType.SelectiveConditional ? (
+            <>
+              <select
+                value={field.value ? String(field.value) : "default"}
+                onChange={(e: { currentTarget: { value: any } }) => {
+                  const selectValue = String(e.currentTarget.value);
+                  onFieldChange(selectValue, fieldIndex);
+                }}
+              >
+                <option value="default" disabled>
+                  {Strings.choose}
+                </option>
+                {field.options?.map((option, index) => {
+                  return <option key={index}>{option}</option>;
+                })}
+              </select>
+              {field.value &&
+                mapConditionalFields(
+                  field.fieldMaps?.find((f) => f.key === field.value)?.fields ??
+                    [],
+                  form,
+                  fieldIndex,
+                  field.value as string
+                )}
+            </>
+          ) : field.type === FieldType.MultiSelect ? (
+            <>
+              {field.keys!.map((key, index) => {
+                const keyMap = field.value as { [key: string]: boolean };
+                return (
+                  <div className="d-block" key={index}>
+                    <label>{key}</label>
+                    <input
+                      className="d-inline mx-3"
+                      type="checkbox"
+                      checked={keyMap[key]}
+                      onChange={(e: { target: { checked: any } }) => {
+                        const booleanValue = e.target.checked;
+                        onFieldChange(booleanValue, fieldIndex, false, key);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </>
+          ) : null}
+        </div>
+      );
+    });
+  }
+  function onConditionalFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm,
+    selectiveKey?: string,
+    min: boolean = false
+  ) {
+    const field = form.fields[fieldIndex];
+    if (!field) return;
+    if (field.type === FieldType.SelectiveConditional) {
+      onSelectiveConditionalFieldChange(
+        targetValue,
+        fieldIndex,
+        innerFieldIndex,
+        form,
+        selectiveKey!,
+        min
+      );
+      return;
+    }
+    let currentField = {
+      ...form.fields[fieldIndex].fields![innerFieldIndex],
+    };
+    currentField = handleRangeFieldValue(currentField, targetValue, min);
+    const fields = form.fields;
+    const innerFields = fields[fieldIndex].fields!;
+    innerFields[innerFieldIndex] = currentField;
+    fields[fieldIndex] = { ...fields[fieldIndex], fields: innerFields };
+  }
+  function onSelectiveConditionalFieldChange(
+    targetValue: any,
+    fieldIndex: number,
+    innerFieldIndex: number,
+    form: EstateForm,
+    selectiveKey: string,
+    min: boolean = false
+  ) {
+    const fieldMaps = form.fields[fieldIndex].fieldMaps ?? [];
+    const selectiveFieldMapIndex = fieldMaps.findIndex(
+      (f) => f.key === selectiveKey
+    );
+    const selectiveFields =
+      fieldMaps.find((f) => f.key === selectiveKey)?.fields ?? [];
+    if (selectiveFields.length < innerFieldIndex + 1) return;
+
+    const currentField = {
+      ...selectiveFields[innerFieldIndex],
+      value: targetValue,
+    };
+
+    selectiveFields[innerFieldIndex] = currentField;
+    if (selectiveFieldMapIndex !== -1) {
+      fieldMaps[selectiveFieldMapIndex].fields = selectiveFields;
+    }
+    const fields = form.fields;
+    fields[fieldIndex] = { ...fields[fieldIndex], fieldMaps };
+
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        fields,
+      },
+    });
+  }
+  function mapConditionalFields(
+    fields: Field[],
+    form: EstateForm,
+    fieldIndex: number,
+    selectiveKey?: string
+  ) {
+    return fields.map((innerField, innerFieldIndex) => {
+      return (
+        <div key={innerFieldIndex} className="input-item py-3">
+          <label className="mb-2">{innerField.title}:</label>
+          {innerField.type === FieldType.Text ? (
+            <input
+              type="text"
+              value={innerField.value ? String(innerField.value) : ""}
+              onChange={(e: { target: { value: any } }) => {
+                const stringValue = String(e.target.value);
+                onConditionalFieldChange(
+                  stringValue,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form,
+                  selectiveKey
+                );
+              }}
+            />
+          ) : innerField.type === FieldType.Number ? (
+            <div className="d-flex flex-row justify-content-evenly align-items-center ">
+              <div>
+                <label>{Strings.minValue}:</label>
+                <input
+                  type="number"
+                  value={
+                    (innerField.value as [number, number])
+                      ? +(innerField.value as [number, number])[0]
+                      : ""
+                  }
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onConditionalFieldChange(
+                      value,
+                      fieldIndex,
+                      innerFieldIndex,
+                      form,
+                      selectiveKey,
+                      true
+                    );
+                  }}
+                />
+              </div>
+              <div>
+                <label>{Strings.maxValue}</label>
+                <input
+                  type="number"
+                  value={
+                    (innerField.value as [number, number])
+                      ? +(innerField.value as [number, number])[1]
+                      : ""
+                  }
+                  onChange={(e: {
+                    currentTarget: { value: string | number };
+                  }) => {
+                    const value = +e.currentTarget.value;
+                    onConditionalFieldChange(
+                      value,
+                      fieldIndex,
+                      innerFieldIndex,
+                      form,
+                      selectiveKey
+                    );
+                  }}
+                />
+              </div>
+            </div>
+          ) : innerField.type === FieldType.Select ? (
+            <select
+              value={innerField.value ? String(innerField.value) : "default"}
+              onChange={(e: { currentTarget: { value: any } }) => {
+                const numberValue = String(e.currentTarget.value);
+                onConditionalFieldChange(
+                  numberValue,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form,
+                  selectiveKey
+                );
+              }}
+            >
+              <option value="default" disabled>
+                {Strings.choose}
+              </option>
+              {innerField.options?.map((option, index) => {
+                return <option key={index}>{option}</option>;
+              })}
+            </select>
+          ) : innerField.type === FieldType.Bool ? (
+            <input
+              className="d-inline mx-3"
+              type="checkbox"
+              checked={innerField.value ? true : false}
+              onChange={(e: { target: { checked: any } }) => {
+                const booleanValue = e.target.checked;
+                onConditionalFieldChange(
+                  booleanValue,
+                  fieldIndex,
+                  innerFieldIndex,
+                  form,
+                  selectiveKey
+                );
+              }}
+            />
+          ) : null}
+        </div>
+      );
+    });
   }
   function handleRangeFieldValue(
     field: Field,
@@ -344,6 +686,38 @@ const SidebarMap: FC<Props> = (props) => {
       fields,
     });
   }
+
+  async function handleAdvancedFilter() {
+    if (isDefault) {
+      // toast.error(Strings.chooseDelegationAndEstateTypes);
+
+      setIsShowModal(true);
+
+      setModalOption({
+        message: Strings.chooseDelegationAndEstateTypes,
+        closeModal: () => setIsShowModal(false),
+        icon: (
+          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
+            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
+            <span className="text-sm">توجه</span>
+          </div>
+        ),
+      });
+      return;
+    }
+
+    if (!isAdvancedFilter) {
+      clearStates();
+      toggleAdvancedFilter(!isAdvancedFilter);
+      setNoFilterExists(false);
+      return;
+    }
+
+    loadForm();
+    if (!noFilterExists) return;
+    toggleAdvancedFilter(!isAdvancedFilter);
+  }
+
   return (
     <div
       className={`h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
@@ -389,6 +763,7 @@ const SidebarMap: FC<Props> = (props) => {
           <Select
             options={delegationTypes}
             defaultValue=""
+            value={selectedDelegationType.name}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",
@@ -401,6 +776,7 @@ const SidebarMap: FC<Props> = (props) => {
           <Select
             options={estateTypes}
             defaultValue=""
+            value={selectedEstateType.name}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع ملک",
@@ -410,14 +786,37 @@ const SidebarMap: FC<Props> = (props) => {
           />
         </div>
         <button
-          onClick={() => setShowAdvanceFilter((prev) => !prev)}
+          onClick={
+            // () => setShowAdvanceFilter((prev) => !prev)
+            handleAdvancedFilter
+          }
           className="border border-white w-full h-10 px-3 flex flex-row items-center justify-center text-white gap-2 transition-all duration-200 hover:shadow-lg active:pt-2"
         >
           <FiIcon.FiFilter className="w-5 h-5" />
           <span>فیلتر پیشرفته</span>
         </button>
-        {showAdvanceFilter && (
-          <div className="w-full h-[500px] bg-red-600 z-20"></div>
+        {/* {showAdvanceFilter && (
+          <div className="w-full h-[500px] z-20 overflow-y-auto overflow-x-hidden text-white px-4">
+            {mapFields(dataForm.fields, dataForm)}
+          </div>
+        )} */}
+        {loading ? (
+          <div>
+            <Spiner />
+          </div>
+        ) : (
+          <div className="w-52 ">
+            {dataForm.fields.length > 0 && (
+              <div className="section card glass shadow-sm py-2  my-2">
+                {mapFields(dataForm.fields, dataForm)}
+              </div>
+            )}
+            {noFilterExists ? (
+              <div className="flex items-center justify-center">
+                <h4 className="">{Strings.noFilterForThisForm}</h4>
+              </div>
+            ) : null}
+          </div>
         )}
         <button
           onClick={searchEstate}
@@ -435,6 +834,7 @@ const SidebarMap: FC<Props> = (props) => {
           <span>بستن</span>
         </button>
       </div>
+      {isShowModal && <Modal options={modalOptiong}></Modal>}
     </div>
   );
 };

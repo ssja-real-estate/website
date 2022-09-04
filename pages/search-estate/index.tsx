@@ -91,9 +91,7 @@ const SearchEstate: NextPage = () => {
                 ))} */}
 
                 {fetchEsteate === undefined ? (
-                  <div className="h-full flex items-center justify-center text-gray-500">
-                    جستجویی انجام نشده است
-                  </div>
+                  <div className="alertBox">جستجویی انجام نشده است</div>
                 ) : (
                   <NewViewHouses allestates={fetchEsteate} />
                 )}

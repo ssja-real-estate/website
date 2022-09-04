@@ -13,6 +13,9 @@ module.exports = {
       vazir: "Vazirmatn",
     },
     extend: {
+      colors: {
+        "dark-blue": "#2c3e50",
+      },
       boxShadow: {
         "1input": "0 5px 10px 1px rgba(0, 187, 170, 0.2)",
         "1inputError": "0 5px 10px 1px rgba(185, 28, 28,0.2)",

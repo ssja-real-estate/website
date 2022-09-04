@@ -171,7 +171,7 @@ class Strings {
   static editInnerInputs = "ویرایش فیلد های داخلی";
   static editInnerInputTitle = "تغییر عنوان فیلد داخلی";
   static chooseDelegationAndEstateTypes =
-    "«نوع واگذاری» و «نوع ملک» را انتخاب کنید";
+    "«نوع درخواست» و «نوع ملک» را انتخاب کنید";
   static resendCode = "ارسال مجدد";
   static profileTooltip = "پروفایل";
   static usersTooltip = "کاربران";

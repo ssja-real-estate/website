@@ -15,6 +15,7 @@ const Select: FC<{
   label?: LabelSelectBox;
   defaultValue?: string;
   onChange: Function;
+  value?: string;
 }> = (props) => {
   return (
     <>
@@ -34,11 +35,10 @@ const Select: FC<{
         }}
         className=""
         id={props.label?.htmlForLabler}
-        defaultValue="choice"
+
+        // value={props.value}
       >
-        <option disabled className="accent-gray-900 py-2" value="choice">
-          انتخاب کنید
-        </option>
+        <option className="accent-gray-900 py-2">انتخاب کنید</option>
         {props.options.map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}

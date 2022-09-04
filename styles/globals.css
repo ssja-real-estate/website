@@ -47,8 +47,11 @@
     @apply text-sm px-4 h-9 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input appearance-none bg-arrow-down bg-no-repeat bg-[left_top_.70rem] bg-[length:15px_15px] bg-origin-content;
   }
   .activeThumbnail {
-    @apply border-dashed border-2 border-[#0ba];
+    @apply border-dashed border-4 border-[#0ba];
     /* @apply scale-150; */
+  }
+  .alertBox {
+    @apply container w-[40%] flex flex-col items-center mt-10 text-sm text-gray-400 border-4 p-6 border-white rounded-lg;
   }
 }
 .swiper .swiper-pagination-bullet-active {

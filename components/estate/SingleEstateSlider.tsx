@@ -68,8 +68,7 @@ function Arrow(props: {
 }
 const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [loaded, setLoaded] = useState(false);
-  const [images, setImages] = useState<string[]>([""]);
+  // const [loaded, setLoaded] = useState(false);
 
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
     {
@@ -77,7 +76,7 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
         setCurrentSlide(slider.track.details.rel);
       },
       created() {
-        setLoaded(true);
+        // setLoaded(true);
       },
     },
     [
@@ -126,8 +125,8 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
 
   if (props.images === undefined || props.images.length === 0) {
     return (
-      <div className="w-[500px] h-[300px] flex flex-col items-center justify-center border-[10px] border-white rounded-2xl shadow-xl">
-        <IoIcon.IoImageOutline className="w-[500px] h-[300xp] text-8xl text-gray-300" />
+      <div className="h-[300px] flex flex-col items-center justify-center border-[10px] border-white rounded-2xl shadow-xl">
+        <IoIcon.IoImageOutline className="text-8xl text-gray-300" />
         <div className="text-gray-300">هیج عکسی درج نشده است</div>
       </div>
     );
@@ -160,10 +159,7 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
 
         <div ref={thumbnailRef} className="keen-slider thumbnail mt-1 h-16">
           {props.images.map((img, index) => (
-            <div
-              key={index}
-              className="keen-slider__slide number-slide1 cursor-pointer "
-            >
+            <div key={index} className="keen-slider__slide cursor-pointer ">
               <Image
                 src={`https://ssja.ir/api/images/${props.id}/${img}`}
                 alt="photo"

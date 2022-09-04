@@ -221,7 +221,7 @@ const Property: NextPage<{ id: string }> = (props) => {
         </h3>
       </div>
       <div className="h-[1px] my-3 bg-gray-300 w-full"></div>
-      <div className="py-5">
+      {/* <div className="py-5">
         <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center justify-between">
           <div className="bg-white border py-4 border-[#d6d6d6] p-2 text-[#0ba] text-[30px] flex items-center justify-center gap-2">
             <span>{(2354654125).toLocaleString("fa-ir")}</span>
@@ -238,8 +238,8 @@ const Property: NextPage<{ id: string }> = (props) => {
             </button>
           </div>
         </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 ">
+      </div> */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mt-8">
         <div className="order-2">
           <h2 className="font-bold text-[#2c3e50] text-lg">مشخصات</h2>
           <div className="mt-3 items-center">
