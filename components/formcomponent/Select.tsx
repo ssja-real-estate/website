@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 interface LabelSelectBox {
   htmlForLabler?: string;
@@ -17,6 +17,10 @@ const Select: FC<{
   onChange: Function;
   value?: string;
 }> = (props) => {
+  const [isState, setIsstate] = useState(true);
+  useEffect(() => {
+    setIsstate((prev) => !prev);
+  }, [props.options]);
   return (
     <>
       {props.label && (
@@ -35,8 +39,7 @@ const Select: FC<{
         }}
         className=""
         id={props.label?.htmlForLabler}
-
-        // value={props.value}
+        value={props.value}
       >
         <option className="accent-gray-900 py-2">انتخاب کنید</option>
         {props.options.map((option) => (

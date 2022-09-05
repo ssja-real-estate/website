@@ -40,6 +40,8 @@ const validateForm = (form: EstateForm): Error[] => {
 };
 
 const getErrorMessage = (fieldTitle: string) => {
+  console.log(fieldTitle);
+
   return `فیلد «${fieldTitle}» باید مقدار داشته باشد`;
 };
 

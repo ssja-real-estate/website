@@ -34,6 +34,7 @@ import Spiner from "../spinner/Spiner";
 import ReactDOM from "react-dom";
 import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
+import AdvanceFilterButton from "../sidebar/AdvanceFilterButton";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
@@ -274,15 +275,31 @@ const SidebarMap: FC<Props> = (props) => {
     props.onSetEstate([]);
     const errors = validateForm(dataForm);
     if (errors.length > 0) {
-      for (let i = 0; i < errors.length; i++) {
-        const error = errors[i];
-        console.log(error);
-        alert(error.message);
-        // toast.error(error.message, {
-        //   duration: 3000,
-        // });
-      }
+      let messageError = "";
+      // alert(String(errors[0].message));
+      setIsShowModal(true);
+      setModalOption({
+        message: errors[0].message,
+        closeModal: () => setIsShowModal(false),
+        icon: (
+          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
+            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
+            <span className="text-sm">توجه</span>
+          </div>
+        ),
+      });
       return;
+      // for (let i = 0; i < errors.length; i++) {
+      //   const error = errors[i];
+      //   // console.log(error);
+      //   alert(error.message);
+      //   // messageError += error.message + ",";
+      //   // toast.error(error.message, {
+      //   //   duration: 3000,
+      //   // });
+      // }
+      // // alert(messageError);
+      // return;
     }
     setLoadingEstates((prev) => true);
 
@@ -295,6 +312,19 @@ const SidebarMap: FC<Props> = (props) => {
     props.onSetEstate(fetchedEstates);
     if (props.closeModalHandler !== undefined) {
       props.closeModalHandler(false);
+    }
+    if (fetchedEstates.length === 0) {
+      setIsShowModal(true);
+      setModalOption({
+        message: "هیج مکانی با مشخصات وارد شده یافت نشد",
+        closeModal: () => setIsShowModal(false),
+        icon: (
+          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
+            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
+            <span className="text-sm">توجه</span>
+          </div>
+        ),
+      });
     }
   }
   function closeModal() {
@@ -710,6 +740,7 @@ const SidebarMap: FC<Props> = (props) => {
       clearStates();
       toggleAdvancedFilter(!isAdvancedFilter);
       setNoFilterExists(false);
+
       return;
     }
 
@@ -785,7 +816,8 @@ const SidebarMap: FC<Props> = (props) => {
             onChange={handleTypeChange}
           />
         </div>
-        <button
+
+        {/* <button
           onClick={
             // () => setShowAdvanceFilter((prev) => !prev)
             handleAdvancedFilter
@@ -794,7 +826,16 @@ const SidebarMap: FC<Props> = (props) => {
         >
           <FiIcon.FiFilter className="w-5 h-5" />
           <span>فیلتر پیشرفته</span>
-        </button>
+        </button> */}
+        <AdvanceFilterButton
+          isDefault={isDefault}
+          advancedSearchHandler={handleAdvancedFilter}
+          clearAdvancedFilter={clearStates}
+          // loadLoaction={loadLocations}
+          // loadOption={loadOptions}
+          setNoFilterExists={() => setNoFilterExists(false)}
+        />
+
         {/* {showAdvanceFilter && (
           <div className="w-full h-[500px] z-20 overflow-y-auto overflow-x-hidden text-white px-4">
             {mapFields(dataForm.fields, dataForm)}
