@@ -54,6 +54,12 @@
     @apply container w-[40%] flex flex-col items-center mt-10 text-sm text-gray-400 border-4 p-6 border-white rounded-lg;
   }
 }
+.dynamicLabel {
+  color: white;
+}
+.dynamicLabel > select {
+  margin-right: 2px;
+}
 .swiper .swiper-pagination-bullet-active {
   background: #0ba !important;
 }

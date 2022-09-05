@@ -9,6 +9,8 @@ import { globalState } from "../../../global/states/globalStates";
 import { Estate } from "../../../global/types/Estate";
 import EstateService from "../../../services/api/EstateService/EstateService";
 import NewViewHouses from "../view-houses/NewViewHouses";
+import Image from "next/image";
+import ShimerAnimationEstateCard from "../../ShimerAnimitionEstateCard/ShimerAnimationEstateCard";
 
 function MortgageRentSale() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -35,7 +37,13 @@ function MortgageRentSale() {
     }
   }
   if (allEstate.length === 0) {
-    return <div className="container">هیج ملکی وجود ندارد</div>;
+    return (
+      <div className="container grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mt-20 mb-20">
+        {[1, 2, 3].map((i) => (
+          <ShimerAnimationEstateCard key={i} />
+        ))}
+      </div>
+    );
   }
   return (
     <div className="mt-20">

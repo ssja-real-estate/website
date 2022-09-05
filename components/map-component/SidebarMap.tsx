@@ -316,7 +316,7 @@ const SidebarMap: FC<Props> = (props) => {
     if (fetchedEstates.length === 0) {
       setIsShowModal(true);
       setModalOption({
-        message: "هیج مکانی با مشخصات وارد شده یافت نشد",
+        message: "مکانی با مشخصات وارد شده یافت نشد",
         closeModal: () => setIsShowModal(false),
         icon: (
           <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
@@ -348,11 +348,13 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function mapFields(fields: Field[], form: EstateForm) {
+    console.log(fields);
+
     return fields.map((field, fieldIndex) => {
       return (
         <div key={fieldIndex} className="input-item py-3">
           {field.type !== FieldType.Image ? (
-            <label className="mb-2">{field.title}</label>
+            <label className="dynamicLabel">{field.title + ":"}</label>
           ) : null}
           {field.type === FieldType.Text ? (
             <input
@@ -364,9 +366,9 @@ const SidebarMap: FC<Props> = (props) => {
               }}
             />
           ) : field.type === FieldType.Range ? (
-            <div className="flex flex-row gap-1 items-center ">
+            <div className="flex flex-col gap-1 py-2 px-2 border border-gray-400">
               <div className="">
-                <label>{Strings.minValue}</label>
+                <label className="text-gray-300">{Strings.minValue}</label>
                 <input
                   type="number"
                   value={field.min ?? ""}
@@ -379,7 +381,7 @@ const SidebarMap: FC<Props> = (props) => {
                 />
               </div>
               <div>
-                <label>{Strings.maxValue}</label>
+                <label className="text-gray-300">{Strings.maxValue}</label>
                 <input
                   type="number"
                   value={field.max ?? ""}
@@ -394,6 +396,7 @@ const SidebarMap: FC<Props> = (props) => {
             </div>
           ) : field.type === FieldType.Select ? (
             <select
+              className="w-full"
               value={field.value ? String(field.value) : "default"}
               onChange={(e: { currentTarget: { value: any } }) => {
                 const numberValue = String(e.currentTarget.value);
@@ -409,7 +412,7 @@ const SidebarMap: FC<Props> = (props) => {
             </select>
           ) : field.type === FieldType.Bool ? (
             <input
-              className="d-inline mx-3"
+              className=""
               type="checkbox"
               checked={field.value ? true : false}
               onChange={(e: { target: { checked: any } }) => {
@@ -420,7 +423,7 @@ const SidebarMap: FC<Props> = (props) => {
           ) : field.type === FieldType.BooleanConditional ? (
             <>
               <input
-                className="d-inline mx-3"
+                className=""
                 type="checkbox"
                 checked={field.value ? true : false}
                 onChange={(e: { target: { checked: any } }) => {
@@ -462,14 +465,17 @@ const SidebarMap: FC<Props> = (props) => {
                 )}
             </>
           ) : field.type === FieldType.MultiSelect ? (
-            <>
+            <div className="flex flex-row flex-wrap gap-2 text-sm pr-2">
               {field.keys!.map((key, index) => {
                 const keyMap = field.value as { [key: string]: boolean };
                 return (
-                  <div className="d-block" key={index}>
-                    <label>{key}</label>
+                  <div
+                    className="border rounded-full flex items-center justify-center p-2"
+                    key={index}
+                  >
+                    <label className="text-gray-300">{key}</label>
                     <input
-                      className="d-inline mx-3"
+                      className="mx-1"
                       type="checkbox"
                       checked={keyMap[key]}
                       onChange={(e: { target: { checked: any } }) => {
@@ -480,7 +486,7 @@ const SidebarMap: FC<Props> = (props) => {
                   </div>
                 );
               })}
-            </>
+            </div>
           ) : null}
         </div>
       );
@@ -561,7 +567,7 @@ const SidebarMap: FC<Props> = (props) => {
     return fields.map((innerField, innerFieldIndex) => {
       return (
         <div key={innerFieldIndex} className="input-item py-3">
-          <label className="mb-2">{innerField.title}:</label>
+          <label className="mb-2 dynamicLabel">{innerField.title}:</label>
           {innerField.type === FieldType.Text ? (
             <input
               type="text"
