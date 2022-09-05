@@ -442,6 +442,7 @@ const SidebarMap: FC<Props> = (props) => {
           ) : field.type === FieldType.SelectiveConditional ? (
             <>
               <select
+                className="w-full"
                 value={field.value ? String(field.value) : "default"}
                 onChange={(e: { currentTarget: { value: any } }) => {
                   const selectValue = String(e.currentTarget.value);
