@@ -23,7 +23,6 @@ const Home: NextPage = () => {
 
       {/* <Header />
       <main className="bg-red-400"></main> */}
-      <div id="portal"></div>
     </div>
   );
 };
