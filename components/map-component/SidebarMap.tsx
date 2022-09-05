@@ -81,7 +81,7 @@ const SidebarMap: FC<Props> = (props) => {
   const [mapInfo, setMapInfo] = useState<MapInfo>();
   const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
   const [isShowModal, setIsShowModal] = useState(false);
-  const [modalOptiong, setModalOption] = useState<ModalOption>();
+  const [modalOption, setModalOption] = useState<ModalOption>();
   useEffect(() => {
     searchService.current.setToken(state.token);
     formService.current.setToken(state.token);
@@ -267,6 +267,7 @@ const SidebarMap: FC<Props> = (props) => {
 
     setNoFilterExists((prev) => false);
   }
+
   async function searchEstate() {
     console.log(selectedDelegationType.id, selectedEstateType.id);
 
@@ -305,15 +306,9 @@ const SidebarMap: FC<Props> = (props) => {
 
     const filter = buildFilter();
     const fetchedEstates = await searchService.current.searchEstates(filter);
-    console.log(fetchedEstates);
-
-    setSearchedEstates(fetchedEstates);
-    setLoadingEstates((prev) => false);
-    props.onSetEstate(fetchedEstates);
-    if (props.closeModalHandler !== undefined) {
-      props.closeModalHandler(false);
-    }
+    console.log(fetchedEstates.length);
     if (fetchedEstates.length === 0) {
+      // debugger;
       setIsShowModal(true);
       setModalOption({
         message: "مکانی با مشخصات وارد شده یافت نشد",
@@ -325,7 +320,15 @@ const SidebarMap: FC<Props> = (props) => {
           </div>
         ),
       });
+      return;
     }
+
+    setSearchedEstates(fetchedEstates);
+    setLoadingEstates((prev) => false);
+    props.onSetEstate(fetchedEstates);
+    // debugger;
+
+    closeModal();
   }
   function closeModal() {
     if (props.closeModalHandler !== undefined) {
@@ -348,7 +351,7 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function mapFields(fields: Field[], form: EstateForm) {
-    console.log(fields);
+    // console.log(fields);
 
     return fields.map((field, fieldIndex) => {
       return (
@@ -370,6 +373,7 @@ const SidebarMap: FC<Props> = (props) => {
               <div className="">
                 <label className="text-gray-300">{Strings.minValue}</label>
                 <input
+                  className="w-full"
                   type="number"
                   value={field.min ?? ""}
                   onChange={(e: {
@@ -383,6 +387,7 @@ const SidebarMap: FC<Props> = (props) => {
               <div>
                 <label className="text-gray-300">{Strings.maxValue}</label>
                 <input
+                  className="w-full"
                   type="number"
                   value={field.max ?? ""}
                   onChange={(e: {
@@ -882,7 +887,7 @@ const SidebarMap: FC<Props> = (props) => {
           <span>بستن</span>
         </button>
       </div>
-      {isShowModal && <Modal options={modalOptiong}></Modal>}
+      {isShowModal && <Modal options={modalOption}></Modal>}
     </div>
   );
 };

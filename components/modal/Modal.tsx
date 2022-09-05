@@ -25,7 +25,7 @@ const Modal: FC<{ options?: ModalOption; children?: ReactNode }> = (props) => {
     </div>
   );
 
-  return ReactDOM.createPortal(modalUi, document.body);
+  return ReactDOM.createPortal(modalUi, window.document.body);
 };
 
 export default Modal;
