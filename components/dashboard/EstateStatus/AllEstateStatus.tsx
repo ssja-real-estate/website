@@ -83,7 +83,7 @@ const AllEstateStatus: FC = () => {
       <div className="">
         <h2 className="font-bold text-dark-blue mb-10">املاک رد شده</h2>
         {rejectedEstate.length === 0 ? (
-          <div className="text-center text-gray-400">
+          <div className="text-center text-gray-400 bg-black">
             ملک رد شده ای یافت نشد!!!
           </div>
         ) : (
