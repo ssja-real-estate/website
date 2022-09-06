@@ -69,7 +69,7 @@ const AllEstateStatus: FC = () => {
           املاک در انتظار تأیید
         </h2>
         {unverifiedEstate.length === 0 ? (
-          <div className="text-center text-gray-400 bg-dark-blue">
+          <div className="text-center text-gray-400 ">
             ملک تأیید نشده ای یافت نشد!!!
           </div>
         ) : (
