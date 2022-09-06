@@ -17,6 +17,7 @@ function MortgageRentSale() {
   const estateService = useRef(new EstateService());
   const [allEstate, setAllEstate] = useState<Estate[]>([]);
   const state = useRecoilValue(globalState);
+  const mounted = useRef(true);
   const tabData: string[] = [Strings.mortgage, Strings.rent, Strings.sale];
   const indexHandler = (index: number) => {
     setActiveIndex(index);
@@ -24,8 +25,12 @@ function MortgageRentSale() {
   // const allRealEsates: RealEastate[] = allRealState;
   useEffect(() => {
     estateService.current.setToken(state.token);
+    // getAllEstate();
     getAllEstate();
-  });
+    return () => {
+      mounted.current = false;
+    };
+  }, [state.token]);
 
   async function getAllEstate() {
     try {

@@ -1,7 +1,5 @@
 import { FC } from "react";
 
-import SsjaMap from "../map-component/SsjaMap";
-
 const EditProfile: FC<{ onExitEdit: () => void }> = (props) => {
   const options = [
     { value: "0", label: "آذربایجان شرقی" },

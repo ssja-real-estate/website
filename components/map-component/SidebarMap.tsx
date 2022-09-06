@@ -34,7 +34,7 @@ import Spiner from "../spinner/Spiner";
 import ReactDOM from "react-dom";
 import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
-import AdvanceFilterButton from "../sidebar/AdvanceFilterButton";
+import AdvanceFilterButton from "./AdvanceFilterButton";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;

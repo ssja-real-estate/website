@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Profile from "../../components/profile/Profile";
-import Sidebar from "../../components/sidebar/Sidebar";
+import Profile from "../../components/dashboard/profile/Profile";
+import Sidebar from "../../components/dashboard/sidebar/Sidebar";
 import * as GoIcon from "react-icons/go";
 import * as FiIcon from "react-icons/fi";
 import * as MdIcon from "react-icons/md";
 import * as TbIcon from "react-icons/tb";
 import { NextPage } from "next";
+import AllEstateStatus from "../../components/dashboard/EstateStatus/AllEstateStatus";
 
+enum dashboardContet {
+  profile = 1,
+  myEstate = 2,
+  forms = 3,
+  users = 4,
+}
 interface sidebarData {
   id: number;
   title: string;
@@ -21,16 +28,16 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
   };
   useEffect(() => {
     switch (index) {
-      case 1:
+      case dashboardContet.profile:
         setElementView(<Profile />);
         break;
-      case 2:
-        setElementView(<h2>املاک من</h2>);
+      case dashboardContet.myEstate:
+        setElementView(<AllEstateStatus />);
         break;
-      case 3:
+      case dashboardContet.forms:
         setElementView(<h2>قالب ها</h2>);
         break;
-      case 4:
+      case dashboardContet.users:
         setElementView(<h2>کاربران</h2>);
         break;
     }
@@ -41,7 +48,7 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
       title: "داشبورد",
       icon: <GoIcon.GoDashboard className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
-        changeDashboardContent(1);
+        changeDashboardContent(dashboardContet.profile);
       },
     },
     {
@@ -51,7 +58,7 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
         <MdIcon.MdOutlineRealEstateAgent className="w-5 h-6 text-[#2c3e50]" />
       ),
       onClickHandler: () => {
-        changeDashboardContent(2);
+        changeDashboardContent(dashboardContet.myEstate);
       },
     },
     {
@@ -59,7 +66,7 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
       title: "قالب ها",
       icon: <TbIcon.TbLayoutGridAdd className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
-        changeDashboardContent(3);
+        changeDashboardContent(dashboardContet.forms);
       },
     },
     {
@@ -67,7 +74,7 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
       title: "کاربران",
       icon: <FiIcon.FiUsers className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
-        changeDashboardContent(4);
+        changeDashboardContent(dashboardContet.users);
       },
     },
   ];
