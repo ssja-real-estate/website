@@ -7,6 +7,7 @@ import * as MdIcon from "react-icons/md";
 import * as TbIcon from "react-icons/tb";
 import { NextPage } from "next";
 import AllEstateStatus from "../../components/dashboard/EstateStatus/AllEstateStatus";
+import MobileSideBar from "../../components/dashboard/sidebar/MobileSideBar";
 
 enum dashboardContet {
   profile = 1,
@@ -83,9 +84,14 @@ const Dashboard: NextPage<{ initial?: number }> = ({ initial = 1 }) => {
     <div className="container">
       <div className="flex flex-row mb-10 gap-5">
         <div className="hidden md:block pt-8 pb-8 bg-white w-52">
-          <Sidebar dataSidebar={sidebarMenu} />
+          <Sidebar dataSidebar={sidebarMenu} index={index} />
         </div>
-        <div className="bg-white pt-8 pb-8 px-10 w-[100%]">{elementView}</div>
+        <div className="bg-white pt-8 pb-8 px-10 w-[100%]">
+          <div className="block md:hidden w-full opacity-100 pb-8 bg-white ">
+            <MobileSideBar dataSidebar={sidebarMenu} index={index} />
+          </div>
+          {elementView}
+        </div>
       </div>
     </div>
   );

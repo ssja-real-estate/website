@@ -11,7 +11,7 @@ const RealEstateCard: React.FC<{
   return (
     <a target="_blank" href={`/estate/${props.estates.id}`} rel="noreferrer">
       <div className="bg-white relative after:absolute  after:block  after:border-t-[5px] after:border-l-[5px] after:border-l-[#f6f6f6] after:border-t-[#00887c] after:top-20 after:-left-1 after:-z-10 after:w-2 after:h-2 cursor-pointer transition-all duration-100 ease-in hover:shadow-lg hover:-translate-y-3">
-        <span className="absolute z-10 top-10 -left-1  text-white bg-[#0ba] px-3 py-2">
+        <span className="absolute z-[5] top-10 -left-1 text-sm sm:text-[12px] h-10 text-white bg-[#0ba] px-3 py-2">
           {"برای " + props.estates.dataForm.title}
         </span>
         <div className="w-full z-10">

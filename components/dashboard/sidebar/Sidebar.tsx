@@ -1,9 +1,5 @@
-import Link from "next/link";
-import React from "react";
-import * as GoIcon from "react-icons/go";
-import * as FiIcon from "react-icons/fi";
 import * as MdIcon from "react-icons/md";
-import * as TbIcon from "react-icons/tb";
+
 const Sidebar: React.FC<{
   dataSidebar: {
     id: number;
@@ -11,6 +7,7 @@ const Sidebar: React.FC<{
     icon: JSX.Element;
     onClickHandler: () => void;
   }[];
+  index: number;
 }> = (props) => {
   return (
     <div className="px-4 h-full flex flex-col justify-between">
@@ -23,7 +20,13 @@ const Sidebar: React.FC<{
               className="flex flex-row items-center gap-2 py-1 pr-4 cursor-pointer group"
             >
               {datObj.icon}
-              <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
+              <span
+                className={`${
+                  props.index === datObj.id
+                    ? "no-underline text-dark-blue font-bold"
+                    : "text-[#a6a6a6] underline"
+                } group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300`}
+              >
                 {datObj.title}
               </span>
             </li>

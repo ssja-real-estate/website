@@ -56,7 +56,7 @@ const AllEstateStatus: FC = () => {
   return (
     <div className="container">
       <div className="">
-        <h2 className="font-bold text-dark-blue mb-10">املاک تأیید شده</h2>
+        <h2 className="font-bold text-dark-blue mb-5">املاک تأیید شده</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
           {verifiedEstate?.map((estate) => (
             <RealEstateCard key={estate.id} estates={estate} />
@@ -65,11 +65,9 @@ const AllEstateStatus: FC = () => {
       </div>
 
       <div className="">
-        <h2 className="font-bold text-dark-blue mb-10">
-          املاک در انتظار تأیید
-        </h2>
+        <h2 className="font-bold text-dark-blue mb-5">املاک در انتظار تأیید</h2>
         {unverifiedEstate.length === 0 ? (
-          <div className="text-center text-gray-400 bg-black">
+          <div className="text-center text-gray-400">
             ملک تأیید نشده ای یافت نشد!!!
           </div>
         ) : (
@@ -81,7 +79,7 @@ const AllEstateStatus: FC = () => {
         )}
       </div>
       <div className="">
-        <h2 className="font-bold text-dark-blue mb-10">املاک رد شده</h2>
+        <h2 className="font-bold text-dark-blue mb-5">املاک رد شده</h2>
         {rejectedEstate.length === 0 ? (
           <div className="text-center text-gray-400">
             ملک رد شده ای یافت نشد!!!

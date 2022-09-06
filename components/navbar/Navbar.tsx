@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { globalState } from "../../global/states/globalStates";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { stat } from "fs/promises";
 import { Role } from "../../global/types/User";
 
 function Navbar() {
@@ -180,36 +179,36 @@ function Navbar() {
             onClick={() => {
               loginHanler();
             }}
-            className="flex flex-row h-full items-center gap-2 group"
+            className="flex flex-row h-full items-center gap-2 group relative"
           >
-            <div className="flex flex-row items-center gap-2 cursor-pointer relativ">
+            <div className="flex flex-row items-center gap-2 cursor-pointer ">
               <BiIcon.BiUser className="w-5 h-5" />
               <span>{username}</span>
+              {isUserValide && (
+                <div className="absolute right-0 hidden w-full group-hover:block top-full bg-white text-gray-700 z-30 rounded-br-md rounded-bl-md shadow-md">
+                  <ul className="flex flex-col justify-start items-center w-full text-sm">
+                    <li
+                      onClick={() => router.push("/dashboard")}
+                      className="flex flex-row  gap-2 py-2 cursor-pointer"
+                    >
+                      <GoIcon.GoDashboard className="w-5 h-6 text-[#2c3e50]" />
+                      <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
+                        داشبورد
+                      </span>
+                    </li>
+                    <li
+                      onClick={() => exite()}
+                      className="flex flex-row gap-2 py-2 cursor-pointer"
+                    >
+                      <MdIcon.MdOutlineExitToApp className="w-5 h-6 text-[#2c3e50]" />
+                      <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
+                        خروج
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
-            {isUserValide && (
-              <div className="absolute left-4 hidden w-[120px] group-hover:block top-12 bg-white text-gray-700 z-30 rounded-br-md rounded-bl-md shadow-md">
-                <ul className="">
-                  <li
-                    onClick={() => router.push("/dashboard")}
-                    className="flex flex-row items-center gap-2 py-2 pr-4 cursor-pointer"
-                  >
-                    <GoIcon.GoDashboard className="w-5 h-6 text-[#2c3e50]" />
-                    <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
-                      داشبورد
-                    </span>
-                  </li>
-                  <li
-                    onClick={() => exite()}
-                    className="flex flex-row items-center gap-2 py-2 pr-4 cursor-pointer"
-                  >
-                    <MdIcon.MdOutlineExitToApp className="w-5 h-6 text-[#2c3e50]" />
-                    <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
-                      خروج
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       </div>
