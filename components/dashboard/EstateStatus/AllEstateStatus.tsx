@@ -59,7 +59,11 @@ const AllEstateStatus: FC = () => {
     unverifiedEstate.length === 0 &&
     rejectedEstate.length === 0
   ) {
-    return <Spiner />;
+    return (
+      <div className="container">
+        <Spiner />
+      </div>
+    );
   }
   return (
     <div className="container">
