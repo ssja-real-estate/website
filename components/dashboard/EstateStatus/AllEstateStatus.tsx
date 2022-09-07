@@ -5,6 +5,7 @@ import { globalState } from "../../../global/states/globalStates";
 import { Estate, EstateStatus } from "../../../global/types/Estate";
 import EstateService from "../../../services/api/EstateService/EstateService";
 import RealEstateCard from "../../home/real-estate-card/RealEstateCard";
+import Spiner from "../../spinner/Spiner";
 
 const AllEstateStatus: FC = () => {
   const estateService = useRef(new EstateService());
@@ -53,6 +54,13 @@ const AllEstateStatus: FC = () => {
     }
   }
 
+  if (
+    verifiedEstate.length === 0 &&
+    unverifiedEstate.length === 0 &&
+    rejectedEstate.length === 0
+  ) {
+    return <Spiner />;
+  }
   return (
     <div className="container">
       <div className="">
