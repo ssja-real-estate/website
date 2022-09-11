@@ -3,6 +3,7 @@ import * as GoIcon from "react-icons/go";
 import * as FiIcon from "react-icons/fi";
 import * as MdIcon from "react-icons/md";
 import * as TbIcon from "react-icons/tb";
+import * as CgIcon from "react-icons/cg";
 import Sidebar from "../sidebar/Sidebar";
 import MobileSideBar from "../sidebar/MobileSideBar";
 import AllEstateStatus from "../EstateStatus/AllEstateStatus";
@@ -81,9 +82,7 @@ const OwnerDashboard: FC = () => {
     {
       id: 3,
       title: "املاک در انتظار تأیید",
-      icon: (
-        <MdIcon.MdOutlineRealEstateAgent className="w-5 h-6 text-[#2c3e50]" />
-      ),
+      icon: <CgIcon.CgSandClock className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
         setSection("unVerifyEstate");
       },
@@ -92,9 +91,7 @@ const OwnerDashboard: FC = () => {
     {
       id: 4,
       title: "املاک تأیید نشده",
-      icon: (
-        <MdIcon.MdOutlineRealEstateAgent className="w-5 h-6 text-[#2c3e50]" />
-      ),
+      icon: <MdIcon.MdOutlineCancel className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
         setSection("rejectEstate");
       },

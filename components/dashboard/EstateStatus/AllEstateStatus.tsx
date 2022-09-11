@@ -56,26 +56,12 @@ const AllEstateStatus: FC = () => {
   if (!estates) {
     return (
       <div className="container">
-        {/* <EstateCardDashboard /> */}
         <Spiner />
       </div>
     );
   }
   return (
     <div className="container">
-      {/* <div className="flex flex-row justify-center items-center border-b gap-1 text-sm">
-        <div className="py-2 px-2 z-10 border-b-white border-b  border-t-4 border-t-[#0ba] scale-105">
-          املاک تأیید شده
-        </div>
-        <div className="py-2 px-2 bg-gray-300 border-t-4 border-t-white">
-          املاک در انتظار تأیید
-        </div>
-        <div className="py-2 px-2 bg-gray-300 border-t-4 border-t-white">
-          املاک رد شده
-        </div>
-      </div> */}
-
-      {/* <h2 className="font-bold text-dark-blue mb-5">املاک تأیید شده</h2> */}
       {estates!.length === 0 ? (
         <div className="text-gray">هیچ ملکی یافت نشد</div>
       ) : (
@@ -89,35 +75,6 @@ const AllEstateStatus: FC = () => {
           ))}
         </div>
       )}
-
-      {/* <div className="">
-        <h2 className="font-bold text-dark-blue mb-5">املاک در انتظار تأیید</h2>
-        {unverifiedEstate.length === 0 ? (
-          <div className="text-center text-gray-400">
-            ملک تأیید نشده ای یافت نشد!!!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
-            {unverifiedEstate?.map((estate) => (
-              <RealEstateCard key={estate.id} estates={estate} />
-            ))}
-          </div>
-        )}
-      </div> */}
-      {/* <div className="">
-        <h2 className="font-bold text-dark-blue mb-5">املاک رد شده</h2>
-        {rejectedEstate.length === 0 ? (
-          <div className="text-center text-gray-400">
-            ملک رد شده ای یافت نشد!!!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
-            {rejectedEstate?.map((estate) => (
-              <RealEstateCard key={estate.id} estates={estate} />
-            ))}
-          </div>
-        )}
-      </div> */}
     </div>
   );
 };
