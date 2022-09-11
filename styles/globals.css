@@ -67,3 +67,20 @@
 .swiper-button-prev {
   color: #0ba !important;
 }
+
+/* .MyScroll {
+  overflow: scroll;
+} */
+.MyScroll::-webkit-scrollbar {
+  width: 12px;
+}
+
+.MyScroll::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.MyScroll::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}

@@ -7,6 +7,7 @@ import {
 import "keen-slider/keen-slider.min.css";
 import Image from "next/image";
 import * as IoIcon from "react-icons/io5";
+import { imagesBaseUrl } from "../../global/states/GlobalState";
 
 function ThumbnailPlugin(
   mainRef: MutableRefObject<KeenSliderInstance | null>
@@ -125,9 +126,16 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
 
   if (props.images === undefined || props.images.length === 0) {
     return (
-      <div className="h-[300px] flex flex-col items-center justify-center border-[10px] border-white rounded-2xl shadow-xl">
-        <IoIcon.IoImageOutline className="text-8xl text-gray-300" />
-        <div className="text-gray-300">هیج عکسی درج نشده است</div>
+      <div className=" border-[10px] border-white rounded-2xl shadow-xl">
+        {/* <IoIcon.IoImageOutline className="text-8xl text-gray-300" />
+        <div className="text-gray-300">هیج عکسی درج نشده است</div> */}
+        <Image
+          src="/image/blankImage/bl.jpg"
+          alt="photo"
+          width={1280}
+          height={720}
+          layout="responsive"
+        />
       </div>
     );
   }
@@ -138,7 +146,7 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
           {props.images.map((img, index) => (
             <div key={index} className="keen-slider__slide number-slide1">
               <Image
-                src={`https://ssja.ir/api/images/${props.id}/${img}`}
+                src={`${imagesBaseUrl}/${props.id}/${img}`}
                 alt="photo"
                 width={1280}
                 height={720}

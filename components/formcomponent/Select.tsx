@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from "react";
 
-interface LabelSelectBox {
+export interface LabelSelectBox {
   htmlForLabler?: string;
   titleLabel?: string;
   labelColor?: string;
 }
-interface OptionSelectBox {
+export interface OptionSelectBox {
   id: string;
   name: string;
 }

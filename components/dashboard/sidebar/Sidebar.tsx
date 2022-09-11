@@ -1,4 +1,6 @@
 import * as MdIcon from "react-icons/md";
+import { useRecoilValue } from "recoil";
+import { ownerSectionAtom } from "../owner-dashboard/OwnerDashboard";
 
 const Sidebar: React.FC<{
   dataSidebar: {
@@ -6,13 +8,14 @@ const Sidebar: React.FC<{
     title: string;
     icon: JSX.Element;
     onClickHandler: () => void;
+    sectionName: string;
   }[];
-  index: number;
 }> = (props) => {
+  const section = useRecoilValue(ownerSectionAtom);
   return (
-    <div className="px-4 h-full flex flex-col justify-between">
+    <div className="px-2 h-full flex flex-col justify-between">
       <div className="">
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-4 text-sm">
           {props.dataSidebar.map((datObj) => (
             <li
               onClick={datObj.onClickHandler}
@@ -22,7 +25,7 @@ const Sidebar: React.FC<{
               {datObj.icon}
               <span
                 className={`${
-                  props.index === datObj.id
+                  section === datObj.sectionName
                     ? "no-underline text-dark-blue font-bold"
                     : "text-[#a6a6a6] underline"
                 } group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300`}

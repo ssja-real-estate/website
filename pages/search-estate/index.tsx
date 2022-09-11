@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import * as GrIcon from "react-icons/gr";
 import * as AiIcon from "react-icons/ai";
 import * as CgIcon from "react-icons/cg";
-import MortgageRentSale from "../../components/home/mortgage-rent-sale/MortgageRentSale";
+
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
 const SearchEstate: NextPage = () => {
@@ -83,7 +83,7 @@ const SearchEstate: NextPage = () => {
             {!toggleShowMapndList ? (
               <SsjaMapTest cordinate={cordinate} isDragable={false} />
             ) : (
-              <div className="z-0 w-full h-full  overflow-y-auto">
+              <div className="z-0 w-full h-full  overflow-y-auto MyScroll">
                 {/* {fetchEsteate?.map((estate) => (
                   <div key={estate.id} className="">
                     {estate.city.name}

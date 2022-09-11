@@ -763,7 +763,7 @@ const SidebarMap: FC<Props> = (props) => {
 
   return (
     <div
-      className={`h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
+      className={`MyScroll h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
     >
       <div className={`space-y-4 }`}>
         <div className="flex flex-col gap-1">
