@@ -10,6 +10,7 @@ import * as CgIcon from "react-icons/cg";
 import ShimerAnimationEstateCard from "../../ShimerAnimitionEstateCard/ShimerAnimationEstateCard";
 import { FieldType } from "../../../global/types/Field";
 import { useUnmountEffect } from "framer-motion";
+import LabelStatusEstatecard from "./LabelStatusEstatecard";
 // const img:ImageLoader = {
 //   src: any;
 //   width: any;
@@ -40,7 +41,7 @@ const EstateCardDashboard: FC<{ estate: Estate; userRole: Role }> = (props) => {
   }
   return (
     <div className="w-full rounded-md overflow-hidden shadow-md relative">
-      <div className="absolute bg-white shadow-sm z-10 top-2 flex flex-row items-center justify-center gap-2 py-1 px-2 rounded-tl-2xl rounded-bl-2xl">
+      {/* <div className="absolute bg-white shadow-sm z-10 top-2 flex flex-row items-center justify-center gap-2 py-1 px-2 rounded-tl-2xl rounded-bl-2xl">
         {props.estate.estateStatus.status === 1 ? (
           <IoIcon.IoCheckmarkCircleOutline className="text-green-600 text-2xl" />
         ) : props.estate.estateStatus.status === 2 ? (
@@ -57,7 +58,8 @@ const EstateCardDashboard: FC<{ estate: Estate; userRole: Role }> = (props) => {
             ? "در انتظار تأیید"
             : props.estate.estateStatus.status === 3 && "تأیید نشده"}
         </span>
-      </div>
+      </div> */}
+      <LabelStatusEstatecard estatStatus={props.estate.estateStatus.status} />
       <Image
         // loader={myLoader}
         // src={`https://ssja.ir/api/images/${props.estate.id}/${imageFromPropsEstate}`}
