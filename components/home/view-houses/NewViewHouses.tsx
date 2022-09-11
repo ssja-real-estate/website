@@ -1,15 +1,18 @@
-import Image from "next/image";
 import React from "react";
-import RealEastate from "../../../data/models/real-estate";
+import { Estate } from "../../../global/types/Estate";
 import RealEstateCard from "../real-estate-card/RealEstateCard";
 
 const NewViewHouses: React.FC<{
-  all: RealEastate[];
+  allestates?: Estate[];
 }> = (props) => {
+  console.log(props.allestates);
+  if (props.allestates?.length === 0) {
+    return <div className="alertBox">ملکی با این مشخصات یافت نشد!!!</div>;
+  }
   return (
-    <div className="container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
-      {props.all.map((realEstate) => (
-        <RealEstateCard key={realEstate.id} realEastate={realEstate} />
+    <div className="container grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mb-20">
+      {props.allestates?.map((estate) => (
+        <RealEstateCard key={estate.id} estates={estate} />
       ))}
     </div>
   );

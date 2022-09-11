@@ -35,11 +35,30 @@
     @apply bg-[#f3bc65] h-12 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221];
   }
   .inputDecoration {
-    @apply px-4 h-12 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input;
+    @apply px-4 h-9 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input;
+  }
+  .inputErroeDecoration {
+    @apply px-4 h-9 transition-all duration-300 border border-red-700  focus:border-red-700 w-full outline-none focus:shadow-1inputError;
   }
   .labelForm {
     @apply leading-6 text-[15px] text-[#2c3e50] block w-full my-2 font-bold;
   }
+  .selectbox {
+    @apply text-sm px-4 h-9 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input appearance-none bg-arrow-down bg-no-repeat bg-[left_top_.70rem] bg-[length:15px_15px] bg-origin-content;
+  }
+  .activeThumbnail {
+    @apply border-dashed border-4 border-[#0ba];
+    /* @apply scale-150; */
+  }
+  .alertBox {
+    @apply container w-[40%] flex flex-col items-center mt-10 text-sm text-gray-400 border-4 p-6 border-white rounded-lg;
+  }
+}
+.dynamicLabel {
+  color: white;
+}
+.dynamicLabel > select {
+  margin-right: 2px;
 }
 .swiper .swiper-pagination-bullet-active {
   background: #0ba !important;
@@ -47,4 +66,21 @@
 .swiper-button-next,
 .swiper-button-prev {
   color: #0ba !important;
+}
+
+/* .MyScroll {
+  overflow: scroll;
+} */
+.MyScroll::-webkit-scrollbar {
+  width: 12px;
+}
+
+.MyScroll::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.MyScroll::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
