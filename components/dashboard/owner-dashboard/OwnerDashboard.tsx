@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import * as GoIcon from "react-icons/go";
 import * as FiIcon from "react-icons/fi";
 import * as MdIcon from "react-icons/md";
@@ -33,31 +33,7 @@ export const ownerSectionAtom = atom({
 });
 const OwnerDashboard: FC = () => {
   const [section, setSection] = useRecoilState(ownerSectionAtom);
-  const [index, setIndex] = useState<number>(0);
-  //   const [elementView, setElementView] = useState<JSX.Element>(<Profile />);
-  //   const changeDashboardContent = (index: number) => {
-  //     setIndex(index);
-  //   };
-  //   useEffect(() => {
-  //     switch (index) {
-  //       case dashboardContet.profile:
-  //         setElementView(<Profile />);
-  //         setSection("profile");
-  //         break;
-  //       case dashboardContet.myEstate:
-  //         setElementView(<AllEstateStatus />);
-  //         setSection("estateStatus");
-  //         break;
-  //       case dashboardContet.forms:
-  //         setElementView(<h2>قالب ها</h2>);
-  //         setSection("templates");
-  //         break;
-  //       case dashboardContet.users:
-  //         setElementView(<h2>کاربران</h2>);
-  //         setSection("users");
-  //         break;
-  //     }
-  //   }, [index]);
+
   const sidebarMenu: sidebarData[] = [
     {
       id: 1,
@@ -125,7 +101,7 @@ const OwnerDashboard: FC = () => {
         <div className="block md:hidden w-full opacity-100 pb-8 bg-white ">
           <MobileSideBar dataSidebar={sidebarMenu} />
         </div>
-        {/* {elementView} */}
+
         {section === "profile" ? (
           <Profile />
         ) : section === "estateStatus" ? (

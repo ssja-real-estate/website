@@ -41,7 +41,9 @@ const UnVerigyEstate: FC = () => {
   return (
     <div className="container">
       {unVerifyEstates!.length === 0 ? (
-        <div className="text-gray">هیچ ملکی یافت نشد</div>
+        <div className="h-full w-full flex items-center justify-center text-gray-300">
+          هیچ ملکی یافت نشد
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
           {unVerifyEstates?.map((estate) => (

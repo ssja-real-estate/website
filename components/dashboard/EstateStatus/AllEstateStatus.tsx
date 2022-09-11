@@ -11,12 +11,12 @@ import EstateCardDashboard from "./EstateCardDashboard";
 const AllEstateStatus: FC = () => {
   const estateService = useRef(new EstateService());
   const [estates, setEstates] = useState<Estate[]>();
-  const [unverifiedEstate, setUnverifiedEstate] = useState<Estate[]>([]);
-  const [rejectedEstate, setRejectedEstate] = useState<Estate[]>([]);
   const state = useRecoilValue(globalState);
   const mounted = useRef(true);
   useEffect(() => {
     estateService.current.setToken(state.token);
+    console.log(state.role);
+
     loadData();
     return () => {
       mounted.current = false;
@@ -33,26 +33,6 @@ const AllEstateStatus: FC = () => {
     }
   }
 
-  async function getUnverifiedEstate() {
-    try {
-      await estateService.current
-        .getEstates(EstateStatus.Unverified)
-        .then((allEstate) => setUnverifiedEstate(allEstate));
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function getRejectedEstate() {
-    try {
-      await estateService.current
-        .getEstates(EstateStatus.Rejected)
-        .then((allEstate) => setRejectedEstate(allEstate));
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   if (!estates) {
     return (
       <div className="container">
@@ -63,7 +43,9 @@ const AllEstateStatus: FC = () => {
   return (
     <div className="container">
       {estates!.length === 0 ? (
-        <div className="text-gray">هیچ ملکی یافت نشد</div>
+        <div className="h-full w-full flex items-center justify-center text-gray-300">
+          ملکی یافت نشد!!!
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
           {estates?.map((estate) => (
