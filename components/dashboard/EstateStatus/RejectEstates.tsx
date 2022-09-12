@@ -18,6 +18,7 @@ const RejectEstates: FC = () => {
       mounted.current = false;
     };
   }, [state.token]);
+
   async function getRejectedEstate() {
     try {
       await estateService.current
@@ -27,6 +28,7 @@ const RejectEstates: FC = () => {
       console.log(error);
     }
   }
+
   if (!rejectedEstate) {
     return (
       <div className="container">
@@ -39,7 +41,7 @@ const RejectEstates: FC = () => {
     <div className="container">
       {rejectedEstate!.length === 0 ? (
         <div className="h-full w-full flex items-center justify-center text-gray-300">
-          ملک تأیید نشده ای یافت نمی شود
+          محتوایی وجود ندارد!!!
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
@@ -47,7 +49,7 @@ const RejectEstates: FC = () => {
             <EstateCardDashboard
               key={estate.id}
               estate={estate}
-              userRole={state.role}
+              verifyButton={true}
             />
           ))}
         </div>

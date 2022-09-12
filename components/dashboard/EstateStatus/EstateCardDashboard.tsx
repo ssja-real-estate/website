@@ -1,31 +1,42 @@
 import Image, { ImageLoader, StaticImageData } from "next/image";
-import { FC, useEffect, useState } from "react";
+import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { Estate } from "../../../global/types/Estate";
 import { Role, roleMap } from "../../../global/types/User";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcon from "react-icons/md";
 import * as BsIcon from "react-icons/bs";
-import * as IoIcon from "react-icons/io5";
-import * as CgIcon from "react-icons/cg";
-import ShimerAnimationEstateCard from "../../ShimerAnimitionEstateCard/ShimerAnimationEstateCard";
+import * as VsIcon from "react-icons/vsc";
 import { FieldType } from "../../../global/types/Field";
-import { useUnmountEffect } from "framer-motion";
+
 import LabelStatusEstatecard from "./LabelStatusEstatecard";
 // const img:ImageLoader = {
 //   src: any;
 //   width: any;
 //   quality: any;
 // };
-const EstateCardDashboard: FC<{ estate: Estate; userRole: Role }> = (props) => {
-  const [src, setSrc] = useState<string | StaticImageData>(
-    "/image/estate/e1.jpg"
-  );
+interface EstateCardProps {
+  estate: Estate;
+  editButton?: boolean;
+  verifyButton?: boolean;
+  rejectButton?: boolean;
+  showEstateInfoButton?: boolean;
+  showBadge?: boolean;
+  onEdit?: MouseEventHandler;
+  onVerify?: MouseEventHandler;
+  onReject?: MouseEventHandler;
+  onShowEstateInfo?: MouseEventHandler;
+  onCloseEstateInfo?: () => void;
+}
+const EstateCardDashboard: FC<EstateCardProps> = (props) => {
+  const [src, setSrc] = useState<string | StaticImageData>("");
   useEffect(() => {
     setSrc(imageFromPropsEstate());
   }, [src]);
+
   const myLoader: ImageLoader = ({ src, width, quality }) => {
     return `https://ssja.ir/api/images/${src}?w=${width}&q=${quality || 100}`;
-  };
+  }; //don't use myLoader function
+
   function imageFromPropsEstate(): string {
     let srcset = "/image/blankImage/bl.jpg";
     props.estate.dataForm.fields.map((es) => {
@@ -35,10 +46,9 @@ const EstateCardDashboard: FC<{ estate: Estate; userRole: Role }> = (props) => {
         )}`;
       }
     });
-    console.log(srcset);
-
     return srcset;
   }
+
   return (
     <div className="w-full rounded-md overflow-hidden shadow-md relative">
       <LabelStatusEstatecard estatStatus={props.estate.estateStatus.status} />
@@ -75,24 +85,40 @@ const EstateCardDashboard: FC<{ estate: Estate; userRole: Role }> = (props) => {
             </span>
           </a>
           <div className="flex flex-row gap-2 items-end">
-            <button className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 hover:shadow-md transition-all hover:bg-[#d99221] hover:border-none">
-              <span title="ویرایش">
-                <BiIcon.BiEditAlt className="text-gray-400 group-hover:text-white" />
-              </span>
-              {/* <div className="text-sm">ویرایش</div> */}
-            </button>
-            {props.userRole === Role.ADMIN ||
-              (props.userRole === Role.OWNER && (
-                <button
-                  title="حذف"
-                  className="border flex flex-row gap-2 py-2 px-2 rounded-full item-center justify-center group hover:scale-105 hover:shadow-md transition-all hover:bg-red-700 hover:border-none"
-                >
-                  <span>
-                    <MdIcon.MdDeleteForever className="text-gray-400 group-hover:text-white" />
-                  </span>
-                  {/* <div className="text-sm">حذف</div> */}
-                </button>
-              ))}
+            {props.editButton && (
+              <button
+                onClick={props.onEdit}
+                className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 hover:shadow-md transition-all hover:bg-[#d99221] hover:border-none"
+              >
+                <span title="ویرایش">
+                  <BiIcon.BiEditAlt className="text-gray-400 group-hover:text-white" />
+                </span>
+                {/* <div className="text-sm">ویرایش</div> */}
+              </button>
+            )}
+            {props.verifyButton && (
+              <button
+                onClick={props.onVerify}
+                className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 shadow-sm shadow-green-500 border-green-500 transition-all hover:bg-green-600 hover:border-none"
+              >
+                <span title="تأیید ملک">
+                  <MdIcon.MdCheck className="text-green-600 group-hover:text-white" />
+                </span>
+                {/* <div className="text-sm">ویرایش</div> */}
+              </button>
+            )}
+            {props.rejectButton && (
+              <button
+                onClick={props.onEdit}
+                className="flex flex-row border border-red-700 py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 shadow-sm shadow-red-700 transition-all hover:bg-red-700 hover:border-none"
+              >
+                <span title="عدم تأیید ملک">
+                  <VsIcon.VscClose className="text-red-700 group-hover:text-white" />
+                </span>
+                {/* <div className="text-sm">ویرایش</div> */}
+              </button>
+            )}
+
             {/* <span className="text-2xl font-bold">
                 {(150000000).toLocaleString("fa-ir")}
               </span>

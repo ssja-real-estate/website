@@ -9,6 +9,7 @@ import EstateCardDashboard from "./EstateCardDashboard";
 const UnVerigyEstate: FC = () => {
   const estateService = useRef(new EstateService());
   const [unVerifyEstates, setUnVerifyEstates] = useState<Estate[]>();
+  const [loading, setLoading] = useState(true);
   const state = useRecoilValue(globalState);
   const mounted = useRef(true);
   useEffect(() => {
@@ -28,6 +29,35 @@ const UnVerigyEstate: FC = () => {
       console.log(error);
     }
   }
+  const verifyEstate = async (estateId: string) => {
+    alert("aaaaaaaaa");
+    if (!mounted.current) return;
+    setLoading((prev) => true);
+
+    await estateService.current.updateEstateStatus(
+      estateId,
+      EstateStatus.Verified
+    );
+
+    await getUnverifiedEstate();
+
+    setLoading((prev) => false);
+  };
+
+  // const rejectEstate = async () => {
+  //   // if (!mounted.current || !rejectEstateState.estateId) return;
+  //   setLoading((prev) => true);
+
+  //   await estateService.current.updateEstateStatus(
+  //     rejectEstateState.estateId,
+  //     EstateStatus.Rejected,
+  //     rejectEstateState.description
+  //   );
+
+  //   setRejectEstateState(defaultRejectEstate);
+  //   await loadData();
+  //   setLoading((prev) => false);
+  // };
 
   if (!unVerifyEstates) {
     return (
@@ -42,7 +72,7 @@ const UnVerigyEstate: FC = () => {
     <div className="container">
       {unVerifyEstates!.length === 0 ? (
         <div className="h-full w-full flex items-center justify-center text-gray-300">
-          هیچ ملکی یافت نشد
+          محتوایی وجود ندارد!!!
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
@@ -50,7 +80,10 @@ const UnVerigyEstate: FC = () => {
             <EstateCardDashboard
               key={estate.id}
               estate={estate}
-              userRole={state.role}
+              rejectButton={true}
+              verifyButton={true}
+              onVerify={() => verifyEstate(estate.id)}
+              // onReject={() => rejectEstate(estate.estateStatus.status)}
             />
           ))}
         </div>
