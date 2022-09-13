@@ -109,7 +109,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
             )}
             {props.rejectButton && (
               <button
-                onClick={props.onEdit}
+                onClick={props.onReject}
                 className="flex flex-row border border-red-700 py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 shadow-sm shadow-red-700 transition-all hover:bg-red-700 hover:border-none"
               >
                 <span title="عدم تأیید ملک">
