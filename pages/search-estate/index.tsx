@@ -24,11 +24,11 @@ const SearchEstate: NextPage = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (state.role === 3) {
-      router.push("/login");
-    } else if (state.role === 1) {
-      setLoaded(true);
-    }
+    // if (state.role === 3) {
+    //   router.push("/login");
+    // } else if (state.role === 1) {
+    //   setLoaded(true);
+    // }
     isShowMenuInMobileDevice
       ? (document.body.style.overflow = "hidden")
       : (document.body.style.overflow = "");
@@ -45,9 +45,9 @@ const SearchEstate: NextPage = () => {
     }
   };
 
-  if (!loaded) {
-    return <div className=""></div>;
-  }
+  // if (!loaded) {
+  //   return <div className=""></div>;
+  // }
   return (
     <div className="">
       <div className="mt-0 sm:mt-0 h-screen">

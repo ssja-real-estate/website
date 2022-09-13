@@ -39,7 +39,7 @@ const Sidebar: React.FC<{
           <li className="flex flex-row items-center justify-center gap-2 py-1  cursor-pointer group">
             <button
               onClick={() => router.push("/add-estate")}
-              className="transition-all  text-sm rounded-full w-full  py-2 px-2 flex flex-row gap-2 justify-center items-center bg-[#d99221] text-white shadow-md hover:-translate-y-1"
+              className="transition-all  text-sm rounded-full w-full  py-2 px-2 flex flex-row gap-2 justify-center items-center bg-[#d99221] text-white shadow-md hover:-translate-y-1 focus-within:translate-y-0"
             >
               <span>+</span>
               <span className="">اضافه کردن ملک</span>
