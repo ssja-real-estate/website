@@ -2261,11 +2261,6 @@ react-dom@18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-functional-select@^3.3.3:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-3.3.3.tgz#276959658702167b8132b94b3c708c72dc843ed6"
-  integrity sha512-OLYfZe4setjvuNR35V8KXK/iCbEh1PTxZIrPKcqmFKnwoKqLDEz1reoJmpm0mjw+UycYwe149FrfsWkI9NfQfg==
-
 react-icons@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.4.0.tgz#a13a8a20c254854e1ec9aecef28a95cdf24ef703"

@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, FC, ChangeEvent } from "react";
 import * as FiIcon from "react-icons/fi";
 import * as RiIcon from "react-icons/ri";
 import * as BSIcon from "react-icons/bs";
@@ -34,22 +34,23 @@ import Spiner from "../spinner/Spiner";
 import ReactDOM from "react-dom";
 import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
-import AdvanceFilterButton from "./AdvanceFilterButton";
+import AdvanceFilterButton from "../../components/map-component/AdvanceFilterButton";
+import { NextPage } from "next";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
   onSetEstate: (estates: Estate[]) => void;
-  width: string;
+  width?: string;
   closeModalHandler?: (close: boolean) => void;
 }
 
-const SidebarMap: FC<Props> = (props) => {
-  const [showAdvanceFilter, setShowAdvanceFilter] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+const SideBarForAddEstate: FC<Props> = (props) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [loadingEstates, setLoadingEstates] = useState(false);
   const [noFilterExists, setNoFilterExists] = useState(false);
   const [isAdvancedFilter, toggleAdvancedFilter] = useState(true);
   const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
+  const [estate, setEstate] = useState<Estate>(defaultEstate);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -65,8 +66,8 @@ const SidebarMap: FC<Props> = (props) => {
   const [selectedEstateType, setSelectedEstateType] =
     useState<EstateType>(defaultEstateType);
   const isDefault: boolean =
-    !selectedDelegationType.id || !selectedEstateType.id ? true : false;
-  const [estate, setEstate] = useState<Estate>(defaultEstate);
+    !selectedDelegationType.name || !selectedEstateType.name ? true : false;
+
   const searchService = useRef(new SearchService());
   const [formData, setFormData] = useState<FormData>(new FormData());
   const [imagesCount, setImagesCount] = useState<number>(0);
@@ -79,6 +80,7 @@ const SidebarMap: FC<Props> = (props) => {
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
+
   const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
   const [isShowModal, setIsShowModal] = useState(false);
   const [modalOption, setModalOption] = useState<ModalOption>();
@@ -92,12 +94,13 @@ const SidebarMap: FC<Props> = (props) => {
 
     loadLocations();
     loadOptions();
+    loadData();
 
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.token, isDefault]);
+  }, [selectedDelegationType, selectedEstateType, state.token]);
 
   const loadLocations = async () => {
     locationService.current
@@ -155,14 +158,7 @@ const SidebarMap: FC<Props> = (props) => {
         // toast.error(Strings.loadingOptionsFailed);
       });
   }
-
-  function clearStates() {
-    // setSelectedDelegationType(defaultDelegationType);
-    // setSelectedEstateType(defaultEstateType);
-    setDataForm(defaultForm);
-    setEstate(defaultEstate);
-  }
-  async function loadForm() {
+  async function loadData() {
     if (!loading) {
       setLoading((prev) => true);
     }
@@ -171,17 +167,91 @@ const SidebarMap: FC<Props> = (props) => {
       setLoading((prev) => false);
       return;
     }
-    const loadedForm = await searchService.current.getfilteredForm(
+    const loadedForm = await formService.current.getForm(
       selectedDelegationType.id,
       selectedEstateType.id
     );
 
-    if (!loadedForm.id) {
-      setNoFilterExists((prev) => true);
-    } else {
-      setDataForm(loadedForm);
-    }
+    setEstate({ ...estate, dataForm: loadedForm });
+    await loadLocations();
+    await loadOptions();
     setLoading((prev) => false);
+  }
+
+  // async function loadForm() {
+  //   if (!loading) {
+  //     setLoading((prev) => true);
+  //   }
+
+  //   if (!selectedDelegationType.id || !selectedEstateType.id) {
+  //     setLoading((prev) => false);
+  //     return;
+  //   }
+  //   const loadedForm = await searchService.current.getfilteredForm(
+  //     selectedDelegationType.id,
+  //     selectedEstateType.id
+  //   );
+
+  //   if (!loadedForm.id) {
+  //     setNoFilterExists((prev) => true);
+  //   } else {
+  //     setDataForm(loadedForm);
+  //   }
+  //   setLoading((prev) => false);
+  //   console.log(dataForm);
+  // }
+
+  async function submitEstate() {
+    console.log(estate.dataForm);
+    selectedProvince.id ? console.log(true) : console.log(false);
+    if (!selectedProvince.id || !selectedCity.id || !selectedNeighborhood.id) {
+      // toast.error(Strings.enterlocationInfo);
+      setIsShowModal(true);
+      setModalOption({
+        message: Strings.enterlocationInfo,
+        closeModal: () => setIsShowModal(false),
+      });
+      return;
+    }
+
+    if (imagesCount > 10) {
+      setIsShowModal(true);
+      setModalOption({
+        message: Strings.enterlocationInfo,
+        closeModal: () => setIsShowModal(false),
+      });
+      return;
+    }
+
+    // const errors = validateForm(estate.dataForm);
+    // if (errors.length > 0) {
+    //   for (let i = 0; i < errors.length; i++) {
+    //     const error = errors[i];
+    //     // toast.error(error.message, {
+    //     //   duration: 2000,
+    //     // });
+    //   }
+    //   return;
+    // }
+
+    // setLoading((prev) => true);
+
+    // formData.append("estate", JSON.stringify(estate));
+    // let response = await estateService.current.requestAddEtate(formData);
+
+    // if (response) {
+    //   // toast.success(Strings.addEstateRequestSuccess, {
+    //   //   duration: 5000,
+    //   // });
+    //   setSelectedProvince(defaultProvince);
+    //   setSelectedCity(defaultCity);
+    //   setSelectedNeighborhood(defaultNeighborhood);
+    //   setSelectedDelegationType(defaultDelegationType);
+    //   setSelectedEstateType(defaultEstateType);
+    //   setFormData(new FormData());
+    //   setEstate(defaultEstate);
+    // }
+    // setLoading((prev) => false);
   }
 
   function handleProvinceChange(provinceId: string) {
@@ -250,11 +320,6 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function handleDelegationChange(data: string) {
-    console.log(data);
-    if (data === "choose") {
-      setSelectedDelegationType(defaultDelegationType);
-      return;
-    }
     setSelectedDelegationType({
       id: data,
       name: data,
@@ -262,17 +327,10 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function handleTypeChange(data: string) {
-    if (data === "choose") {
-      setSelectedEstateType(defaultEstateType);
-      return;
-    }
     setSelectedEstateType({
       id: data,
       name: data,
     });
-    console.log(selectedEstateType);
-
-    setNoFilterExists((prev) => false);
   }
 
   async function searchEstate() {
@@ -356,23 +414,62 @@ const SidebarMap: FC<Props> = (props) => {
 
     return filter;
   }
+  function checkFileSizes(files: File[]): boolean {
+    const sumOfFileSizes = files.map((f) => f.size).reduce((a, b) => a + b, 0);
+    return sumOfFileSizes > 2048;
+  }
 
   function mapFields(fields: Field[], form: EstateForm) {
-    // console.log(fields);
+    console.log(form);
 
     return fields.map((field, fieldIndex) => {
       return (
-        <div key={fieldIndex} className="input-item py-3">
-          {field.type !== FieldType.Image ? (
-            <label className="dynamicLabel">{field.title + ":"}</label>
-          ) : null}
+        <div key={fieldIndex} className="py-3">
+          <label className="dynamicLabel">
+            {field.title} {field.optional ? Strings.optionalField : ""}
+          </label>
+
           {field.type === FieldType.Text ? (
             <input
               type="text"
+              className="w-full"
               value={field.value ? String(field.value) : ""}
-              onChange={(e: { target: { value: any } }) => {
+              onChange={(e) => {
                 const stringValue = String(e.target.value);
-                onFieldChange(stringValue, fieldIndex);
+
+                onFieldChange(stringValue, form, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.Number ? (
+            <input
+              type="number"
+              className="w-full"
+              value={field.value ? Number(field.value) : ""}
+              onChange={(e) => {
+                const numberValue = Number(e.target.value);
+
+                onFieldChange(numberValue, form, fieldIndex);
+              }}
+            />
+          ) : field.type === FieldType.Image ? (
+            <input
+              type="file"
+              multiple
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                let selectedFiles = Array.from(e.target.files!);
+                setImagesCount(selectedFiles.length);
+
+                if (!checkFileSizes(selectedFiles)) {
+                  alert(Strings.imagesSizeLimit);
+                  e.target.value = "";
+                  selectedFiles = [];
+                }
+
+                const data = new FormData();
+                selectedFiles.forEach((file, index) => {
+                  data.append("images", file);
+                });
+                setFormData(data);
               }}
             />
           ) : field.type === FieldType.Range ? (
@@ -383,11 +480,9 @@ const SidebarMap: FC<Props> = (props) => {
                   className="w-full"
                   type="number"
                   value={field.min ?? ""}
-                  onChange={(e: {
-                    currentTarget: { value: string | number };
-                  }) => {
+                  onChange={(e) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, fieldIndex, true);
+                    onFieldChange(value, form, fieldIndex);
                   }}
                 />
               </div>
@@ -397,11 +492,9 @@ const SidebarMap: FC<Props> = (props) => {
                   className="w-full"
                   type="number"
                   value={field.max ?? ""}
-                  onChange={(e: {
-                    currentTarget: { value: string | number };
-                  }) => {
+                  onChange={(e) => {
                     const value = +e.currentTarget.value;
-                    onFieldChange(value, fieldIndex);
+                    onFieldChange(value, form, fieldIndex);
                   }}
                 />
               </div>
@@ -410,9 +503,10 @@ const SidebarMap: FC<Props> = (props) => {
             <select
               className="w-full"
               value={field.value ? String(field.value) : "default"}
-              onChange={(e: { currentTarget: { value: any } }) => {
-                const numberValue = String(e.currentTarget.value);
-                onFieldChange(numberValue, fieldIndex);
+              onChange={(e) => {
+                const numberValue = String(e.target.value);
+                // debugger;
+                onFieldChange(numberValue, form, fieldIndex);
               }}
             >
               <option value="default" disabled>
@@ -427,9 +521,9 @@ const SidebarMap: FC<Props> = (props) => {
               className=""
               type="checkbox"
               checked={field.value ? true : false}
-              onChange={(e: { target: { checked: any } }) => {
+              onChange={(e) => {
                 const booleanValue = e.target.checked;
-                onFieldChange(booleanValue, fieldIndex);
+                onFieldChange(booleanValue, form, fieldIndex);
               }}
             />
           ) : field.type === FieldType.BooleanConditional ? (
@@ -438,9 +532,9 @@ const SidebarMap: FC<Props> = (props) => {
                 className=""
                 type="checkbox"
                 checked={field.value ? true : false}
-                onChange={(e: { target: { checked: any } }) => {
+                onChange={(e) => {
                   const booleanValue = e.target.checked;
-                  onFieldChange(booleanValue, fieldIndex);
+                  onFieldChange(booleanValue, form, fieldIndex);
                 }}
               />
               {field.value &&
@@ -456,9 +550,9 @@ const SidebarMap: FC<Props> = (props) => {
               <select
                 className="w-full"
                 value={field.value ? String(field.value) : "default"}
-                onChange={(e: { currentTarget: { value: any } }) => {
+                onChange={(e) => {
                   const selectValue = String(e.currentTarget.value);
-                  onFieldChange(selectValue, fieldIndex);
+                  onFieldChange(selectValue, form, fieldIndex);
                 }}
               >
                 <option value="default" disabled>
@@ -491,9 +585,9 @@ const SidebarMap: FC<Props> = (props) => {
                       className="mx-1"
                       type="checkbox"
                       checked={keyMap[key]}
-                      onChange={(e: { target: { checked: any } }) => {
+                      onChange={(e) => {
                         const booleanValue = e.target.checked;
-                        onFieldChange(booleanValue, fieldIndex, false, key);
+                        onFieldChange(booleanValue, form, fieldIndex);
                       }}
                     />
                   </div>
@@ -505,6 +599,7 @@ const SidebarMap: FC<Props> = (props) => {
       );
     });
   }
+
   function onConditionalFieldChange(
     targetValue: any,
     fieldIndex: number,
@@ -521,8 +616,7 @@ const SidebarMap: FC<Props> = (props) => {
         fieldIndex,
         innerFieldIndex,
         form,
-        selectiveKey!,
-        min
+        selectiveKey!
       );
       return;
     }
@@ -540,8 +634,7 @@ const SidebarMap: FC<Props> = (props) => {
     fieldIndex: number,
     innerFieldIndex: number,
     form: EstateForm,
-    selectiveKey: string,
-    min: boolean = false
+    selectiveKey: string
   ) {
     const fieldMaps = form.fields[fieldIndex].fieldMaps ?? [];
     const selectiveFieldMapIndex = fieldMaps.findIndex(
@@ -688,7 +781,6 @@ const SidebarMap: FC<Props> = (props) => {
       );
     });
   }
-
   function handleRangeFieldValue(
     field: Field,
     targetValue: any,
@@ -706,20 +798,19 @@ const SidebarMap: FC<Props> = (props) => {
     }
     return { ...field };
   }
-
   function onFieldChange(
     targetValue: any,
+    form: EstateForm,
     fieldIndex: number,
-    min: boolean = false,
     key?: string
   ) {
-    let currentField = {
+    // return;
+
+    const currentField = {
       ...dataForm.fields[fieldIndex],
     };
-
-    if (currentField.type === FieldType.Range) {
-      currentField = handleRangeFieldValue(currentField, targetValue, min);
-    } else if (currentField.type === FieldType.MultiSelect) {
+    console.log(currentField.value);
+    if (currentField.type === FieldType.MultiSelect) {
       const fieldValue = currentField.value as { [key: string]: boolean };
       if (key && fieldValue) {
         fieldValue[key] = targetValue;
@@ -729,52 +820,21 @@ const SidebarMap: FC<Props> = (props) => {
       currentField.value = targetValue;
     }
 
-    const fields = dataForm.fields;
-    fields[fieldIndex] = currentField;
+    const fields = form.fields;
+    fields[fieldIndex].value = currentField.value;
 
-    setDataForm({
-      ...dataForm,
-      fields,
+    setEstate({
+      ...estate,
+      dataForm: {
+        ...form,
+        fields: fields,
+      },
     });
-  }
-
-  async function handleAdvancedFilter() {
-    console.log(selectedDelegationType.name);
-    console.log(isAdvancedFilter);
-
-    if (isDefault) {
-      // toast.error(Strings.chooseDelegationAndEstateTypes);
-      setIsShowModal(true);
-
-      setModalOption({
-        message: Strings.chooseDelegationAndEstateTypes,
-        closeModal: () => setIsShowModal(false),
-        icon: (
-          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
-            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
-            <span className="text-sm">توجه</span>
-          </div>
-        ),
-      });
-      return;
-    }
-
-    if (!isAdvancedFilter) {
-      clearStates();
-      toggleAdvancedFilter(!isAdvancedFilter);
-      setNoFilterExists(false);
-
-      return;
-    }
-
-    loadForm();
-    if (!noFilterExists) return;
-    toggleAdvancedFilter(!isAdvancedFilter);
   }
 
   return (
     <div
-      className={`MyScroll h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
+      className={`MyScroll h-full py-5 px-14 w-96 bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
     >
       <div className={`space-y-4 }`}>
         <div className="flex flex-col gap-1">
@@ -816,78 +876,60 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={delegationTypes}
-            defaultValue=""
-            value={selectedDelegationType.name}
+            // defaultValue=""
+            // value={selectedDelegationType.name}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",
               labelColor: "white",
             }}
+            isDisabled={true}
             onChange={handleDelegationChange}
           />
         </div>
         <div className="flex flex-col gap-1">
           <Select
             options={estateTypes}
-            defaultValue=""
-            value={selectedEstateType.name}
+            // defaultValue=""
+            // value={selectedEstateType.name}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع ملک",
               labelColor: "white",
             }}
+            isDisabled={true}
             onChange={handleTypeChange}
           />
         </div>
-
-        {/* <button
-          onClick={
-            // () => setShowAdvanceFilter((prev) => !prev)
-            handleAdvancedFilter
-          }
-          className="border border-white w-full h-10 px-3 flex flex-row items-center justify-center text-white gap-2 transition-all duration-200 hover:shadow-lg active:pt-2"
-        >
-          <FiIcon.FiFilter className="w-5 h-5" />
-          <span>فیلتر پیشرفته</span>
-        </button> */}
-        <AdvanceFilterButton
-          isDefault={isDefault}
-          advancedSearchHandler={handleAdvancedFilter}
-          clearAdvancedFilter={clearStates}
-          // loadLoaction={loadLocations}
-          // loadOption={loadOptions}
-          setNoFilterExists={() => setNoFilterExists(false)}
-        />
-
-        {/* {showAdvanceFilter && (
-          <div className="w-full h-[500px] z-20 overflow-y-auto overflow-x-hidden text-white px-4">
-            {mapFields(dataForm.fields, dataForm)}
-          </div>
-        )} */}
-        {loading ? (
+        {isDefault ? (
+          <h4 className="text-white gap-2 bg-dark-blue/75 rounded-2xl px-2 py-2 flex flex-col items-center text-sm justify-between">
+            <BSIcon.BsFillExclamationTriangleFill className="text-2xl" />
+            {Strings.chooseDelegationAndEstateTypes}
+          </h4>
+        ) : loading ? (
           <div>
             <Spiner />
           </div>
         ) : (
-          <div className="w-52 ">
-            {dataForm.fields.length > 0 && (
-              <div className="section card glass shadow-sm py-2  my-2">
-                {mapFields(dataForm.fields, dataForm)}
-              </div>
+          <>
+            <div className="w-full">
+              {mapFields(estate.dataForm.fields, estate.dataForm)}
+            </div>
+            {!estate.dataForm.id ? (
+              <h4 className="text-white border rounded-2xl px-2 py-2 flex flex-row items-center text-sm justify-between">
+                {Strings.formDoesNotExist}
+                <BSIcon.BsFillExclamationTriangleFill />
+              </h4>
+            ) : (
+              <button
+                className="bg-[#f3bc65] h-10 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221] mt-3"
+                onClick={submitEstate}
+              >
+                {Strings.addEstate}
+              </button>
             )}
-            {noFilterExists ? (
-              <div className="flex items-center justify-center">
-                <h4 className="">{Strings.noFilterForThisForm}</h4>
-              </div>
-            ) : null}
-          </div>
+          </>
         )}
-        <button
-          onClick={searchEstate}
-          className="bg-[#f3bc65] h-10 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221] mt-3"
-        >
-          جستجو
-        </button>
       </div>
       <div className="block md:hidden">
         <button
@@ -903,4 +945,4 @@ const SidebarMap: FC<Props> = (props) => {
   );
 };
 
-export default SidebarMap;
+export default SideBarForAddEstate;

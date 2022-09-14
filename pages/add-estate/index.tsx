@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
-import SidebarMap from "../../components/map-component/SidebarMap";
+
 import SsjaMapTest from "../../components/map-component/SsjaMapTest";
 import MapInfo, { defaultMapInfo } from "../../global/types/MapInfo";
 import { globalState } from "../../global/states/globalStates";
@@ -12,7 +12,8 @@ import * as CgIcon from "react-icons/cg";
 
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
-const SearchEstate: NextPage = () => {
+import AddEstateSidebar from "../../components/AddEstate/AddEstateSideBar";
+const AddEstate: NextPage = () => {
   const [toggleShowMapAndList, setToggleShowMapAndList] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [isShowMenuInMobileDevice, setIsShowMobileInMobileDevice] =
@@ -53,25 +54,11 @@ const SearchEstate: NextPage = () => {
       <div className="mt-0 sm:mt-0 h-screen">
         <div className="flex flex-row h-full">
           <div className="hidden md:block">
-            <SidebarMap
-              setCore={setCordinate}
-              onSetEstate={setEstate}
-              width="72"
-            />
+            <AddEstateSidebar setCore={setCordinate} onSetEstate={setEstate} />
           </div>
           {/* <SsjaMap lng={lngvalue} lat={latvalue} /> */}
           <div className="relative h-full w-full rounded-lg ">
-            <div className="absolute border-[2px] w-12 h-12 flex items-center justify-center  bg-white z-20 top-2 right-2 text-[#2c3e50] rounded-lg shadow-md">
-              <button
-                onClick={() => setToggleShowMapAndList((prev) => !prev)}
-                className="shadow-2xl py-1 px-1 text-sm"
-              >
-                {!toggleShowMapAndList && <CgIcon.CgList className="w-8 h-8" />}
-                {toggleShowMapAndList && <GrIcon.GrMap className="w-6 h-6" />}
-                {/* <span>فهرست</span> */}
-              </button>
-            </div>
-            <div className="absolute  md:hidden border-[2px] h-12 flex items-center justify-center  bg-white z-20  top-2 right-16 text-[#2c3e50] rounded-lg shadow-md">
+            <div className="absolute  md:hidden border-[2px] h-12 flex items-center justify-center  bg-white z-20  top-2 right-3 text-[#2c3e50] rounded-lg shadow-md">
               <button
                 onClick={() => setIsShowMobileInMobileDevice(true)}
                 className="flex flex-row items-center justify-center gap-1 shadow-2xl py-1 px-2 text-sm"
@@ -80,23 +67,7 @@ const SearchEstate: NextPage = () => {
                 {/* <span className="text-lg">جستجو</span> */}
               </button>
             </div>
-            {!toggleShowMapAndList ? (
-              <SsjaMapTest cordinate={cordinate} isDragable={false} />
-            ) : (
-              <div className="z-0 w-full h-full  overflow-y-auto MyScroll">
-                {/* {fetchEsteate?.map((estate) => (
-                  <div key={estate.id} className="">
-                    {estate.city.name}
-                  </div>
-                ))} */}
-
-                {fetchEsteate === undefined ? (
-                  <div className="alertBox">جستجویی انجام نشده است</div>
-                ) : (
-                  <NewViewHouses allestates={fetchEsteate} />
-                )}
-              </div>
-            )}
+            <SsjaMapTest cordinate={cordinate} isDragable={false} />
           </div>
         </div>
       </div>
@@ -108,7 +79,7 @@ const SearchEstate: NextPage = () => {
             className="fixed top-0 w-full h-full bg-black/60 z-30 flex items-center justify-center"
           ></div>
           <div className="fixed top-0 bottom-2  mt-4 mb-4 z-30">
-            <SidebarMap
+            <AddEstateSidebar
               setCore={setCordinate}
               onSetEstate={setEstate}
               width="72"
@@ -121,4 +92,4 @@ const SearchEstate: NextPage = () => {
   );
 };
 
-export default SearchEstate;
+export default AddEstate;

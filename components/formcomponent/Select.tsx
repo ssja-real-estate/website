@@ -16,6 +16,7 @@ const Select: FC<{
   defaultValue?: string;
   onChange: Function;
   value?: string;
+  isDisabled?: boolean;
 }> = (props) => {
   const [isState, setIsstate] = useState(true);
   useEffect(() => {
@@ -39,9 +40,16 @@ const Select: FC<{
         }}
         className=""
         id={props.label?.htmlForLabler}
-        value={props.value}
+        // value={props.value}
+        defaultValue="choose"
       >
-        <option className="accent-gray-900 py-2">انتخاب کنید</option>
+        <option
+          value="choose"
+          className="accent-gray-900 py-2"
+          disabled={props.isDisabled}
+        >
+          انتخاب کنید
+        </option>
         {props.options.map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}
