@@ -12,6 +12,7 @@ import {
 import CustomModal from "../../modal/CustomModal";
 import Strings from "../../../data/strings";
 import RejectModal from "../../modal/RejectModal";
+import ModalAlert from "../../modal/ModalAlert";
 
 const UnVerigyEstate: FC = () => {
   const estateService = useRef(new EstateService());
@@ -20,6 +21,7 @@ const UnVerigyEstate: FC = () => {
   const [unVerifyEstates, setUnVerifyEstates] = useState<Estate[]>();
   const [loading, setLoading] = useState(true);
   const state = useRecoilValue(globalState);
+  const [errorMessage, setErrorMessage] = useState("");
   const mounted = useRef(true);
   useEffect(() => {
     estateService.current.setToken(state.token);
@@ -35,7 +37,8 @@ const UnVerigyEstate: FC = () => {
         .getEstates(EstateStatus.Unverified)
         .then((allEstate) => setUnVerifyEstates(allEstate));
     } catch (error) {
-      console.log(error);
+      setErrorMessage(error as string);
+      return;
     }
   }
   const verifyEstate = async (estateId: string) => {
@@ -66,7 +69,23 @@ const UnVerigyEstate: FC = () => {
     await getUnverifiedEstate();
     setLoading((prev) => false);
   };
-
+  const handleCloseModal = () => {
+    setErrorMessage("");
+    setUnVerifyEstates([]);
+  };
+  if (errorMessage) {
+    return (
+      <div className="container">
+        <ModalAlert
+          show={errorMessage ? true : false}
+          handleClose={handleCloseModal}
+          cancelTitle="بستن"
+        >
+          <div className="text-red-700 flex justify-center">{errorMessage}</div>
+        </ModalAlert>
+      </div>
+    );
+  }
   if (!unVerifyEstates) {
     return (
       <div className="container">

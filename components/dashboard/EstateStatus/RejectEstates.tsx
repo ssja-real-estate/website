@@ -6,12 +6,14 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { globalState } from "../../../global/states/globalStates";
 import EstateCardDashboard from "./EstateCardDashboard";
 import { rejectEstateAtom } from "./RejectEstateModal/RejectEstateModalState";
+import ModalAlert from "../../modal/ModalAlert";
 
 const RejectEstates: FC = () => {
   const estateService = useRef(new EstateService());
   const [rejectedEstate, setRejectedEstate] = useState<Estate[]>();
   const state = useRecoilValue(globalState);
   const [loading, setLoading] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [rejectEstateState, setRejectEstateState] =
     useRecoilState(rejectEstateAtom);
   const mounted = useRef(true);
@@ -29,7 +31,7 @@ const RejectEstates: FC = () => {
         .getEstates(EstateStatus.Rejected)
         .then((allEstate) => setRejectedEstate(allEstate));
     } catch (error) {
-      console.log(error);
+      setErrorMessage(error as string);
     }
     setLoading((prev) => false);
   }
@@ -47,6 +49,23 @@ const RejectEstates: FC = () => {
     setLoading((prev) => false);
   };
 
+  const handleCloseModal = () => {
+    setErrorMessage("");
+    setRejectedEstate([]);
+  };
+  if (errorMessage) {
+    return (
+      <div className="container">
+        <ModalAlert
+          show={errorMessage ? true : false}
+          handleClose={handleCloseModal}
+          cancelTitle="بستن"
+        >
+          <div className="text-red-700 flex justify-center">{errorMessage}</div>
+        </ModalAlert>
+      </div>
+    );
+  }
   if (!rejectedEstate) {
     return (
       <div className="container">

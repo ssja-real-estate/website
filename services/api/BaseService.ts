@@ -38,18 +38,21 @@ class BaseService {
   }
 
   handleError(error: any) {
+    // console.log(error);
+
     if (!error.isAxiosError) {
-      // this.toastUnknownError(error);
+      this.toastUnknownError(error);
       return;
     }
 
     let response = (error as AxiosError<any>).response;
     if (response && response?.data) {
       if (!response.data.error) {
-        // this.toastStatusError(error);
+        this.toastStatusError(error);
         return;
       } else {
         // toast.error(response.data.error);
+        throw response.data.error;
       }
     } else {
       this.toastStatusError(error);
@@ -58,14 +61,19 @@ class BaseService {
   }
 
   private toastStatusError(error: AxiosError) {
+    // console.log(error.response);
+
     if (!error.response) {
-      // this.toastUnknownError(error);
+      this.toastUnknownError(error);
       return;
     }
 
     const status = error.response.status;
+    // console.log(status);
+
     let message = this.buildErrorMessage(status);
     // toast.error(message);
+    throw message;
   }
 
   private buildErrorMessage(status: number) {
@@ -96,6 +104,8 @@ class BaseService {
 
   private toastUnknownError(error: any) {
     // toast.error(Strings.unknownError);
+    alert(error);
+    throw Strings.unknownError;
   }
 }
 
