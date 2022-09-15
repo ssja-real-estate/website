@@ -26,8 +26,6 @@ const AllEstateStatus: FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     estateService.current.setToken(state.token);
-    console.log(state.role);
-
     loadData();
     return () => {
       mounted.current = false;
