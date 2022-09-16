@@ -46,10 +46,6 @@ interface Props {
 
 const SideBarForAddEstate: FC<Props> = (props) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingEstates, setLoadingEstates] = useState(false);
-  const [noFilterExists, setNoFilterExists] = useState(false);
-  const [isAdvancedFilter, toggleAdvancedFilter] = useState(true);
-  const [searchedEstates, setSearchedEstates] = useState<Estate[]>([]);
   const [estate, setEstate] = useState<Estate>(defaultEstate);
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
@@ -223,35 +219,43 @@ const SideBarForAddEstate: FC<Props> = (props) => {
       return;
     }
 
-    // const errors = validateForm(estate.dataForm);
-    // if (errors.length > 0) {
-    //   for (let i = 0; i < errors.length; i++) {
-    //     const error = errors[i];
-    //     // toast.error(error.message, {
-    //     //   duration: 2000,
-    //     // });
-    //   }
-    //   return;
-    // }
+    const errors = validateForm(estate.dataForm);
+    let error: string[] = [];
+    if (errors.length > 0) {
+      for (let i = 0; i < errors.length; i++) {
+        error.push(errors[i].message);
+        // toast.error(error.message, {
+        //   duration: 2000,
+        // });
+      }
+      if (error.length > 0) {
+        setIsShowModal(true);
+        setModalOption({
+          message: error,
+          closeModal: () => setIsShowModal(false),
+        });
+      }
+      return;
+    }
 
-    // setLoading((prev) => true);
+    setLoading((prev) => true);
 
     // formData.append("estate", JSON.stringify(estate));
     // let response = await estateService.current.requestAddEtate(formData);
 
     // if (response) {
-    //   // toast.success(Strings.addEstateRequestSuccess, {
-    //   //   duration: 5000,
-    //   // });
-    //   setSelectedProvince(defaultProvince);
-    //   setSelectedCity(defaultCity);
-    //   setSelectedNeighborhood(defaultNeighborhood);
-    //   setSelectedDelegationType(defaultDelegationType);
-    //   setSelectedEstateType(defaultEstateType);
-    //   setFormData(new FormData());
-    //   setEstate(defaultEstate);
+    // toast.success(Strings.addEstateRequestSuccess, {
+    //   duration: 5000,
+    // });
+    setSelectedProvince(defaultProvince);
+    setSelectedCity(defaultCity);
+    setSelectedNeighborhood(defaultNeighborhood);
+    setSelectedDelegationType(defaultDelegationType);
+    setSelectedEstateType(defaultEstateType);
+    setFormData(new FormData());
+    setEstate(defaultEstate);
     // }
-    // setLoading((prev) => false);
+    setLoading((prev) => false);
   }
 
   function handleProvinceChange(provinceId: string) {
@@ -333,68 +337,6 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     });
   }
 
-  async function searchEstate() {
-    console.log(selectedDelegationType.id, selectedEstateType.id);
-
-    console.log("dataForm:");
-    console.log(dataForm);
-    props.onSetEstate([]);
-    const errors = validateForm(dataForm);
-    if (errors.length > 0) {
-      let messageError = "";
-      // alert(String(errors[0].message));
-      setIsShowModal(true);
-      setModalOption({
-        message: errors[0].message,
-        closeModal: () => setIsShowModal(false),
-        icon: (
-          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
-            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
-            <span className="text-sm">توجه</span>
-          </div>
-        ),
-      });
-      return;
-      // for (let i = 0; i < errors.length; i++) {
-      //   const error = errors[i];
-      //   // console.log(error);
-      //   alert(error.message);
-      //   // messageError += error.message + ",";
-      //   // toast.error(error.message, {
-      //   //   duration: 3000,
-      //   // });
-      // }
-      // // alert(messageError);
-      // return;
-    }
-    setLoadingEstates((prev) => true);
-
-    const filter = buildFilter();
-    const fetchedEstates = await searchService.current.searchEstates(filter);
-    console.log(fetchedEstates.length);
-    if (fetchedEstates.length === 0) {
-      // debugger;
-      setIsShowModal(true);
-      setModalOption({
-        message: "مکانی با مشخصات وارد شده یافت نشد",
-        closeModal: () => setIsShowModal(false),
-        icon: (
-          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
-            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
-            <span className="text-sm">توجه</span>
-          </div>
-        ),
-      });
-      return;
-    }
-
-    setSearchedEstates(fetchedEstates);
-    setLoadingEstates((prev) => false);
-    props.onSetEstate(fetchedEstates);
-    // debugger;
-
-    closeModal();
-  }
   function closeModal() {
     if (props.closeModalHandler !== undefined) {
       props.closeModalHandler(false);
@@ -574,7 +516,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
           ) : field.type === FieldType.MultiSelect ? (
             <div className="flex flex-row flex-wrap gap-2 text-sm pr-2">
               {field.keys!.map((key, index) => {
-                const keyMap = field.value as { [key: string]: boolean };
+                // const keyMap = field.value as { [key: string]: boolean };
                 return (
                   <div
                     className="border rounded-full flex items-center justify-center p-2"
@@ -584,10 +526,10 @@ const SideBarForAddEstate: FC<Props> = (props) => {
                     <input
                       className="mx-1"
                       type="checkbox"
-                      checked={keyMap[key]}
+                      checked={(field.value as { [key: string]: boolean })[key]}
                       onChange={(e) => {
                         const booleanValue = e.target.checked;
-                        onFieldChange(booleanValue, form, fieldIndex);
+                        onFieldChange(booleanValue, form, fieldIndex, key);
                       }}
                     />
                   </div>
@@ -806,12 +748,15 @@ const SideBarForAddEstate: FC<Props> = (props) => {
   ) {
     // return;
 
+    // debugger;
     const currentField = {
-      ...dataForm.fields[fieldIndex],
+      ...form.fields[fieldIndex],
     };
-    console.log(currentField.value);
+    console.log(currentField.type);
+    // debugger;
     if (currentField.type === FieldType.MultiSelect) {
       const fieldValue = currentField.value as { [key: string]: boolean };
+
       if (key && fieldValue) {
         fieldValue[key] = targetValue;
         currentField.value = fieldValue;
@@ -821,7 +766,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     }
 
     const fields = form.fields;
-    fields[fieldIndex].value = currentField.value;
+    fields[fieldIndex] = currentField;
 
     setEstate({
       ...estate,
@@ -846,6 +791,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               titleLabel: "استان",
               labelColor: "white",
             }}
+            value={selectedProvince.name}
             onChange={handleProvinceChange}
           />
         </div>
@@ -858,6 +804,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               titleLabel: "شهرستان",
               labelColor: "white",
             }}
+            value={selectedCity.name}
             onChange={handleCityChange}
           />
         </div>
@@ -870,6 +817,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               titleLabel: "منطقه",
               labelColor: "white",
             }}
+            value={selectedNeighborhood.name}
             onChange={handleNeighborhoodChange}
           />
         </div>
@@ -877,13 +825,13 @@ const SideBarForAddEstate: FC<Props> = (props) => {
           <Select
             options={delegationTypes}
             // defaultValue=""
-            // value={selectedDelegationType.name}
+            value={selectedDelegationType.name}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",
               labelColor: "white",
             }}
-            isDisabled={true}
+            // isDisabled={true}
             onChange={handleDelegationChange}
           />
         </div>
@@ -891,13 +839,13 @@ const SideBarForAddEstate: FC<Props> = (props) => {
           <Select
             options={estateTypes}
             // defaultValue=""
-            // value={selectedEstateType.name}
+            value={selectedEstateType.name}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع ملک",
               labelColor: "white",
             }}
-            isDisabled={true}
+            // isDisabled={true}
             onChange={handleTypeChange}
           />
         </div>

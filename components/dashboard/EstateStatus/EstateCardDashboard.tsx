@@ -28,10 +28,10 @@ interface EstateCardProps {
   onCloseEstateInfo?: () => void;
 }
 const EstateCardDashboard: FC<EstateCardProps> = (props) => {
-  const [src, setSrc] = useState<string | StaticImageData>("");
-  useEffect(() => {
-    setSrc(imageFromPropsEstate());
-  }, [src]);
+  // const [src, setSrc] = useState<string | StaticImageData>("");
+  // useEffect(() => {
+  //   setSrc(imageFromPropsEstate());
+  // }, [src]);
 
   const myLoader: ImageLoader = ({ src, width, quality }) => {
     return `https://ssja.ir/api/images/${src}?w=${width}&q=${quality || 100}`;
@@ -55,7 +55,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
       <Image
         // loader={myLoader}
         // src={`https://ssja.ir/api/images/${props.estate.id}/${imageFromPropsEstate}`}
-        src={src}
+        src={imageFromPropsEstate()}
         alt="house"
         layout="responsive"
         width={554}

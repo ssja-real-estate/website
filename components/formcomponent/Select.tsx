@@ -18,10 +18,11 @@ const Select: FC<{
   value?: string;
   isDisabled?: boolean;
 }> = (props) => {
-  const [isState, setIsstate] = useState(true);
+  const [optionsSet, setOptions] = useState<OptionSelectBox[]>();
+  // const [isState, setIsstate] = useState(true);
   useEffect(() => {
-    setIsstate((prev) => !prev);
-  }, [props.options]);
+    setOptions(props.options);
+  }, [optionsSet, props.options]);
   return (
     <>
       {props.label && (
@@ -40,7 +41,7 @@ const Select: FC<{
         }}
         className=""
         id={props.label?.htmlForLabler}
-        // value={props.value}
+        value={props.value}
         defaultValue="choose"
       >
         <option
@@ -50,7 +51,7 @@ const Select: FC<{
         >
           انتخاب کنید
         </option>
-        {props.options.map((option) => (
+        {optionsSet?.map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}
           </option>

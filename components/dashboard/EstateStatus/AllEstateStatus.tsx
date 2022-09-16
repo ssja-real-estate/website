@@ -1,6 +1,4 @@
-import { AxiosError } from "axios";
 import { useRouter } from "next/router";
-import { json } from "node:stream/consumers";
 import { FC, useEffect, useRef, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -10,9 +8,7 @@ import {
 import { globalState } from "../../../global/states/globalStates";
 import { Estate, EstateStatus } from "../../../global/types/Estate";
 import EstateService from "../../../services/api/EstateService/EstateService";
-import CustomModal from "../../modal/CustomModal";
 import ModalAlert from "../../modal/ModalAlert";
-
 import Spiner from "../../spinner/Spiner";
 import EstateCardDashboard from "./EstateCardDashboard";
 
