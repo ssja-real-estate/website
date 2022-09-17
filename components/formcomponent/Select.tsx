@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import Strings from "../../data/strings";
 
 export interface LabelSelectBox {
   htmlForLabler?: string;
@@ -22,7 +23,8 @@ const Select: FC<{
   // const [isState, setIsstate] = useState(true);
   useEffect(() => {
     setOptions(props.options);
-  }, [optionsSet, props.options]);
+  }, [props.options]);
+
   return (
     <>
       {props.label && (
@@ -35,21 +37,15 @@ const Select: FC<{
       )}
       <select
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          console.log(e.target.value);
-
           props.onChange(e.target.value);
         }}
         className=""
         id={props.label?.htmlForLabler}
         value={props.value}
-        defaultValue="choose"
+        // defaultValue=""
       >
-        <option
-          value="choose"
-          className="accent-gray-900 py-2"
-          disabled={props.isDisabled}
-        >
-          انتخاب کنید
+        <option value="" className="accent-gray-900 py-2" disabled>
+          {Strings.choose}
         </option>
         {optionsSet?.map((option) => (
           <option key={option.id} value={option.id}>

@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, FC, ChangeEvent } from "react";
-import * as FiIcon from "react-icons/fi";
 import * as RiIcon from "react-icons/ri";
 import * as BSIcon from "react-icons/bs";
 
@@ -81,7 +80,6 @@ const SideBarForAddEstate: FC<Props> = (props) => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [modalOption, setModalOption] = useState<ModalOption>();
   useEffect(() => {
-    searchService.current.setToken(state.token);
     formService.current.setToken(state.token);
     delegationTypeService.current.setToken(state.token);
     estateTypeService.current.setToken(state.token);
@@ -131,13 +129,15 @@ const SideBarForAddEstate: FC<Props> = (props) => {
           }
         }
       })
-      .catch((e) => {
-        console.log(e);
-
-        // toast.error(Strings.loadingLocationsFailed);
+      .catch((_) => {
+        //  toast.error(Strings.loadingLocationsFailed);
+        setIsShowModal(true);
+        setModalOption({
+          message: Strings.loadingLocationsFailed,
+          closeModal: () => setIsShowModal(false),
+        });
       });
   };
-
   async function loadOptions() {
     delegationTypeService.current
       .getAllDelegationTypes()
@@ -149,9 +149,12 @@ const SideBarForAddEstate: FC<Props> = (props) => {
         setEstateTypes(estateTypes);
       })
       .catch((error) => {
-        console.log(error);
-
         // toast.error(Strings.loadingOptionsFailed);
+        setIsShowModal(true);
+        setModalOption({
+          message: Strings.loadingOptionsFailed,
+          closeModal: () => setIsShowModal(false),
+        });
       });
   }
   async function loadData() {
@@ -201,7 +204,6 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     console.log(estate.dataForm);
     selectedProvince.id ? console.log(true) : console.log(false);
     if (!selectedProvince.id || !selectedCity.id || !selectedNeighborhood.id) {
-      // toast.error(Strings.enterlocationInfo);
       setIsShowModal(true);
       setModalOption({
         message: Strings.enterlocationInfo,
@@ -220,52 +222,43 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     }
 
     const errors = validateForm(estate.dataForm);
-    let error: string[] = [];
+
     if (errors.length > 0) {
-      for (let i = 0; i < errors.length; i++) {
-        error.push(errors[i].message);
-        // toast.error(error.message, {
-        //   duration: 2000,
-        // });
-      }
-      if (error.length > 0) {
-        setIsShowModal(true);
-        setModalOption({
-          message: error,
-          closeModal: () => setIsShowModal(false),
-        });
-      }
+      setIsShowModal(true);
+      setModalOption({
+        message: errors[0].message,
+        closeModal: () => setIsShowModal(false),
+      });
       return;
     }
 
     setLoading((prev) => true);
+    formData.append("estate", JSON.stringify(estate));
+    console.log(JSON.stringify(estate));
+    let response = await estateService.current.requestAddEtate(formData);
 
-    // formData.append("estate", JSON.stringify(estate));
-    // let response = await estateService.current.requestAddEtate(formData);
+    if (response) {
+      setSelectedProvince(defaultProvince);
+      setSelectedCity(defaultCity);
+      setSelectedNeighborhood(defaultNeighborhood);
+      setSelectedDelegationType(defaultDelegationType);
+      setSelectedEstateType(defaultEstateType);
+      setFormData(new FormData());
+      setEstate(defaultEstate);
+    }
 
-    // if (response) {
-    // toast.success(Strings.addEstateRequestSuccess, {
-    //   duration: 5000,
-    // });
-    setSelectedProvince(defaultProvince);
-    setSelectedCity(defaultCity);
-    setSelectedNeighborhood(defaultNeighborhood);
-    setSelectedDelegationType(defaultDelegationType);
-    setSelectedEstateType(defaultEstateType);
-    setFormData(new FormData());
-    setEstate(defaultEstate);
-    // }
     setLoading((prev) => false);
+    setIsShowModal(true);
+    setModalOption({
+      message: Strings.addEstateRequestSuccess,
+      closeModal: () => setIsShowModal(false),
+    });
   }
 
   function handleProvinceChange(provinceId: string) {
     const province = provinces.find((p) => p.id === provinceId);
 
     if (!province) {
-      setSelectedProvince(defaultProvince);
-      setSelectedCity(defaultCity);
-      setCities([]);
-      setSelectedNeighborhood(defaultNeighborhood);
       return;
     }
 
@@ -275,10 +268,17 @@ const SideBarForAddEstate: FC<Props> = (props) => {
       cities: province.cities,
       mapInfo: province.mapInfo,
     });
-    setCities(province.cities);
-
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
+    setMapInfo(province.mapInfo);
+    setCities(province.cities);
+    setEstate({
+      ...estate,
+      province: {
+        id: provinceId,
+        name: province.name,
+      },
+    });
     props.setCore(province.mapInfo);
   }
 
@@ -286,9 +286,6 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     const city = cities.find((c) => c.id === cityId);
 
     if (!city) {
-      setSelectedCity(defaultCity);
-      setSelectedNeighborhood(defaultNeighborhood);
-      setNeighborhoods([]);
       return;
     }
 
@@ -303,13 +300,19 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     if (city.mapInfo) {
       props.setCore(city.mapInfo);
     }
+    setEstate({
+      ...estate,
+      city: {
+        id: cityId,
+        name: city.name,
+      },
+    });
   }
 
   function handleNeighborhoodChange(neighborhoodId: string) {
     const neighborhood = neighborhoods.find((n) => n.id === neighborhoodId);
 
     if (!neighborhood) {
-      setSelectedNeighborhood(defaultNeighborhood);
       return;
     }
 
@@ -318,9 +321,17 @@ const SideBarForAddEstate: FC<Props> = (props) => {
       name: neighborhoodId,
       mapInfo: neighborhood.mapInfo,
     });
+    setMapInfo(neighborhood.mapInfo);
     if (neighborhood.mapInfo) {
       props.setCore(neighborhood.mapInfo);
     }
+    setEstate({
+      ...estate,
+      neighborhood: {
+        id: neighborhoodId,
+        name: neighborhood.name,
+      },
+    });
   }
 
   function handleDelegationChange(data: string) {
@@ -791,7 +802,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               titleLabel: "استان",
               labelColor: "white",
             }}
-            value={selectedProvince.name}
+            value={selectedProvince.id}
             onChange={handleProvinceChange}
           />
         </div>
@@ -804,7 +815,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               titleLabel: "شهرستان",
               labelColor: "white",
             }}
-            value={selectedCity.name}
+            value={selectedCity.id}
             onChange={handleCityChange}
           />
         </div>
@@ -817,7 +828,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               titleLabel: "منطقه",
               labelColor: "white",
             }}
-            value={selectedNeighborhood.name}
+            value={selectedNeighborhood.id}
             onChange={handleNeighborhoodChange}
           />
         </div>
@@ -825,7 +836,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
           <Select
             options={delegationTypes}
             // defaultValue=""
-            value={selectedDelegationType.name}
+            value={selectedDelegationType.id}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",

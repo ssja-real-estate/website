@@ -780,7 +780,8 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={provinces}
-            defaultValue=""
+            // defaultValue=""
+            value={selectedProvince.id}
             label={{
               htmlForLabler: "provinces",
               titleLabel: "استان",
@@ -792,7 +793,8 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={cities}
-            defaultValue=""
+            // defaultValue=""
+            value={selectedCity.id}
             label={{
               htmlForLabler: "cities",
               titleLabel: "شهرستان",
@@ -804,7 +806,8 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={neighborhoods}
-            defaultValue=""
+            value={selectedNeighborhood.id}
+            // defaultValue=""
             label={{
               htmlForLabler: "neighborhoods",
               titleLabel: "منطقه",
@@ -817,7 +820,7 @@ const SidebarMap: FC<Props> = (props) => {
           <Select
             options={delegationTypes}
             defaultValue=""
-            value={selectedDelegationType.name}
+            value={selectedDelegationType.id}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",
@@ -830,7 +833,7 @@ const SidebarMap: FC<Props> = (props) => {
           <Select
             options={estateTypes}
             defaultValue=""
-            value={selectedEstateType.name}
+            value={selectedEstateType.id}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع ملک",

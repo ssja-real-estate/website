@@ -15,15 +15,17 @@ interface Props {
 const HeaderAndFooterLayout = ({ children }: Props) => {
   const state = useRecoilValue(globalState);
   const [loaded, setLoaded] = useState(false);
-
   const router = useRouter();
   useEffect(() => {
-    if (router.route === "/dashboard" && !state.loggedIn) {
+    if (
+      (router.route === "/dashboard" || router.route === "/add-estate") &&
+      !state.loggedIn
+    ) {
       router.push("/login");
     } else {
       setLoaded(true);
     }
-  });
+  }, [router, loaded, state]);
   if (!loaded) {
     return <div></div>;
   }

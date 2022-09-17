@@ -241,7 +241,10 @@ const Property: NextPage<{ id: string }> = (props) => {
       </div> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mt-8">
         <div className="order-2">
-          <h2 className="font-bold text-[#2c3e50] text-lg">مشخصات</h2>
+          <h2 className="font-bold text-[#2c3e50] text-lg">
+            <span>مشخصات جهت </span>
+            <span>{estate.dataForm.title}</span>
+          </h2>
           <div className="mt-3 items-center">
             <ul className="flex flex-col gap-3 text-[#2c3e50] text-sm">
               {mapField(estate.dataForm.fields)}
