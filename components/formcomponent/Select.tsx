@@ -15,7 +15,7 @@ const Select: FC<{
   options: OptionSelectBox[];
   label?: LabelSelectBox;
   defaultValue?: string;
-  onChange: Function;
+  onChange: Function | null;
   value?: string;
   isDisabled?: boolean;
 }> = (props) => {
@@ -37,11 +37,12 @@ const Select: FC<{
       )}
       <select
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          props.onChange(e.target.value);
+          props.onChange !== null ? props.onChange(e.target.value) : null;
         }}
         className=""
         id={props.label?.htmlForLabler}
         value={props.value}
+        disabled={props?.isDisabled ? true : false}
         // defaultValue=""
       >
         <option value="" className="accent-gray-900 py-2" disabled>

@@ -87,7 +87,7 @@ const AllEstateStatus: FC = () => {
                   inputEstate: estate,
                   screenType: ScreenType.Edit,
                 }));
-                router.push("/edit-estate");
+                router.push({ pathname: "/edit-estate" });
               }}
             />
           ))}

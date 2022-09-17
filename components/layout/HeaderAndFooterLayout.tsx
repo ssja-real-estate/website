@@ -18,7 +18,9 @@ const HeaderAndFooterLayout = ({ children }: Props) => {
   const router = useRouter();
   useEffect(() => {
     if (
-      (router.route === "/dashboard" || router.route === "/add-estate") &&
+      (router.route === "/dashboard" ||
+        router.route === "/add-estate" ||
+        router.route === "/edit-estate") &&
       !state.loggedIn
     ) {
       router.push("/login");
