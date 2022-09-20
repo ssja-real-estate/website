@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import Strings from "../../../../data/strings";
 import DelegationTypesList from "./DelegationTypesList/DelegationTypesList";
+import EstateTypesList from "./EstateTypes/EstateTypesList";
 import ProvinceList from "./ProvinceList/ProvinceList";
 
 const TemplateList: FC = () => {
@@ -96,7 +97,7 @@ const TemplateList: FC = () => {
             <DelegationTypesList />
           </TabPanel>
           <TabPanel>
-            <h2>نوع ملکها</h2>
+            <EstateTypesList />
           </TabPanel>
           <TabPanel>
             <ProvinceList />
