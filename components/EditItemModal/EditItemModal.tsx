@@ -76,7 +76,7 @@ const EditItemModal: React.FC<Props> = (props) => {
         <div>
           <h2 className="text-dark-blue font-bold text-2xl px-3">ویرایش</h2>
         </div>
-        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+        <div className="w-full h-[1px] bg-gray-100 my-3"></div>
         <div className="px-3">
           <form>
             <div>
@@ -101,7 +101,7 @@ const EditItemModal: React.FC<Props> = (props) => {
                     <label>{Strings.latitude}</label>
                     <input
                       className="inputDecoration my-1"
-                      type="text"
+                      type="number"
                       value={mapInfo.latitude}
                       onChange={(e: {
                         currentTarget: { value: string | number };
@@ -117,7 +117,7 @@ const EditItemModal: React.FC<Props> = (props) => {
                     <label>{Strings.longitude}</label>
                     <input
                       className="inputDecoration my-1"
-                      type="text"
+                      type="number"
                       value={mapInfo.longitude}
                       onChange={(e: {
                         currentTarget: { value: string | number };
@@ -177,7 +177,7 @@ const EditItemModal: React.FC<Props> = (props) => {
             </div>
           </form>
         </div>
-        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+        <div className="w-full h-[1px] bg-gray-100 my-3"></div>
       </div>
     </CustomModal>
   );

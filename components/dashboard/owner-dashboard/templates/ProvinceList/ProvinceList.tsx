@@ -1,32 +1,35 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Strings from "../../../../../data/strings";
 import { globalState } from "../../../../../global/states/globalStates";
-import DelegationType from "../../../../../global/types/DelegationType";
-import DelegationTypeService from "../../../../../services/api/DelegationTypeService/DelegationTypeService";
+import { defaultMapInfo } from "../../../../../global/types/MapInfo";
+import Province from "../../../../../global/types/Province";
+import LocationService from "../../../../../services/api/LocationService/LocationService";
 import EditItemModal from "../../../../EditItemModal/EditItemModal";
 import editItemModalState, {
   buildMap,
   defaultEditItemModalState,
   EditItemType,
 } from "../../../../EditItemModal/EditItemModalState";
-import Spiner from "../../../../spinner/Spiner";
 import * as AiIcon from "react-icons/ai";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcon from "react-icons/md";
-const DelegationTypesList: FC = () => {
-  const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
-  const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
-  const [newItems, setNewItems] = useState<DelegationType[]>([]);
-  const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
+import Spiner from "../../../../spinner/Spiner";
+import React from "react";
+function ProvinceList() {
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [removedItems, setRemovedItems] = useState<Province[]>([]);
+  const [newItems, setNewItems] = useState<Province[]>([]);
+  const [newProvince, setNewProvince] = useState<Province>({
     id: "",
     name: "",
+    cities: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
   const state = useRecoilValue(globalState);
-  const service = useRef(new DelegationTypeService());
+  const service = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
 
@@ -41,102 +44,114 @@ const DelegationTypesList: FC = () => {
   }, [state.token]);
 
   useEffect(() => {
-    if (modalState.editMap[EditItemType.DelegationType]) {
-      editDelegationType();
+    if (modalState.editMap[EditItemType.Province]) {
+      editProvince();
     }
 
     return () => {
       modalMounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalState.editMap[EditItemType.DelegationType]]);
+  }, [modalState.editMap[EditItemType.Province]]);
 
   const loadData = async () => {
-    setDelegationTypes([]);
     if (!loading) {
       setLoading((prev) => true);
     }
-    const data = await service.current.getAllDelegationTypes();
+    const data = await service.current.getAllProvinces();
 
     if (!mounted.current) {
       setLoading((prev) => false);
       return;
     }
 
-    setDelegationTypes(data);
-    console.log(data);
-
+    setProvinces(data);
     setLoading((prev) => false);
   };
 
-  const selectItemAsDeleted = (delegationType: DelegationType) => {
+  const selectItemAsRemoved = (province: Province) => {
     setRemovedItems((prev) => {
-      let type = prev.find((item) => item.id === delegationType.id);
-      let newRemovedItems = [];
-      if (type) {
-        newRemovedItems = prev.filter((item) => item.id !== delegationType.id);
+      let prov = prev.find((item) => item.id === province.id);
+      if (prov) {
+        const newRemovedItems = prev.filter((item) => item.id !== province.id);
         return newRemovedItems;
       } else {
-        newRemovedItems = [...prev, delegationType];
+        const newRemovedItems = [...prev, province];
         return newRemovedItems;
       }
     });
   };
 
-  const createNewDelegationTypes = async () => {
+  const createNewProvinces = async () => {
     for (let i = 0; i < newItems.length; i++) {
-      const element = newItems[i];
-      await service.current.createDelegationType(element);
+      const province = newItems[i];
+      await service.current.createProvince(province);
     }
   };
 
-  const editDelegationType = async () => {
+  const editProvince = async () => {
     if (modalState.id === "") return;
 
-    setLoading((prev) => true);
-    let newType = await service.current.editDelegationType({
-      id: modalState.id,
-      name: modalState.value,
-    });
+    let province = provinces.find((p) => p.id === modalState.id);
 
-    if (newType) {
-      setDelegationTypes((types) => {
-        let prevType = types.find((t) => t.id === newType!.id);
-        if (prevType) {
-          prevType.name = newType!.name;
-        }
-        return types;
+    setLoading((prev) => true);
+
+    if (province) {
+      let newType = await service.current.editProvince({
+        id: modalState.id,
+        name: modalState.value,
+        cities: province !== undefined ? province.cities : [],
+        mapInfo: modalState.mapInfo,
       });
+
+      if (newType) {
+        setProvinces((prev) => {
+          let prevType = prev.find((t) => t.id === newType!.id);
+
+          if (prevType) {
+            prevType.name = newType!.name;
+            prevType.mapInfo = newType?.mapInfo;
+          }
+
+          return prev;
+        });
+      }
     }
+
     if (modalMounted.current) {
       setModalState(defaultEditItemModalState);
     }
     setLoading((prev) => false);
   };
 
-  const deleteDelegationTypes = async () => {
+  const deleteProvinces = async () => {
     for (let i = 0; i < removedItems.length; i++) {
-      const element = removedItems[i];
-      await service.current.deleteDelegationType(element.id);
+      const province = removedItems[i];
+      await service.current.deleteProvince(province.id);
     }
   };
 
   const saveChanges = async () => {
     setLoading((prev) => true);
-    await deleteDelegationTypes();
-    await createNewDelegationTypes();
+    await deleteProvinces();
+    await createNewProvinces();
     await loadData();
   };
+
   return (
     <div className="h-full flex flex-col">
       <EditItemModal
         title={Strings.edit}
-        placeholder={Strings.delegationType}
-        editItemType={EditItemType.DelegationType}
+        placeholder={Strings.province}
+        editItemType={EditItemType.Province}
       />
       <div className="flex flex-row items-center gap-2 justify-center">
         <h4 className="text-2xl text-dark-blue font-bold">
-          {Strings.delegationTypes}
+          {Strings.provinces}{" "}
+          <span className="text-dark-blue/30 text-sm">
+            (<span>تعداد</span>
+            <span>{provinces.length}</span>)
+          </span>
         </h4>
         {/* <button
           className="refresh-btn d-inline rounded-circle"
@@ -154,15 +169,13 @@ const DelegationTypesList: FC = () => {
             <Spiner />
           ) : (
             <ul className="flex flex-row flex-wrap gap-2">
-              {delegationTypes.map((delegationType, index) => {
+              {provinces.map((province, index) => {
                 return (
                   <React.Fragment key={index}>
                     <li
                       className={`flex flex-row px-2 justify-between gap-5 items-center rounded-full p-2 shadow-xl ${
                         removedItems.length > 0 &&
-                        removedItems.find(
-                          (item) => item.id === delegationType.id
-                        )
+                        removedItems.find((item) => item.id === province.id)
                           ? "bg-red-100 text-red-800 hover:text-white text-sm hover:bg-red-800"
                           : "bg-[#f6f6f6]/60 text-dark-blue text-sm "
                       }  cursor-default transition-all duration-200`}
@@ -180,18 +193,17 @@ const DelegationTypesList: FC = () => {
                       //   });
                       // }}
                     >
-                      <span className="font-bold">{delegationType.name}</span>
+                      <span className="font-bold">{province.name}</span>
                       <div className="flex flex-row gap-1">
                         <span
                           onClick={() => {
-                            const newMap = buildMap(
-                              EditItemType.DelegationType
-                            );
+                            const newMap = buildMap(EditItemType.Province);
                             setModalState({
                               ...defaultEditItemModalState,
-                              id: delegationType.id,
-                              value: delegationType.name,
+                              id: province.id,
+                              value: province.name,
                               displayMap: [...newMap],
+                              mapInfo: province.mapInfo,
                             });
                           }}
                           title="ویرایش"
@@ -201,7 +213,7 @@ const DelegationTypesList: FC = () => {
                         </span>
                         <span
                           onClick={() => {
-                            selectItemAsDeleted(delegationType);
+                            selectItemAsRemoved(province);
                           }}
                           title="حذف"
                           className="border p-1 rounded-full hover:bg-red-700 cursor-pointer"
@@ -260,11 +272,11 @@ const DelegationTypesList: FC = () => {
           <input
             type="text"
             className="inputDecoration"
-            placeholder={Strings.addNewDelegationType}
-            value={newDelegationType.name}
+            placeholder={Strings.addNewProvince}
+            value={newProvince.name}
             onChange={(e) => {
-              setNewDelegationType({
-                ...newDelegationType,
+              setNewProvince({
+                ...newProvince,
                 name: e.target.value,
               });
             }}
@@ -272,16 +284,16 @@ const DelegationTypesList: FC = () => {
           <button
             className="w-9 h-9 flex items-center justify-center border group border-[#f3bc65] hover:bg-[#f3bc65]"
             onClick={() => {
-              newDelegationType.name.trim() !== "" &&
+              newProvince.name.trim() !== "" &&
                 setNewItems((prev) => [
                   ...prev,
                   {
-                    ...newDelegationType,
-                    name: newDelegationType.name.trim(),
+                    ...newProvince,
+                    name: newProvince.name.trim(),
                   },
                 ]);
-              setNewDelegationType({
-                ...newDelegationType,
+              setNewProvince({
+                ...newProvince,
                 name: "",
               });
             }}
@@ -294,6 +306,6 @@ const DelegationTypesList: FC = () => {
       </div>
     </div>
   );
-};
+}
 
-export default DelegationTypesList;
+export default ProvinceList;

@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import Strings from "../../../../data/strings";
 import DelegationTypesList from "./DelegationTypesList/DelegationTypesList";
+import ProvinceList from "./ProvinceList/ProvinceList";
 
 const TemplateList: FC = () => {
   const [indexTab, setIndexTab] = useState<number>(0);
@@ -97,7 +98,9 @@ const TemplateList: FC = () => {
           <TabPanel>
             <h2>نوع ملکها</h2>
           </TabPanel>
-          <TabPanel>استان</TabPanel>
+          <TabPanel>
+            <ProvinceList />
+          </TabPanel>
           <TabPanel>شهرها</TabPanel>
           <TabPanel>منطقه ها</TabPanel>
           <TabPanel>واحد ها</TabPanel>
