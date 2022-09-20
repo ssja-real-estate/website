@@ -30,6 +30,7 @@ import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
 import { estateScreenAtom, ScreenType } from "../../global/states/EstateScreen";
 import { imagesBaseUrl } from "../../global/states/GlobalState";
+import Image from "next/image";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
@@ -332,8 +333,9 @@ const EditEstateSideBar: FC<Props> = (props) => {
     if (!form.fields || form.fields.length < 1) return;
 
     const firstField = form.fields[0];
-    if (firstField.type !== FieldType.Image) return;
 
+    if (firstField.type !== FieldType.Image) return;
+    console.log(firstField);
     setPreviousImages((firstField.value as string[]) ?? []);
   }
 
@@ -550,11 +552,14 @@ const EditEstateSideBar: FC<Props> = (props) => {
               }}
             />
           ) : field.type === FieldType.Image ? (
-            <div className="">
+            <div className="h-[150px] w-full">
               {previousImages.length > 0
                 ? previousImages.map((img, idx) => (
                     <div key={idx}>
-                      <img
+                      <Image
+                        width={200}
+                        height={150}
+                        layout="responsive"
                         src={`${imagesBaseUrl}/${estate.id}/${img}`}
                         alt={`${imagesBaseUrl}/${estate.id}/${img}`}
                         className="thumbnail rounded-3"
@@ -854,6 +859,7 @@ const EditEstateSideBar: FC<Props> = (props) => {
       });
       return;
     }
+    console.log(previousImages.length);
 
     if (imagesCount + previousImages.length > 10) {
       setIsShowModal(true);

@@ -15,7 +15,7 @@ export interface CustomModalProps {
 
 const CustomModal: FC<CustomModalProps> = ({
   show = false,
-  title = "Modal Title",
+  title,
   cancelTitle = "Close",
   successTitle = "Save",
   handleClose,
@@ -35,7 +35,7 @@ const CustomModal: FC<CustomModalProps> = ({
   const modalMui = (
     <div className="fixed bg-black/40 inset-0 z-50  flex h-full w-full items-center justify-center">
       <div className="py-3 justify-evenly bg-white h-50 rounded-lg gap-4 w-[80%] sm:w-[70%] md:w-[50%] lg:w-[40%]">
-        <div className="text-dark-blue px-2">{title}</div>
+        {title && <div className="text-dark-blue px-2">{title}</div>}
         {children}
         <div className="flex flex-row items-center justify-end gap-2 px-2">
           <button
