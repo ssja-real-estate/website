@@ -1,8 +1,10 @@
 import React, { FC, useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import Strings from "../../../../data/strings";
+import CityList from "./CityList/CityList";
 import DelegationTypesList from "./DelegationTypesList/DelegationTypesList";
 import EstateTypesList from "./EstateTypes/EstateTypesList";
+import NeighborhoodList from "./NeighborhoodList/NeighborhoodList";
 import ProvinceList from "./ProvinceList/ProvinceList";
 
 const TemplateList: FC = () => {
@@ -102,8 +104,12 @@ const TemplateList: FC = () => {
           <TabPanel>
             <ProvinceList />
           </TabPanel>
-          <TabPanel>شهرها</TabPanel>
-          <TabPanel>منطقه ها</TabPanel>
+          <TabPanel>
+            <CityList />
+          </TabPanel>
+          <TabPanel>
+            <NeighborhoodList />
+          </TabPanel>
           <TabPanel>واحد ها</TabPanel>
           <TabPanel>اشتراک ها</TabPanel>
           <TabPanel>فرمها</TabPanel>
