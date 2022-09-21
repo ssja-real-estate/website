@@ -69,7 +69,7 @@ function CityList() {
           );
           if (province) {
             setSelectedProvince(province);
-            setCities((prev) => province.cities);
+            setCities((prev) => province.cities.reverse());
           }
         } else {
           setSelectedProvince(defaultProvince);
@@ -77,6 +77,7 @@ function CityList() {
       })
       .catch((_) => {
         // toast.error(Strings.loadingLocationsFailed);
+        alert(Strings.loadingLocationsFailed);
       });
   };
 
@@ -192,7 +193,101 @@ function CityList() {
           refresh
         </button> */}
       </div>
+      <div className="flex flex-row w-full gap-[2px] items-center">
+        <div className="w-full flex flex-row gap-[2px] items-center">
+          <select
+            className="selectbox w-[47.5%]"
+            defaultValue="default"
+            value={selectedProvince?.id}
+            onChange={(e: { currentTarget: { value: any } }) => {
+              const provinceId = e.currentTarget.value;
+              if (provinceId) {
+                const province = provinces.find((p) => p.id === provinceId);
+                if (province) {
+                  setSelectedProvince(province);
+                  setCities(province.cities);
+                }
+              }
+            }}
+          >
+            <option value="default">{Strings.chooseProvince}</option>
+            {provinces.map((province, index) => {
+              return (
+                <option key={index} value={province.id}>
+                  {province.name}
+                </option>
+              );
+            })}
+          </select>
+          <input
+            type="text"
+            className="inputDecoration w-[47.5%]"
+            placeholder={Strings.addNewCity}
+            value={newCity.name}
+            onChange={(e) => {
+              setNewCity({
+                ...newCity,
+                name: e.target.value,
+              });
+            }}
+          />
+          <button
+            className="w-9 h-9 flex items-center justify-center border group border-[#f3bc65] hover:bg-[#f3bc65]"
+            onClick={() => {
+              newCity.name.trim() !== "" &&
+                setNewItems((prev) => [
+                  ...prev,
+                  {
+                    ...newCity,
+                    name: newCity.name.trim(),
+                  },
+                ]);
+              setNewCity({
+                ...newCity,
+                name: "",
+              });
+            }}
+          >
+            <AiIcon.AiOutlinePlus className="text-2xl transition-all text-[#f3bc65] group-hover:text-white" />
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-row mt-5">
+        <ul className="flex-1 flex flex-row flex-wrap gap-2">
+          {newItems.map((newItem, index) => {
+            return (
+              <li
+                key={index}
+                className="flex flex-row px-2 justify-between gap-5 items-center rounded-full p-2 bg-[#d99221]/60 text-dark-blue text-sm hover:bg-[#d99221] cursor-default transition-all duration-200"
+              >
+                {newItem.name}
 
+                <span
+                  onClick={() => {
+                    setNewItems((prev) => prev.filter((_, id) => id !== index));
+                  }}
+                  title="حذف"
+                  className="border border-white p-1 rounded-full hover:bg-red-700 cursor-pointer"
+                >
+                  <MdIcon.MdOutlineRemove className="text-white" />
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        {(newItems.length > 0 || removedItems.length > 0) && (
+          <button
+            className="text-sm bg-[#d99221] text-white h-9 px-2"
+            onClick={async () => {
+              await saveChanges();
+              setNewItems([]);
+              setRemovedItems([]);
+            }}
+          >
+            {Strings.saveChanges}
+          </button>
+        )}
+      </div>
       <div className="my-5 flex flex-col gap-7 justify-between">
         <div className="">
           {loading ? (
@@ -248,105 +343,6 @@ function CityList() {
             </ul>
           )}
         </div>
-        <div className="flex flex-row">
-          <ul className="flex-1 flex flex-row flex-wrap gap-2">
-            {newItems.map((newItem, index) => {
-              return (
-                <li
-                  key={index}
-                  className="flex flex-row px-2 justify-between gap-5 items-center rounded-full p-2 bg-[#d99221]/60 text-dark-blue text-sm hover:bg-[#d99221] cursor-default transition-all duration-200"
-                >
-                  {newItem.name}
-
-                  <span
-                    onClick={() => {
-                      setNewItems((prev) =>
-                        prev.filter((_, id) => id !== index)
-                      );
-                    }}
-                    title="حذف"
-                    className="border border-white p-1 rounded-full hover:bg-red-700 cursor-pointer"
-                  >
-                    <MdIcon.MdOutlineRemove className="text-white" />
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-          {(newItems.length > 0 || removedItems.length > 0) && (
-            <button
-              className="text-sm bg-[#d99221] text-white h-9 px-2"
-              onClick={async () => {
-                await saveChanges();
-                setNewItems([]);
-                setRemovedItems([]);
-              }}
-            >
-              {Strings.saveChanges}
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-row w-full gap-[2px] items-center">
-        <div className="w-full flex flex-row gap-[2px] items-center">
-          <select
-            className="selectbox w-[45%]"
-            defaultValue="default"
-            value={selectedProvince?.id}
-            onChange={(e: { currentTarget: { value: any } }) => {
-              const provinceId = e.currentTarget.value;
-              if (provinceId) {
-                const province = provinces.find((p) => p.id === provinceId);
-                if (province) {
-                  setSelectedProvince(province);
-                  setCities(province.cities);
-                }
-              }
-            }}
-          >
-            <option value="default">{Strings.chooseProvince}</option>
-            {provinces.map((province, index) => {
-              return (
-                <option key={index} value={province.id}>
-                  {province.name}
-                </option>
-              );
-            })}
-          </select>
-          <input
-            type="text"
-            className="inputDecoration w-[45%]"
-            placeholder={Strings.addNewCity}
-            value={newCity.name}
-            onChange={(e) => {
-              setNewCity({
-                ...newCity,
-                name: e.target.value,
-              });
-            }}
-          />
-          <button
-            className="w-9 h-9 flex items-center justify-center border group border-[#f3bc65] hover:bg-[#f3bc65]"
-            onClick={() => {
-              newCity.name.trim() !== "" &&
-                setNewItems((prev) => [
-                  ...prev,
-                  {
-                    ...newCity,
-                    name: newCity.name.trim(),
-                  },
-                ]);
-              setNewCity({
-                ...newCity,
-                name: "",
-              });
-            }}
-          >
-            <AiIcon.AiOutlinePlus className="text-2xl transition-all text-[#f3bc65] group-hover:text-white" />
-          </button>
-        </div>
-
-        <div className="flex flex-col"></div>
       </div>
     </div>
   );
