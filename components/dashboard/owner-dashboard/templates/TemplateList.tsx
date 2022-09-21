@@ -6,6 +6,7 @@ import DelegationTypesList from "./DelegationTypesList/DelegationTypesList";
 import EstateTypesList from "./EstateTypes/EstateTypesList";
 import NeighborhoodList from "./NeighborhoodList/NeighborhoodList";
 import ProvinceList from "./ProvinceList/ProvinceList";
+import UnitList from "./UnitList/UnitList";
 
 const TemplateList: FC = () => {
   const [indexTab, setIndexTab] = useState<number>(0);
@@ -110,7 +111,9 @@ const TemplateList: FC = () => {
           <TabPanel>
             <NeighborhoodList />
           </TabPanel>
-          <TabPanel>واحد ها</TabPanel>
+          <TabPanel>
+            <UnitList />
+          </TabPanel>
           <TabPanel>اشتراک ها</TabPanel>
           <TabPanel>فرمها</TabPanel>
         </div>
