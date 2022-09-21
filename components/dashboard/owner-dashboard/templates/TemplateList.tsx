@@ -5,6 +5,7 @@ import CityList from "./CityList/CityList";
 import DelegationTypesList from "./DelegationTypesList/DelegationTypesList";
 import EstateTypesList from "./EstateTypes/EstateTypesList";
 import NeighborhoodList from "./NeighborhoodList/NeighborhoodList";
+import PaymentList from "./PaymentList/PaymentList";
 import ProvinceList from "./ProvinceList/ProvinceList";
 import UnitList from "./UnitList/UnitList";
 
@@ -92,32 +93,30 @@ const TemplateList: FC = () => {
           {Strings.forms}
         </Tab>
       </TabList>
-      {indexTab === -1 ? (
-        <div className=""></div>
-      ) : (
-        <div className="flex-1 p-2 h-full">
-          <TabPanel>
-            <DelegationTypesList />
-          </TabPanel>
-          <TabPanel>
-            <EstateTypesList />
-          </TabPanel>
-          <TabPanel>
-            <ProvinceList />
-          </TabPanel>
-          <TabPanel>
-            <CityList />
-          </TabPanel>
-          <TabPanel>
-            <NeighborhoodList />
-          </TabPanel>
-          <TabPanel>
-            <UnitList />
-          </TabPanel>
-          <TabPanel>اشتراک ها</TabPanel>
-          <TabPanel>فرمها</TabPanel>
-        </div>
-      )}
+      <div className="flex-1 p-2 h-full">
+        <TabPanel>
+          <DelegationTypesList />
+        </TabPanel>
+        <TabPanel>
+          <EstateTypesList />
+        </TabPanel>
+        <TabPanel>
+          <ProvinceList />
+        </TabPanel>
+        <TabPanel>
+          <CityList />
+        </TabPanel>
+        <TabPanel>
+          <NeighborhoodList />
+        </TabPanel>
+        <TabPanel>
+          <UnitList />
+        </TabPanel>
+        <TabPanel>
+          <PaymentList />
+        </TabPanel>
+        <TabPanel>فرمها</TabPanel>
+      </div>
     </Tabs>
   );
 };
