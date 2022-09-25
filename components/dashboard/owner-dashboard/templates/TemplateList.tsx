@@ -4,6 +4,7 @@ import Strings from "../../../../data/strings";
 import CityList from "./CityList/CityList";
 import DelegationTypesList from "./DelegationTypesList/DelegationTypesList";
 import EstateTypesList from "./EstateTypes/EstateTypesList";
+import Forms from "./Forms/Forms";
 import NeighborhoodList from "./NeighborhoodList/NeighborhoodList";
 import PaymentList from "./PaymentList/PaymentList";
 import ProvinceList from "./ProvinceList/ProvinceList";
@@ -115,7 +116,9 @@ const TemplateList: FC = () => {
         <TabPanel>
           <PaymentList />
         </TabPanel>
-        <TabPanel>فرمها</TabPanel>
+        <TabPanel>
+          <Forms />
+        </TabPanel>
       </div>
     </Tabs>
   );

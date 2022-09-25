@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Strings from "../../data/strings";
-export interface CustomModalProps {
+export interface InnerCustomModalProps {
   show: boolean;
   title?: string;
   cancelTitle?: string;
@@ -13,7 +13,7 @@ export interface CustomModalProps {
   children?: JSX.Element;
 }
 
-const CustomModal: FC<CustomModalProps> = ({
+const InnerCustomModal: FC<InnerCustomModalProps> = ({
   show = false,
   title,
   cancelTitle = "Close",
@@ -24,14 +24,14 @@ const CustomModal: FC<CustomModalProps> = ({
   isFullscreen = false,
   children,
 }) => {
-  useEffect(() => {
-    if (show) {
-      document.body.style.overflow = "hidden";
-    }
-    return () => {
-      document.body.removeAttribute("style");
-    };
-  });
+  // useEffect(() => {
+  //   if (show) {
+  //     document.body.style.overflow = "hidden";
+  //   }
+  //   return () => {
+  //     document.body.removeAttribute("style");
+  //   };
+  // });
   const modalMui = (
     <div className="fixed bg-black/40 inset-0 z-50  flex h-full w-full items-center justify-center">
       <div
@@ -69,4 +69,4 @@ const CustomModal: FC<CustomModalProps> = ({
   return show ? ReactDOM.createPortal(modalMui, document.body) : null;
 };
 
-export default CustomModal;
+export default InnerCustomModal;

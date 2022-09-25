@@ -55,6 +55,7 @@ class Strings {
   static day = "روز";
   static noCreditForThisUser = "حساب کاربری شما فاقد اشتراک است";
   static saveChanges = "ذخیره تغییرات";
+  static addForm = "اضافه کردن فرم";
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
   static choose = "انتخاب کنید";
