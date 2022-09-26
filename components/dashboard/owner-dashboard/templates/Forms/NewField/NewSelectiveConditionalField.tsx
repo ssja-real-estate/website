@@ -7,6 +7,7 @@ import {
   FieldType,
 } from "../../../../../../global/types/Field";
 import { optionsAtom, selectiveInnerFieldsAtom } from "./NewFieldStates";
+import NewSelectField from "./NewSelectField";
 
 function NewSelectiveConditionalField() {
   const [selectiveField, setInnerFields] = useRecoilState(
@@ -111,7 +112,9 @@ function NewSelectiveConditionalField() {
   }
 
   return (
-    <div className="">NewSlectiveConditionalField</div>
+    <div className="">
+      <NewSelectField />
+    </div>
     // <Accordion className="mt-3">
     //   <NewSelectField />
     //   {options.map((option, index) => {

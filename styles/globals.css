@@ -56,6 +56,12 @@
   .alertBox {
     @apply container w-[40%] flex flex-col items-center mt-10 text-sm text-gray-400 border-4 p-6 border-white rounded-lg;
   }
+  .myBorderHover {
+    @apply shadow-1input border-[#0ba];
+  }
+  .myBorder {
+    @apply shadow-1input border-[#0ba] bg-[#0ba];
+  }
 }
 .dynamicLabel {
   color: white;
