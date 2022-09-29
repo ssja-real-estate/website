@@ -1,28 +1,32 @@
 import { SetStateAction, useState } from "react";
-import {
-  InputGroup,
-  Button,
-  Form,
-  ListGroup,
-  CloseButton,
-} from "react-bootstrap";
 import { useRecoilState } from "recoil";
-
-import Strings from "global/constants/strings";
+import Strings from "../../../../../../data/strings";
+import { FieldType } from "../../../../../../global/types/Field";
 import { editSelectFieldModalDataAtom } from "../FormsState";
-import { FieldType } from "global/types/Field";
-
+import * as BiIcon from "react-icons/bi";
+import * as IoIcon from "react-icons/io";
+import * as Io5Icon from "react-icons/io5";
 function EditSelectField() {
   const [editSelectFieldModalData, setEditSelectFieldModalData] =
     useRecoilState(editSelectFieldModalDataAtom);
   const [newItemTitle, setNewItemTitle] = useState<string>("");
+  console.log(editSelectFieldModalData);
 
   return (
-    <div className="w-100 d-flex flex-row justify-content-center">
-      <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-        <InputGroup style={{ direction: "ltr" }}>
-          <Button
-            variant="dark"
+    <div className="w-full flex flex-row justify-center">
+      <div className="flex flex-col justify-center gap-2 pt-3">
+        <div className="flex flex-row">
+          <input
+            className="inputDecoration "
+            type="text"
+            placeholder={Strings.newOption}
+            value={newItemTitle}
+            onChange={(e: { target: { value: SetStateAction<string> } }) => {
+              setNewItemTitle(e.target.value);
+            }}
+          />
+          <button
+            className="border border-[#0ba] p-2 text-[#0ba] hover:text-white hover:bg-[#0ba]"
             onClick={() => {
               if (newItemTitle.trim() !== "") {
                 const fieldType = editSelectFieldModalData.data.type;
@@ -46,29 +50,21 @@ function EditSelectField() {
               setNewItemTitle("");
             }}
           >
-            <i className="bi-plus-lg fs-6"></i>
-          </Button>
-          <Form.Control
-            type="text"
-            placeholder={Strings.newOption}
-            value={newItemTitle}
-            onChange={(e: { target: { value: SetStateAction<string> } }) => {
-              setNewItemTitle(e.target.value);
-            }}
-          />
-        </InputGroup>
-        <ListGroup>
+            <BiIcon.BiPlus className="" />
+          </button>
+        </div>
+        <ul className="my-2 flex flex-col gap-2">
           {(editSelectFieldModalData.data.type === FieldType.Select
             ? editSelectFieldModalData.data.options!
             : editSelectFieldModalData.data.keys!
           ).map((option, optionIndex) => {
             return (
-              <ListGroup.Item
+              <li
                 key={optionIndex}
-                className="d-flex flex-row justify-content-between align-items-center"
+                className="flex flex-row justify-between items-center border bg-gray-100 text-sm rounded-2xl p-2"
               >
                 {option}
-                <CloseButton
+                <button
                   onClick={() => {
                     const fieldType = editSelectFieldModalData.data.type;
                     const field = editSelectFieldModalData.data;
@@ -95,11 +91,13 @@ function EditSelectField() {
                       },
                     });
                   }}
-                />
-              </ListGroup.Item>
+                >
+                  <Io5Icon.IoCloseSharp />
+                </button>
+              </li>
             );
           })}
-        </ListGroup>
+        </ul>
       </div>
     </div>
   );

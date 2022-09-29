@@ -56,7 +56,8 @@ class BaseService {
       }
     } else {
       this.toastStatusError(error);
-      return;
+      throw error;
+      // return;
     }
   }
 

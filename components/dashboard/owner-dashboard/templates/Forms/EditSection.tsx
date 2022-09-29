@@ -26,6 +26,8 @@ import * as AiIcon from "react-icons/ai";
 import * as MdIcon from "react-icons/md";
 import NewField from "./NewField/NewField";
 import InnerCustomModal from "../../../../modal/InnerCustomModal";
+import EditConditionalField from "./EditField/EditConditionalField";
+import EditSelectField from "./EditField/EditSelectField";
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
   const [showRenameFieldModal, setShowRenameFieldModal] =
@@ -225,9 +227,13 @@ function EditSection() {
                     <MdIcon.MdOutlineEditNote
                       className="text-2xl font-bold cursor-pointer"
                       onClick={() => {
-                        setInnerFieldModalData({
+                        setEditSelectFieldModalData({
                           index: fieldIndex,
-                          data: { ...field },
+                          data: {
+                            ...field,
+                            options: field.options ?? [],
+                            keys: field.keys ?? [],
+                          },
                         });
                         setShowEditSelectFieldModal(true);
                       }}
@@ -251,8 +257,8 @@ function EditSection() {
                     // </i>
                   )}
                   {field.type === FieldType.SelectiveConditional && (
-                    <i
-                      className="bi-list-ul fs-4 me-3"
+                    <MdIcon.MdOutlineEditNote
+                      className="text-2xl font-bold cursor-pointer"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                         setSelectiveInnerFieldData({
@@ -269,7 +275,7 @@ function EditSection() {
                         });
                         setShowEditSelectiveInnerFieldModal(true);
                       }}
-                    ></i>
+                    />
                   )}
                 </div>
                 {field.type !== FieldType.Image ? (
@@ -401,8 +407,10 @@ function EditSection() {
           setShowEditInnerFieldsModal(false);
         }}
       >
-        {/* <EditConditionalField /> */}
-        <div className=""></div>
+        <div className="border-t border-b w-full h-[80vh] my-2 py-2 px-2 overflow-y-auto">
+          <EditConditionalField />
+        </div>
+        {/* <div className="">EditConditionalField</div> */}
       </InnerCustomModal>
       <InnerCustomModal
         show={showEditSelectFieldModal}
@@ -429,8 +437,9 @@ function EditSection() {
           }
         }}
       >
-        {/* <EditSelectField /> */}
-        <div className=""></div>
+        <div className="border-t border-b w-full h-[80vh] my-2 py-2 px-2 overflow-y-auto">
+          <EditSelectField />
+        </div>
       </InnerCustomModal>
       <InnerCustomModal
         isFullscreen
@@ -449,7 +458,9 @@ function EditSection() {
         }}
       >
         {/* <EditSelectiveConditionalField /> */}
-        <div className=""></div>
+        <div className="border-t border-b w-full h-[80vh] my-2 py-2 px-2 overflow-y-auto">
+          <div className="">EditSelectiveConditionalField</div>
+        </div>
       </InnerCustomModal>
       <div className="flex flex-col items-stretch justify-center my-3">
         <h5 className="font-bold">{Strings.inputs}</h5>
