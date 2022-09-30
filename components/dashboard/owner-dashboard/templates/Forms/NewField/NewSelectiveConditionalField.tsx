@@ -125,13 +125,12 @@ function NewSelectiveConditionalField() {
   return (
     <div className="">
       <NewSelectField />
-      <div className="">NewSelectiveConditionalField</div>
       {options.map((option, index) => {
         return (
           <div key={index.toString()}>
-            <Accordion title={Strings.newConditionalField}>
+            <Accordion title={option + " " + Strings.newConditionalField}>
               <div>
-                <h3 className="mt-4">{option}</h3>
+                {/* <h3 className="mt-4">{option}</h3> */}
                 <ul className="flex flex-col gap-2">
                   {selectiveField.fieldMaps &&
                   selectiveField.fieldMaps.length > 0
@@ -365,12 +364,12 @@ function NewSelectiveConditionalField() {
                           <BiIcon.BiPlus className="" />
                         </button>
                       </div>
-                      <ul>
+                      <ul className="w-full flex flex-col gap-1">
                         {innerOptions.map((innerOption, innerOptionIndex) => {
                           return (
                             <li
                               key={innerOptionIndex + v4()}
-                              className="d-flex flex-row justify-content-between align-items-center"
+                              className="p-2 flex flex-row justify-between items-center border rounded-2xl bg-gray-100"
                             >
                               {innerOption}
                               <button
@@ -384,7 +383,7 @@ function NewSelectiveConditionalField() {
                                   setInnerOptions(filteredOptions);
                                 }}
                               >
-                                EndClostButton
+                                <Io5Icon.IoCloseSharp />
                               </button>
                             </li>
                           );

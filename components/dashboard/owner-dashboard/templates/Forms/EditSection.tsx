@@ -28,6 +28,7 @@ import NewField from "./NewField/NewField";
 import InnerCustomModal from "../../../../modal/InnerCustomModal";
 import EditConditionalField from "./EditField/EditConditionalField";
 import EditSelectField from "./EditField/EditSelectField";
+import EditSelectiveConditionalField from "./EditField/EditSelectiveConditionalField";
 function EditSection() {
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
   const [showRenameFieldModal, setShowRenameFieldModal] =
@@ -457,9 +458,8 @@ function EditSection() {
           setShowEditSelectiveInnerFieldModal(false);
         }}
       >
-        {/* <EditSelectiveConditionalField /> */}
         <div className="border-t border-b w-full h-[80vh] my-2 py-2 px-2 overflow-y-auto">
-          <div className="">EditSelectiveConditionalField</div>
+          <EditSelectiveConditionalField />
         </div>
       </InnerCustomModal>
       <div className="flex flex-col items-stretch justify-center my-3">

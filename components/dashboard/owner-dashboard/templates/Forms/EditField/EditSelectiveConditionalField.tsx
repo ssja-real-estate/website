@@ -1,17 +1,6 @@
 import { SetStateAction, useEffect, useState } from "react";
-import {
-  Accordion,
-  Button,
-  CloseButton,
-  Col,
-  Form,
-  InputGroup,
-  ListGroup,
-  Row,
-} from "react-bootstrap";
 import { useRecoilState } from "recoil";
-
-import Strings from "global/constants/strings";
+import Strings from "../../../../../../data/strings";
 import {
   defaultField,
   Field,
@@ -22,14 +11,19 @@ import {
   FieldMap,
   FieldType,
   FieldTypeTitle,
-} from "global/types/Field";
-import { getFieldTypeAndNecessity } from "services/utilities/stringUtility";
+} from "../../../../../../global/types/Field";
+import { getFieldTypeAndNecessity } from "../../../../../../services/utilities/stringUtility";
 import {
   editSelectFieldModalDataAtom,
   selectiveInnerFieldModalDataAtom,
 } from "../FormsState";
+import Accordion from "../NewField/Accordion";
 import EditSelectField from "./EditSelectField";
-
+import * as IoIcon from "react-icons/io";
+import * as Io5Icon from "react-icons/io5";
+import * as AiIcon from "react-icons/ai";
+import * as MdIcon from "react-icons/md";
+import * as BiIcon from "react-icons/bi";
 function EditSelectiveConditionalField() {
   const [selectiveInnerFields, setInnerFields] = useRecoilState(
     selectiveInnerFieldModalDataAtom
@@ -44,7 +38,7 @@ function EditSelectiveConditionalField() {
   const [filterableStatus, setFilterableStatus] = useState(
     FieldFilterableStatus.IsNotFilterable
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [options, setOptions] = useRecoilState(editSelectFieldModalDataAtom);
 
   useEffect(() => {}, [options]);
@@ -146,258 +140,282 @@ function EditSelectiveConditionalField() {
   }
 
   return (
-    <Accordion className="mt-3">
+    <>
       <EditSelectField />
       {(options.data.options ?? []).map((option, index) => {
         return (
-          <>
-            <h3 className="mt-4">{option}</h3>
-            <Accordion.Item eventKey={index.toString()}>
-              <Accordion.Header>
-                <span className="ms-3">{Strings.newConditionalField}</span>
-              </Accordion.Header>
-              <Accordion.Body>
-                <ListGroup>
-                  {selectiveInnerFields.data.fieldMaps &&
-                    (
-                      selectiveInnerFields.data.fieldMaps.find(
-                        (f) => f.key === option
-                      )?.fields ?? []
-                    ).map((field, fieldIndex) => {
-                      return (
-                        <ListGroup.Item key={fieldIndex} variant="warning">
-                          <Row className="align-items-center">
-                            <Col xs="auto">
-                              <i
-                                className="bi-chevron-up d-block"
-                                style={{ cursor: "pointer" }}
+          <Accordion
+            key={index.toString()}
+            title={Strings.newConditionalField + " " + option}
+          >
+            <div>
+              <div>
+                <div>
+                  <ul className="flex flex-col gap-2">
+                    {selectiveInnerFields.data.fieldMaps &&
+                      (
+                        selectiveInnerFields.data.fieldMaps.find(
+                          (f) => f.key === option
+                        )?.fields ?? []
+                      ).map((field, fieldIndex) => {
+                        return (
+                          <li
+                            className="bg-[#fff3cd] rounded-2xl px-2 py-2"
+                            key={fieldIndex}
+                          >
+                            <div className="flex flex-row items-center justify-between px-2">
+                              {/* <div>
+                                <i
+                                  className="bi-chevron-up d-block"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    moveItemUp(fieldIndex, option);
+                                  }}
+                                >
+                                  up
+                                </i>
+                                <i
+                                  className="bi-chevron-down d-block"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    moveItemDown(fieldIndex, option);
+                                  }}
+                                >
+                                  down
+                                </i>
+                              </div> */}
+                              <div className="flex flex-row gap-10">
+                                <div>
+                                  <h6 className="d-inline">{field.title}</h6>
+                                </div>
+                                <div>
+                                  <h6 className="d-inline text-muted">
+                                    {getFieldTypeAndNecessity(field)}
+                                  </h6>
+                                </div>
+                              </div>
+                              <button
+                                className="m-3"
                                 onClick={() => {
-                                  moveItemUp(fieldIndex, option);
-                                }}
-                              ></i>
-                              <i
-                                className="bi-chevron-down d-block"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => {
-                                  moveItemDown(fieldIndex, option);
-                                }}
-                              ></i>
-                            </Col>
-                            <Col>
-                              <h6 className="d-inline">{field.title}</h6>
-                            </Col>
-                            <Col>
-                              <h6 className="d-inline text-muted">
-                                {getFieldTypeAndNecessity(field)}
-                              </h6>
-                            </Col>
-                            <CloseButton
-                              className="m-3"
-                              onClick={() => {
-                                const fields =
-                                  getInnerFieldsByKey(option) ?? [];
-                                const filteredFields = fields.filter(
-                                  (_, index) => {
-                                    return fieldIndex !== index;
-                                  }
-                                );
-
-                                let newFieldMaps: FieldMap[] =
-                                  field.fieldMaps ?? [];
-                                const fieldMapIndex = (
-                                  field.fieldMaps ?? []
-                                ).findIndex((f) => f.key === option);
-
-                                if (fieldMapIndex === -1) {
-                                  newFieldMaps.push({
-                                    key: option,
-                                    fields: filteredFields,
-                                  });
-                                } else {
-                                  newFieldMaps[fieldMapIndex].fields =
-                                    filteredFields;
-                                }
-
-                                if (
-                                  window.confirm(Strings.confirmDeleteInput)
-                                ) {
-                                  setInnerFields({
-                                    ...selectiveInnerFields,
-                                    data: {
-                                      ...selectiveInnerFields.data,
-                                      fieldMaps: [...newFieldMaps],
-                                    },
-                                  });
-                                }
-                              }}
-                            />
-                          </Row>
-                        </ListGroup.Item>
-                      );
-                    })}
-                </ListGroup>
-                <InputGroup className="mt-3" style={{ direction: "ltr" }}>
-                  <Button
-                    variant="dark"
-                    onClick={() => {
-                      let newInnerField: Field = {
-                        ...defaultField,
-                        title: newInnerFieldTitle,
-                        type: selectedType,
-                        optional:
-                          fieldInputNecessity === FieldInputNecessity.Optional,
-                        filterable:
-                          filterableStatus ===
-                          FieldFilterableStatus.IsFilterable,
-                      };
-                      if (newInnerFieldTitle.trim() !== "") {
-                        if (selectedType === FieldType.Select) {
-                          if (innerOptions.length < 2) {
-                            alert(Strings.chooseAtLeastTwoOptionsForSelect);
-                            return;
-                          }
-                        }
-                        newInnerField.options = innerOptions;
-                        addNewInnerField(newInnerField, option);
-                        setInnerOptions([]);
-                      } else {
-                        alert(Strings.enterValidTitleForInput);
-                      }
-                      setNewInnerFieldTitle("");
-                      setFieldInputNecessity(FieldInputNecessity.Obligatory);
-                      setFilterableStatus(
-                        FieldFilterableStatus.IsNotFilterable
-                      );
-                    }}
-                  >
-                    <i className="bi-plus-lg fs-6"></i>
-                  </Button>
-                  <Form.Select
-                    style={{ minWidth: 100, maxWidth: "15vw" }}
-                    value={fieldInputNecessity}
-                    onChange={(e: { currentTarget: { value: any } }) => {
-                      setFieldInputNecessity(Number(e.currentTarget.value));
-                    }}
-                  >
-                    <option value={FieldInputNecessity.Obligatory}>
-                      {FieldInputNecessityLabel.Obligatory}
-                    </option>
-                    <option value={FieldInputNecessity.Optional}>
-                      {FieldInputNecessityLabel.Optional}
-                    </option>
-                  </Form.Select>
-                  <Form.Select
-                    style={{ minWidth: 100, maxWidth: "15vw" }}
-                    value={filterableStatus}
-                    onChange={(e: {
-                      currentTarget: { value: string | number };
-                    }) => {
-                      setFilterableStatus(+e.currentTarget.value);
-                    }}
-                  >
-                    <option value={FieldFilterableStatus.IsNotFilterable}>
-                      {FieldFilterableStatusLabel.IsNotFilterable}
-                    </option>
-                    <option value={FieldFilterableStatus.IsFilterable}>
-                      {FieldFilterableStatusLabel.IsFilterable}
-                    </option>
-                  </Form.Select>
-                  <Form.Select
-                    style={{ minWidth: 100, maxWidth: "15vw" }}
-                    value={selectedType}
-                    onChange={(e: { currentTarget: { value: any } }) => {
-                      setSelectedType(Number(e.currentTarget.value));
-                    }}
-                  >
-                    <option value={FieldType.Text}>
-                      {FieldTypeTitle.Text}
-                    </option>
-                    <option value={FieldType.Number}>
-                      {FieldTypeTitle.Number}
-                    </option>
-                    <option value={FieldType.Select}>
-                      {FieldTypeTitle.Select}
-                    </option>
-                    <option value={FieldType.Bool}>
-                      {FieldTypeTitle.Bool}
-                    </option>
-                  </Form.Select>
-                  <Form.Control
-                    type="text"
-                    placeholder={Strings.newInnerInputTitle}
-                    maxLength={30}
-                    value={newInnerFieldTitle}
-                    onChange={(e: {
-                      target: { value: SetStateAction<string> };
-                    }) => {
-                      setNewInnerFieldTitle(e.target.value);
-                    }}
-                  />
-                </InputGroup>
-                {selectedType === FieldType.Select && (
-                  <div className="w-100 d-flex flex-row justify-content-center">
-                    <div className="d-flex flex-column justify-content-center gap-2 pt-3">
-                      <InputGroup style={{ direction: "ltr" }}>
-                        <Button
-                          variant="dark"
-                          onClick={() => {
-                            if (innerNewOptionTitle.trim() !== "") {
-                              setInnerOptions([
-                                ...innerOptions,
-                                innerNewOptionTitle,
-                              ]);
-                              setInnerNewOptionTitle("");
-                            } else {
-                              setInnerNewOptionTitle("");
-                              alert(Strings.enterValidInputForNewOption);
-                            }
-                          }}
-                        >
-                          <i className="bi-plus-lg fs-6"></i>
-                        </Button>
-                        <Form.Control
-                          type="text"
-                          placeholder={Strings.newOption}
-                          value={innerNewOptionTitle}
-                          onChange={(e: {
-                            target: { value: SetStateAction<string> };
-                          }) => {
-                            setInnerNewOptionTitle(e.target.value);
-                          }}
-                        />
-                      </InputGroup>
-                      <ListGroup>
-                        {innerOptions.map((innerOption, innerOptionIndex) => {
-                          return (
-                            <ListGroup.Item
-                              key={innerOptionIndex}
-                              className="d-flex flex-row justify-content-between align-items-center"
-                            >
-                              {innerOption}
-                              <CloseButton
-                                onClick={() => {
-                                  const newOptions = innerOptions;
-                                  const filteredOptions = newOptions.filter(
+                                  const fields =
+                                    getInnerFieldsByKey(option) ?? [];
+                                  const filteredFields = fields.filter(
                                     (_, index) => {
-                                      return innerOptionIndex !== index;
+                                      return fieldIndex !== index;
                                     }
                                   );
-                                  setInnerOptions(filteredOptions);
+
+                                  let newFieldMaps: FieldMap[] =
+                                    field.fieldMaps ?? [];
+                                  const fieldMapIndex = (
+                                    field.fieldMaps ?? []
+                                  ).findIndex((f) => f.key === option);
+
+                                  if (fieldMapIndex === -1) {
+                                    newFieldMaps.push({
+                                      key: option,
+                                      fields: filteredFields,
+                                    });
+                                  } else {
+                                    newFieldMaps[fieldMapIndex].fields =
+                                      filteredFields;
+                                  }
+
+                                  if (
+                                    window.confirm(Strings.confirmDeleteInput)
+                                  ) {
+                                    setInnerFields({
+                                      ...selectiveInnerFields,
+                                      data: {
+                                        ...selectiveInnerFields.data,
+                                        fieldMaps: [...newFieldMaps],
+                                      },
+                                    });
+                                  }
                                 }}
-                              />
-                            </ListGroup.Item>
-                          );
-                        })}
-                      </ListGroup>
+                              >
+                                <Io5Icon.IoCloseSharp />
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                  <div className="mt-3 flex flex-row justify-between">
+                    <div className="flex flex-row items-center">
+                      <input
+                        className="inputDecoration w-[35vw]"
+                        type="text"
+                        placeholder={Strings.newInnerInputTitle}
+                        maxLength={30}
+                        value={newInnerFieldTitle}
+                        onChange={(e: {
+                          target: { value: SetStateAction<string> };
+                        }) => {
+                          setNewInnerFieldTitle(e.target.value);
+                        }}
+                      />
+                      <select
+                        className="defaultSelectbox w-[15vw]"
+                        // style={{ minWidth: 100, maxWidth: "15vw" }}
+                        value={selectedType}
+                        onChange={(e: { currentTarget: { value: any } }) => {
+                          setSelectedType(Number(e.currentTarget.value));
+                        }}
+                      >
+                        <option value={FieldType.Text}>
+                          {FieldTypeTitle.Text}
+                        </option>
+                        <option value={FieldType.Number}>
+                          {FieldTypeTitle.Number}
+                        </option>
+                        <option value={FieldType.Select}>
+                          {FieldTypeTitle.Select}
+                        </option>
+                        <option value={FieldType.Bool}>
+                          {FieldTypeTitle.Bool}
+                        </option>
+                      </select>
+
+                      <select
+                        className="defaultSelectbox w-[15vw]"
+                        // style={{ minWidth: 100, maxWidth: "15vw" }}
+                        value={filterableStatus}
+                        onChange={(e: {
+                          currentTarget: { value: string | number };
+                        }) => {
+                          setFilterableStatus(+e.currentTarget.value);
+                        }}
+                      >
+                        <option value={FieldFilterableStatus.IsNotFilterable}>
+                          {FieldFilterableStatusLabel.IsNotFilterable}
+                        </option>
+                        <option value={FieldFilterableStatus.IsFilterable}>
+                          {FieldFilterableStatusLabel.IsFilterable}
+                        </option>
+                      </select>
+                      <select
+                        className="defaultSelectbox w-[15vw]"
+                        // style={{ minWidth: 100, maxWidth: "15vw" }}
+                        value={fieldInputNecessity}
+                        onChange={(e: { currentTarget: { value: any } }) => {
+                          setFieldInputNecessity(Number(e.currentTarget.value));
+                        }}
+                      >
+                        <option value={FieldInputNecessity.Obligatory}>
+                          {FieldInputNecessityLabel.Obligatory}
+                        </option>
+                        <option value={FieldInputNecessity.Optional}>
+                          {FieldInputNecessityLabel.Optional}
+                        </option>
+                      </select>
                     </div>
+
+                    <button
+                      className="border border-[#0ba] p-2 text-[#0ba] hover:text-white hover:bg-[#0ba]"
+                      onClick={() => {
+                        let newInnerField: Field = {
+                          ...defaultField,
+                          title: newInnerFieldTitle,
+                          type: selectedType,
+                          optional:
+                            fieldInputNecessity ===
+                            FieldInputNecessity.Optional,
+                          filterable:
+                            filterableStatus ===
+                            FieldFilterableStatus.IsFilterable,
+                        };
+                        if (newInnerFieldTitle.trim() !== "") {
+                          if (selectedType === FieldType.Select) {
+                            if (innerOptions.length < 2) {
+                              alert(Strings.chooseAtLeastTwoOptionsForSelect);
+                              return;
+                            }
+                          }
+                          newInnerField.options = innerOptions;
+                          addNewInnerField(newInnerField, option);
+                          setInnerOptions([]);
+                        } else {
+                          alert(Strings.enterValidTitleForInput);
+                        }
+                        setNewInnerFieldTitle("");
+                        setFieldInputNecessity(FieldInputNecessity.Obligatory);
+                        setFilterableStatus(
+                          FieldFilterableStatus.IsNotFilterable
+                        );
+                      }}
+                    >
+                      <BiIcon.BiPlus className="" />
+                    </button>
                   </div>
-                )}
-              </Accordion.Body>
-            </Accordion.Item>
-          </>
+                  {selectedType === FieldType.Select && (
+                    <div className="w-full flex flex-row justify-center">
+                      <div className="flex flex-col items-center gap-2 pt-3">
+                        <div className="flex flex-row">
+                          <input
+                            type="text"
+                            className="inputDecoration"
+                            placeholder={Strings.newOption}
+                            value={innerNewOptionTitle}
+                            onChange={(e: {
+                              target: { value: SetStateAction<string> };
+                            }) => {
+                              setInnerNewOptionTitle(e.target.value);
+                            }}
+                          />
+                          <button
+                            className="border border-[#0ba] p-2 text-[#0ba] hover:text-white hover:bg-[#0ba]"
+                            onClick={() => {
+                              if (innerNewOptionTitle.trim() !== "") {
+                                setInnerOptions([
+                                  ...innerOptions,
+                                  innerNewOptionTitle,
+                                ]);
+                                setInnerNewOptionTitle("");
+                              } else {
+                                setInnerNewOptionTitle("");
+                                alert(Strings.enterValidInputForNewOption);
+                              }
+                            }}
+                          >
+                            <BiIcon.BiPlus className="" />
+                          </button>
+                        </div>
+                        <ul className="w-full flex flex-col gap-1">
+                          {innerOptions.map((innerOption, innerOptionIndex) => {
+                            return (
+                              <li
+                                key={innerOptionIndex}
+                                className="p-2 flex flex-row justify-between items-center border rounded-2xl bg-gray-100"
+                              >
+                                {innerOption}
+                                <button
+                                  onClick={() => {
+                                    const newOptions = innerOptions;
+                                    const filteredOptions = newOptions.filter(
+                                      (_, index) => {
+                                        return innerOptionIndex !== index;
+                                      }
+                                    );
+                                    setInnerOptions(filteredOptions);
+                                  }}
+                                >
+                                  <Io5Icon.IoCloseSharp />
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Accordion>
         );
       })}
-    </Accordion>
+    </>
   );
 }
 export default EditSelectiveConditionalField;
