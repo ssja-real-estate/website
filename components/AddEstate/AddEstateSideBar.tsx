@@ -279,7 +279,9 @@ const SideBarForAddEstate: FC<Props> = (props) => {
         name: province.name,
       },
     });
-    props.setCore(province.mapInfo);
+    if (province.mapInfo) {
+      props.setCore(province.mapInfo);
+    }
   }
 
   function handleCityChange(cityId: string) {

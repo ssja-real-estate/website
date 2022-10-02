@@ -205,7 +205,9 @@ const SidebarMap: FC<Props> = (props) => {
 
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
-    props.setCore(province.mapInfo);
+    if (province.mapInfo) {
+      props.setCore(province.mapInfo);
+    }
   }
 
   function handleCityChange(cityId: string) {
