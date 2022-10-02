@@ -3,10 +3,23 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { Estate } from "../../../global/types/Estate";
+import { FieldType } from "../../../global/types/Field";
 
 const RealEstateCard: React.FC<{
   estates: Estate;
 }> = (props) => {
+  function imageFromPropsEstate(): string {
+    let srcset = "/image/blankImage/bl.jpg";
+    props.estates.dataForm.fields.map((es) => {
+      if (es.type === FieldType.Image && (es.value as []).length > 0) {
+        srcset = `https://ssja.ir/api/images/${props.estates.id}/${String(
+          (es.value as []).at(0)
+        )}`;
+      }
+    });
+    return srcset;
+  }
+
   const router = useRouter();
   return (
     <a target="_blank" href={`/estate/${props.estates.id}`} rel="noreferrer">
@@ -16,14 +29,17 @@ const RealEstateCard: React.FC<{
         </span>
         <div className="w-full z-10">
           <Image
-            src="/image/estate/e1.jpg"
+            src={imageFromPropsEstate()}
             alt="house"
             layout="responsive"
             width={554}
             height={360}
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="/image/load/spinner.gif"
           />
         </div>
-        <div className="px-2 py-4 divide-y divide-dashed">
+        <div className="px-2 py-4">
           <div className="">
             <h3 className="font-bold text-[#2c3e50]">
               {props.estates.province.name}
@@ -37,12 +53,12 @@ const RealEstateCard: React.FC<{
               {/* <span>کمیسیون</span>
               <span className="text-2xl font-bold">5%</span> */}
             </div>
-            <div className="flex flex-row gap-2 items-end">
+            {/* <div className="flex flex-row gap-2 items-end">
               <span className="text-2xl font-bold">
                 {(150000000).toLocaleString("fa-ir")}
               </span>
               <span>تومان</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

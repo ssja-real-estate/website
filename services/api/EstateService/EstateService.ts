@@ -19,8 +19,6 @@ class EstateService extends BaseService {
         verifiedEstates = response.data as Estate[];
       }
     } catch (error) {
-      throw error;
-
       this.handleError(error);
     }
 

@@ -28,12 +28,12 @@ const LabelStatusEstatecard: FC<labelCard> = (props) => {
         )
       )}
       {props.estatStatus === 1 ? (
-        <span className="text-white">تأیید شده</span>
+        <span className="text-white text-sm">تأیید شده</span>
       ) : props.estatStatus === 2 ? (
-        <span className="text-white">در انتظار تأیید</span>
+        <span className="text-white  text-sm">در انتظار تأیید</span>
       ) : (
         props.estatStatus === 3 && (
-          <span className="text-white">تأیید نشده</span>
+          <span className="text-white  text-sm">تأیید نشده</span>
         )
       )}
     </div>

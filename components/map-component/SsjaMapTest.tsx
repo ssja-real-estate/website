@@ -90,23 +90,25 @@ const SsjaMapTest: FC<{
     // });
 
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
-    const mapmarker = new mapboxgl.Marker({
-      draggable: props.isDragable,
-    })
-      .setLngLat([props.cordinate.longitude, props.cordinate.latitude])
-      .setPopup(
-        new mapboxgl.Popup({ offset: 20 }).setHTML(
-          `<a
-          target="_blank"
-          href="/estate/126"
-          style="display:block;width:150px;background-color:red"
-          >
-          1
-          <img src="/image/product/06.jpg" style="" />
-          </a>`
-        )
-      )
-      .addTo(map);
+
+    // const mapmarker = new mapboxgl.Marker({
+    //   draggable: props.isDragable,
+    // })
+    //   .setLngLat([props.cordinate.longitude, props.cordinate.latitude])
+    //   .setPopup(
+    //     new mapboxgl.Popup({ offset: 20 }).setHTML(
+    //       `<a
+    //       target="_blank"
+    //       href="/estate/126"
+    //       style="display:block;width:150px;background-color:red"
+    //       >
+    //       1
+    //       <img src="/image/product/06.jpg" style="" />
+    //       </a>`
+    //     )
+    //   )
+    //   .addTo(map);
+
     // new mapboxgl.Marker()
     //   .setLngLat([47.72187702416752, 36.54])
     //   .setPopup(

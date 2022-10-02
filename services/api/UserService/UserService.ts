@@ -95,12 +95,16 @@ class UserService extends BaseService {
         mobile,
         password,
       });
+      if (response.status === 200 && response.statusText === "OK") {
+        if (response.data) {
+          // toast.success(response.data as string);
+          console.log(response.data as string);
 
-      if (response.data) {
-        // toast.success(response.data as string);
+          // alert(response.data as string);
+        }
       }
     } catch (error: any) {
-      throw error;
+      this.handleError(error);
     }
   }
 

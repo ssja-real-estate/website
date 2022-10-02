@@ -9,7 +9,7 @@ import { globalState } from "../../global/states/globalStates";
 import LocationService from "../../services/api/LocationService/LocationService";
 import { useRecoilValue } from "recoil";
 import Strings from "../../data/strings";
-import Select from "../formComponent/Select";
+import Select from "../../components/formcomponent/Select";
 import City, { defaultCity } from "../../global/types/City";
 import Neighborhood, {
   defaultNeighborhood,
@@ -65,7 +65,7 @@ const SidebarMap: FC<Props> = (props) => {
   const [selectedEstateType, setSelectedEstateType] =
     useState<EstateType>(defaultEstateType);
   const isDefault: boolean =
-    !selectedDelegationType.name || !selectedEstateType.name ? true : false;
+    !selectedDelegationType.id || !selectedEstateType.id ? true : false;
   const [estate, setEstate] = useState<Estate>(defaultEstate);
   const searchService = useRef(new SearchService());
   const [formData, setFormData] = useState<FormData>(new FormData());
@@ -97,7 +97,7 @@ const SidebarMap: FC<Props> = (props) => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.token]);
+  }, [state.token, isDefault]);
 
   const loadLocations = async () => {
     locationService.current
@@ -157,8 +157,8 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function clearStates() {
-    setSelectedDelegationType(defaultDelegationType);
-    setSelectedEstateType(defaultEstateType);
+    // setSelectedDelegationType(defaultDelegationType);
+    // setSelectedEstateType(defaultEstateType);
     setDataForm(defaultForm);
     setEstate(defaultEstate);
   }
@@ -205,7 +205,9 @@ const SidebarMap: FC<Props> = (props) => {
 
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
-    props.setCore(province.mapInfo);
+    if (province.mapInfo) {
+      props.setCore(province.mapInfo);
+    }
   }
 
   function handleCityChange(cityId: string) {
@@ -250,8 +252,11 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function handleDelegationChange(data: string) {
-    // console.log(event.currentTarget.value);
-
+    console.log(data);
+    if (data === "choose") {
+      setSelectedDelegationType(defaultDelegationType);
+      return;
+    }
     setSelectedDelegationType({
       id: data,
       name: data,
@@ -259,6 +264,10 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   function handleTypeChange(data: string) {
+    if (data === "choose") {
+      setSelectedEstateType(defaultEstateType);
+      return;
+    }
     setSelectedEstateType({
       id: data,
       name: data,
@@ -681,6 +690,7 @@ const SidebarMap: FC<Props> = (props) => {
       );
     });
   }
+
   function handleRangeFieldValue(
     field: Field,
     targetValue: any,
@@ -698,6 +708,7 @@ const SidebarMap: FC<Props> = (props) => {
     }
     return { ...field };
   }
+
   function onFieldChange(
     targetValue: any,
     fieldIndex: number,
@@ -730,9 +741,11 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   async function handleAdvancedFilter() {
+    console.log(selectedDelegationType.name);
+    console.log(isAdvancedFilter);
+
     if (isDefault) {
       // toast.error(Strings.chooseDelegationAndEstateTypes);
-
       setIsShowModal(true);
 
       setModalOption({
@@ -769,7 +782,8 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={provinces}
-            defaultValue=""
+            // defaultValue=""
+            value={selectedProvince.id}
             label={{
               htmlForLabler: "provinces",
               titleLabel: "استان",
@@ -781,7 +795,8 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={cities}
-            defaultValue=""
+            // defaultValue=""
+            value={selectedCity.id}
             label={{
               htmlForLabler: "cities",
               titleLabel: "شهرستان",
@@ -793,7 +808,8 @@ const SidebarMap: FC<Props> = (props) => {
         <div className="flex flex-col gap-1">
           <Select
             options={neighborhoods}
-            defaultValue=""
+            value={selectedNeighborhood.id}
+            // defaultValue=""
             label={{
               htmlForLabler: "neighborhoods",
               titleLabel: "منطقه",
@@ -806,7 +822,7 @@ const SidebarMap: FC<Props> = (props) => {
           <Select
             options={delegationTypes}
             defaultValue=""
-            value={selectedDelegationType.name}
+            value={selectedDelegationType.id}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع درخواست",
@@ -819,7 +835,7 @@ const SidebarMap: FC<Props> = (props) => {
           <Select
             options={estateTypes}
             defaultValue=""
-            value={selectedEstateType.name}
+            value={selectedEstateType.id}
             label={{
               htmlForLabler: "delegationTypes",
               titleLabel: "نوع ملک",

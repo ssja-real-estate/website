@@ -9,13 +9,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { globalState } from "../../global/states/globalStates";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Role } from "../../global/types/User";
-
+import { ownerSectionAtom } from "../dashboard/owner-dashboard/OwnerDashboard";
 function Navbar() {
   const state = useRecoilValue(globalState);
   const setGlobalState = useSetRecoilState(globalState);
   const router = useRouter();
+  const [section, setSection] = useRecoilState(ownerSectionAtom);
   const [isUserValide, setIsUserValid] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isShowMobileMenu, setIsShowMobile] = useState(false);
@@ -65,13 +66,14 @@ function Navbar() {
     router.push(path);
   };
   const exite = () => {
+    router.push("/");
     setGlobalState({
       loggedIn: false,
       role: Role.USER,
       token: "",
       userId: "",
     });
-    router.push("/");
+    setSection("profile");
   };
 
   return (
