@@ -47,7 +47,7 @@ const ModalInfo: FC<CustomModalProps> = ({
         </div> */}
         <button
           onClick={handleClose}
-          className="px-7 py-2 bg-gray-400 text-white rounded-md"
+          className="px-7 py-2 bg-[#d99221] text-white rounded-md"
         >
           {cancelTitle}
         </button>

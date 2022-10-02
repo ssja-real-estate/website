@@ -2,7 +2,7 @@ import React from "react";
 
 function Ourmoto() {
   return (
-    <div className="container">
+    <div className="container mb-10">
       <h1 className="text-center font-bold text-[50px] text-[#2c3e50] py-6">
         مشاورین املاک
       </h1>

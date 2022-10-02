@@ -55,7 +55,7 @@ const Signup: NextPage = () => {
     } catch (error) {
       console.log(error);
       setErroFrorm(error as string);
-      alert(error);
+      // alert(error);
     }
 
     // setVerificationState({

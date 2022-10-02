@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import * as MdIcon from "react-icons/md";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { defaultGlobalState } from "../../../global/states/GlobalState";
+import { globalState } from "../../../global/states/globalStates";
 import { ownerSectionAtom } from "../owner-dashboard/OwnerDashboard";
 
 const Sidebar: React.FC<{
@@ -12,6 +14,7 @@ const Sidebar: React.FC<{
     sectionName: string;
   }[];
 }> = (props) => {
+  const [state, setGlobalState] = useRecoilState(globalState);
   const section = useRecoilValue(ownerSectionAtom);
   const router = useRouter();
   return (
@@ -49,7 +52,13 @@ const Sidebar: React.FC<{
       </div>
       <div className="">
         <ul className="mt-4">
-          <li className="flex flex-row items-center gap-2 py-1 pr-4 cursor-pointer group">
+          <li
+            onClick={() => {
+              setGlobalState(defaultGlobalState);
+              router.push("/login");
+            }}
+            className="flex flex-row items-center gap-2 py-1 pr-4 cursor-pointer group"
+          >
             <MdIcon.MdOutlineExitToApp className="w-5 h-6 text-[#2c3e50]" />
             <span className="text-[#a6a6a6] underline group-hover:no-underline group-hover:text-[#2c3e50] transition-all duration-300">
               خروج
