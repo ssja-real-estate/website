@@ -13,7 +13,7 @@ import * as CgIcon from "react-icons/cg";
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
 const SearchEstate: NextPage = () => {
-  const [toggleShowMapndList, settoggleShowMapndList] = useState(false);
+  const [toggleShowMapAndList, setToggleShowMapAndList] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [isShowMenuInMobileDevice, setIsShowMobileInMobileDevice] =
     useState(false);
@@ -24,11 +24,11 @@ const SearchEstate: NextPage = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (state.role === 3) {
-      router.push("/login");
-    } else if (state.role === 1) {
-      setLoaded(true);
-    }
+    // if (state.role === 3) {
+    //   router.push("/login");
+    // } else if (state.role === 1) {
+    //   setLoaded(true);
+    // }
     isShowMenuInMobileDevice
       ? (document.body.style.overflow = "hidden")
       : (document.body.style.overflow = "");
@@ -45,9 +45,9 @@ const SearchEstate: NextPage = () => {
     }
   };
 
-  if (!loaded) {
-    return <div className=""></div>;
-  }
+  // if (!loaded) {
+  //   return <div className=""></div>;
+  // }
   return (
     <div className="">
       <div className="mt-0 sm:mt-0 h-screen">
@@ -63,11 +63,11 @@ const SearchEstate: NextPage = () => {
           <div className="relative h-full w-full rounded-lg ">
             <div className="absolute border-[2px] w-12 h-12 flex items-center justify-center  bg-white z-20 top-2 right-2 text-[#2c3e50] rounded-lg shadow-md">
               <button
-                onClick={() => settoggleShowMapndList((prev) => !prev)}
+                onClick={() => setToggleShowMapAndList((prev) => !prev)}
                 className="shadow-2xl py-1 px-1 text-sm"
               >
-                {!toggleShowMapndList && <CgIcon.CgList className="w-8 h-8" />}
-                {toggleShowMapndList && <GrIcon.GrMap className="w-6 h-6" />}
+                {!toggleShowMapAndList && <CgIcon.CgList className="w-8 h-8" />}
+                {toggleShowMapAndList && <GrIcon.GrMap className="w-6 h-6" />}
                 {/* <span>فهرست</span> */}
               </button>
             </div>
@@ -80,7 +80,7 @@ const SearchEstate: NextPage = () => {
                 {/* <span className="text-lg">جستجو</span> */}
               </button>
             </div>
-            {!toggleShowMapndList ? (
+            {!toggleShowMapAndList ? (
               <SsjaMapTest cordinate={cordinate} isDragable={false} />
             ) : (
               <div className="z-0 w-full h-full  overflow-y-auto MyScroll">

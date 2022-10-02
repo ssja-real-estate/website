@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import * as HiIcon from "react-icons/hi";
 import { useRecoilValue } from "recoil";
@@ -14,6 +15,7 @@ const MobileSideBar: FC<{
 }> = (props) => {
   const [showMenu, setShowMenu] = useState(false);
   const section = useRecoilValue(ownerSectionAtom);
+  const router = useRouter();
   return (
     <div className="w-full">
       <HiIcon.HiMenuAlt2
@@ -40,6 +42,15 @@ const MobileSideBar: FC<{
               </span>
             </div>
           ))}
+          <div className="flex flex-row items-center justify-center gap-2 py-1  cursor-pointer group">
+            <button
+              onClick={() => router.push("/add-estate")}
+              className="transition-all  text-sm rounded-full w-full  py-2 px-2 flex flex-row gap-2 justify-center items-center bg-[#d99221] text-white shadow-md hover:-translate-y-1 focus-within:translate-y-0"
+            >
+              <span>+</span>
+              <span className="">اضافه کردن ملک</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

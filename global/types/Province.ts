@@ -5,7 +5,7 @@ interface Province {
   id: string;
   name: string;
   cities: City[];
-  mapInfo: MapInfo;
+  mapInfo?: MapInfo;
 }
 
 export const defaultProvince: Province = {

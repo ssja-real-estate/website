@@ -1,8 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import * as GoIcon from "react-icons/go";
 import * as FiIcon from "react-icons/fi";
 import * as MdIcon from "react-icons/md";
 import * as TbIcon from "react-icons/tb";
+import * as CgIcon from "react-icons/cg";
 import Sidebar from "../sidebar/Sidebar";
 import MobileSideBar from "../sidebar/MobileSideBar";
 import AllEstateStatus from "../EstateStatus/AllEstateStatus";
@@ -10,6 +11,8 @@ import Profile from "../profile/Profile";
 import { atom, useRecoilState } from "recoil";
 import UnVerigyEstate from "../EstateStatus/UnVerigyEstate";
 import RejectEstates from "../EstateStatus/RejectEstates";
+import TemplateList from "./templates/TemplateList";
+import UsersSection from "./Users/UsersSection";
 interface sidebarData {
   id: number;
   title: string;
@@ -32,31 +35,7 @@ export const ownerSectionAtom = atom({
 });
 const OwnerDashboard: FC = () => {
   const [section, setSection] = useRecoilState(ownerSectionAtom);
-  const [index, setIndex] = useState<number>(0);
-  //   const [elementView, setElementView] = useState<JSX.Element>(<Profile />);
-  //   const changeDashboardContent = (index: number) => {
-  //     setIndex(index);
-  //   };
-  //   useEffect(() => {
-  //     switch (index) {
-  //       case dashboardContet.profile:
-  //         setElementView(<Profile />);
-  //         setSection("profile");
-  //         break;
-  //       case dashboardContet.myEstate:
-  //         setElementView(<AllEstateStatus />);
-  //         setSection("estateStatus");
-  //         break;
-  //       case dashboardContet.forms:
-  //         setElementView(<h2>قالب ها</h2>);
-  //         setSection("templates");
-  //         break;
-  //       case dashboardContet.users:
-  //         setElementView(<h2>کاربران</h2>);
-  //         setSection("users");
-  //         break;
-  //     }
-  //   }, [index]);
+
   const sidebarMenu: sidebarData[] = [
     {
       id: 1,
@@ -81,9 +60,7 @@ const OwnerDashboard: FC = () => {
     {
       id: 3,
       title: "املاک در انتظار تأیید",
-      icon: (
-        <MdIcon.MdOutlineRealEstateAgent className="w-5 h-6 text-[#2c3e50]" />
-      ),
+      icon: <CgIcon.CgSandClock className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
         setSection("unVerifyEstate");
       },
@@ -92,9 +69,7 @@ const OwnerDashboard: FC = () => {
     {
       id: 4,
       title: "املاک تأیید نشده",
-      icon: (
-        <MdIcon.MdOutlineRealEstateAgent className="w-5 h-6 text-[#2c3e50]" />
-      ),
+      icon: <MdIcon.MdOutlineCancel className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
         setSection("rejectEstate");
       },
@@ -128,7 +103,7 @@ const OwnerDashboard: FC = () => {
         <div className="block md:hidden w-full opacity-100 pb-8 bg-white ">
           <MobileSideBar dataSidebar={sidebarMenu} />
         </div>
-        {/* {elementView} */}
+
         {section === "profile" ? (
           <Profile />
         ) : section === "estateStatus" ? (
@@ -138,9 +113,9 @@ const OwnerDashboard: FC = () => {
         ) : section === "rejectEstate" ? (
           <RejectEstates />
         ) : section === "users" ? (
-          <div>کاربران</div>
+          <UsersSection />
         ) : (
-          section === "templates" && <div className="">قالبها</div>
+          section === "templates" && <TemplateList />
         )}
       </div>
     </div>
