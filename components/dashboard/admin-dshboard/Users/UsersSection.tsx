@@ -16,28 +16,10 @@ const UsersSection: FC = () => {
       className="flex flex-row w-full"
       onSelect={(index) => selectTabIndex(index)}
     >
-      <TabList className="flex flex-col gap-[2px] overflow-hidden  w-32 text-center ">
+      <TabList className="flex flex-col gap-[2px] overflow-hidden w-32 text-center ">
         <Tab
           className={`cursor-pointer p-2 text-sm transition-all duration-150 focus-visible:outline-none ${
             indexTab === 0
-              ? "bg-[#0ba] text-white"
-              : "text-gray-500 bg-[#f6f6f6] hover:bg-[#0ba]/10"
-          }`}
-        >
-          {Strings.owners}
-        </Tab>
-        <Tab
-          className={`cursor-pointer p-2 text-sm transition-all duration-150 focus-visible:outline-none ${
-            indexTab === 1
-              ? "bg-[#0ba] text-white"
-              : "text-gray-500 bg-[#f6f6f6] hover:bg-[#0ba]/10"
-          }`}
-        >
-          {Strings.admins}
-        </Tab>
-        <Tab
-          className={`cursor-pointer p-2 text-sm transition-all duration-150 focus-visible:outline-none ${
-            indexTab === 2
               ? "bg-[#0ba] text-white"
               : "text-gray-500 bg-[#f6f6f6] hover:bg-[#0ba]/10"
           }`}
@@ -46,21 +28,21 @@ const UsersSection: FC = () => {
         </Tab>
         <Tab
           className={`cursor-pointer p-2 text-sm transition-all duration-150 focus-visible:outline-none ${
-            indexTab === 3
-              ? "bg-[#0ba] text-white"
-              : "text-gray-500 bg-[#f6f6f6] hover:bg-[#0ba]/10"
+            indexTab === 1
+              ? "bg-[#0ba] text-white overflow-hidden"
+              : "text-gray-500 bg-[#f6f6f6] hover:bg-[#0ba]/10 overflow-hidden"
           }`}
         >
           {Strings.users}
         </Tab>
       </TabList>
       <div className="flex-1 p-2 h-full">
-        <TabPanel>
+        {/* <TabPanel>
           <OwnerList />
         </TabPanel>
         <TabPanel>
           <AdminList />
-        </TabPanel>
+        </TabPanel> */}
         <TabPanel>
           <AgentList />
         </TabPanel>

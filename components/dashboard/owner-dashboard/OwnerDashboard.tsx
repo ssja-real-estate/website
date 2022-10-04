@@ -13,6 +13,7 @@ import UnVerigyEstate from "../EstateStatus/UnVerigyEstate";
 import RejectEstates from "../EstateStatus/RejectEstates";
 import TemplateList from "./templates/TemplateList";
 import UsersSection from "./Users/UsersSection";
+
 interface sidebarData {
   id: number;
   title: string;
@@ -103,7 +104,6 @@ const OwnerDashboard: FC = () => {
         <div className="block md:hidden w-full opacity-100 pb-8 bg-white ">
           <MobileSideBar dataSidebar={sidebarMenu} />
         </div>
-
         {section === "profile" ? (
           <Profile />
         ) : section === "estateStatus" ? (

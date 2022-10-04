@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
+import Strings from "../../../../../data/strings";
 import { globalState } from "../../../../../global/states/globalStates";
 import User, {
   defaultUser,
@@ -7,17 +8,16 @@ import User, {
   roleMap,
 } from "../../../../../global/types/User";
 import UserService from "../../../../../services/api/UserService/UserService";
+import Spiner from "../../../../spinner/Spiner";
 import * as TbIcon from "react-icons/tb";
 import * as FaIcon from "react-icons/fa";
 import { TabList, Tabs } from "react-tabs";
-import Spiner from "../../../../spinner/Spiner";
-import Strings from "../../../../../data/strings";
 
-function UsersList() {
+const AdminList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User>(defaultUser);
+  const [selectedAdmin, setSelectedAdmin] = useState<User>(defaultUser);
 
   const state = useRecoilValue(globalState);
   const userService = useRef(new UserService());
@@ -37,17 +37,17 @@ function UsersList() {
     if (!loading) {
       setLoading(true);
     }
-    const users = await userService.current.getAllUsers();
+    const admins = await userService.current.getAllUsers(Role.ADMIN);
     if (mounted.current) {
-      setUsers(users);
+      setUsers(admins);
       setLoading(false);
     }
   };
 
   const changeRole = async () => {
-    if (selectedUser.id === "") return;
-    const userId = selectedUser.id;
-    const role = selectedUser.role;
+    if (selectedAdmin.id === "") return;
+    const userId = selectedAdmin.id;
+    const role = selectedAdmin.role;
     setLoading(true);
     await userService.current.changeUserRole(userId, role);
     await loadData();
@@ -64,7 +64,7 @@ function UsersList() {
             <div className="flex flex-row gap-3 w-full">
               <div className="flex-1">
                 <div className="flex flex-row gap-2 items-center justify-center">
-                  <h3 className="text-xl">{Strings.userInfo}</h3>
+                  <h3 className="text-xl text-center">{Strings.adminInfo}</h3>
                   <button
                     className="shadow-md w-8 h-8 rounded-full flex items-center justify-center"
                     onClick={async () => {
@@ -99,7 +99,7 @@ function UsersList() {
                       return (
                         <TabList
                           onClick={() => {
-                            setSelectedUser({
+                            setSelectedAdmin({
                               id: user.id,
                               mobile: user.mobile,
                               role: user.role,
@@ -108,9 +108,9 @@ function UsersList() {
                           }}
                           key={index}
                           className={`${
-                            selectedUser.id === user.id &&
+                            selectedAdmin.id === user.id &&
                             "text-white bg-[#0ba]"
-                          } border p-2 rounded-md flex items-center justify-center cursor-pointer select-none overflow-hidden`}
+                          } border p-2 rounded-md flex items-center justify-center cursor-pointer select-none`}
                         >
                           <span>{user.mobile}</span>
                         </TabList>
@@ -141,10 +141,10 @@ function UsersList() {
               </div>
 
               <div className="flex-1">
-                {selectedUser.id && (
+                {selectedAdmin.id && (
                   <div className="sticky top-20">
                     <h3 className="mb-4 text-xl text-center">
-                      {Strings.userInfo}
+                      {Strings.adminInfo}
                     </h3>
                     {/* {owners.map((user, index) => {
                     return (
@@ -159,19 +159,19 @@ function UsersList() {
                   })} */}
                     <div className="w-full shadow-md my-2 rounded-xl p-3 flex flex-col items-center justify-center border">
                       <div className="flex flex-row item-cnter justify-center font-bold gap-1 py-2">
-                        <span className="">{selectedUser.mobile}</span>
+                        <span className="">{selectedAdmin.mobile}</span>
                         <FaIcon.FaPhoneAlt />
                       </div>
                       <div className="flex flex-row w-full gap-1">
                         <select
-                          value={selectedUser.role}
+                          value={selectedAdmin.role}
                           className="selectbox"
                           onChange={(e) => {
                             const roleString = e.currentTarget.value;
                             if (roleString) {
                               const role = Number(roleString) as Role;
-                              setSelectedUser({
-                                ...selectedUser,
+                              setSelectedAdmin({
+                                ...selectedAdmin,
                                 role,
                               });
                             }
@@ -205,6 +205,6 @@ function UsersList() {
       )}
     </>
   );
-}
+};
 
-export default UsersList;
+export default AdminList;

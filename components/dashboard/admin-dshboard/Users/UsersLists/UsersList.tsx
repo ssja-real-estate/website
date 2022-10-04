@@ -110,7 +110,7 @@ function UsersList() {
                           className={`${
                             selectedUser.id === user.id &&
                             "text-white bg-[#0ba]"
-                          } border p-2 rounded-md flex items-center justify-center cursor-pointer select-none overflow-hidden`}
+                          } border p-2 rounded-md flex items-center justify-center cursor-pointer select-none`}
                         >
                           <span>{user.mobile}</span>
                         </TabList>
@@ -162,7 +162,7 @@ function UsersList() {
                         <span className="">{selectedUser.mobile}</span>
                         <FaIcon.FaPhoneAlt />
                       </div>
-                      <div className="flex flex-row w-full gap-1">
+                      {/* <div className="flex flex-row w-full gap-1">
                         <select
                           value={selectedUser.role}
                           className="selectbox"
@@ -194,7 +194,7 @@ function UsersList() {
                         >
                           {Strings.save}
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 )}

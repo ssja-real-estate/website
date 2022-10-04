@@ -12,6 +12,8 @@ import { atom, useRecoilState } from "recoil";
 import UnVerigyEstate from "../EstateStatus/UnVerigyEstate";
 import RejectEstates from "../EstateStatus/RejectEstates";
 import { ownerSectionAtom } from "../owner-dashboard/OwnerDashboard";
+import UsersSection from "./Users/UsersSection";
+import TemplateList from "./templates/TemplateList";
 interface sidebarData {
   id: number;
   title: string;
@@ -89,14 +91,12 @@ const AdminDashboard: FC = () => {
           <Profile />
         ) : section === "estateStatus" ? (
           <AllEstateStatus />
-        ) : section === "unVerifyEstate" ? (
-          <UnVerigyEstate />
-        ) : section === "rejectEstate" ? (
-          <RejectEstates />
         ) : section === "users" ? (
-          <div>کاربران</div>
+          <div>
+            <UsersSection />
+          </div>
         ) : (
-          section === "templates" && <div className="">قالبها</div>
+          section === "templates" && <TemplateList />
         )}
       </div>
     </div>
