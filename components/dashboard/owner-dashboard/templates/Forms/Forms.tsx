@@ -214,7 +214,21 @@ const Forms = () => {
     }
     await loadData();
   };
+  const deleteForm = async () => {
+    if (window.confirm(Strings.messageDeleteForm)) {
+      setLoading((prev) => true);
+      try {
+        await formService.current.deleteForm(form.id as string);
+      } catch (e) {
+        console.log(e);
+      }
+      console.log(form.id);
 
+      await loadData();
+    } else {
+      return;
+    }
+  };
   return (
     <>
       <div className="flex flex-row items-center gap-2 justify-center">
@@ -353,7 +367,21 @@ const Forms = () => {
                 />
               </div>
               {form.estateTypeId ? (
-                <div className="flex flex-row items-center justify-end w-full">
+                <div className="flex flex-row items-center justify-end w-full gap-2">
+                  <button
+                    className="p-2 rounded-md shadow-sm bg-red-500 text-white"
+                    onClick={() => {
+                      // setShowEditSectionModal(true);
+                      // setModalSection({
+                      //   index: 0,
+                      //   data: { fields: form.fields },
+                      // });
+                      deleteForm();
+                    }}
+                    disabled={isDefault}
+                  >
+                    {Strings.deleteForm}
+                  </button>
                   <button
                     className="p-2 rounded-md shadow-sm bg-[#f3bc65] text-white"
                     onClick={() => {

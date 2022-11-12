@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   defaultEstate,
   Estate,
@@ -22,6 +23,29 @@ class EstateService extends BaseService {
       this.handleError(error);
     }
 
+    return verifiedEstates;
+  }
+
+  async getLastEstates(status: EstateStatus = EstateStatus.Verified) {
+    let verifiedEstates: Estate[] = [];
+    try {
+      let response = await axios
+        .create({
+          baseURL: `https://ssja.ir/api/`,
+          timeout: 10000,
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+        })
+        .get(`${this.estatesUrl}`);
+      if (response.data) {
+        console.log(response);
+
+        verifiedEstates = response.data as Estate[];
+      }
+    } catch (error) {
+      this.handleError(error);
+    }
     return verifiedEstates;
   }
 

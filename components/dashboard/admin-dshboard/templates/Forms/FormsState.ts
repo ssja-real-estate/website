@@ -65,21 +65,21 @@ export const defaultSelectiveInnerFieldModalData: Modal<Field> = {
 };
 
 export const modalSectionAtom = atom<Modal<Section>>({
-  key: "ownerModalSectionState",
+  key: "adminModalSectionState",
   default: defaultModalSection,
 });
 
 export const innerFieldModalDataAtom = atom<Modal<Field>>({
-  key: "ownerEditInnerFieldsModalDataState",
+  key: "adminEditInnerFieldsModalDataState",
   default: defaultInnerFieldModalData,
 });
 
 export const editSelectFieldModalDataAtom = atom<Modal<Field>>({
-  key: "ownerEditSelectFieldModalState",
+  key: "adminEditSelectFieldModalState",
   default: defaultEditSelectFieldModalData,
 });
 
 export const selectiveInnerFieldModalDataAtom = atom<Modal<Field>>({
-  key: "ownerSelectiveInnerFieldModalDataState",
+  key: "adminSelectiveInnerFieldModalDataState",
   default: defaultSelectiveInnerFieldModalData,
 });
