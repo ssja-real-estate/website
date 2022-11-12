@@ -2,16 +2,16 @@ import { atom } from "recoil";
 import { defaultField, Field } from "../../../../../../global/types/Field";
 
 export const selectiveInnerFieldsAtom = atom<Field>({
-  key: "ownerSelectiveInnerFieldsState",
+  key: "admiSelectiveInnerFieldsState",
   default: defaultField,
 });
 
 export const innerFieldsAtom = atom<Field[]>({
-  key: "ownerInnerFieldsState",
+  key: "adminInnerFieldsState",
   default: [],
 });
 
 export const optionsAtom = atom<string[]>({
-  key: "ownerModalOptionsState",
+  key: "adminModalOptionsState",
   default: [],
 });

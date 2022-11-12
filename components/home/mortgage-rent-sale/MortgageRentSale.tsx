@@ -32,10 +32,19 @@ function MortgageRentSale() {
     };
   }, [state.token]);
 
+  // async function getAllEstate() {
+  //   try {
+  //     await estateService.current
+  //       .getEstates()
+  //       .then((allEstate) => setAllEstate(allEstate));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
   async function getAllEstate() {
     try {
       await estateService.current
-        .getEstates()
+        .getLastEstates()
         .then((allEstate) => setAllEstate(allEstate));
     } catch (error) {
       console.log(error);

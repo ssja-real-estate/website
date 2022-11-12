@@ -109,6 +109,9 @@ class Strings {
   static chooseImages = "انتخاب تصاویر";
   static addNewSection = "افزودن بخش جدید";
   static editForm = "ویرایش فرم";
+  static deleteForm = "حذف فرم";
+  static messageDeleteForm = "آیا مایل به حذف این فرم هستید؟";
+
   static sectionTitleCantBeEmpty = "عنوان بخش نمی‌تواند خالی باشد";
   static chooseEstateType = "انتخاب نوع ملک";
   static chooseDelegationType = "انتخاب نوع واگذاری";
