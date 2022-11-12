@@ -12,7 +12,11 @@ import { globalState } from "../../global/states/globalStates";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Role } from "../../global/types/User";
 import { ownerSectionAtom } from "../dashboard/owner-dashboard/OwnerDashboard";
+import CustomModal from "../modal/CustomModal";
+import commissionModalState from "../CommissionModal/CommissionModalState";
+import CommissionModal from "../CommissionModal/CommissionModal";
 function Navbar() {
+  const [modalState, setModalState] = useRecoilState(commissionModalState);
   const state = useRecoilValue(globalState);
   const setGlobalState = useSetRecoilState(globalState);
   const router = useRouter();
@@ -78,6 +82,7 @@ function Navbar() {
 
   return (
     <div className="w-full select-none">
+      <CommissionModal />
       <div
         className={`${
           scrolled && "fixed w-full "
@@ -139,7 +144,12 @@ function Navbar() {
                     {Strings.laws}
                   </li>
                   <li
-                    onClick={() => goto("/")}
+                    onClick={() => {
+                      setModalState({
+                        ...modalState,
+                        showCommissionModal: true,
+                      });
+                    }}
                     className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
                   >
                     {Strings.commissionCalculation}
@@ -217,7 +227,7 @@ function Navbar() {
       <div
         className={`hidden z-50  transition-all duration-300 inset-0 sm:flex flex-row justify-between items-center ${
           scrolled
-            ? "fixed top-0 h-16 bg-white text-gray-600 w-full  shadow-md"
+            ? "fixed top-0 h-16 bg-white text-gray-600 w-full shadow-md"
             : "top-12 bg-[#f6f6f6] text-gray-600 container h-16"
         }
         `}
@@ -247,8 +257,16 @@ function Navbar() {
               <li>
                 <Link href="/">{Strings.laws}</Link>
               </li>
-              <li>
-                <Link href="/">{Strings.commissionCalculation}</Link>
+              <li
+                onClick={() => {
+                  setModalState({
+                    ...modalState,
+                    showCommissionModal: true,
+                  });
+                }}
+                className="cursor-pointer"
+              >
+                {Strings.commissionCalculation}
               </li>
             </ul>
           </div>

@@ -7,7 +7,7 @@ import BaseService from "../BaseService";
 
 class EstateService extends BaseService {
   estateUrl = "/estate";
-
+  estatesUrl = "/estates"; //for home
   async getEstates(status: EstateStatus = EstateStatus.Verified) {
     let verifiedEstates: Estate[] = [];
     try {
