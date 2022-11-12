@@ -37,6 +37,9 @@
   .inputDecoration {
     @apply px-4 h-9 transition-all duration-300 border  focus:border-[#0ba] w-full outline-none focus:shadow-1input;
   }
+  .inputDecorationDefault {
+    @apply px-4 h-9 transition-all duration-300 border  focus:border-[#0ba] outline-none focus:shadow-1input;
+  }
   .inputErroeDecoration {
     @apply px-4 h-9 transition-all duration-300 border border-red-700  focus:border-red-700 w-full outline-none focus:shadow-1inputError;
   }

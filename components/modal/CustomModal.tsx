@@ -8,7 +8,7 @@ export interface CustomModalProps {
   successTitle?: string;
   isLarge?: boolean;
   isFullscreen?: boolean;
-  handleClose: () => void;
+  handleClose?: () => void;
   handleSuccess?: () => void;
   children?: JSX.Element;
 }
@@ -50,18 +50,18 @@ const CustomModal: FC<CustomModalProps> = ({
             isFullscreen && "sticky bottom-1"
           } flex flex-row items-center justify-end gap-2 px-2`}
         >
-          <button
+          {handleClose && <button
             onClick={handleClose}
             className="px-7 py-2 bg-gray-400 text-white rounded-md"
           >
             {Strings.cancel}
-          </button>
-          <button
+          </button>}
+         {handleSuccess && <button
             onClick={handleSuccess}
             className="px-7 py-2 bg-[#d99221] text-white rounded-md"
           >
             {Strings.save}
-          </button>
+          </button>}
         </div>
       </div>
     </div>
