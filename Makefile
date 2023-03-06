@@ -1,5 +1,6 @@
 .SILENT:
 
+
 # import config
 # you can change the default config with `make cnf="config_special.env" build`
 cnf=./app-config.sh
