@@ -27,7 +27,7 @@ jobs:
           passphrase: ${{ secrets.SERVER_PRIVATE_KEY_PASSPHRASE }}
           envs: DOCKER_PASSWORD
           script: |
-            cd frontend/
+            cd ~/frontend/
             make password=$DOCKER_PASSWORD login
             make pull
             make
