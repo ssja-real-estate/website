@@ -1,6 +1,5 @@
 .SILENT:
 
-
 # import config
 # you can change the default config with `make cnf="config_special.env" build`
 cnf=./app-config.sh
@@ -8,12 +7,13 @@ cnf=./app-config.sh
 username?=sajaweb
 password?=
 
-# Dockerfile stage to build(default is set to dev)
-stage?=dev
+# Dockerfile stage to build(default is set to prod)
+stage?=prod
 
 # image name 
-IMAGE_NAME=$(shell $(cnf) name $(username))
-CONTAINER_NAME="$(shell $(cnf) name)-$(stage)"
+REMOTE_IMAGE_NAME=$(shell $(cnf) name $(username))
+LOCAL_IMAGE_NAME=$(shell $(cnf) name)
+CONTAINER_NAME="$(LOCAL_IMAGE_NAME)-$(stage)"
 
 # port to run the docker container
 PORT=$(shell $(cnf) port)
@@ -26,10 +26,11 @@ WORKDIR=$(shell pwd)
 PARENT_DIR=$(shell echo "${PWD}##*/}")
 
 # Complete image tag
-IMAGE_TAG="$(IMAGE_NAME)-$(stage)"
+REMOTE_IMAGE_TAG="$(REMOTE_IMAGE_NAME)-$(stage)"
+LOCAL_IMAGE_TAG="$(LOCAL_IMAGE_NAME)-$(stage)"
 
 .DEFAULT_GOAL := help
-.PHONY: help build
+.PHONY: help
 
 # Default target
 help: ## help(default)  
@@ -37,7 +38,7 @@ help: ## help(default)
 	echo "Usage: make [OPTIONS] TARGET"
 	echo "--------------------------------"
 	echo "Options:"
-	echo "stage: set Dockerfile stage (dev[default], prod)"
+	echo "stage: set Dockerfile stage (prod[default], dev(currently not available))"
 	echo "username: set DockerHub username (sajaweb[default])"
 	echo "password: set DockerHub password"
 	echo "--------------------------------"
@@ -51,58 +52,50 @@ help: ## help(default)
 # Docker tasks
 
 # Build docker image 
-build: ## build-image/params:stage,username
-	docker build -f Dockerfile.$(stage) -t $(IMAGE_TAG) .
+build-remote: ## build-remote-image/params:stage,username
+	docker build -f Dockerfile.prod -t $(REMOTE_IMAGE_TAG) .
 
 # Build docker image on local machine
-build-local: ## build-local-image/params:stage,username
-	docker build -f Dockerfile.$(stage) -t $(CONTAINER_NAME) .
+build-local: ## build-local-image/params:stage
+	docker build -f Dockerfile.prod -t $(CONTAINER_NAME) .
 
 # Run docker container in development mode
-run-dev: stop ## run-dev-container 
-	docker run --rm -itd --env-file ./.env --name $(CONTAINER_NAME) \
-		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src:ro \
-		$(IMAGE_TAG) 
+run-remote-dev: stop ## run-remote-dev-container/params:stage,username 
+	docker run --rm -itd --name $(CONTAINER_NAME) \
+		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app \
+		$(REMOTE_IMAGE_TAG) 
 
 # Run docker container in production mode
-run-prod: stop ## run-prod-container 
-	docker run --rm -itd --env-file ./.env --name $(CONTAINER_NAME) \
-		-p $(PORT):$(CONTAINER_PORT) $(IMAGE_TAG) 
+run-remote-prod: stop ## run-remote-prod-container/params:stage,username
+	docker run --rm -itd --name $(CONTAINER_NAME) \
+		-p $(PORT):$(CONTAINER_PORT) $(REMOTE_IMAGE_TAG) 
 
 # Run docker container locally in development mode
-run-local-dev: stop-local ## run-dev-container-locally
-	docker run --rm -it --env-file ./.env --name $(CONTAINER_NAME) \
+run-local-dev: stop-local ## run-local-dev-container/params:stage
+	docker run --rm -it --name $(CONTAINER_NAME) \
 		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src \
-		$(CONTAINER_NAME):latest
+		$(LOCAL_IMAGE_TAG):latest
 
 # Run docker container locally in production mode
 run-local-prod: stop-local ## run-prod-container-locally
-	docker run --rm -itd --env-file ./.env --name $(CONTAINER_NAME) \
-		-p $(PORT):$(CONTAINER_PORT) $(CONTAINER_NAME):latest
+	docker run --rm -itd --name $(CONTAINER_NAME) \
+		-p $(PORT):$(CONTAINER_PORT) $(LOCAL_IMAGE_TAG):latest
 	
 # Execute docker container shell
-exec: ## execute-container
-	docker exec -it $(CONTAINER_NAME) bash
-
-# Execute local docker container shell
-exec-local: ## execute-local-container
+exec: ## execute-container/params:stage
 	docker exec -it $(CONTAINER_NAME) bash
 
 # Stop the docker container
-stop: ## stop-container
-	docker rm $(CONTAINER_NAME) -f
-
-# Stop the local docker container
-stop-local: ## stop-local-container
+stop: ## stop-container/params:stage
 	docker rm $(CONTAINER_NAME) -f
 
 # Remove docker image
-rm-image: ## remove-image
-	docker rmi $(IMAGE_TAG)
+rm-remote-image: ## remove-remote-image/params:stage,username
+	docker rmi $(REMOTE_IMAGE_TAG)
 
 # Remove local docker image
-rm-local-image: ## remove-local-image
-	docker rmi $(CONTAINER_NAME)
+rm-local-image: ## remove-local-image/params:stage
+	docker rmi $(LOCAL_IMAGE_TAG)
 
 login: set-password ## login-to-docker-hub/params:username,password
 	cat pass | docker login -u $(username) --password-stdin
@@ -115,17 +108,8 @@ set-password: ## set-password
 logout: ## logout-from-docker-hub
 	docker logout
 
-push: ## push-docker-image-to-registry/params:stage,username
-	docker push $(IMAGE_TAG)
+push-remote: ## push-remote-image-to-registry/params:stage,username
+	docker push $(REMOTE_IMAGE_TAG)
 
-push-local: ## push-local-docker-image-to-registry
-	docker push $(CONTAINER_NAME)
-
-pull: ## pull-docker-image-from-registry
-	docker pull $(IMAGE_TAG)
-
-pull-local: ## pull-local-docker-image-from-registry
-	docker pull $(CONTAINER_NAME)
-
-
-
+pull-remote: ## pull-remote-image-from-registry/params:stage,username
+	docker pull $(REMOTE_IMAGE_TAG)
