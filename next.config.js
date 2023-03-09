@@ -6,6 +6,7 @@ const nextConfig = {
 
 module.exports = {
   images: {
+    loader: "akamai",
     domains: ["ssja.ir"],
   },
 };
