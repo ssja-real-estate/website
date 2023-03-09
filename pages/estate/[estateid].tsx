@@ -1,11 +1,5 @@
-import { log } from "console";
-import { NextPage, NextPageContext } from "next";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { json } from "node:stream/consumers";
-import React, { useEffect, useRef, useState } from "react";
-import * as AiIcon from "react-icons/ai";
-import * as BiIcon from "react-icons/bi";
+import { GetStaticPaths, NextPage, NextPageContext } from "next";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import MultiSelectView from "../../components/estate/MultiSelectView";
 
@@ -14,7 +8,7 @@ import SsjaMapTest from "../../components/map-component/SsjaMapTest";
 import Spiner from "../../components/spinner/Spiner";
 import { globalState } from "../../global/states/globalStates";
 import { defaultEstate, Estate } from "../../global/types/Estate";
-import { Field, FieldMap, FieldType } from "../../global/types/Field";
+import { Field, FieldType } from "../../global/types/Field";
 import { defaultMapInfo } from "../../global/types/MapInfo";
 import EstateService from "../../services/api/EstateService/EstateService";
 
@@ -267,8 +261,15 @@ const Property: NextPage<{ id: string }> = (props) => {
 };
 export default Property;
 
-export const getServerSideProps = async (context: NextPageContext) => {
+export const getStaticProps = async (context: NextPageContext) => {
   return {
     props: { id: context.query.estateid },
+  };
+};
+
+export const getStaticPaths: GetStaticPaths<{ id: string }> = async () => {
+  return {
+    paths: [],
+    fallback: "blocking",
   };
 };
