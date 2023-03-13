@@ -147,7 +147,7 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
             <div key={index} className="keen-slider__slide number-slide1">
               <Image
                 src={`${imagesBaseUrl}/${props.id}/${img}`}
-                alt="photo"
+                alt={img}
                 width={1280}
                 height={720}
                 layout="responsive"

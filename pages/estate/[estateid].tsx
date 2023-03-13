@@ -1,4 +1,10 @@
-import { GetStaticPaths, NextPage, NextPageContext } from "next";
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  NextPage,
+  NextPageContext,
+} from "next";
+import { ParsedUrlQuery } from "querystring";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import MultiSelectView from "../../components/estate/MultiSelectView";
@@ -26,6 +32,8 @@ const Property: NextPage<{ id: string }> = (props) => {
     estateService.current.setToken(state.token);
     // loadEstate();
     if (props.id) {
+      console.log(props.id);
+
       loadEstate(props.id);
 
       setLoaded(true);
@@ -261,9 +269,25 @@ const Property: NextPage<{ id: string }> = (props) => {
 };
 export default Property;
 
-export const getStaticProps = async (context: NextPageContext) => {
+interface IParams extends ParsedUrlQuery {
+  estateid: string;
+}
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const arr: string[] = ["slug1", "slug2"];
+//   const paths = arr.map((slug) => {
+//     return {
+//       params: { slug },
+//     };
+//   });
+//   return { paths };
+// };
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const estatid = context.params as IParams;
+  console.log(context.params);
   return {
-    props: { id: context.query.estateid },
+    props: { id: estatid.estateid },
   };
 };
 
