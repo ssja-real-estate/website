@@ -16,7 +16,7 @@ const UsersSection: FC = () => {
       className="flex flex-row w-full"
       onSelect={(index) => selectTabIndex(index)}
     >
-      <TabList className="flex flex-col gap-[2px] overflow-hidden  w-32 text-center ">
+      <TabList className="flex flex-col gap-[2px] overflow-hidden  w-32 text-center">
         <Tab
           className={`cursor-pointer p-2 text-sm transition-all duration-150 focus-visible:outline-none ${
             indexTab === 0

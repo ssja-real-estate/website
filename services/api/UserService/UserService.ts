@@ -83,6 +83,8 @@ class UserService extends BaseService {
       }
       // console.log(response);
     } catch (error: any) {
+      console.log(error);
+
       throw error;
     }
 
