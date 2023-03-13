@@ -29,15 +29,8 @@ class EstateService extends BaseService {
   async getLastEstates(status: EstateStatus = EstateStatus.Verified) {
     let verifiedEstates: Estate[] = [];
     try {
-      let response = await axios
-        .create({
-          baseURL: `https://ssja.ir/api/`,
-          timeout: 10000,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        })
-        .get(`${this.estatesUrl}`);
+      let response = await this.Api
+        .get(`${this.estatesUrl}/list/${status}`);
       if (response.data) {
         console.log(response);
 

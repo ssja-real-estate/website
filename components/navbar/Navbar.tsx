@@ -82,7 +82,7 @@ function Navbar() {
 
   return (
     <div className="w-full select-none">
-      <CommissionModal />
+      {modalState.showCommissionModal && <CommissionModal />}
       <div
         className={`${
           scrolled && "fixed w-full "
