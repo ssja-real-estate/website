@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useRecoilState } from "recoil";
 import Strings from "../../data/strings";
 import CustomModal from "../modal/CustomModal";
@@ -52,19 +52,38 @@ const CommissionModal = () => {
     name: PropertyTradeTypeName;
   }>(defaultType);
   const [price, setPrice] = useState<number>(0);
-  const [mortgage, setMortgage] = useState<number>(0);
+  const [mortgage, setMortgage] = useState<string>("");
   const [taxPercent, setTaxPercent] = useState<number>(defaultTaxPercent);
   const [commissionPercent, setCommissionPercent] = useState<number>(
     defaultCommisssionPercent
   );
+  const [value, setValue] = useState<string>("");
   const [finalResult, setFinalResult] = useState<number>(0);
   const [mortgageCoefficient, setMortgageCoefficient] = useState<number>(
     defaultMorgageCoefficient
   );
 
+  const addCommas = (num: string): string => {
+    const n = parseInt(num);
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const removeNonNumeric = (num: string) =>
+    num.toString().replace(/[^0-9]/g, "");
+
+  const handleChange = (e: string) => {
+    setValue(addCommas(removeNonNumeric(e)));
+  };
+  const handleChangeMortgage = (e: string) => {
+    // const num = parseInt(e);
+    console.log(e);
+
+    setMortgage(addCommas(removeNonNumeric(e)));
+  };
+
   const calculateCommission = () => {
     let convertedMortgage = convertMortgageToRent();
-    let finalPrice = price;
+    let finalPrice = parseInt(value);
     if (type.type === PropertyTradeType.OnlyMortgage) {
       finalPrice = convertedMortgage;
     }
@@ -78,7 +97,7 @@ const CommissionModal = () => {
   };
 
   const convertMortgageToRent = () => {
-    const mortgageCount = Math.floor(mortgage / 1000000);
+    const mortgageCount = Math.floor(parseInt(mortgage) / 1000000);
     return mortgageCount * mortgageCoefficient;
   };
 
@@ -92,7 +111,8 @@ const CommissionModal = () => {
   const resetValues = () => {
     setType(defaultType);
     setPrice(0);
-    setMortgage(0);
+    setValue("");
+    setMortgage("");
     setCommissionPercent(defaultCommisssionPercent);
     setMortgageCoefficient(defaultMorgageCoefficient);
     setTaxPercent(defaultTaxPercent);
@@ -152,11 +172,12 @@ const CommissionModal = () => {
                   </label>
                   <input
                     className="inputDecorationDefault"
-                    type="number"
-                    value={price}
-                    onChange={(e: any) => {
-                      setPrice(+e.currentTarget.value);
-                    }}
+                    type="text"
+                    value={value}
+                    onChange={(e) => handleChange(e.target.value)}
+                    // onChange={(e: any) => {
+                    //   setPrice(+e.currentTarget.value);
+                    // }}
                   />
                 </div>
               </>
@@ -168,10 +189,10 @@ const CommissionModal = () => {
                   <label>{Strings.mortgagePrice}:</label>
                   <input
                     className="inputDecorationDefault"
-                    type="number"
+                    type="text"
                     value={mortgage}
                     onChange={(e: any) => {
-                      setMortgage(e.currentTarget.value);
+                      handleChangeMortgage(e.currentTarget.value);
                     }}
                   />
                 </div>
