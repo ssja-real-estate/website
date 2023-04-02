@@ -17,8 +17,15 @@ import { defaultEstate, Estate } from "../../global/types/Estate";
 import { Field, FieldType } from "../../global/types/Field";
 import { defaultMapInfo } from "../../global/types/MapInfo";
 import EstateService from "../../services/api/EstateService/EstateService";
+import { useRouter } from "next/router";
+import { log } from "console";
 
 const Property: NextPage<{ id: string }> = (props) => {
+  const router = useRouter();
+  const estateid: string = String(router.query.estateid);
+  console.log(router.query);
+  console.log(estateid);
+  // console.log(router.pathname);
   const estateService = useRef(new EstateService());
   const state = useRecoilValue(globalState);
   const [estate, setEstate] = useState<Estate>(defaultEstate);
@@ -31,10 +38,10 @@ const Property: NextPage<{ id: string }> = (props) => {
   useEffect(() => {
     estateService.current.setToken(state.token);
     // loadEstate();
-    if (props.id) {
-      console.log(props.id);
+    if (estateid) {
+      // console.log(props.id);
 
-      loadEstate(props.id);
+      loadEstate(estateid);
 
       setLoaded(true);
     }
@@ -273,27 +280,17 @@ interface IParams extends ParsedUrlQuery {
   estateid: string;
 }
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const arr: string[] = ["slug1", "slug2"];
-//   const paths = arr.map((slug) => {
-//     return {
-//       params: { slug },
-//     };
-//   });
-//   return { paths };
+// export const getStaticProps: GetStaticProps = async (context) => {
+//   const estatid = context.params as IParams;
+//   console.log(context.params);
+//   return {
+//     props: { id: estatid.estateid },
+//   };
 // };
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const estatid = context.params as IParams;
-  console.log(context.params);
-  return {
-    props: { id: estatid.estateid },
-  };
-};
-
-export const getStaticPaths: GetStaticPaths<{ id: string }> = async () => {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-};
+// export const getStaticPaths: GetStaticPaths<{ id: string }> = async () => {
+//   return {
+//     paths: [],
+//     fallback: "blocking",
+//   };
+// };
