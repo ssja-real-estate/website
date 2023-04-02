@@ -276,10 +276,6 @@ const Property: NextPage<{ id: string }> = (props) => {
 };
 export default Property;
 
-interface IParams extends ParsedUrlQuery {
-  estateid: string;
-}
-
 // export const getStaticProps: GetStaticProps = async (context) => {
 //   const estatid = context.params as IParams;
 //   console.log(context.params);
