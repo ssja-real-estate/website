@@ -1,4 +1,5 @@
 import {
+  GetServerSideProps,
   GetStaticPaths,
   GetStaticProps,
   NextPage,
@@ -20,11 +21,7 @@ import EstateService from "../../services/api/EstateService/EstateService";
 import { useRouter } from "next/router";
 import { log } from "console";
 
-const Property: NextPage<{ id: string }> = (props) => {
-  const router = useRouter();
-  const estateid: string = String(router.query.estateid);
-  console.log(router.query);
-  console.log(estateid);
+const Property: NextPage<{ estateid: string }> = ({ estateid }) => {
   // console.log(router.pathname);
   const estateService = useRef(new EstateService());
   const state = useRecoilValue(globalState);
@@ -33,17 +30,18 @@ const Property: NextPage<{ id: string }> = (props) => {
   const [images, setImages] = useState<string[]>();
   const mounted = useRef(true);
 
-  // console.log(router.query);
-
   useEffect(() => {
+    console.log("run use effect");
+
     estateService.current.setToken(state.token);
     // loadEstate();
+    // const estateid =
+    console.log(estateid);
+
     if (estateid) {
       // console.log(props.id);
-
-      loadEstate(estateid);
-
-      setLoaded(true);
+      // alert("aaaaaaaa");
+      loadEstate(estateid as string);
     }
     return () => {
       mounted.current = false;
@@ -51,21 +49,9 @@ const Property: NextPage<{ id: string }> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 
-  // useEffect(() => {
-  //   const id = router.query.estateid;
-  //   console.log(router.query);
-  //   console.log(id);
-  //   if (id) {
-  //     setEstateId(id as string);
-  //   }
-  //   loadEstate();
-  //   return () => {
-  //     mounted.current = false;
-  //   };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [router.query]);
-  // console.log(router.query ? true);
   const loadEstate = async (id: string) => {
+    console.log(id);
+
     await estateService.current
       .getEstateById(id)
       .then((estate) => {
@@ -73,11 +59,13 @@ const Property: NextPage<{ id: string }> = (props) => {
         console.log(estate);
 
         setEstate(estate);
+        setLoaded(true);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
   // const myLoader = ({ src: string, width: numver, quality: number }) => {
   //   return `https://ssja.com/api/images/${src}?w=${width}&q=${quality || 75}`;
   // };
@@ -263,7 +251,7 @@ const Property: NextPage<{ id: string }> = (props) => {
         <div className="">
           {
             /* <SingleEstateSlider /> */
-            <ImageEstate field={estate.dataForm.fields} id={props.id} />
+            <ImageEstate field={estate.dataForm.fields} id={estateid} />
           }
         </div>
       </div>
@@ -276,17 +264,35 @@ const Property: NextPage<{ id: string }> = (props) => {
 };
 export default Property;
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { estateid } = context.query;
+
+  return {
+    props: { estateid: estateid }, // will be passed to the page component as props
+  };
+};
+// interface IParams extends ParsedUrlQuery {
+//   estateid: string;
+// }
 // export const getStaticProps: GetStaticProps = async (context) => {
-//   const estatid = context.params as IParams;
-//   console.log(context.params);
+//   const params = context.params as IParams;
+//   // const estateid = params.estateid;
+
+//   console.log(params);
 //   return {
-//     props: { id: estatid.estateid },
+//     props: { estateid: params },
 //   };
 // };
 
-// export const getStaticPaths: GetStaticPaths<{ id: string }> = async () => {
+// export const getStaticPaths: GetStaticPaths<{ estateid: string }> = async (
+//   context
+// ) => {
 //   return {
-//     paths: [],
+//     paths: [
+//       {
+//         params: { estateid },
+//       },
+//     ],
 //     fallback: "blocking",
 //   };
 // };
