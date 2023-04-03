@@ -47,6 +47,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
         )}`;
       }
     });
+
     return srcset;
   }
 

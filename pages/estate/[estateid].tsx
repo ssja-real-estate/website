@@ -19,10 +19,7 @@ import { Field, FieldType } from "../../global/types/Field";
 import { defaultMapInfo } from "../../global/types/MapInfo";
 import EstateService from "../../services/api/EstateService/EstateService";
 import { useRouter } from "next/router";
-import { log } from "console";
-
 const Property: NextPage<{ estateid: string }> = (props) => {
-  // console.log(router.pathname);
   const router = useRouter();
   const estateService = useRef(new EstateService());
   const state = useRecoilValue(globalState);
@@ -31,6 +28,7 @@ const Property: NextPage<{ estateid: string }> = (props) => {
   const [images, setImages] = useState<string[]>();
   const mounted = useRef(true);
   const [id, setEstateid] = useState(router.query);
+  console.log(id);
 
   useEffect(() => {
     console.log("run use effect");
