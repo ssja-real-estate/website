@@ -49,6 +49,8 @@ class EstateService extends BaseService {
     return verifiedEstates;
   }
 
+
+  
   async getEstateById(estateId: string) {
     let estate: Estate = defaultEstate;
     try {

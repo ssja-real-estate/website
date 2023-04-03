@@ -9,10 +9,10 @@ import MobileSideBar from "../sidebar/MobileSideBar";
 import AllEstateStatus from "../EstateStatus/AllEstateStatus";
 import Profile from "../profile/Profile";
 import { atom, useRecoilState } from "recoil";
-import UnVerigyEstate from "../EstateStatus/UnVerigyEstate";
 import RejectEstates from "../EstateStatus/RejectEstates";
 import TemplateList from "./templates/TemplateList";
 import UsersSection from "./Users/UsersSection";
+import UnVerifyEstate from "../EstateStatus/UnVerifyEstate";
 
 interface sidebarData {
   id: number;
@@ -109,7 +109,7 @@ const OwnerDashboard: FC = () => {
         ) : section === "estateStatus" ? (
           <AllEstateStatus />
         ) : section === "unVerifyEstate" ? (
-          <UnVerigyEstate />
+          <UnVerifyEstate />
         ) : section === "rejectEstate" ? (
           <RejectEstates />
         ) : section === "users" ? (
