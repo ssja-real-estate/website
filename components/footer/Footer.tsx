@@ -49,11 +49,11 @@ function Footer() {
             <div className="flex flex-col gap-3 w-">
               <span className="font-bold">آدرس:</span>
               <p className="pr-2">
-                آذربایجان غربی - مهاباد- تپه قاضی - ایستگاه 3
+                آذربایجان غربی - مهاباد- تپه قاضی - ایستگاه 6
               </p>
               <span className="font-bold">شماره موبایل:</span>
               <p dir="ltr" className="pr-2 text-right">
-                {"0914 444 4444"}
+                {Strings.mobileNumber}
               </p>
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
                 <FaIcon.FaTelegram className="w-6 h-6" />
