@@ -242,14 +242,34 @@ function Navbar() {
             <h1 className="text-lg">
               <Link href="/">{Strings.sajaSystem}</Link>
             </h1>
+            <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
+              <Link href="/add-estate">اضافه کردن ملک</Link>
+            </button>
           </div>
           <div className="flex-1">
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
               <li>
                 <Link href="/search-estate">{Strings.searchEstates}</Link>
               </li>
-              <li>
-                <Link href="/">{Strings.inquiries}</Link>
+              <li className="relative group cursor-pointer">
+                {Strings.inquiries}
+                <ul className="absolute z-10 w-[250%] bg-white rounded-md p-4 group-hover:flex flex-col gap-2 text-sm hidden">
+                  <li>
+                    <Link href="https://my.ssaa.ir/portal/estate/originality-document/">
+                      استعلام سند
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://my.ssaa.ir/portal/ssar/originality-document/">
+                      استعلام وکالت نامه
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://cbi.ir/simplelist/19689.aspx">
+                      استعلام چک صیادی
+                    </Link>
+                  </li>
+                </ul>
               </li>
               <li>
                 <Link href="/">{Strings.contractSamples}</Link>
