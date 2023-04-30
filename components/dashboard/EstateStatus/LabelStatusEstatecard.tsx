@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import * as BsIcon from "react-icons/bs";
 import * as IoIcon from "react-icons/io5";
 import * as CgIcon from "react-icons/cg";
@@ -16,7 +16,7 @@ const LabelStatusEstatecard: FC<labelCard> = (props) => {
           : props.estatStatus === 2
           ? "bg-gray-400"
           : props.estatStatus === 3 && "bg-red-800"
-      } bg-white shadow-sm z-10 top-2 flex flex-row items-center justify-center gap-2 py-1 px-2 rounded-tl-2xl rounded-bl-2xl`}
+      } shadow-sm z-10 top-2 flex flex-row items-center justify-center gap-2 py-1 px-2 rounded-tl-2xl rounded-bl-2xl`}
     >
       {props.estatStatus === 1 ? (
         <IoIcon.IoCheckmarkCircleOutline className="text-white text-2xl" />
