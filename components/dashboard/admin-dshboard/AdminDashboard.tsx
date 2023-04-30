@@ -9,7 +9,7 @@ import MobileSideBar from "../sidebar/MobileSideBar";
 import AllEstateStatus from "../EstateStatus/AllEstateStatus";
 import Profile from "../profile/Profile";
 import { atom, useRecoilState } from "recoil";
-import UnVerigyEstate from "../EstateStatus/UnVerifyEstate";
+import UnVerigyEstate from "../EstateStatus/UnVerigyEstate";
 import RejectEstates from "../EstateStatus/RejectEstates";
 import { ownerSectionAtom } from "../owner-dashboard/OwnerDashboard";
 import UsersSection from "./Users/UsersSection";

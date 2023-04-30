@@ -9,7 +9,6 @@ import * as VsIcon from "react-icons/vsc";
 import { FieldType } from "../../../global/types/Field";
 
 import LabelStatusEstatecard from "./LabelStatusEstatecard";
-import Link from "next/link";
 // const img:ImageLoader = {
 //   src: any;
 //   width: any;
@@ -76,7 +75,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
           </p>
         </div>
         <div className="flex flex-row justify-between items-end pt-2 mt-2">
-          {/* <a
+          <a
             target="_blank"
             href={`/estate/${props.estate.id}`}
             rel="noreferrer"
@@ -85,14 +84,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
             <span title="اطلاعات کامل ملک">
               <BsIcon.BsInfoCircleFill className="text-gray-400 group-hover:text-white" />
             </span>
-          </a> */}
-          <Link target="_blank" href={`/estate/${props.estate.id}`}>
-            <div className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 hover:shadow-md transition-all hover:bg-[#0ba] hover:border-none hover:cursor-pointer">
-              <span title="اطلاعات کامل ملک">
-                <BsIcon.BsInfoCircleFill className="text-gray-400 group-hover:text-white" />
-              </span>
-            </div>
-          </Link>
+          </a>
           <div className="flex flex-row gap-2 items-end">
             {props.editButton && (
               <button

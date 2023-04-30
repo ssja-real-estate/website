@@ -1,7 +1,8 @@
 class Strings {
   static sajaHomePageDescriptionMetaTag =
     "سامانه ثجا، فروش ملک، رهن ملک، اجاره ملک، فروش زمین";
-  static phoneNumber = "+98 044 4244 5555";
+  static phoneNumber = "+98 044 4234 1544";
+  static mobileNumber = "0937 882 2922"
   static sajaSystemCompleteName = "سامانه ثبت و جستجوی املاک";
   static mortgage = "رهن";
   static rent = "اجاره";

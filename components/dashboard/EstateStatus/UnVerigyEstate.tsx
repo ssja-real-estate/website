@@ -14,7 +14,7 @@ import Strings from "../../../data/strings";
 import RejectModal from "../../modal/RejectModal";
 import ModalAlert from "../../modal/ModalAlert";
 
-const UnVerifyEstate: FC = () => {
+const UnVerigyEstate: FC = () => {
   const estateService = useRef(new EstateService());
   const [rejectEstateState, setRejectEstateState] =
     useRecoilState(rejectEstateAtom);
@@ -139,4 +139,4 @@ const UnVerifyEstate: FC = () => {
   );
 };
 
-export default UnVerifyEstate;
+export default UnVerigyEstate;

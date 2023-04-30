@@ -49,11 +49,11 @@ function Footer() {
             <div className="flex flex-col gap-3 w-">
               <span className="font-bold">آدرس:</span>
               <p className="pr-2">
-                آذربایجان غربی - مهاباد- تپه قاضی - ایستگاه 3
+                آذربایجان غربی - مهاباد- تپه قاضی - ایستگاه 6
               </p>
               <span className="font-bold">شماره موبایل:</span>
               <p dir="ltr" className="pr-2 text-right">
-                {"0914 444 4444"}
+                {Strings.mobileNumber}
               </p>
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
                 <FaIcon.FaTelegram className="w-6 h-6" />
@@ -65,7 +65,7 @@ function Footer() {
           <div className="">
             <h3 className="text-[#0ba] mb-4">نماد اعتماد</h3>
             <div className="bg-white/100 rounded-md border-2 border-[#0ba] shadow-2xl shadow-[#0ba] border-spacing-8">
-              <a
+              {/* <a
                 href="https://trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW"
                 target="_blank"
                 rel="noreferrer"
@@ -76,7 +76,7 @@ function Footer() {
                   height={150}
                   alt="enamad"
                 />
-              </a>
+              </a> dfd */}
             </div>
           </div>
         </div>
