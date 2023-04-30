@@ -65,7 +65,7 @@ function Footer() {
           <div className="">
             <h3 className="text-[#0ba] mb-4">نماد اعتماد</h3>
             <div className="bg-white/100 rounded-md border-2 border-[#0ba] shadow-2xl shadow-[#0ba] border-spacing-8">
-              <a
+              {/* <a
                 href="https://trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW"
                 target="_blank"
                 rel="noreferrer"
@@ -76,7 +76,7 @@ function Footer() {
                   height={150}
                   alt="enamad"
                 />
-              </a>
+              </a> */}
             </div>
           </div>
         </div>
