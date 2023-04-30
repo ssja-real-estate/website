@@ -24,7 +24,7 @@ const Property = () => {
     // setEstateid(router.query.estateid as string);
     loadEstate(router.query.estateid as string);
     setLoaded(true);
-  }, [router.query]);
+  }, [router.query, loaded]);
 
   useEffect(() => {
     estateService.current.setToken(state.token);
@@ -32,9 +32,7 @@ const Property = () => {
     return () => {
       mounted.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    //test
-  }, [state.token, loaded]);
+  }, [state.token]);
 
   const loadEstate = async (id: string) => {
     console.log(id);
