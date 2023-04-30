@@ -19,7 +19,12 @@ const Property = () => {
   const mounted = useRef(true);
   // const [images, setImages] = useState<string[]>();
 
-  console.log(router.query);
+  useEffect(() => {
+    estateService.current.setToken(state.token);
+    return () => {
+      mounted.current = false;
+    };
+  }, [state.token]);
   useEffect(() => {
     loadEstate(router.query.estateid as string);
     setLoaded(true);
@@ -27,13 +32,6 @@ const Property = () => {
       mounted.current = false;
     };
   }, [router.query, loaded]);
-
-  useEffect(() => {
-    estateService.current.setToken(state.token);
-    return () => {
-      mounted.current = false;
-    };
-  }, [state.token]);
 
   const loadEstate = async (id: string) => {
     console.log(id);
