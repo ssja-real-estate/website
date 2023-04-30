@@ -76,7 +76,7 @@ function Footer() {
                   height={150}
                   alt="enamad"
                 />
-              </a> */}
+              </a> dfd */}
             </div>
           </div>
         </div>
