@@ -9,6 +9,7 @@ import * as VsIcon from "react-icons/vsc";
 import { FieldType } from "../../../global/types/Field";
 
 import LabelStatusEstatecard from "./LabelStatusEstatecard";
+import { useRouter } from "next/router";
 // const img:ImageLoader = {
 //   src: any;
 //   width: any;
@@ -28,6 +29,7 @@ interface EstateCardProps {
   onCloseEstateInfo?: () => void;
 }
 const EstateCardDashboard: FC<EstateCardProps> = (props) => {
+  const router = useRouter();
   // const [src, setSrc] = useState<string | StaticImageData>("");
   // useEffect(() => {
   //   setSrc(imageFromPropsEstate());
@@ -77,7 +79,13 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
         <div className="flex flex-row justify-between items-end pt-2 mt-2">
           <a
             target="_blank"
-            href={`/estate/${props.estate.id}`}
+            // href={`/estate/${props.estate.id}`}
+            onClick={() =>
+              router.push({
+                pathname: "/estate/[estateid]",
+                query: { estateid: props.estate.id },
+              })
+            }
             rel="noreferrer"
             className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 hover:shadow-md transition-all hover:bg-[#0ba] hover:border-none"
           >

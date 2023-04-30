@@ -32,7 +32,6 @@ const Property = () => {
       mounted.current = false;
     };
   }, [router.query, loaded]);
-
   const loadEstate = async (id: string) => {
     console.log(id);
 
