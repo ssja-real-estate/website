@@ -21,14 +21,15 @@ const Property = () => {
 
   console.log(router.query);
   useEffect(() => {
-    // setEstateid(router.query.estateid as string);
     loadEstate(router.query.estateid as string);
     setLoaded(true);
+    return () => {
+      mounted.current = false;
+    };
   }, [router.query, loaded]);
 
   useEffect(() => {
     estateService.current.setToken(state.token);
-    console.log(router.query.estateid);
     return () => {
       mounted.current = false;
     };
