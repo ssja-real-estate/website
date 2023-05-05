@@ -58,7 +58,7 @@ const CommissionModal = () => {
     defaultCommisssionPercent
   );
   const [value, setValue] = useState<string>("");
-  const [finalResult, setFinalResult] = useState<number>(0);
+  const [finalResult, setFinalResult] = useState<string>();
   const [mortgageCoefficient, setMortgageCoefficient] = useState<number>(
     defaultMorgageCoefficient
   );
@@ -73,7 +73,6 @@ const CommissionModal = () => {
     num.toString().replace(/[^0-9]/g, "");
 
   const handleChange = (e: string) => {
-    // alert(addCommas(removeNonNumeric(e)));
     setValue(addCommas(removeNonNumeric(e)));
   };
   const handleChangeMortgage = (e: string) => {
@@ -85,6 +84,7 @@ const CommissionModal = () => {
 
   const calculateCommission = () => {
     let convertedMortgage = convertMortgageToRent();
+
     let finalPrice = parseInt(value.replaceAll(",", ""));
     if (type.type === PropertyTradeType.OnlyMortgage) {
       finalPrice = convertedMortgage;
@@ -95,16 +95,17 @@ const CommissionModal = () => {
       type.type === PropertyTradeType.OnlyRent
     ) {
       quarter = finalPrice;
-      alert(quarter);
+
       quarter += convertedMortgage;
     }
     const tax = quarter * (taxPercent / 100);
     const finalResult = quarter + tax;
-    setFinalResult(finalResult);
+    setFinalResult(addCommas(removeNonNumeric(String(finalResult))));
   };
 
   const convertMortgageToRent = () => {
-    const mortgageCount = Math.floor(parseInt(mortgage) / 1000000);
+    const mortgageNumber = mortgage.replaceAll(",", "");
+    const mortgageCount = Math.floor(parseInt(mortgageNumber) / 1000000);
     return mortgageCount * mortgageCoefficient;
   };
 
@@ -148,7 +149,7 @@ const CommissionModal = () => {
                   if (item) {
                     resetValues();
                     setType(item);
-                    setFinalResult(0);
+                    setFinalResult("");
                   }
                 }}
               >
@@ -255,7 +256,7 @@ const CommissionModal = () => {
             onClick={() => {
               toggleModalDisplay(false);
               resetValues();
-              setFinalResult(0);
+              setFinalResult("");
             }}
           >
             {Strings.cancel}
