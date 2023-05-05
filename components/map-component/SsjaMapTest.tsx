@@ -69,7 +69,7 @@ const SsjaMapTest: FC<{
     });
     map.flyTo({
       zoom: props.cordinate.zoom,
-
+      animate: false,
       center: [props.cordinate.longitude, props.cordinate.latitude],
     });
 
