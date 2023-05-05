@@ -62,7 +62,8 @@ const CommissionModal = () => {
   const [mortgageCoefficient, setMortgageCoefficient] = useState<number>(
     defaultMorgageCoefficient
   );
-
+  const [checkActiveCommissionPercent, setCheckActiveCommissionPercent] =
+    useState<boolean>(true);
   const addCommas = (num: string): string => {
     const n = parseInt(num);
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -72,6 +73,7 @@ const CommissionModal = () => {
     num.toString().replace(/[^0-9]/g, "");
 
   const handleChange = (e: string) => {
+    // alert(addCommas(removeNonNumeric(e)));
     setValue(addCommas(removeNonNumeric(e)));
   };
   const handleChangeMortgage = (e: string) => {
@@ -83,12 +85,17 @@ const CommissionModal = () => {
 
   const calculateCommission = () => {
     let convertedMortgage = convertMortgageToRent();
-    let finalPrice = parseInt(value);
+    let finalPrice = parseInt(value.replaceAll(",", ""));
     if (type.type === PropertyTradeType.OnlyMortgage) {
       finalPrice = convertedMortgage;
     }
-    let quarter = finalPrice * (commissionPercent / 100);
-    if (type.type === PropertyTradeType.RentAndMortgage) {
+    let quarter = finalPrice * (commissionPercent / 100); // this line ignoer when PropertyTradeType is RentAndMortage
+    if (
+      type.type === PropertyTradeType.RentAndMortgage ||
+      type.type === PropertyTradeType.OnlyRent
+    ) {
+      quarter = finalPrice;
+      alert(quarter);
       quarter += convertedMortgage;
     }
     const tax = quarter * (taxPercent / 100);
@@ -150,17 +157,28 @@ const CommissionModal = () => {
                 })}
               </select>
             </div>
-            <div className="flex flex-col w-full gap-1">
-              <label>{Strings.commissionPercent}:</label>
-              <input
-                className="inputDecorationDefault"
-                type="number"
-                value={commissionPercent}
-                onChange={(e: any) => {
-                  setCommissionPercent(e.currentTarget.value);
-                }}
-              />
-            </div>
+            {type.type == PropertyTradeType.BuyAndSell ||
+            type.type === PropertyTradeType.OnlyMortgage ? (
+              <>
+                <div className="flex flex-col w-full gap-1">
+                  <label>{Strings.commissionPercent}:</label>
+                  <div className="flex w-full items-center group">
+                    <span className="border-r border-t border-b pr-2 h-9 flex items-center group-focus-within:border-[#0ba]">
+                      %
+                    </span>
+                    <input
+                      className="inputDecorationDefault w-full border-r-0"
+                      type="number"
+                      value={commissionPercent}
+                      onChange={(e: any) => {
+                        setCommissionPercent(e.currentTarget.value);
+                      }}
+                      //
+                    />
+                  </div>
+                </div>
+              </>
+            ) : null}
             {type.type !== PropertyTradeType.OnlyMortgage ? (
               <>
                 <div className="flex flex-col w-full gap-1">
@@ -211,14 +229,19 @@ const CommissionModal = () => {
             ) : null}
             <div className="flex flex-col w-full gap-1">
               <label>{Strings.taxPercent}:</label>
-              <input
-                className="inputDecorationDefault"
-                type="number"
-                value={taxPercent}
-                onChange={(e: any) => {
-                  setTaxPercent(e.currentTarget.value);
-                }}
-              />
+              <div className="flex w-full items-center group">
+                <span className="border-r border-t border-b pr-2 h-9 flex items-center group-focus-within:border-[#0ba]">
+                  %
+                </span>
+                <input
+                  className="inputDecorationDefault w-full border-r-0"
+                  type="number"
+                  value={taxPercent}
+                  onChange={(e: any) => {
+                    setTaxPercent(e.currentTarget.value);
+                  }}
+                />
+              </div>
             </div>
           </form>
           {!finalResult ? null : (

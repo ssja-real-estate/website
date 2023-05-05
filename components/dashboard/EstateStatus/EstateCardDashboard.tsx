@@ -87,7 +87,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
               })
             }
             rel="noreferrer"
-            className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 hover:shadow-md transition-all hover:bg-[#0ba] hover:border-none"
+            className="flex flex-row border py-2 px-2 rounded-full item-center justify-center gap-2 group hover:scale-105 hover:shadow-md transition-all hover:bg-[#0ba] hover:border-none cursor-pointer"
           >
             <span title="اطلاعات کامل ملک">
               <BsIcon.BsInfoCircleFill className="text-gray-400 group-hover:text-white" />
