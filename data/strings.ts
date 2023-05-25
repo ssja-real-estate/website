@@ -18,6 +18,7 @@ class Strings {
   static dashboard = "داشبورد";
   static commissionCalculation = "محاسبه‌ی کمیسیون";
   static commissionPercent = "درصد کمیسیون";
+  static rentpersent="تعرفه مصوب کمیسیون اجاره "
   static commission = "کمیسیون";
   static taxPercent = "درصد مالیات بر ارزش افزوده";
   static inquiries = "استعلام‌ها";
@@ -43,11 +44,11 @@ class Strings {
   static addNewDelegationType = "افزودن نوع واگذاری جدید";
   static addNewEstateType = "افزودن نوع ملک جدید";
   static newPaymentTitle = "افزودن اشتراک جدید";
-  static creditAmount = "مبلغ (تومان)";
-  static price = "مبلغ (تومان)";
+  static creditAmount = "مبلغ معامله(تومان)";
+  static price = "مبلغ معامله(تومان)";
   static rentPrice = "مبلغ اجاره (تومان)";
   static mortgagePrice = "مبلغ رهن (تومان)";
-  static mortgageCoefficient = "ضریب تبدیل رهن (تومان)";
+  static mortgageCoefficient = "تعرفه مصوب کمیسیون رهن به ازای هر یک میلیون تومان";
   static tradeType = "نوع معامله";
   static paymentDuration = "مدت اعتبار (روز)";
   static remainingDuration = "روز تا پایان اعتبار";
@@ -57,6 +58,7 @@ class Strings {
   static noCreditForThisUser = "حساب کاربری شما فاقد اشتراک است";
   static saveChanges = "ذخیره تغییرات";
   static addForm = "اضافه کردن فرم";
+  
   static saveChangesSuccess = "تغییرات با موفقیت ذخیره شد";
   static saveChangesError = "خطا در ذخیره سازی تغییرات";
   static choose = "انتخاب کنید";

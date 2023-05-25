@@ -39,7 +39,7 @@ class Strings {
   static price = "مبلغ (تومان)";
   static rentPrice = "مبلغ اجاره (تومان)";
   static mortgagePrice = "مبلغ رهن (تومان)";
-  static mortgageCoefficient = "ضریب تبدیل رهن (تومان)";
+  static mortgageCoefficient = "تعرفه مصوب کمیسیون رهن به ازای هریک میلیون (تومان)";
   static tradeType = "نوع معامله";
   static paymentDuration = "مدت اعتبار (روز)";
   static remainingDuration = "روز تا پایان اعتبار";

@@ -86,7 +86,7 @@ function Navbar() {
       <div
         className={`${
           scrolled && "fixed w-full "
-        } sm:static w-full h-12 text-white ${bgTopNavbar}  z-10`}
+        } sm:static w-full h-24 ext-white ${bgTopNavbar}  z-10`}
       >
         <div className="container flex flex-row justify-between items-center h-full">
           <div
@@ -177,9 +177,10 @@ function Navbar() {
               </div>
             </div>
           </div>
-          <div className="hidden sm:flex flex-row items-center gap-2 bg-black/30 h-full px-2 text-sm">
-            <MdIcon.MdPhoneEnabled className="w-5 h-5" />
-            <span dir="ltr"> {Strings.phoneNumber}</span>
+          <div className="hidden sm:flex flex-row items-center gap-2  h-full px-2 text-sm">
+            {/* <MdIcon.MdPhoneEnabled className="w-5 h-5" /> */}
+            <img src="/logo.png" height={120} width={120}></img>
+            <span className="text-sm" dir="ltr"> {Strings.sajaSystem + "(ثبت وجستجوی املاک کشور)"}</span>
           </div>
 
           <div className="h-full hidden sm:flex flex-row items-center gap-3">
@@ -238,19 +239,28 @@ function Navbar() {
           } flex flex-row justify-between items-center w-full`}
         >
           <div className="flex flex-row items-center gap-3">
-            <ImIcon.ImSection className=" w-10 h-10" />
+            {/* <ImIcon.ImSection className=" w-10 h-10" />
             <h1 className="text-lg">
               <Link href="/">{Strings.sajaSystem}</Link>
-            </h1>
-            <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
-              <Link href="/add-estate">اضافه کردن ملک</Link>
+            </h1> */}
+            <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
+                <li>
+                <Link href="/add-estate">ثبت املاک</Link>
+                </li>
+                <li>
+                <Link href="/search-estate">{Strings.searchEstates}</Link>
+                </li>
+              </ul>
+            {/* <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
+              <Link href="/add-estate">ثبت املاک</Link>
             </button>
+            <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
+                <Link href="/search-estate">{Strings.searchEstates}</Link>
+                </button> */}
           </div>
           <div className="flex-1">
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
-              <li>
-                <Link href="/search-estate">{Strings.searchEstates}</Link>
-              </li>
+             
               <li className="relative group cursor-pointer">
                 {Strings.inquiries}
                 <ul className="absolute z-10 w-[250%] bg-white rounded-md p-4 group-hover:flex flex-col gap-2 text-sm hidden">
