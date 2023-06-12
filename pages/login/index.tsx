@@ -21,13 +21,14 @@ const Login: NextPage = () => {
   const service = useRef(new UserService());
   const setGlobalState = useSetRecoilState(globalState);
   const router = useRouter();
-  const handleKeyDown = (event:any) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
       // 👇 Get input value
       loginUser();
     }
   };
   const loginUser = async () => {
+  
     if (!RegexValidator.validatePhone(mobile)) {
       setIsMobileValidate(Strings.invalidPhoneNumber);
       return;
@@ -45,9 +46,10 @@ const Login: NextPage = () => {
     }
     try {
       const loginState = await service.current.loginUser(mobile, password);
+      // console.log(loginState);
 
       if (loginState) {
-        console.log(loginState);
+        // console.log(loginState);
 
         setGlobalState(loginState!);
         router.push("/");

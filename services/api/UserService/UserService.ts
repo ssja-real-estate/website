@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 import GlobalState from "../../../global/states/GlobalState";
 import User, { defaultUser, Role } from "../../../global/types/User";
 import BaseService from "../BaseService";
+import { log } from "console";
 
 class UserService extends BaseService {
   private userUrl = "/user";
@@ -41,9 +42,13 @@ class UserService extends BaseService {
         `${this.userUrl}/${userId}`,
         this.config
       );
+      // console.log(response.data);
 
       if (response.data) {
         const data = response.data as User;
+
+        // console.log(data);
+
         user = {
           ...user,
           id: data.id,
@@ -70,8 +75,12 @@ class UserService extends BaseService {
         mobile,
         password,
       });
+      console.log(response);
 
       if (response.data) {
+        // alert(JSON.stringify(response.data));
+        console.log(response.data);
+
         const token = response.data.token as string;
         const user = response.data.user as User;
         globalState = {
@@ -79,10 +88,13 @@ class UserService extends BaseService {
           token: token,
           role: user.role,
           loggedIn: token.length !== 0,
+          name: user.mobile,
         };
       }
       // console.log(response);
     } catch (error: any) {
+      console.log(error);
+
       throw error;
     }
 
@@ -163,6 +175,7 @@ class UserService extends BaseService {
           userId: user.id,
           role: user.role,
           loggedIn: true,
+          name: user.mobile,
         };
       }
     } catch (error) {

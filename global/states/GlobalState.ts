@@ -5,6 +5,7 @@ interface GlobalState {
   token: string;
   role: Role;
   loggedIn: boolean;
+  name: string;
 }
 
 const defaultGlobalState: GlobalState = {
@@ -12,6 +13,7 @@ const defaultGlobalState: GlobalState = {
   token: "",
   role: Role.USER,
   loggedIn: false,
+  name: "",
 };
 
 export const imagesBaseUrl = "https://ssja.ir/api/images";

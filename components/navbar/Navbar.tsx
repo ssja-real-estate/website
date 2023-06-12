@@ -15,6 +15,8 @@ import { ownerSectionAtom } from "../dashboard/owner-dashboard/OwnerDashboard";
 import CustomModal from "../modal/CustomModal";
 import commissionModalState from "../CommissionModal/CommissionModalState";
 import CommissionModal from "../CommissionModal/CommissionModal";
+import Image from "next/image";
+import { userInfo } from "os";
 function Navbar() {
   const [modalState, setModalState] = useRecoilState(commissionModalState);
   const state = useRecoilValue(globalState);
@@ -48,7 +50,7 @@ function Navbar() {
   };
   useEffect(() => {
     state.loggedIn
-      ? setUsername("کاک کمال")
+      ? setUsername(state.name)
       : setUsername(Strings.loginOrSignup);
     state.loggedIn ? setIsUserValid(true) : setIsUserValid(false);
     window.addEventListener("scroll", handleScroll);
@@ -76,6 +78,7 @@ function Navbar() {
       role: Role.USER,
       token: "",
       userId: "",
+      name: "",
     });
     setSection("profile");
   };
@@ -172,21 +175,41 @@ function Navbar() {
                 <div className="flex flex-row gap-2">
                   <FaIcon.FaTelegram className="w-6 h-6" />
                   <FaIcon.FaInstagram className="w-6 h-6" />
-                 
                 </div>
               </div>
             </div>
           </div>
           <div className="hidden sm:flex flex-row items-center gap-2  h-full px-2 text-sm">
             {/* <MdIcon.MdPhoneEnabled className="w-5 h-5" /> */}
-            <img src="/logo.png" height={120} width={120}></img>
-            <span className="text-sm" dir="ltr"> {Strings.sajaSystem + "(ثبت وجستجوی املاک کشور)"}</span>
+            {/* <img src="/logo2.png" height={120} width={120}></img> */}
+            <div className="w-[100px]">
+              <Image
+                src="/image/logo/logo2.png"
+                // layout="responsive"
+                width="75%"
+                height="75%"
+                alt="logo"
+              />
+            </div>
+            <span className="text-sm" dir="ltr">
+              {Strings.sajaSystem + "(ثبت وجستجوی املاک کشور)"}
+            </span>
           </div>
 
           <div className="h-full hidden sm:flex flex-row items-center gap-3">
-            <FaIcon.FaTelegram className="w-6 h-6" />
-            <FaIcon.FaInstagram className="w-6 h-6" />
-           
+            <Link
+              href="
+https://t.me/samane_ssja"
+            >
+              <FaIcon.FaTelegram className="w-6 h-6 cursor-pointer" />
+            </Link>
+            <Link
+              href="
+https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
+"
+            >
+              <FaIcon.FaInstagram className="w-6 h-6 cursor-pointer" />
+            </Link>
           </div>
           <div
             onClick={() => {
@@ -244,13 +267,13 @@ function Navbar() {
               <Link href="/">{Strings.sajaSystem}</Link>
             </h1> */}
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
-                <li>
+              <li>
                 <Link href="/add-estate">ثبت املاک</Link>
-                </li>
-                <li>
+              </li>
+              <li>
                 <Link href="/search-estate">{Strings.searchEstates}</Link>
-                </li>
-              </ul>
+              </li>
+            </ul>
             {/* <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
               <Link href="/add-estate">ثبت املاک</Link>
             </button>
@@ -260,7 +283,6 @@ function Navbar() {
           </div>
           <div className="flex-1">
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
-             
               <li className="relative group cursor-pointer">
                 {Strings.inquiries}
                 <ul className="absolute z-10 w-[250%] bg-white rounded-md p-4 group-hover:flex flex-col gap-2 text-sm hidden">
