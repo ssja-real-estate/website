@@ -21,7 +21,12 @@ const Login: NextPage = () => {
   const service = useRef(new UserService());
   const setGlobalState = useSetRecoilState(globalState);
   const router = useRouter();
-
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Enter') {
+      // 👇 Get input value
+      loginUser();
+    }
+  };
   const loginUser = async () => {
     if (!RegexValidator.validatePhone(mobile)) {
       setIsMobileValidate(Strings.invalidPhoneNumber);
@@ -97,6 +102,7 @@ const Login: NextPage = () => {
               </label>
               <input
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
                 id="password"
                 className={`${
                   passwordMessageError

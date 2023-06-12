@@ -220,6 +220,15 @@ const Property = () => {
         </div>
       </div> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mt-8">
+      <div className="">
+          {
+            /* <SingleEstateSlider /> */
+            <ImageEstate
+              field={estate.dataForm.fields}
+              id={router.query.estateid as string}
+            />
+          }
+        </div>
         <div className="order-2">
           <h2 className="font-bold text-[#2c3e50] text-lg">
             <span>مشخصات جهت </span>
@@ -231,15 +240,7 @@ const Property = () => {
             </ul>
           </div>
         </div>
-        <div className="">
-          {
-            /* <SingleEstateSlider /> */
-            <ImageEstate
-              field={estate.dataForm.fields}
-              id={router.query.estateid as string}
-            />
-          }
-        </div>
+        
       </div>
       <div className="h-64 mt-14">
         <h2 className="text-[#2c3e50] font-bold text-lg my-2">نقشه ملک</h2>

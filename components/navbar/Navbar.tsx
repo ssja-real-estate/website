@@ -172,7 +172,7 @@ function Navbar() {
                 <div className="flex flex-row gap-2">
                   <FaIcon.FaTelegram className="w-6 h-6" />
                   <FaIcon.FaInstagram className="w-6 h-6" />
-                  <FaIcon.FaWhatsapp className="w-6 h-6" />
+                 
                 </div>
               </div>
             </div>
@@ -186,7 +186,7 @@ function Navbar() {
           <div className="h-full hidden sm:flex flex-row items-center gap-3">
             <FaIcon.FaTelegram className="w-6 h-6" />
             <FaIcon.FaInstagram className="w-6 h-6" />
-            <FaIcon.FaWhatsapp className="w-6 h-6" />
+           
           </div>
           <div
             onClick={() => {
@@ -277,6 +277,11 @@ function Navbar() {
                   <li>
                     <Link href="https://cbi.ir/simplelist/19689.aspx">
                       استعلام چک صیادی
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://geoplaner.com">
+                      استعلام موقعیت جغرافیایی ملک
                     </Link>
                   </li>
                 </ul>

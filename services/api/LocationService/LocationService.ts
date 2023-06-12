@@ -20,15 +20,17 @@ class LocationService extends BaseService {
 
       if (response.data) {
         response.data.forEach((element: Province) => {
+          element.cities.sort((a,b)=>(a.name<b.name?-1:1));
+          console.log(element)
           provinces.push(element);
         });
       }
     } catch (error: any) {
-      console.log(error);
+   
       throw error;
       // this.handleError(error);
     }
-
+    provinces.sort((a,b)=>(a.name<b.name)?-1:1);
     return provinces;
   }
 
@@ -86,8 +88,9 @@ class LocationService extends BaseService {
     } catch (error: any) {
       this.handleError(error);
     }
-
-    return cities;
+    console.log("*********************************************");
+    console.log(cities);
+    return cities.sort();
   }
 
   async createCityInProvince(provinceId: string, city: City) {

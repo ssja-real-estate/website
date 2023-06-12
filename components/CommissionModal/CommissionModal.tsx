@@ -84,6 +84,12 @@ const CommissionModal = () => {
 
     setMortgage(addCommas(removeNonNumeric(e)));
   };
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Enter') {
+      // 👇 Get input value
+      calculateCommission();
+    }
+  };
 let quarter=0;
   const calculateCommission = () => {
     let convertedMortgage = convertMortgageToRent();
@@ -174,7 +180,31 @@ let quarter=0;
                 })}
               </select>
             </div>
-            {type.type == PropertyTradeType.BuyAndSell ?
+           
+            
+            {type.type !== PropertyTradeType.OnlyMortgage ? (
+              <>
+                <div className="flex flex-col w-full gap-1">
+                  <label>
+                    {type.type !== PropertyTradeType.RentAndMortgage
+                      ? type.type==PropertyTradeType.OnlyRent?Strings.rentPrice: Strings.price
+                      : Strings.rentPrice}
+                    :
+                  </label>
+                  <input
+                    className="inputDecorationDefault"
+                    type="text"
+                    value={value}
+                    onKeyUp={handleKeyDown}
+                    onChange={(e) => handleChange(e.target.value)}
+                    // onChange={(e: any) => {
+                    //   setPrice(+e.currentTarget.value);
+                    // }}
+                  />
+                </div>
+              </>
+            ) : null}
+             {type.type == PropertyTradeType.BuyAndSell ?
           (
               <>
                 <div className="flex flex-col w-full gap-1">
@@ -193,28 +223,6 @@ let quarter=0;
                       //
                     />
                   </div>
-                </div>
-              </>
-            ) : null}
-            
-            {type.type !== PropertyTradeType.OnlyMortgage ? (
-              <>
-                <div className="flex flex-col w-full gap-1">
-                  <label>
-                    {type.type !== PropertyTradeType.RentAndMortgage
-                      ? type.type==PropertyTradeType.OnlyRent?Strings.rentPrice: Strings.price
-                      : Strings.rentPrice}
-                    :
-                  </label>
-                  <input
-                    className="inputDecorationDefault"
-                    type="text"
-                    value={value}
-                    onChange={(e) => handleChange(e.target.value)}
-                    // onChange={(e: any) => {
-                    //   setPrice(+e.currentTarget.value);
-                    // }}
-                  />
                 </div>
               </>
             ) : null}
