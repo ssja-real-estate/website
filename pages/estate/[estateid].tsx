@@ -33,13 +33,10 @@ const Property = () => {
     };
   }, [router.query, loaded]);
   const loadEstate = async (id: string) => {
-    console.log(id);
-
     await estateService.current
       .getEstateById(id)
       .then((estate) => {
-        console.log("estate: ");
-        console.log(estate);
+       
 
         setEstate(estate);
         setLoaded(true);

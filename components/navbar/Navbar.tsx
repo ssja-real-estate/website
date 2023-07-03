@@ -267,6 +267,9 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
               <Link href="/">{Strings.sajaSystem}</Link>
             </h1> */}
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
+            <li>
+                <Link href="/"> صفحه اصلی</Link>
+              </li>
               <li>
                 <Link href="/add-estate">ثبت املاک</Link>
               </li>

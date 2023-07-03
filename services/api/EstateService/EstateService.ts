@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   defaultEstate,
   Estate,
@@ -52,7 +52,7 @@ class EstateService extends BaseService {
   async getEstateById(estateId: string) {
     let estate: Estate = defaultEstate;
     try {
-      let response = await this.Api.get(
+      let response: AxiosResponse<any> = await this.Api.get(
         `${this.estateUrl}/${estateId}`,
         this.config
       );
@@ -83,6 +83,8 @@ class EstateService extends BaseService {
 
   async requestAddEtate(formData: FormData) {
     let newEstate = undefined;
+   
+
     try {
       let response = await this.Api.post(this.estateUrl, formData, this.config);
       if (response.data) {

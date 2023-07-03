@@ -58,7 +58,7 @@ function Footer() {
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
                 <FaIcon.FaTelegram className="w-6 h-6" />
                 <FaIcon.FaInstagram className="w-6 h-6" />
-                <FaIcon.FaWhatsapp className="w-6 h-6" />
+              
               </div>
             </div>
           </div>

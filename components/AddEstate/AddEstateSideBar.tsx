@@ -75,7 +75,8 @@ const SideBarForAddEstate: FC<Props> = (props) => {
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const [mapInfo, setMapInfo] = useState<MapInfo>();
-
+  const [value, setValue] = useState<string>("");
+  const [mortgage, setMortgage] = useState<string>("");
   const [dataForm, setDataForm] = useState<EstateForm>(defaultForm);
   const [isShowModal, setIsShowModal] = useState(false);
   const [modalOption, setModalOption] = useState<ModalOption>();
@@ -95,7 +96,23 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDelegationType, selectedEstateType, state.token]);
+  const addCommas = (num: string): string => {
+    const n = parseInt(num);
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
+  const removeNonNumeric = (num: string) =>
+    num.toString().replace(/[^0-9]/g, "");
+
+  const handleChange = (e: string) => {
+   
+    setValue(addCommas(removeNonNumeric(e)));
+  };
+  const handleChangeMortgage = (e: string) => {
+    
+
+    setMortgage(addCommas(removeNonNumeric(e)));
+  };
   const loadLocations = async () => {
     locationService.current
       .getAllProvinces()
@@ -399,9 +416,10 @@ const SideBarForAddEstate: FC<Props> = (props) => {
             <input
               type="number"
               className="w-full"
-              value={field.value ? Number(field.value) : ""}
+               value={field.value ? Number(field.value) : ""}
+              
               onChange={(e) => {
-                const numberValue = Number(e.target.value);
+                const numberValue = String( e.target.value);
 
                 onFieldChange(numberValue, form, fieldIndex);
               }}
@@ -765,7 +783,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     const currentField = {
       ...form.fields[fieldIndex],
     };
-    console.log(currentField.type);
+    
     // debugger;
     if (currentField.type === FieldType.MultiSelect) {
       const fieldValue = currentField.value as { [key: string]: boolean };

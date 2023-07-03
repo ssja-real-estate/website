@@ -79,8 +79,7 @@ const CommissionModal = () => {
     setValue(addCommas(removeNonNumeric(e)));
   };
   const handleChangeMortgage = (e: string) => {
-    // const num = parseInt(e);
-    console.log(e);
+    
 
     setMortgage(addCommas(removeNonNumeric(e)));
   };
