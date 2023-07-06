@@ -235,6 +235,7 @@ let quarter=0;
                     className="inputDecorationDefault"
                     type="text"
                     value={mortgage}
+                    onKeyUp={handleKeyDown}
                     onChange={(e: any) => {
                       handleChangeMortgage(e.currentTarget.value);
                     }}
@@ -256,6 +257,7 @@ let quarter=0;
                     <input
                       className="inputDecorationDefault w-full border-r-0"
                       type="number"
+                      onKeyUp={handleKeyDown}
                       value={rentComision}
                       onChange={(e: any) => {
                         setRentComosion(e.currentTarget.value);
@@ -273,6 +275,7 @@ let quarter=0;
                <input
                  className="inputDecorationDefault"
                  type="number"
+                 onKeyUp={handleKeyDown}
                  value={mortgageCoefficient}
                  onChange={(e: any) => {
                    setMortgageCoefficient(e.currentTarget.value);
@@ -292,6 +295,7 @@ let quarter=0;
                 <input
                   className="inputDecorationDefault w-full border-r-0"
                   type="number"
+                  onKeyUp={handleKeyDown}
                   value={taxPercent}
                   onChange={(e: any) => {
                     setTaxPercent(e.currentTarget.value);
