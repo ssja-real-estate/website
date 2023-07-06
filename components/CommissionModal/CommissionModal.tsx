@@ -215,6 +215,7 @@ let quarter=0;
                     <input
                       className="inputDecorationDefault w-full border-r-0"
                       type="number"
+                      onKeyUp={handleKeyDown}
                       value={commissionPercent}
                       onChange={(e: any) => {
                         setCommissionPercent(e.currentTarget.value);
