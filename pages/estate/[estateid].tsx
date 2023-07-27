@@ -36,8 +36,6 @@ const Property = () => {
     await estateService.current
       .getEstateById(id)
       .then((estate) => {
-       
-
         setEstate(estate);
         setLoaded(true);
       })
@@ -49,17 +47,24 @@ const Property = () => {
   // const myLoader = ({ src: string, width: numver, quality: number }) => {
   //   return `https://ssja.com/api/images/${src}?w=${width}&q=${quality || 75}`;
   // };
-  function parseField(value: object) {
-    let oprions: [] = [];
-    (Object.keys(value) as (keyof typeof value)[]).forEach((key, index) => {
-      // 👇️ name Tom 0, country Chile 1
-      // console.log(key, value[key], index);
-      if (value[key]) {
-        oprions.push(key);
+  function parseField(
+    fieldOptions: { Key: string; Value: boolean }[]
+  ): string[] {
+    let result: string[] = [];
+    for (const option of fieldOptions) {
+      if (option.Value === true) {
+        result.push(option.Key);
       }
-    });
+    }
+    // (Object.keys(value) as (keyof typeof value)[]).forEach((key, index) => {
+    //   // 👇️ name Tom 0, country Chile 1
+    //   // console.log(key, value[key], index);
+    //   if (value[key] === true) {
+    //     oprions.push(key);
+    //   }
+    // });
 
-    return oprions;
+    return result;
     // return oprions.map((option, index) => (
     //   <div key={index} className="hidden group-focus-within:block">
     //     {option}
@@ -106,7 +111,8 @@ const Property = () => {
               key={index}
               className="flex flex-row gap-2 w-full items-center before:block before:w-2 before:h-2 before:border-2 before:border-[#0ba] before:rounded-full"
             >
-              3
+              <span>{field.title}</span> :
+              <span>{(field.value as boolean) ? "دارد" : "ندارد"}</span>
             </li>
           );
 
@@ -171,7 +177,7 @@ const Property = () => {
             <MultiSelectView
               key={index}
               title={field.title}
-              options={parseField(field.value as object)}
+              options={parseField((field?.value as any[]) ?? [])}
             />
           );
 
