@@ -105,12 +105,9 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     num.toString().replace(/[^0-9]/g, "");
 
   const handleChange = (e: string) => {
-   
     setValue(addCommas(removeNonNumeric(e)));
   };
   const handleChangeMortgage = (e: string) => {
-    
-
     setMortgage(addCommas(removeNonNumeric(e)));
   };
   const loadLocations = async () => {
@@ -416,10 +413,9 @@ const SideBarForAddEstate: FC<Props> = (props) => {
             <input
               type="number"
               className="w-full"
-               value={field.value ? Number(field.value) : ""}
-              
+              value={field.value ? Number(field.value) : ""}
               onChange={(e) => {
-                const numberValue = String( e.target.value);
+                const numberValue = String(e.target.value);
 
                 onFieldChange(numberValue, form, fieldIndex);
               }}
@@ -512,11 +508,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
               />
               {field.value &&
                 !!field.fields &&
-                mapConditionalFields(
-                  field.fields!.filter((f) => f.filterable),
-                  form,
-                  fieldIndex
-                )}
+                mapConditionalFields(field.fields!, form, fieldIndex)}
             </>
           ) : field.type === FieldType.SelectiveConditional ? (
             <>
@@ -783,7 +775,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     const currentField = {
       ...form.fields[fieldIndex],
     };
-    
+
     // debugger;
     if (currentField.type === FieldType.MultiSelect) {
       const fieldValue = currentField.value as { [key: string]: boolean };
