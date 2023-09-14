@@ -433,6 +433,7 @@ const EditEstateSideBar: FC<Props> = (props) => {
       const fieldValue = currentField.value as { [key: string]: boolean };
       if (key && fieldValue) {
         fieldValue[key] = targetValue;
+
         currentField.value = fieldValue;
       }
     } else {
