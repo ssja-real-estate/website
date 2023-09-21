@@ -13,7 +13,7 @@ import * as CgIcon from "react-icons/cg";
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
 const SearchEstate: NextPage = () => {
-  const [toggleShowMapAndList, setToggleShowMapAndList] = useState(false);
+  const [toggleShowMapAndList, setToggleShowMapAndList] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [isShowMenuInMobileDevice, setIsShowMobileInMobileDevice] =
     useState(false);
