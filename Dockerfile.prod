@@ -3,7 +3,7 @@ FROM node:14.18.1 as builder
 
 COPY package.json yarn.lock ./
 
-RUN yarn install --production --frozen-lockfile
+RUN yarn install --frozen-lockfile
 
 RUN mkdir /ssja && mv ./node_modules ./ssja
 
@@ -11,7 +11,7 @@ WORKDIR /ssja
 
 COPY . .
 
-RUN yarn add --dev typescript @types/react @types/node
+# RUN yarn add --dev typescript @types/react @types/node
 
 # RUN npx browserslist@latest --update-db
 
