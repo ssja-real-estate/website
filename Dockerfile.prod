@@ -11,10 +11,6 @@ WORKDIR /ssja
 
 COPY . .
 
-# RUN yarn add --dev typescript @types/react @types/node
-
-# RUN npx browserslist@latest --update-db
-
 RUN yarn build
 
 # production stage
