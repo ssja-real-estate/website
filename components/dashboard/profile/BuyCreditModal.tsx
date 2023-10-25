@@ -90,7 +90,7 @@ const BuyCreditModal: React.FC<Props> = ({ payments, reloadScreen }) => {
             onClick={buyCredit}
             className="px-7 py-2 bg-[#d99221] text-white rounded-md"
           >
-            {Strings.save}
+           پرداخت
           </button>
         </div>
       </div>

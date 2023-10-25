@@ -94,6 +94,24 @@ const OwnerDashboard: FC = () => {
       },
       sectionName: sectionName.users,
     },
+     {
+      id: 7,
+      title: "قراردادها وقوانین",
+      icon: <FiIcon.FiUploadCloud className="w-5 h-6 text-[#2c3e50]" />,
+      onClickHandler: () => {
+        setSection("users");
+      },
+      sectionName: sectionName.users,
+    },
+    {
+      id: 8,
+      title: "تنظیمات اسلایدر",
+      icon: <FiIcon.FiUploadCloud className="w-5 h-6 text-[#2c3e50]" />,
+      onClickHandler: () => {
+        setSection("users");
+      },
+      sectionName: sectionName.users,
+    },
   ];
   return (
     <div className="flex flex-row mb-10 gap-5">

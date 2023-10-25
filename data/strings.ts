@@ -198,7 +198,7 @@ class Strings {
   static invalidZoomValue = "مقدار واردشده برای زوم نامعتبر است";
   static adminFormDoesNotExist = "این فرم هنوز ساخته نشده‌است";
   static enterlocationInfo = "استان، شهر و منطقه را وارد کنید";
-  static addEstateRequestSuccess = "درخواست ثبت ملک با موفقیت ارسال شد";
+  static addEstateRequestSuccess = "آگاهی شماباموفقیت ثبت گردید و بعد از تایید در قسمت جستجو قابل مشاهده خواهد بود.";
   static estateInfo = "اطلاعات ملک";
   static description = "توضیحات";
   static rejectEstate = "عدم تایید ملک";

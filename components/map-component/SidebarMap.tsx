@@ -110,7 +110,7 @@ const SidebarMap: FC<Props> = (props) => {
           );
           if (province) {
             setSelectedProvince({ ...province });
-            setCities((prev) => province.cities);
+            setCities((prev) => province.cities.sort());
             if (selectedCity?.id) {
               const city = province.cities.find(
                 (c) => c.id === selectedCity.id
@@ -118,7 +118,7 @@ const SidebarMap: FC<Props> = (props) => {
               if (city) {
                 setSelectedCity({ ...city });
                 const neighborhoods = city.neighborhoods;
-                setNeighborhoods((prev) => neighborhoods);
+                setNeighborhoods((prev) => neighborhoods.sort());
                 if (selectedNeighborhood?.id) {
                   const neighborhood = neighborhoods.find(
                     (n) => n.id === selectedNeighborhood.id
@@ -198,10 +198,10 @@ const SidebarMap: FC<Props> = (props) => {
     setSelectedProvince({
       id: provinceId,
       name: provinceId,
-      cities: province.cities,
+      cities: province.cities.sort((a, b) => a.name.localeCompare(b.name)),
       mapInfo: province.mapInfo,
     });
-    setCities(province.cities);
+    setCities(province.cities.sort((a, b) => a.name.localeCompare(b.name)));
 
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);

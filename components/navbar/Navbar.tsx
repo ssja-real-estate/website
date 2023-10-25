@@ -310,6 +310,21 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                       استعلام موقعیت جغرافیایی ملک
                     </Link>
                   </li>
+                  <li>
+                    <Link href="https://www.iranamlaak.ir/Forms/Contracts/FilterContractsByContractSide.aspx">
+                      استعلام کد رهگیری قراردادها
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://iranianasnaf.ir/forms/public/nationalcodeinquiry/default.aspx">
+                      استعلام پروانه بر مبنای کد ملی
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://iranianasnaf.ir/forms/public/postalcodeinquiry/default.aspx">
+                     استعلام واحد دارای پروانه بر مبنای کد پستی
+                    </Link>
+                  </li>
                 </ul>
               </li>
               <li>
