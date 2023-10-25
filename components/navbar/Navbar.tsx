@@ -4,6 +4,7 @@ import * as BiIcon from "react-icons/bi";
 import * as IoIcon from "react-icons/io";
 import * as ImIcon from "react-icons/im";
 import * as GoIcon from "react-icons/go";
+
 import Strings from "../../data/strings";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -191,7 +192,7 @@ function Navbar() {
                 alt="logo"
               />
             </div>
-            <span className="text-sm" dir="ltr">
+            <span className="text-sm font-['nastaliq'] text-xl" dir="ltr">
               {Strings.sajaSystem + "(ثبت وجستجوی املاک کشور)"}
             </span>
           </div>

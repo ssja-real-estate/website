@@ -61,34 +61,16 @@ const SearchEstate: NextPage = () => {
           </div>
           {/* <SsjaMap lng={lngvalue} lat={latvalue} /> */}
           <div className="relative h-full w-full rounded-lg ">
-            <div className="absolute border-[2px] w-12 h-12 flex items-center justify-center  bg-white z-20 top-2 right-2 text-[#2c3e50] rounded-lg shadow-md">
-              <button
-                onClick={() => setToggleShowMapAndList((prev) => !prev)}
-                className="shadow-2xl py-1 px-1 text-sm"
-              >
-                {!toggleShowMapAndList && <CgIcon.CgList className="w-8 h-8" />}
-                {toggleShowMapAndList && <GrIcon.GrMap className="w-6 h-6" />}
-                {/* <span>فهرست</span> */}
-              </button>
-            </div>
-            <div className="absolute  md:hidden border-[2px] h-12 flex items-center justify-center  bg-white z-20  top-2 right-16 text-[#2c3e50] rounded-lg shadow-md">
-              <button
-                onClick={() => setIsShowMobileInMobileDevice(true)}
-                className="flex flex-row items-center justify-center gap-1 shadow-2xl py-1 px-2 text-sm"
-              >
-                <AiIcon.AiOutlineSearch className="w-6 h-6" />
-                {/* <span className="text-lg">جستجو</span> */}
-              </button>
-            </div>
-            {!toggleShowMapAndList ? (
+            
+            
+          
+              <div className="  h-1/2 w-full p-2">
               <SsjaMapTest cordinate={cordinate} isDragable={false} />
-            ) : (
-              <div className="z-0 w-full h-full  overflow-y-auto MyScroll">
-                {/* {fetchEsteate?.map((estate) => (
-                  <div key={estate.id} className="">
-                    {estate.city.name}
-                  </div>
-                ))} */}
+              </div>
+              
+               
+                 <div className=" flex flex-col w-full  ">
+               
 
                 {fetchEsteate === undefined ? (
                   <div className="alertBox">جستجویی انجام نشده است</div>
@@ -96,7 +78,8 @@ const SearchEstate: NextPage = () => {
                   <NewViewHouses allestates={fetchEsteate} />
                 )}
               </div>
-            )}
+              
+               
           </div>
         </div>
       </div>

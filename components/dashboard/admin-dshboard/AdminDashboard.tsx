@@ -76,6 +76,16 @@ const AdminDashboard: FC = () => {
       },
       sectionName: sectionName.users,
     },
+    {
+      id: 5,
+      title: "نمونه قراردادها وقوانین",
+      icon: <FiIcon.FiLoader className="w-5 h-6 text-[#2c3e50]" />,
+      onClickHandler: () => {
+        setSection("users");
+      },
+      sectionName: sectionName.users,
+    },
+    
   ];
   return (
     <div className="flex flex-row mb-10 gap-5">

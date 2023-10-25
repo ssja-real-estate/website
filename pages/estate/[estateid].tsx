@@ -233,18 +233,20 @@ const Property = () => {
               {mapField(estate.dataForm.fields)}
             </ul>
           </div>
-        </div>
-        <div className="">
+          <div className=" mt-8">
           <ImageEstate
             field={estate.dataForm.fields}
-            id={router.query.estateid as string}
+            id={router.query.estateid as string}  
           />
         </div>
-      </div>
-      <div className="h-64 mt-14">
+        </div>
+        <div className="h-full">
         <h2 className="text-[#2c3e50] font-bold text-lg my-2">نقشه ملک</h2>
         <SsjaMapTest cordinate={defaultMapInfo} isDragable={false} />
       </div>
+      </div>
+     
+      
     </div>
   );
 };
