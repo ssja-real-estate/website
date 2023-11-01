@@ -89,7 +89,7 @@ const SidebarMap: FC<Props> = (props) => {
     estateTypeService.current.setToken(state.token);
     estateService.current.setToken(state.token);
     locationService.current.setToken(state.token);
-
+  
     loadLocations();
     loadOptions();
 
@@ -97,13 +97,18 @@ const SidebarMap: FC<Props> = (props) => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.token, isDefault]);
+  }, [state.token, isDefault],);
+  useEffect(()=> {
+    searchEstate();
+  },[selectedProvince, selectedCity,selectedNeighborhood])
 
   const loadLocations = async () => {
     locationService.current
       .getAllProvinces()
       .then((fetchedProvinces) => {
+        
         setProvinces(fetchedProvinces.sort((a,b)=>a.name.localeCompare(b.name)));
+        
         if (selectedProvince?.id) {
           const province = fetchedProvinces.find(
             (p) => p.id === selectedProvince.id
