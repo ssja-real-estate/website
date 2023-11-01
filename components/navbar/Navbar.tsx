@@ -180,7 +180,7 @@ function Navbar() {
               </div>
             </div>
           </div>
-          <div className="hidden sm:flex flex-row items-center gap-2  h-full px-2 text-sm">
+          <div className="hidden sm:flex flex-row items-end gap-2  h-full px-2 text-sm">
             {/* <MdIcon.MdPhoneEnabled className="w-5 h-5" /> */}
             {/* <img src="/logo2.png" height={120} width={120}></img> */}
             <div className="w-[100px]">
@@ -192,7 +192,7 @@ function Navbar() {
                 alt="logo"
               />
             </div>
-            <span className="text-sm font-['nastaliq'] text-xl" dir="ltr">
+            <span className=" font-['nastaliq']  text-4xl" dir="ltr">
               {Strings.sajaSystem + "(ثبت وجستجوی املاک کشور)"}
             </span>
           </div>
