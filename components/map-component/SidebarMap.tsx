@@ -103,7 +103,7 @@ const SidebarMap: FC<Props> = (props) => {
     locationService.current
       .getAllProvinces()
       .then((fetchedProvinces) => {
-        setProvinces(fetchedProvinces);
+        setProvinces(fetchedProvinces.sort((a,b)=>a.name.localeCompare(b.name)));
         if (selectedProvince?.id) {
           const province = fetchedProvinces.find(
             (p) => p.id === selectedProvince.id
@@ -278,10 +278,7 @@ const SidebarMap: FC<Props> = (props) => {
   }
 
   async function searchEstate() {
-    console.log(selectedDelegationType.id, selectedEstateType.id);
-
-    console.log("dataForm:");
-    console.log(dataForm);
+   
     props.onSetEstate([]);
     const errors = validateForm(dataForm);
     if (errors.length > 0) {
@@ -299,17 +296,7 @@ const SidebarMap: FC<Props> = (props) => {
         ),
       });
       return;
-      // for (let i = 0; i < errors.length; i++) {
-      //   const error = errors[i];
-      //   // console.log(error);
-      //   alert(error.message);
-      //   // messageError += error.message + ",";
-      //   // toast.error(error.message, {
-      //   //   duration: 3000,
-      //   // });
-      // }
-      // // alert(messageError);
-      // return;
+      
     }
     setLoadingEstates((prev) => true);
 

@@ -109,7 +109,7 @@ const EditEstateSideBar: FC<Props> = (props) => {
     locationService.current
       .getAllProvinces()
       .then((fetchedProvinces) => {
-        setProvinces(fetchedProvinces);
+        setProvinces(fetchedProvinces.sort((a,b)=> a.name.localeCompare(b.name)));
         let locationIds = undefined;
         if (screenType === ScreenType.Add) {
           locationIds = {
@@ -154,7 +154,7 @@ const EditEstateSideBar: FC<Props> = (props) => {
       name: province.id,
     });
 
-    setCities((prev) => province.cities);
+    setCities((prev) => province.cities.sort((a,b) => a.name.localeCompare(b.name)));
     if (!cityId) return;
     const city = province.cities.find((c) => c.id === cityId);
     if (!city) return;
@@ -349,13 +349,13 @@ const EditEstateSideBar: FC<Props> = (props) => {
     setSelectedProvince({
       id: provinceId,
       name: provinceId,
-      cities: province.cities,
+      cities: province.cities.sort((a,b)=>a.name.localeCompare(b.name)),
       mapInfo: province.mapInfo,
     });
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
     setMapInfo(province.mapInfo);
-    setCities(province.cities);
+    setCities(province.cities.sort((a,b)=>a.name.localeCompare(b.name)));
     if (province.mapInfo) {
       props.setCore(province.mapInfo);
     }

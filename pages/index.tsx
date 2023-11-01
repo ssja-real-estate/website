@@ -11,7 +11,7 @@ import { globalState } from "../global/states/globalStates";
 const Home: NextPage = () => {
   const state = useRecoilValue(globalState);
   return (
-    <div>
+    <html lang="fa-IR">
       <Head>
         <title>{Strings.sajaSystem}</title>
         <meta
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
 
       {/* <Header />
       <main className="bg-red-400"></main> */}
-    </div>
+    </html>
   );
 };
 

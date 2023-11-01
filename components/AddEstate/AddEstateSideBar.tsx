@@ -114,14 +114,14 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     locationService.current
       .getAllProvinces()
       .then((fetchedProvinces) => {
-        setProvinces(fetchedProvinces);
+        setProvinces(fetchedProvinces.sort((a,b)=>a.name.localeCompare(b.name)));
         if (selectedProvince?.id) {
           const province = fetchedProvinces.find(
             (p) => p.id === selectedProvince.id
           );
           if (province) {
             setSelectedProvince({ ...province });
-            setCities((prev) => province.cities);
+            setCities((prev) => province.cities.sort((a,b)=>a.name.localeCompare(b.name)));
             if (selectedCity?.id) {
               const city = province.cities.find(
                 (c) => c.id === selectedCity.id
@@ -285,7 +285,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     setSelectedCity(defaultCity);
     setSelectedNeighborhood(defaultNeighborhood);
     setMapInfo(province.mapInfo);
-    setCities(province.cities);
+    setCities(province.cities.sort((a,b)=>a.name.localeCompare(b.name)));
     setEstate({
       ...estate,
       province: {
