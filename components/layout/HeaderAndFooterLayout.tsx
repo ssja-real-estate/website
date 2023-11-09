@@ -39,16 +39,16 @@ const HeaderAndFooterLayout = ({ children }: Props) => {
     );
   }
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="w-full h-full  ">
       <header>
         <Header>
           <Navbar />
         </Header>
       </header>
 
-      <main>{children}</main>
+      <div className="shrink">{children}</div>
 
-      <footer className="sticky top-[100vh]">
+      <footer className="flex relative ">
         <Footer />
       </footer>
     </div>

@@ -49,9 +49,9 @@ const SearchEstate: NextPage = () => {
   //   return <div className=""></div>;
   // }
   return (
-    <div className="">
-      <div className="mt-0 sm:mt-0 h-screen">
-        <div className="flex flex-row h-full">
+    <>
+      <div className=" mt-0 sm:mt-0">
+        <div className="flex flex-row ">
           <div className="hidden md:block">
             <SidebarMap
               setCore={setCordinate}
@@ -59,17 +59,16 @@ const SearchEstate: NextPage = () => {
               width="72"
             />
           </div>
-          {/* <SsjaMap lng={lngvalue} lat={latvalue} /> */}
-          <div className="relative h-full w-full rounded-lg ">
+                 <div className="   flex-col w-full rounded-lg ">
             
             
           
-              <div className="  h-1/2 w-full p-2">
+              <div className="flex  h-[250px]">
               <SsjaMapTest cordinate={cordinate} isDragable={false} />
               </div>
               
                
-                 <div className=" flex flex-col w-full  ">
+               <div className=" grow ">
                
 
                 {fetchEsteate === undefined ? (
@@ -77,8 +76,8 @@ const SearchEstate: NextPage = () => {
                 ) : (
                   <NewViewHouses allestates={fetchEsteate} />
                 )}
-              </div>
-              
+           
+           </div>
                
           </div>
         </div>
@@ -100,7 +99,7 @@ const SearchEstate: NextPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

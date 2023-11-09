@@ -10,7 +10,7 @@ const NewViewHouses: React.FC<{
     return <div className="alertBox">ملکی با این مشخصات یافت نشد!!!</div>;
   }
   return (
-    <div className="container grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mb-20">
+    <div className=" grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mb-20">
       {props.allestates?.map((estate) => (
         <RealEstateCard key={estate.id} estates={estate} />
       ))}

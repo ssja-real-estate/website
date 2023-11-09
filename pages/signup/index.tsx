@@ -11,8 +11,7 @@ import Strings from "../../data/strings";
 import { verificationState } from "../../global/states/VerificationState";
 import UserService from "../../services/api/UserService/UserService";
 import RegexValidator from "../../utilities/RegexValidator";
-
-const Signup: NextPage = () => {
+  const Signup: NextPage = () => {
   const router = useRouter();
   const [visibility, setVisibility] = useState(false);
   const [mobile, setMobile] = useState("");
@@ -33,8 +32,7 @@ const Signup: NextPage = () => {
   const signupUser = async () => {
     const valid = RegexValidator.validatePhone(mobile);
     if (!valid.isCheck) {
-      // alert("2222222222");
-      setMobileError(valid.error);
+         setMobileError(valid.error);
       return;
     } else {
       setMobileError("");
@@ -55,7 +53,7 @@ const Signup: NextPage = () => {
     } catch (error) {
       console.log(error);
       setErroFrorm(error as string);
-      // alert(error);
+
     }
 
     // setVerificationState({

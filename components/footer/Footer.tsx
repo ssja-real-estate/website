@@ -4,8 +4,8 @@ import * as FaIcon from "react-icons/fa";
 import Strings from "../../data/strings";
 function Footer() {
   return (
-    <div className="w-full bg-[#222] text-[#bebebe]">
-      <div className="container py-20">
+    <div className="flex  w-full bg-[#222] text-[#bebebe]">
+      <div className="flex py-20">
         <div className="flex flex-col md:flex-row gap-10 items-start justify-start">
           <div className="">
             <h3 className="text-[#0ba] mb-4">منوی اصلی</h3>

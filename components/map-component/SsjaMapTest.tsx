@@ -144,7 +144,7 @@ const SsjaMapTest: FC<{
     //   </div>
 
     // </div>
-    <div className="h-full w-full" ref={mapNode}></div>
+    <div className="w-full h-full" ref={mapNode}></div>
   );
 };
 
