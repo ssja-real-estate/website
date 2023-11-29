@@ -46,11 +46,17 @@ function Footer() {
           </div>
           <div className="flex-1 space-y-2">
             <h3 className="text-[#0ba] mb-4">تماس با ما</h3>
+            
             <div className="flex flex-col gap-3 w-">
               <span className="font-bold">آدرس:</span>
               <p className="pr-2">
                 آذربایجان غربی - مهاباد- کوی زیبا
-              </p>
+              </p><div className="pr-2">
+              <span>تلفن تماس:</span> <span dir="rtl">044-42341544</span>
+               </div>
+               <p className="pr-2">
+                <span>ساعت پاسخگویی: ۸ الی ۱۷ (شنبه تا پنجشنبه)</span>
+               </p>
               {/* <span className="font-bold">شماره موبایل:</span> */}
               {/* <p dir="ltr" className="pr-2 text-right">
                 {Strings.mobileNumber}
