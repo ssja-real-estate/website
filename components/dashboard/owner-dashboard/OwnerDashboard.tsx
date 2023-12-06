@@ -13,6 +13,7 @@ import UnVerigyEstate from "../EstateStatus/UnVerigyEstate";
 import RejectEstates from "../EstateStatus/RejectEstates";
 import TemplateList from "./templates/TemplateList";
 import UsersSection from "./Users/UsersSection";
+import LawDashboard from "../add-law/law-dashboard";
 
 interface sidebarData {
   id: number;
@@ -29,6 +30,7 @@ enum sectionName {
   unVerifyEstate = "unVerifyEstate",
   rejectEstate = "rejectEstate",
   users = "users",
+  addlaws="add-law"
 }
 export const ownerSectionAtom = atom({
   key: "ownerSidebarState",
@@ -99,9 +101,9 @@ const OwnerDashboard: FC = () => {
       title: "قراردادها وقوانین",
       icon: <FiIcon.FiUploadCloud className="w-5 h-6 text-[#2c3e50]" />,
       onClickHandler: () => {
-        setSection("users");
+        setSection("add-law");
       },
-      sectionName: sectionName.users,
+      sectionName: sectionName.addlaws,
     },
     {
       id: 8,
@@ -124,7 +126,10 @@ const OwnerDashboard: FC = () => {
         </div>
         {section === "profile" ? (
           <Profile />
-        ) : section === "estateStatus" ? (
+        )
+        :section ==="add-law" ? (<LawDashboard/>)
+        
+        : section === "estateStatus" ? (
           <AllEstateStatus />
         ) : section === "unVerifyEstate" ? (
           <UnVerigyEstate />
@@ -134,7 +139,7 @@ const OwnerDashboard: FC = () => {
           <UsersSection />
         ) : (
           section === "templates" && <TemplateList />
-        )}
+        ) }
       </div>
     </div>
   );
