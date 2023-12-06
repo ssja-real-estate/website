@@ -68,7 +68,7 @@ const SearchEstate: NextPage = () => {
               </div>
               
                
-               <div className=" grow ">
+               <div className=" grow  p-6">
                
 
                 {fetchEsteate === undefined ? (
