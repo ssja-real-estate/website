@@ -26,7 +26,7 @@ class Strings {
   static proxyInquiry = "استعلام وکالت‌نامه";
   static onlineChequeInquiry = "استعلام چک صیادی";
   static contractSamples = "نمونه قراردادها";
-  static laws = "قوانین";
+  static laws = "قوانین ومقررات";
   static civilLaw = "قانون مدنی";
   static delegationTypes = "نوع واگذاری‌ها";
   static estateTypes = "نوع ملک‌ها";

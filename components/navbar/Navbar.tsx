@@ -331,7 +331,7 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                 <Link href="/">{Strings.contractSamples}</Link>
               </li>
               <li>
-                <Link href="/">{Strings.laws}</Link>
+                <Link href="/laws">{Strings.laws}</Link>
               </li>
               <li
                 onClick={() => {
