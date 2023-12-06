@@ -2,7 +2,7 @@ const LawDashboard=() => {
 
     return (
         <>
-           <h1>اضافه کردن قوانین ومقررات</h1>
+           <h1>اضافه کردن قوانین املاک</h1>
            <hr className="mt-4 p-4" />
            <form className="flex flex-col" action="">
 
