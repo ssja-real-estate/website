@@ -8,7 +8,7 @@ class Strings {
   static rent = "اجاره";
   static sale = "فروش";
   static home = "خانه";
-  static sajaSystem = "سامانه ثجا";
+  static sajaSystem = " سامانه ثجا( ثبت و جستجوی املاک کشور)";
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
   static addEstate = "ثبت ملک";

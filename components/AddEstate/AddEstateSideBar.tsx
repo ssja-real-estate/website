@@ -215,7 +215,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
   // }
 
   async function submitEstate() {
-    console.log(estate.dataForm);
+
     selectedProvince.id ? console.log(true) : console.log(false);
     if (!selectedProvince.id || !selectedCity.id || !selectedNeighborhood.id) {
       setIsShowModal(true);
@@ -389,7 +389,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
   }
 
   function mapFields(fields: Field[], form: EstateForm) {
-    console.log(form);
+   
 
     return fields.map((field, fieldIndex) => {
       return (
