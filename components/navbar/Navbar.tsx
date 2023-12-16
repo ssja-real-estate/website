@@ -139,6 +139,12 @@ function Navbar() {
                     onClick={() => goto("/")}
                     className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
                   >
+                    {Strings.amlaklaw}
+                  </li>
+                  <li
+                    onClick={() => goto("/")}
+                    className="flex items-center h-full w-full px-4 py-2 cursor-pointer"
+                  >
                     {Strings.contractSamples}
                   </li>
                   <li
@@ -326,6 +332,9 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                     </Link>
                   </li>
                 </ul>
+              </li>
+              <li>
+                <Link href="/">{Strings.amlaklaw}</Link>
               </li>
               <li>
                 <Link href="/">{Strings.contractSamples}</Link>

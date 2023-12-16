@@ -69,6 +69,7 @@ class Strings {
   static addNewNeighborhood = "افزودن منطقه جدید";
   static addNewUnit = "افزودن واحد جدید";
   static login = "ورود";
+  static amlaklaw="قوانین املاک"
   static sajaLogin = "ورود به سامانه ثجا";
   static sajaSignup = "ثبت نام در سامانه ثجا";
   static mobile = "شماره موبایل";
