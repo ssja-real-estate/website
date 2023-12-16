@@ -247,8 +247,8 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     }
 
     setLoading((prev) => true);
+    
     formData.append("estate", JSON.stringify(estate));
-    console.log(JSON.stringify(estate));
     let response = await estateService.current.requestAddEtate(formData);
 
     if (response) {

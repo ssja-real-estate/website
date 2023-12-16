@@ -2,7 +2,7 @@ const LawDashboard=() => {
    const submitForm=(e:React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       const formData = new FormData(e.currentTarget);
-      console.log(formData.get("document"))
+      
 
       
    }
