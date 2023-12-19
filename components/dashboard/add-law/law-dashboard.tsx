@@ -10,6 +10,10 @@ const LawDashboard=() => {
    const submitForm=async(e:React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       const formData = new FormData(e.currentTarget);
+      console.log(formData)
+      console.log(formData.get("title"))
+
+      formData.append("document",JSON.stringify(formData.get("title")))
      let response=await documentService.current.createForm(formData);
       
       if (response) {

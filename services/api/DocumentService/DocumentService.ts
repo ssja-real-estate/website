@@ -4,7 +4,7 @@ class DocumentService extends BaseService {
   documentUrl="/document"
   createForm = async (form: FormData) => {
     try {
-     let response= await this.Api.post(this.documentUrl, form, this.config);
+     let response= await this.Api.post(this.documentUrl, this.config);
      if (response.status==200) {
       return true;
      }
