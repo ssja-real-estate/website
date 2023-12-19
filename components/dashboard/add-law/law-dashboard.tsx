@@ -1,11 +1,25 @@
+import { useRecoilValue } from "recoil";
+import { globalState } from "../../../global/states/globalStates";
+import { useEffect, useRef } from "react";
+import DocumentService from "../../../services/api/DocumentService/DocumentService";
+
 const LawDashboard=() => {
-   const submitForm=(e:React.FormEvent<HTMLFormElement>) => {
+
+   const state = useRecoilValue(globalState);
+   const documentService=useRef( new DocumentService())
+   const submitForm=async(e:React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       const formData = new FormData(e.currentTarget);
+     let response=await documentService.current.createForm(formData);
       
-
+      if (response) {
+          console.log(response);
+      }
       
    }
+   useEffect(()=>{
+      documentService.current.setToken(state.token)
+   },[])
     return (
         <>
            <h1>اضافه کردن قوانین املاک</h1>
