@@ -199,7 +199,7 @@ function Navbar() {
               />
             </div>
             <span className=" font-['nastaliq']  text-4xl" dir="ltr">
-              {Strings.sajaSystem + "(ثبت وجستجوی املاک کشور)"}
+              {Strings.sajaSystem }
             </span>
           </div>
 
