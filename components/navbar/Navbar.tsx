@@ -203,19 +203,20 @@ function Navbar() {
             </span>
           </div>
 
-          <div className="h-full hidden sm:flex flex-row items-center gap-3">
+          <div className="h-full  hidden sm:flex flex-row items-center gap-3">
             <Link
               href="
 https://t.me/samane_ssja"
             >
-              <FaIcon.FaTelegram className="w-6 h-6 cursor-pointer" />
+              <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
+              {/* <FaIcon.FaTelegram className="w-6 h-6 cursor-pointer" /> */}
             </Link>
             <Link
               href="
 https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
 "
             >
-              <FaIcon.FaInstagram className="w-6 h-6 cursor-pointer" />
+              <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
             </Link>
           </div>
           <div
