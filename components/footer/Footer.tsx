@@ -62,8 +62,20 @@ function Footer() {
                 {Strings.mobileNumber}
               </p> */}
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
-                <FaIcon.FaTelegram className="w-6 h-6" />
-                <FaIcon.FaInstagram className="w-6 h-6" />
+              <Link
+              href="
+https://t.me/samane_ssja"
+            >
+              <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
+       
+            </Link>
+            <Link
+              href="
+https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
+"
+            >
+              <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
+            </Link>
               
               </div>
             </div>

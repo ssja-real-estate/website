@@ -180,8 +180,20 @@ function Navbar() {
                   <span dir="ltr"> {Strings.phoneNumber}</span>
                 </div>
                 <div className="flex flex-row gap-2">
-                  <FaIcon.FaTelegram className="w-6 h-6" />
-                  <FaIcon.FaInstagram className="w-6 h-6" />
+                <Link
+              href="
+https://t.me/samane_ssja"
+            >
+              <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
+       
+            </Link>
+            <Link
+              href="
+https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
+"
+            >
+              <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
+            </Link>
                 </div>
               </div>
             </div>
@@ -203,13 +215,13 @@ function Navbar() {
             </span>
           </div>
 
-          <div className="h-full  hidden sm:flex flex-row items-center gap-3">
+          {/* <div className="h-full  hidden sm:flex flex-row items-center gap-3">
             <Link
               href="
 https://t.me/samane_ssja"
             >
               <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
-              {/* <FaIcon.FaTelegram className="w-6 h-6 cursor-pointer" /> */}
+       
             </Link>
             <Link
               href="
@@ -218,7 +230,7 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
             >
               <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
             </Link>
-          </div>
+          </div> */}
           <div
             onClick={() => {
               loginHanler();
