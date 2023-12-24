@@ -39,7 +39,7 @@ class BaseService {
   }
 
   handleError(error: any) {
-    // console.log(error);
+
 
     if (!error.isAxiosError) {
       this.toastUnknownError(error);
@@ -52,18 +52,18 @@ class BaseService {
         this.toastStatusError(error);
         return;
       } else {
-        // toast.error(response.data.error);
+      
         throw response.data.error;
       }
     } else {
       this.toastStatusError(error);
       throw error;
-      // return;
+  
     }
   }
 
   private toastStatusError(error: AxiosError) {
-    // console.log(error.response);
+   
 
     if (!error.response) {
       this.toastUnknownError(error);
@@ -71,10 +71,10 @@ class BaseService {
     }
 
     const status = error.response.status;
-    // console.log(status);
+ 
 
     let message = this.buildErrorMessage(status);
-    // toast.error(message);
+    
     throw message;
   }
 
