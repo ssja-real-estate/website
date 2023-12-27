@@ -364,7 +364,7 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
               <ul className="absolute z-10 w-[250%] bg-white rounded-md p-4 group-hover:flex flex-col gap-2 text-sm hidden">
                 {
                   documents.map((item:Document)=>
-                  <li>
+                  <li key={item.id}>
                   <Link href="https://my.ssaa.ir/portal/estate/originality-document/">
                     {item.title}
                    </Link>
