@@ -18,6 +18,8 @@ import commissionModalState from "../CommissionModal/CommissionModalState";
 import CommissionModal from "../CommissionModal/CommissionModal";
 import Image from "next/image";
 import DocumentService from "../../services/api/DocumentService/DocumentService";
+import { baseApiUrl } from "mapbox-gl";
+import BaseService from "../../services/api/BaseService";
 
 function Navbar() {
   const [modalState, setModalState] = useRecoilState(commissionModalState);
@@ -365,7 +367,7 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                 {
                   documents.map((item:Document)=>
                   <li key={item.id}>
-                  <Link href="https://my.ssaa.ir/portal/estate/originality-document/">
+                  <Link href={"/getdocument/"+item.path}>
                     {item.title}
                    </Link>
                 </li>
