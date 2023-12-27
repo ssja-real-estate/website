@@ -7,17 +7,18 @@ import * as GoIcon from "react-icons/go";
 
 import Strings from "../../data/strings";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { globalState } from "../../global/states/globalStates";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Role } from "../../global/types/User";
 import { ownerSectionAtom } from "../dashboard/owner-dashboard/OwnerDashboard";
-import CustomModal from "../modal/CustomModal";
+import { Document } from "../../global/types/document";
 import commissionModalState from "../CommissionModal/CommissionModalState";
 import CommissionModal from "../CommissionModal/CommissionModal";
 import Image from "next/image";
-import { userInfo } from "os";
+import DocumentService from "../../services/api/DocumentService/DocumentService";
+
 function Navbar() {
   const [modalState, setModalState] = useRecoilState(commissionModalState);
   const state = useRecoilValue(globalState);
@@ -26,13 +27,17 @@ function Navbar() {
   const [section, setSection] = useRecoilState(ownerSectionAtom);
   const [isUserValide, setIsUserValid] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const documentService=useRef( new DocumentService())
   const [isShowMobileMenu, setIsShowMobile] = useState(false);
   const [username, setUsername] = useState(Strings.loginOrSignup);
   const bgTopNavbar = "bg-[#0ba]";
 
   const loginHanler = () => {
+
     state.loggedIn ? () => {} : router.push("/login");
   };
+
+  const [documents,setDocuments]=useState<Document[]>([])
   const handleScroll = () => {
     let offsetY = window.scrollY;
 
@@ -49,11 +54,16 @@ function Navbar() {
       setIsShowMobile(false);
     }
   };
+
   useEffect(() => {
     state.loggedIn
       ? setUsername(state.name)
       : setUsername(Strings.loginOrSignup);
     state.loggedIn ? setIsUserValid(true) : setIsUserValid(false);
+    documentService.current.setToken(state.token);
+    documentService.current.getDocument().then((value) => {
+      setDocuments(value);
+    })
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
     if (isShowMobileMenu) {
@@ -349,8 +359,21 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
               <li>
                 <Link href="/">{Strings.amlaklaw}</Link>
               </li>
-              <li>
-                <Link href="/">{Strings.contractSamples}</Link>
+              <li className="relative group cursor-pointer">
+              {Strings.contractSamples}
+              <ul className="absolute z-10 w-[250%] bg-white rounded-md p-4 group-hover:flex flex-col gap-2 text-sm hidden">
+                {
+                  documents.map((item:Document)=>
+                  <li>
+                  <Link href="https://my.ssaa.ir/portal/estate/originality-document/">
+                    {item.title}
+                   </Link>
+                </li>
+                  )
+                }
+              
+            
+              </ul>
               </li>
               <li>
                 <Link href="/laws">{Strings.laws}</Link>

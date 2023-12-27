@@ -55,7 +55,7 @@ class FormService extends BaseService {
       this.handleError(error);
     }
 
-    console.log(form);
+   
     return form;
   };
 
