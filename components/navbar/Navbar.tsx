@@ -367,7 +367,7 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                 {
                   documents.map((item:Document)=>
                   <li key={item.id}>
-                  <Link href={"/getdocument/"+item.path}>
+                  <Link href={"https:/ssja.ir/api/getdocument/"+item.path}>
                     {item.title}
                    </Link>
                 </li>
