@@ -40,6 +40,7 @@ function Navbar() {
   };
 
   const [documents,setDocuments]=useState<Document[]>([])
+  const [documenttype1,setDocumenttype1]=useState<Document[]>([])
   const handleScroll = () => {
     let offsetY = window.scrollY;
 
@@ -63,8 +64,9 @@ function Navbar() {
       : setUsername(Strings.loginOrSignup);
     state.loggedIn ? setIsUserValid(true) : setIsUserValid(false);
   
-    documentService.current.getDocument().then((value) => {
-      setDocuments(value);
+    documentService.current.getDocument().then((value:Document[]) => {
+      setDocuments(value.filter((item:Document)=>item.type==2));
+      setDocumenttype1(value.filter((item)=>item.type==1))
     })
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
@@ -309,12 +311,7 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                 <Link href="/search-estate">{Strings.searchEstates}</Link>
               </li>
             </ul>
-            {/* <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
-              <Link href="/add-estate">ثبت املاک</Link>
-            </button>
-            <button className="bg-[#f3bc65] p-2 text-white rounded-full text-sm">
-                <Link href="/search-estate">{Strings.searchEstates}</Link>
-                </button> */}
+        
           </div>
           <div className="flex-1">
             <ul className="flex flex-row justify-end sm:gap-3 sm:text-[13px] md:text-sm lg:text-base md:gap-4 lg:gap-8">
@@ -358,8 +355,21 @@ https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
                   </li>
                 </ul>
               </li>
-              <li>
-                <Link href="/">{Strings.amlaklaw}</Link>
+              <li className="relative group cursor-pointer">
+              {Strings.amlaklaw}
+              <ul className="absolute z-10 w-[250%] bg-white rounded-md p-4 group-hover:flex flex-col gap-2 text-sm hidden">
+                {
+                  documenttype1.map((item:Document)=>
+                  <li key={item.id}>
+                  <Link href={"https:/ssja.ir/api/getdocument/"+item.path}>
+                    {item.title}
+                   </Link>
+                </li>
+                  )
+                }
+              
+            
+              </ul>
               </li>
               <li className="relative group cursor-pointer">
               {Strings.contractSamples}

@@ -1,22 +1,31 @@
 import { useRecoilValue } from "recoil";
 import { globalState } from "../../../global/states/globalStates";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from "react";
 import DocumentService from "../../../services/api/DocumentService/DocumentService";
 import { Document } from "../../../global/types/document";
 import * as MdIcon from "react-icons/md";
+import Select from "../../formcomponent/Select";
 
 const LawDashboard=() => {
 
    const state = useRecoilValue(globalState);
+   const [doctype,setDoctype]=useState(1)
    const[documents,setDocuments]=useState<Document[]>([])
    const documentService=useRef( new DocumentService())
+
+  const onchange=(e:ChangeEvent<HTMLSelectElement> ) => {
+
+    setDoctype(Number(e.target.value))
+  
+  }
    const submitForm=async(e:React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       const formData = new FormData(e.currentTarget);
      
 
       formData.append("document",JSON.stringify({
-         "title":formData.get("title")
+         "title":formData.get("title"),
+         "type":doctype
       }))
 
      let response=await documentService.current.createForm(formData);
@@ -28,13 +37,13 @@ const LawDashboard=() => {
    }
    const getDocs=async() => {
       documentService.current.getDocument().then((value:Document[]) => {
-         setDocuments(value);
+        setDocuments(value.filter((item)=>item.type==doctype));
        
     })
    }
 
    const deletedoc=(id:string) => {
-      console.log(id)
+  
       documentService.current.deleteDocument(id).then(()=>{
          getDocs();
       })
@@ -43,10 +52,18 @@ const LawDashboard=() => {
 
       documentService.current.setToken(state.token)
       getDocs();
-   },[])
+   },[doctype])
     return (
         <>
-           <h1>اضافه کردن قوانین املاک</h1>
+         
+            <select onChange={onchange} className="w-1/2" >
+                <option value={1}>
+                    قوانین املاک
+                </option>
+                <option value={2}>
+                   نمونه قراردادها
+                </option>
+            </select>
            <hr className="mt-4 p-4" />
            <form className="flex flex-row items-center gap-3" onSubmit={submitForm}>
 

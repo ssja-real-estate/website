@@ -3,12 +3,14 @@
 interface Document {
    id:string,
    title:string,
-   path:string
+   path:string,
+   type:number,
 }
 const defaultDocument:Document= {
     id:"",
     title:"",
-    path:""
+    path:"",
+    type:1,
 }
 export type {Document}
 export {defaultDocument}
