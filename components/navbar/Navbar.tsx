@@ -60,7 +60,7 @@ function Navbar() {
       ? setUsername(state.name)
       : setUsername(Strings.loginOrSignup);
     state.loggedIn ? setIsUserValid(true) : setIsUserValid(false);
-    documentService.current.setToken(state.token);
+  
     documentService.current.getDocument().then((value) => {
       setDocuments(value);
     })

@@ -37,7 +37,7 @@ catch (error:any) {
 getDocument=async ():Promise<Document[]> => {
   let documents:Document[]=[]
   try {
-      let response=await this.Api.get(this.documentUrl,this.config)
+      let response=await this.Api.get(this.documentUrl)
        if (response.status===200) {
         documents=response.data
         return documents
