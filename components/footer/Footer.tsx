@@ -49,14 +49,15 @@ function Footer() {
             
             <div className="flex flex-col gap-3 w-">
               <span className="font-bold">آدرس:</span>
-              <p className="pr-2">
-                آذربایجان غربی - مهاباد- کوی زیبا
-              </p><div className="pr-2">
+            
               <span>تلفن تماس:</span> <span dir="rtl">044-42341544</span>
                </div>
                <p className="pr-2">
                 <span>ساعت پاسخگویی: ۸ الی ۱۷ (شنبه تا پنجشنبه)</span>
                </p>
+               <p className="pr-2">
+          آذربایجان غربی- مهاباد- کوی زیبا-خیابان گلستان-کوچه گلستان ۱۴-طبقه اول
+              </p><div className="pr-2">
               {/* <span className="font-bold">شماره موبایل:</span> */}
               {/* <p dir="ltr" className="pr-2 text-right">
                 {Strings.mobileNumber}
