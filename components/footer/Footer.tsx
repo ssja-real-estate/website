@@ -58,7 +58,7 @@ function Footer() {
                <div className="flex flex-row gap-1">
                <span className="font-bold">آدرس:</span>
                <p className="pr-2">
-          آذربایجان غربی- مهاباد- کوی زیبا-خیابان گلستان-کوچه گلستان ۱۴-طبقه اول
+          آذربایجان غربی- مهاباد- کوی زیبا-خیابان گلستان-کوچه گلستان ۱۴-پلاک ۰.۰-طبقه اول
               </p>
               </div>
               <div className="pr-2">
