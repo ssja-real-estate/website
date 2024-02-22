@@ -60,16 +60,15 @@ function Footer() {
               </p> */}
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
               <Link
-              href="
-https://t.me/samane_ssja"
+              href={'https://t.me/samane_ssja'}
             >
               <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
        
             </Link>
             <Link
-              href="
-https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
-"
+              href={'https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA=='}
+
+
             >
               <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
             </Link>
