@@ -81,7 +81,7 @@ function Footer() {
             <div className="bg-white/100 rounded-md border-2 border-[#0ba] shadow-2xl shadow-[#0ba] border-spacing-8">
             <Link 
             target="_blank"
-            href={'trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}>
+            href={'https://trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}>
             
         
        
@@ -90,7 +90,9 @@ function Footer() {
               height={100}
               
               src={'https://trustseal.enamad.ir/logo.aspx?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}
-               alt='enamad' key='mpSx0xjRfdtYxeZVHICW'/>    </Link>
+               alt='enamad' key='mpSx0xjRfdtYxeZVHICW'>
+                </Image> 
+                  </Link>
 
             </div>
           </div>
