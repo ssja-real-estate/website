@@ -81,16 +81,18 @@ function Footer() {
             <div className="bg-white/100 rounded-md border-2 border-[#0ba] shadow-2xl shadow-[#0ba] border-spacing-8">
             <Link 
             target="_blank"
+            referrerPolicy='origin'
             href={'https://trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}>
             
         
        
-              <Image referrerPolicy='origin'
-              width={100}
-              height={100}
-              
+              <Image 
+               width={100}
+               height={100}
+               loading="lazy"
               src={'https://trustseal.enamad.ir/logo.aspx?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}
-               alt='enamad' key='mpSx0xjRfdtYxeZVHICW'>
+               alt='enamad'>
+             
                 </Image> 
                   </Link>
 
