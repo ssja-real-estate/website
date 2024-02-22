@@ -59,19 +59,19 @@ function Footer() {
                 {Strings.mobileNumber}
               </p> */}
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
-              {/* <Link
+              <Link
               href={'t.me/samane_ssja'}
             >
               <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
        
-            </Link> */}
-            {/* <Link
+            </Link> 
+             <Link
               href={'instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA=='}
 
 
             >
               <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
-            </Link> */}
+            </Link>
               
               </div>
             </div>
@@ -87,10 +87,10 @@ function Footer() {
         
        
               <Image 
-               width={100}
-               height={100}
+               width={75}
+               height={75}
                loading="lazy"
-              src={'https://trustseal.enamad.ir/logo.aspx?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}
+                src={"/image/namad.png"}
                alt='enamad'>
              
                 </Image> 
