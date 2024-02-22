@@ -60,13 +60,13 @@ function Footer() {
               </p> */}
               <div className="flex flex-row justify-start items-center text-[#0ba] gap-3">
               <Link
-              href={'https://t.me/samane_ssja'}
+              href={'t.me/samane_ssja'}
             >
               <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
        
             </Link>
             <Link
-              href={'https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA=='}
+              href={'instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA=='}
 
 
             >
@@ -81,7 +81,7 @@ function Footer() {
             <div className="bg-white/100 rounded-md border-2 border-[#0ba] shadow-2xl shadow-[#0ba] border-spacing-8">
             <Link 
             target="_blank"
-            href='https://trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW'>
+            href={'trustseal.enamad.ir/?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}>
             
         
        
@@ -89,7 +89,7 @@ function Footer() {
               width={100}
               height={100}
               
-              src='https://trustseal.enamad.ir/logo.aspx?id=272685&Code=mpSx0xjRfdtYxeZVHICW'
+              src={'https://trustseal.enamad.ir/logo.aspx?id=272685&Code=mpSx0xjRfdtYxeZVHICW'}
                alt='enamad' key='mpSx0xjRfdtYxeZVHICW'/>    </Link>
 
             </div>
