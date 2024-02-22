@@ -57,12 +57,12 @@ const RealEstateCard: React.FC<{
               {/* <span>کمیسیون</span>
               <span className="text-2xl font-bold">5%</span> */}
             </div>
-            {/* <div className="flex flex-row gap-2 items-end">
-              <span className="text-2xl font-bold">
+            <div className="flex flex-row gap-2 items-end">
+              <span className="text-xl font-bold">
                 {(150000000).toLocaleString("fa-ir")}
               </span>
               <span>تومان</span>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

@@ -8,6 +8,6 @@ module.exports = {
   images: {
     loader: "akamai",
     path: "",
-    domains: ["ssja.ir"],
+    domains: ["ssja.ir","trustseal.enamad.ir"],
   },
 };
