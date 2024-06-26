@@ -7,8 +7,9 @@ class BaseService {
   protected config: AxiosRequestConfig | undefined;
   protected MapApi: AxiosInstance;
 
-    private baseUrl = "https://ssja.ir/api";
-  //  private baseUrl = "http://localhost:5001/api";
+    // private baseUrl = "https://ssja.ir/api";
+    // private baseUrl = "http://localhost:5001/api";
+    private baseUrl = "http://37.32.7.226";
    private mapBaseUrl = "https://api.neshan.org";
 
   constructor() {
