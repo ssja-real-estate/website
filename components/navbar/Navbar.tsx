@@ -217,8 +217,8 @@ function Navbar() {
               <Image
                 src="/image/logo/logo2.png"
                 // layout="responsive"
-                width="75%"
-                height="75%"
+                width="100"
+                height="100"
                 alt="logo"
               />
             </div>
