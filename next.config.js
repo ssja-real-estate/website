@@ -2,12 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-};
-
-module.exports = {
+  output: 'export', // ✅ اضافه شده برای static export
   images: {
     loader: "akamai",
     path: "",
-    domains: ["ssja.ir","trustseal.enamad.ir"],
+    domains: ["ssja.ir", "trustseal.enamad.ir"],
   },
 };
+
+module.exports = nextConfig;
