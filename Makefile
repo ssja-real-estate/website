@@ -4,7 +4,7 @@
 # you can change the default config with `make cnf="config_special.env" build`
 cnf=./app-config.sh
 
-username?=sajaweb
+username?=webssja
 password?=
 
 # Dockerfile stage to build(default is set to prod)
