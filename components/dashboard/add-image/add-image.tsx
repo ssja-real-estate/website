@@ -18,7 +18,7 @@ const SliderDashboard=() => {
 
  
    const submitForm=async(e:React.FormEvent<HTMLFormElement>) => {
-  
+    e.preventDefault();
     const form = e.currentTarget;
     const fileInput = form.querySelector('input[type="file"][name="slider"]') as HTMLInputElement;
     if (!fileInput.files || fileInput.files.length === 0) {
