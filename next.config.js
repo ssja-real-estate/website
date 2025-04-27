@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  output: 'export', // ✅ اضافه شده برای static export
+  // output: 'export', // ✅ اضافه شده برای static export
   images: {
     loader: "akamai",
     path: "",
