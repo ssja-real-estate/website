@@ -102,13 +102,15 @@ const SliderDashboard=() => {
                </th>
               
                <td className="px-6 py-4">
-                  <Image
-                   alt={item.id}
-                  src={"https://ssja.ir/api" +"/slider/"+ item.path}
-                   width={200}
-                   height={200}
-                  ></Image>
-                   {item.path}
+               <div style={{ width: '200px', height: '100px', position: 'relative' }}>
+      <Image
+        src={`https://ssja.ir/api/slider/${item.path}`}
+        alt="عکس مشاور املاک"
+        fill
+        style={{ objectFit: 'cover' }}
+        priority={false}
+      />
+    </div>
                </td>
                
                <td className="px-6 py-4">

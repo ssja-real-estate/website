@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
-   output: 'export', // ✅ اضافه شده برای static export
+ 
+    output: 'export', // ✅ اضافه شده برای static export
   images: {
-    loader: "akamai",
-    path: "",
-    domains: ["ssja.ir", "trustseal.enamad.ir"],
+    // loader: "akamai",
+    //path: "",
+    domains: ["ssja.ir","www.ssja.ir", "trustseal.enamad.ir"],
+    
   },
 };
 
