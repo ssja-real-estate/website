@@ -2,10 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
    
-    output: 'export', // ✅ اضافه شده برای static export
+    // output: 'export', // ✅ اضافه شده برای static export
   images: {
-    loader: "akamai",
-    path: "",
+    loader: "default",
+    //path: "",
     domains: ["ssja.ir","www.ssja.ir", "trustseal.enamad.ir"],
     
   },
