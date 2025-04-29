@@ -47,7 +47,7 @@ function CarsoulSlider() {
       >
         {
           sliders.map((item:Slider,index:number)=>
-            <SwiperSlide>
+            <SwiperSlide key={index}>
           <div>
             <Image
               src={`https://ssja.ir/api/slider/${item.path}`}
