@@ -12,7 +12,8 @@ import BaseService from "../../../services/api/BaseService";
 const SliderDashboard=() => {
 
    const state = useRecoilValue(globalState);
-  
+   const [isLoading, setIsLoading] = useState(false);
+
    const[sliders,setSliders]=useState<Slider[]>([])
    const sliderService=useRef( new SliderService())
 
@@ -31,16 +32,17 @@ const SliderDashboard=() => {
     const formData = new FormData();
     formData.append('slider', file); 
     
+     try {
+      setIsLoading(true);
      
       let response=await sliderService.current.createForm(formData)
   
       if (response) {
        getSliders();
-      } else {
-        alert("error");
-        alert(response);
       } 
-      
+    } finally {
+      setIsLoading(false);
+    }
    }
    const getSliders=async() => {
       sliderService.current.getSlider().then((value:Slider[]) => {
@@ -48,13 +50,16 @@ const SliderDashboard=() => {
        
     })
    }
-
-   const deleteSlider=(id:string) => {
+   const deleteSlider = async (id: string) => {
+    try {
+      setIsLoading(true);
+      await sliderService.current.deleteSlider(id);
+      await getSliders();
+    } finally {
+      setIsLoading(false);
+    }
+  }
   
-      sliderService.current.deleteSlider(id).then(()=>{
-         getSliders();
-      })
-   }
    useEffect(()=>{
 
       sliderService.current.setToken(state.token)
