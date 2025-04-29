@@ -2,7 +2,7 @@ import { Slider } from "../../../global/types/slider";
 import BaseService from "../BaseService";
 
 class SliderService extends BaseService {
-  sliderUrl="/slider"
+  sliderUrl="/carsoul"
   
   
   createForm = async (form: FormData) => {

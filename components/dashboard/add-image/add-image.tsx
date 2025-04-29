@@ -78,7 +78,11 @@ const SliderDashboard=() => {
              <br />
              <button className="border px-6 py-2 w-32 rounded bg-blue-400" type="submit"> <span>ذخیره</span></button>
            </form>
-           
+           {isLoading && (
+  <div className="flex justify-center items-center mt-4">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-solid"></div>
+  </div>
+)}
 
 <div className="relative overflow-x-auto shadow-md mt-4 sm:rounded-lg">
     <table className="w-full text-sm text-right text-gray-500 dark:text-gray-400">
