@@ -86,7 +86,7 @@ class EstateService extends BaseService {
    
 
     try {
-      let response = await this.Api.post(this.estateUrl, formData, this.config);
+      let response = await this.Api.postForm(this.estateUrl, formData, this.config);
       if (response.data) {
         newEstate = response.data as Estate;
       }

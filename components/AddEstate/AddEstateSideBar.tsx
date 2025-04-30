@@ -216,7 +216,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
 
   async function submitEstate() {
 
-    selectedProvince.id ? console.log(true) : console.log(false);
+
     if (!selectedProvince.id || !selectedCity.id || !selectedNeighborhood.id) {
       setIsShowModal(true);
       setModalOption({
