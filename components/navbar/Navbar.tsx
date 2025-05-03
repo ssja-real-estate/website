@@ -354,7 +354,7 @@ function Navbar() {
           </div>
 
           {/* ---------- پروفایل/ورود ---------- */}
-          <div className="relative flex items-center gap-2">
+          <div className="relative flex items-center gap-2 group">
             <button
               onClick={() => !state.loggedIn && router.push("/login")}
               className="flex items-center gap-2"
@@ -364,7 +364,7 @@ function Navbar() {
             </button>
 
             {isUserValid && (
-              <ul className="absolute right-0 top-full w-36 bg-white text-gray-700 rounded-md shadow-md hidden group-hover:block">
+              <ul className="absolute right-0 top-full w-36 bg-white text-gray-700 rounded-md shadow-md hidden group group-hover:block">
                 <li
                   className="py-2 flex gap-2 cursor-pointer px-4 hover:bg-gray-100"
                   onClick={() => router.push("/dashboard")}
