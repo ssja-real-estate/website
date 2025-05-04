@@ -6,9 +6,6 @@ import SsjaMapTest from "../../components/map-component/SsjaMapTest";
 import MapInfo, { defaultMapInfo } from "../../global/types/MapInfo";
 import { globalState } from "../../global/states/globalStates";
 import { useRouter } from "next/router";
-import * as GrIcon from "react-icons/gr";
-import * as AiIcon from "react-icons/ai";
-import * as CgIcon from "react-icons/cg";
 
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
@@ -24,11 +21,7 @@ const SearchEstate: NextPage = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // if (state.role === 3) {
-    //   router.push("/login");
-    // } else if (state.role === 1) {
-    //   setLoaded(true);
-    // }
+   
     isShowMenuInMobileDevice
       ? (document.body.style.overflow = "hidden")
       : (document.body.style.overflow = "");
@@ -37,17 +30,13 @@ const SearchEstate: NextPage = () => {
   const closeOverlayModal = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
-    console.log(e.currentTarget);
-    console.log(ref.current);
-
+  
     if (ref.current === e.currentTarget) {
       setIsShowMobileInMobileDevice(false);
     }
   };
 
-  // if (!loaded) {
-  //   return <div className=""></div>;
-  // }
+ 
   return (
     <>
       <div className=" mt-0 sm:mt-0">

@@ -154,16 +154,7 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
               />
             </div>
           ))}
-          {/* <div className="keen-slider__slide number-slide1">
-            <Image
-              src="/image/estate/t1.jpg"
-              alt="photo"
-              width={1280}
-              height={720}
-              layout="responsive"
-            />
-          </div> */}
-        </div>
+             </div>
 
         <div ref={thumbnailRef} className="keen-slider thumbnail mt-1 h-16">
           {props.images.map((img, index) => (
@@ -177,51 +168,7 @@ const SingleEstateSlider: FC<{ images: string[]; id: string }> = (props) => {
               />
             </div>
           ))}
-          {/* <div className="keen-slider__slide number-slide1 cursor-pointer ">
-            <Image
-              src="/image/estate/t1.jpg"
-              alt="photo"
-              objectFit="cover"
-              objectPosition="center"
-              layout="fill"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide2 cursor-pointer">
-            <Image
-              src="/image/estate/t2.jpg"
-              alt="photo"
-              objectFit="cover"
-              objectPosition="center"
-              layout="fill"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide3 cursor-pointer">
-            <Image
-              src="/image/estate/t3.jpg"
-              alt="photo"
-              objectFit="cover"
-              objectPosition="center"
-              layout="fill"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide4 cursor-pointer">
-            <Image
-              src="/image/estate/t4.jpg"
-              alt="photo"
-              objectFit="cover"
-              objectPosition="center"
-              layout="fill"
-            />
-          </div>
-          <div className="keen-slider__slide number-slide5 cursor-pointer">
-            <Image
-              src="/image/estate/t5.jpg"
-              alt="photo"
-              objectFit="cover"
-              objectPosition="center"
-              layout="fill"
-            />
-          </div> */}
+         
         </div>
       </div>
     </>

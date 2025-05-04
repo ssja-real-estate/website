@@ -1,6 +1,8 @@
 import React from "react";
 import { Estate } from "../../../global/types/Estate";
 import RealEstateCard from "../real-estate-card/RealEstateCard";
+import { EstateCard } from "../../Estatecard/estatecard";
+import { parseEstateToCard } from "../../../services/utilities/estateparser";
 
 const NewViewHouses: React.FC<{
   allestates?: Estate[];
@@ -11,9 +13,15 @@ const NewViewHouses: React.FC<{
   }
   return (
     <div className=" grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4 mb-20">
-      {props.allestates?.map((estate) => (
-        <RealEstateCard key={estate.id} estates={estate} />
-      ))}
+      {props.allestates?.map(estate => {
+  // 1) تبدیل داده به فرمت کارت
+  const cardData = parseEstateToCard(estate);
+
+  // 2) کل داده را با spread پاس بدهید
+  // 3) حتماً «key» یکتا تعیین کنید (React به‌طور خودکار از پراپ‌ id به‌عنوان key استفاده نمی‌کند)
+  return <EstateCard key={cardData.id} {...cardData} />;
+})}
+
     </div>
   );
 };
