@@ -28,6 +28,6 @@ jobs:
           script: |
             cd ~/frontend/
             make password=$DOCKER_PASSWORD login
-            make pull
-            make
+            make pull webssja/ssja_prod
+            make run-local-prod
             make logout
