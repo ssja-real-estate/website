@@ -257,135 +257,262 @@
 // pages/estate/[estateid].tsx
 
 // pages/estate/[estateid].tsx
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
 
+
+// ///new 1 //////
+// import { useCallback, useEffect, useMemo, useState } from 'react';
+// import { useRouter } from 'next/router';
+// import { useRecoilValue } from 'recoil';
+
+// import MultiSelectView from '../../components/estate/MultiSelectView';
+// import ImageEstate from '../../components/ImageEstate/ImageEstate';
+// import SsjaMapTest from '../../components/map-component/SsjaMapTest';
+// import Spinner from '../../components/spinner/Spiner';
+
+// import { globalState } from '../../global/states/globalStates';
+// import EstateService from '../../services/api/EstateService/EstateService';
+// import { defaultEstate, Estate } from '../../global/types/Estate';
+// import { Field, FieldType } from '../../global/types/Field';
+// import { defaultMapInfo } from '../../global/types/MapInfo';
+
+// const PropertyPage: React.FC = () => {
+//   const router = useRouter();
+//   const { token } = useRecoilValue(globalState);
+
+//   const estateService = useMemo(() => new EstateService(), []);
+//   const [estate, setEstate] = useState<Estate>(defaultEstate);
+//   const [loading, setLoading] = useState(true);
+
+//   /* یک‌بار توکن را روی سرویس ست کنیم */
+//   useEffect(() => {
+//     estateService.setToken(token);
+//   }, [estateService, token]);
+
+//   /* واکشی ملک بعد از آماده شدن پارامتر آدرس */
+//   useEffect(() => {
+//     if (!router.isReady) return;
+//     const { estateid } = router.query;
+//     if (typeof estateid !== 'string') return;
+
+//     (async () => {
+//       try {
+//         const data = await estateService.getEstateById(estateid);
+//         setEstate(data);
+//       } catch (err) {
+//         console.error(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     })();
+//   }, [router.isReady, router.query.estateid, estateService]);
+
+//   /* کمکى‌ها */
+//   const parseMultiSelect = useCallback(
+//     (options: { Key: string; Value: boolean }[] = []) =>
+//       options.filter(o => o.Value).map(o => o.Key),
+//     []
+//   );
+
+//   /* قالب نمایش هر فیلد */
+//   const renderField = useCallback(
+//     (field: Field, idx: number) => {
+//       const wrap = (child: React.ReactNode) => (
+//         <li
+//           key={idx}
+//           className="flex items-center gap-2 w-full before:block before:w-2 before:h-2 before:border-2 before:border-[#0ba] before:rounded-full"
+//         >
+//           {child}
+//         </li>
+//       );
+
+//       switch (field.type) {
+//         case FieldType.Text:
+//           return wrap(
+//             <>
+//               <span>{field.title}</span>:<span>{String(field.value)}</span>
+//             </>
+//           );
+
+//         case FieldType.Number:
+//           return wrap(
+//             <>
+//               <span>{field.title}</span>:
+//               <span>
+//                 {typeof field.value === 'number'
+//                   ? field.value.toLocaleString('fa-IR')
+//                   : String(field.value)}
+//               </span>
+//             </>
+//           );
+
+//         case FieldType.Select:
+//           return wrap(
+//             <>
+//               <span>{field.title}</span>:<span>{String(field.value)}</span>
+//             </>
+//           );
+
+//         case FieldType.Bool:
+//         case FieldType.BooleanConditional:
+//           return wrap(
+//             <>
+//               <span>{field.title}</span>:
+//               <span>{field.value ? 'دارد' : 'ندارد'}</span>
+//             </>
+//           );
+
+//         case FieldType.MultiSelect:
+//           return (
+//             <MultiSelectView
+//               key={idx}
+//               title={field.title}
+//               options={parseMultiSelect(field.value as any[])}
+//             />
+//           );
+
+//         /* تصویر یا انواع ناشناخته در این نما ندارد */
+//         default:
+//           return null;
+//       }
+//     },
+//     [parseMultiSelect]
+//   );
+
+//   /* ---------- خروجی ---------- */
+//   if (loading) return <Spinner />;
+
+//   return (
+//     <div className="container mb-16">
+//       {/* عنوان */}
+//       <header>
+//         <h1 className="text-[#2c3e50] text-[30px] font-bold">
+//           {estate.province?.name}
+//         </h1>
+//         <h3 className="text-[#2c3e50] text-[20px] font-light">
+//           {`${estate.city?.name ?? ''}، ${estate.neighborhood?.name ?? ''}`}
+//         </h3>
+//       </header>
+
+//       <hr className="my-3" />
+
+//       <div className="grid gap-10 mt-8 sm:grid-cols-2">
+//         {/* ستون مشخصات */}
+//         <section>
+//           <h2 className="text-lg font-bold text-[#2c3e50]">
+//             مشخصات جهت <span>{estate.dataForm?.title}</span>
+//           </h2>
+
+//           <ul className="flex flex-col gap-3 mt-3 text-sm text-[#2c3e50]">
+//             {estate.dataForm?.fields?.map(renderField)}
+//           </ul>
+
+//           {/* گالری تصاویر */}
+//           <div className="mt-8">
+//             <ImageEstate
+//               field={estate.dataForm?.fields}
+//               id={router.query.estateid as string}
+//             />
+//           </div>
+//         </section>
+
+//         {/* ستون نقشه */}
+//         <section>
+//           <h2 className="my-2 text-lg font-bold text-[#2c3e50]">نقشه ملک</h2>
+//           <SsjaMapTest cordinate={defaultMapInfo} isDragable={false} />
+//         </section>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default PropertyPage;
+
+
+// ///end new 1
+
+
+// pages/estate/[estateid].tsx
+import { GetServerSideProps, NextPage } from 'next';
 import MultiSelectView from '../../components/estate/MultiSelectView';
 import ImageEstate from '../../components/ImageEstate/ImageEstate';
 import SsjaMapTest from '../../components/map-component/SsjaMapTest';
-import Spinner from '../../components/spinner/Spiner';
 
-import { globalState } from '../../global/states/globalStates';
 import EstateService from '../../services/api/EstateService/EstateService';
-import { defaultEstate, Estate } from '../../global/types/Estate';
+import { Estate } from '../../global/types/Estate';
 import { Field, FieldType } from '../../global/types/Field';
 import { defaultMapInfo } from '../../global/types/MapInfo';
 
-const PropertyPage: React.FC = () => {
-  const router = useRouter();
-  const { token } = useRecoilValue(globalState);
+interface Props {
+  estate: Estate;
+}
 
-  const estateService = useMemo(() => new EstateService(), []);
-  const [estate, setEstate] = useState<Estate>(defaultEstate);
-  const [loading, setLoading] = useState(true);
+const PropertyPage: NextPage<Props> = ({ estate }) => {
+  /* ---------- کمکى‌ها ---------- */
+  const parseMultiSelect = (
+    ops: { Key: string; Value: boolean }[] = []
+  ) => ops.filter(o => o.Value).map(o => o.Key);
 
-  /* یک‌بار توکن را روی سرویس ست کنیم */
-  useEffect(() => {
-    estateService.setToken(token);
-  }, [estateService, token]);
+  const renderField = (field: Field, i: number) => {
+    const wrap = (child: React.ReactNode) => (
+      <li
+        key={i}
+        className="flex items-center gap-2 before:block before:w-2 before:h-2 before:border-2 before:border-[#0ba] before:rounded-full"
+      >
+        {child}
+      </li>
+    );
 
-  /* واکشی ملک بعد از آماده شدن پارامتر آدرس */
-  useEffect(() => {
-    if (!router.isReady) return;
-    const { estateid } = router.query;
-    if (typeof estateid !== 'string') return;
+    switch (field.type) {
+      case FieldType.Text:
+        return wrap(
+          <>
+            <span>{field.title}</span>:<span>{String(field.value)}</span>
+          </>
+        );
+      case FieldType.Number:
+        return wrap(
+          <>
+            <span>{field.title}</span>:
+            <span>
+              {Number(field.value).toLocaleString('fa-IR')}
+            </span>
+          </>
+        );
+      case FieldType.Select:
+        return wrap(
+          <>
+            <span>{field.title}</span>:<span>{String(field.value)}</span>
+          </>
+        );
+      case FieldType.Bool:
+      case FieldType.BooleanConditional:
+        return wrap(
+          <>
+            <span>{field.title}</span>:
+            <span>{field.value ? 'دارد' : 'ندارد'}</span>
+          </>
+        );
+      case FieldType.MultiSelect:
+        return (
+          <MultiSelectView
+            key={i}
+            title={field.title}
+            options={parseMultiSelect(field.value as any[])}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
-    (async () => {
-      try {
-        const data = await estateService.getEstateById(estateid);
-        setEstate(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [router.isReady, router.query.estateid, estateService]);
-
-  /* کمکى‌ها */
-  const parseMultiSelect = useCallback(
-    (options: { Key: string; Value: boolean }[] = []) =>
-      options.filter(o => o.Value).map(o => o.Key),
-    []
-  );
-
-  /* قالب نمایش هر فیلد */
-  const renderField = useCallback(
-    (field: Field, idx: number) => {
-      const wrap = (child: React.ReactNode) => (
-        <li
-          key={idx}
-          className="flex items-center gap-2 w-full before:block before:w-2 before:h-2 before:border-2 before:border-[#0ba] before:rounded-full"
-        >
-          {child}
-        </li>
-      );
-
-      switch (field.type) {
-        case FieldType.Text:
-          return wrap(
-            <>
-              <span>{field.title}</span>:<span>{String(field.value)}</span>
-            </>
-          );
-
-        case FieldType.Number:
-          return wrap(
-            <>
-              <span>{field.title}</span>:
-              <span>
-                {typeof field.value === 'number'
-                  ? field.value.toLocaleString('fa-IR')
-                  : String(field.value)}
-              </span>
-            </>
-          );
-
-        case FieldType.Select:
-          return wrap(
-            <>
-              <span>{field.title}</span>:<span>{String(field.value)}</span>
-            </>
-          );
-
-        case FieldType.Bool:
-        case FieldType.BooleanConditional:
-          return wrap(
-            <>
-              <span>{field.title}</span>:
-              <span>{field.value ? 'دارد' : 'ندارد'}</span>
-            </>
-          );
-
-        case FieldType.MultiSelect:
-          return (
-            <MultiSelectView
-              key={idx}
-              title={field.title}
-              options={parseMultiSelect(field.value as any[])}
-            />
-          );
-
-        /* تصویر یا انواع ناشناخته در این نما ندارد */
-        default:
-          return null;
-      }
-    },
-    [parseMultiSelect]
-  );
-
-  /* ---------- خروجی ---------- */
-  if (loading) return <Spinner />;
-
+  /* ---------- UI ---------- */
   return (
     <div className="container mb-16">
-      {/* عنوان */}
       <header>
-        <h1 className="text-[#2c3e50] text-[30px] font-bold">
+        <h1 className="text-[30px] font-bold text-[#2c3e50]">
           {estate.province?.name}
         </h1>
-        <h3 className="text-[#2c3e50] text-[20px] font-light">
+        <h3 className="text-[20px] font-light text-[#2c3e50]">
           {`${estate.city?.name ?? ''}، ${estate.neighborhood?.name ?? ''}`}
         </h3>
       </header>
@@ -393,28 +520,28 @@ const PropertyPage: React.FC = () => {
       <hr className="my-3" />
 
       <div className="grid gap-10 mt-8 sm:grid-cols-2">
-        {/* ستون مشخصات */}
+        {/* مشخصات */}
         <section>
           <h2 className="text-lg font-bold text-[#2c3e50]">
             مشخصات جهت <span>{estate.dataForm?.title}</span>
           </h2>
-
           <ul className="flex flex-col gap-3 mt-3 text-sm text-[#2c3e50]">
             {estate.dataForm?.fields?.map(renderField)}
           </ul>
 
-          {/* گالری تصاویر */}
           <div className="mt-8">
             <ImageEstate
               field={estate.dataForm?.fields}
-              id={router.query.estateid as string}
+              id={estate.id}
             />
           </div>
         </section>
 
-        {/* ستون نقشه */}
+        {/* نقشه */}
         <section>
-          <h2 className="my-2 text-lg font-bold text-[#2c3e50]">نقشه ملک</h2>
+          <h2 className="my-2 text-lg font-bold text-[#2c3e50]">
+            نقشه ملک
+          </h2>
           <SsjaMapTest cordinate={defaultMapInfo} isDragable={false} />
         </section>
       </div>
@@ -423,3 +550,27 @@ const PropertyPage: React.FC = () => {
 };
 
 export default PropertyPage;
+
+/* ------------------------------------------------------------------ */
+/*                واکشی داده روی سرور با EstateService                */
+/* ------------------------------------------------------------------ */
+export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
+  const { estateid } = ctx.params!;
+
+  /* 1) استخراج توکن از کوکی (نام کوکی را در صورت نیاز عوض کنید) */
+
+
+
+  /* 2) استفاده از همان سرویسِ موجود */
+  const estateService = new EstateService();
+
+
+  try {
+    const estate = await estateService.getEstateById(estateid as string);
+    return { props: { estate } };
+  } catch (err) {
+    /* اگر ملک پیدا نشد یا سرویس خطا داد → 404 واقعی */
+    console.error(err);
+    return { notFound: true };
+  }
+};
