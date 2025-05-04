@@ -218,6 +218,7 @@ function Navbar() {
   /* -------- unified nav data -------- */
   const navMenu: MenuItem[] = [
     { label: Strings.home, path: "/" },
+    {label:Strings.addEstate,path:"/add-estate"},
     { label: Strings.searchEstates, path: "/search-estate" },
     {
       label: Strings.inquiries,
