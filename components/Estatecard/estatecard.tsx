@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { EstateCardProps } from "../../global/types/estatecard";
 import Image from 'next/image';
 export const EstateCard: React.FC<EstateCardProps> = ({
@@ -7,6 +8,11 @@ export const EstateCard: React.FC<EstateCardProps> = ({
     prices,
     images,
   }) => (
+    <Link
+    href={`/estate/${id}`}
+    rel="noopener noreferrer"
+    target="_blank"
+  >
     <article
       key={id}
       dir="rtl"
@@ -45,4 +51,5 @@ export const EstateCard: React.FC<EstateCardProps> = ({
         )}
       </div>
     </article>
+    </Link>
   );
