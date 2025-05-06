@@ -6,9 +6,8 @@ import SsjaMapTest from "../../components/map-component/SsjaMapTest";
 import MapInfo, { defaultMapInfo } from "../../global/types/MapInfo";
 import { globalState } from "../../global/states/globalStates";
 import { useRouter } from "next/router";
-import * as GrIcon from "react-icons/gr";
 import * as AiIcon from "react-icons/ai";
-import * as CgIcon from "react-icons/cg";
+
 
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
