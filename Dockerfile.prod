@@ -1,60 +1,68 @@
 
-
-
-
-# #build stage
-# FROM node:18-alpine as builder
-
+# FROM node:18-alpine AS builder
 # WORKDIR /app
-
 # COPY package.json package-lock.json ./
-
 # RUN npm ci
-
 # COPY . .
-
 # RUN npm run build
+# # Stage 2: Production
+# FROM node:18-alpine AS runner
+# WORKDIR /app
+# # فقط نیازهای لازم را کپی می‌کنیم
+# COPY --from=builder /app/.next .next
+# COPY --from=builder /app/public ./public
+# COPY --from=builder /app/package.json ./package.json
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/next.config.js ./next.config.js
+# COPY --from=builder /app/tsconfig.json ./tsconfig.json
+# ENV NODE_ENV=production
+# EXPOSE 3000
+# CMD ["npm", "start"]
 
-# # production stage
-# FROM nginx:alpine as prod
-
-# COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
-
-# RUN rm -rf /usr/share/nginx/html/*
-
-# COPY --from=builder /app/out /usr/share/nginx/html
-
-# EXPOSE 3000 80
-
-# CMD ["nginx", "-g", "daemon off;"]
-
-
-# Stage 1: Build
+# =========================
+# 1) Builder stage
+# =========================
 FROM node:18-alpine AS builder
-
 WORKDIR /app
 
+# کپی فقط فایل‌های package برای نصب deps (شامل dev)
 COPY package.json package-lock.json ./
-RUN npm ci
 
+# نصب همه‌ی deps
+RUN npm ci --silent
+
+# کپی کل سورس و بیلد
 COPY . .
-
 RUN npm run build
 
-# Stage 2: Production
+# =========================
+# 2) Runner stage
+# =========================
 FROM node:18-alpine AS runner
-
 WORKDIR /app
 
-# فقط نیازهای لازم را کپی می‌کنیم
-COPY --from=builder /app/.next .next
+# برای گواهی‌های HTTPS
+RUN apk add --no-cache ca-certificates
+
+# تنظیم محیط پروداکشن و URL های API
+ENV NODE_ENV=production
+ENV API_URL=http://sajaback:5001/api
+ENV NEXT_PUBLIC_API_URL=/api
+
+# نصب فقط production deps و پاک‌سازی cache
+COPY --from=builder /app/package.json /app/package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts --silent \
+ && npm cache clean --force
+
+# کپی خروجی بیلد
+COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
-ENV NODE_ENV=production
+# پورت برنامه
 EXPOSE 3000
 
+# دستور اجرا
 CMD ["npm", "start"]
+

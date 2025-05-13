@@ -331,9 +331,3 @@ const EstatePage: NextPage<Props> = ({ estate }) => {
 
 export default EstatePage;
 
-/* برای بولت‌ها در Tailwind اضافه کنید:
-.before\:dot::before {
-  content: "";
-  @apply block w-2 h-2 border-2 border-[#0ba] rounded-full;
-}
-*/
