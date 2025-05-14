@@ -1,36 +1,13 @@
 
-# FROM node:18-alpine AS builder
-# WORKDIR /app
-# COPY package.json package-lock.json ./
-# RUN npm ci
-# COPY . .
-# RUN npm run build
-# # Stage 2: Production
-# FROM node:18-alpine AS runner
-# WORKDIR /app
-# # فقط نیازهای لازم را کپی می‌کنیم
-# COPY --from=builder /app/.next .next
-# COPY --from=builder /app/public ./public
-# COPY --from=builder /app/package.json ./package.json
-# COPY --from=builder /app/node_modules ./node_modules
-# COPY --from=builder /app/next.config.js ./next.config.js
-# COPY --from=builder /app/tsconfig.json ./tsconfig.json
-# ENV NODE_ENV=production
-# EXPOSE 3000
-# CMD ["npm", "start"]
-
-# Stage 1: Builder
 FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
-
 # Stage 2: Production
 FROM node:18-alpine AS runner
 WORKDIR /app
-
 # فقط نیازهای لازم را کپی می‌کنیم
 COPY --from=builder /app/.next .next
 COPY --from=builder /app/public ./public
@@ -38,11 +15,9 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-
-# تنظیم متغیرهای محیطی
 ENV NODE_ENV=production
-ENV API_URL=http://sajaback:5001/api
-ENV NEXT_PUBLIC_API_URL=/api
-
 EXPOSE 3000
 CMD ["npm", "start"]
+
+# Stage 1: Builder
+
