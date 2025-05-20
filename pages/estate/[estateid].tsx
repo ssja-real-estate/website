@@ -219,6 +219,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
 };
 
 const EstatePage: NextPage<Props> = ({ estate }) => {
+  console.log(estate);
   const parseField = (opts: { Key: string; Value: boolean }[]): string[] =>
     opts.filter((o) => o.Value).map((o) => o.Key);
 

@@ -7,7 +7,7 @@ import { parseEstateToCard } from "../../../services/utilities/estateparser";
 const NewViewHouses: React.FC<{
   allestates?: Estate[];
 }> = (props) => {
-  console.log(props.allestates);
+ 
   if (props.allestates?.length === 0) {
     return <div className="alertBox">ملکی با این مشخصات یافت نشد!!!</div>;
   }
