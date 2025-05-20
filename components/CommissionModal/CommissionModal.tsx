@@ -43,7 +43,7 @@ const defaultType = {
 };
 const defaultCommisssionPercent = 0.75;
 
-const defaultTaxPercent =9;
+const defaultTaxPercent =10;
 const defaultMorgageCoefficient = 10000;
 
 const CommissionModal = () => {

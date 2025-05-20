@@ -316,6 +316,10 @@ function Navbar() {
               drawerOpen ? "translate-x-0" : "translate-x-full"
             }`}
           >
+          <div className="flex flex-row justify-between items-center p-2 gap-1">
+
+              {/* <Image src="/image/logo/logo2.png" width={20} height={20} alt="logo" /> */}
+              <span className="font-['nastaliq'] text-lg">{Strings.sajaSystem}</span>
             {/* دکمهٔ بستن */}
             <div className="flex justify-end p-2">
               <button onClick={closeDrawer} aria-label="close menu">
@@ -323,6 +327,7 @@ function Navbar() {
               </button>
             </div>
 
+          </div>
             {/* منوی موبایل */}
             <MobileMenu
               items={navMenu}
@@ -335,8 +340,7 @@ function Navbar() {
 
             {/* لوگو و شبکه‌های اجتماعی (همان قبلی) */}
             <div className="mt-auto flex flex-col items-center gap-4 pb-4">
-              <Image src="/image/logo/logo2.png" width={40} height={40} alt="logo" />
-              <span className="font-['nastaliq'] text-xl">{Strings.sajaSystem}</span>
+            
               <div className="flex flex-row gap-2">
                 <Link href="t.me/samane_ssja">
                   <Image src="/icon/telegram.png" width={24} height={24} alt="telegram" />

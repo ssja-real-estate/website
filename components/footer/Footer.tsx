@@ -5,32 +5,9 @@ import Strings from "../../data/strings";
 function Footer() {
   return (
     <div className="flex  w-full bg-[#222] text-[#bebebe]">
-      <div className="flex py-20">
-        <div className="flex flex-col md:flex-row gap-10 items-start justify-start">
-          <div className="">
-            <h3 className="text-[#0ba] px-3 mb-4 ">منوی اصلی</h3>
-            <ul className="flex flex-col space-y-2 text-sm pr-3">
-              <li>
-                <Link href="/">{Strings.addEstates}</Link>
-              </li>
-              <li>
-                <Link href="/">{Strings.searchEstates}</Link>
-              </li>
-              <li>
-                <Link href="/">{Strings.inquiries}</Link>
-              </li>
-              <li>
-                <Link href="/">{Strings.contractSamples}</Link>
-              </li>
-              <li>
-                <Link href="/">{Strings.laws}</Link>
-              </li>
-              <li>
-                <Link href="/">{Strings.commissionCalculation}</Link>
-              </li>
-            </ul>
-          </div>
-          <div className="flex-1">
+      <div className="flex p-10">
+        <div className="flex flex-col md:flex-row gap-10 items-end justify-start">
+           <div className="flex-1">
             <h3 className="text-[#0ba] mb-4">درباره ما</h3>
             <p className="text-justify pl-5">
             استارت ساخت پلتفرم ثجا در مورخه 2 شهریور 1399 با هدف تسریع در معاملات، جلوگیری از اخلال در بازار ملک توسط برخی دلالان و کلاهبرداری کسانی که ملک دیگران را برای فروش، رهن و اجاره قرار می دهند، زده شد طوری که عموم مردم، کانال های تلگرامی، پیج ها، سایت ها و اپلیکیشن های املاک در یک جا قادر به ثبت و جستجوی املاک با فیلدهای اختصاصی شوند و مشتریان به آسانی موارد ثبت شده را جستجو نمایند.

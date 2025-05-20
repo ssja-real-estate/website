@@ -11,7 +11,7 @@ class Strings {
   static sajaSystem = " سامانه ثجا( ثبت و جستجوی املاک کشور)";
   static searchEstates = "جستجوی املاک";
   static addEstates = "ثبت املاک";
-  static addEstate = "ثبت ملک";
+  static addEstate = "ثبت املاک";
   static searchEstate = "جستجوی ملک";
   static editEstate = "ویرایش ملک";
   static loginOrSignup = "ورود یا ثبت نام";
@@ -26,7 +26,7 @@ class Strings {
   static proxyInquiry = "استعلام وکالت‌نامه";
   static onlineChequeInquiry = "استعلام چک صیادی";
   static contractSamples = "نمونه قراردادها";
-  static laws = "قوانین ومقررات";
+  static laws = "مقررات سایت";
   static civilLaw = "قانون مدنی";
   static delegationTypes = "نوع واگذاری‌ها";
   static estateTypes = "نوع ملک‌ها";
