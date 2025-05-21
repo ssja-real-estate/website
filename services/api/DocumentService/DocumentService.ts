@@ -9,7 +9,7 @@ class DocumentService extends BaseService {
   
     try {
   
-     let response= await this.Api.post(this.documentUrl,form,this.config);
+     let response= await this.Api.postForm(this.documentUrl,form,this.config);
   
      if (response.status==200) {
     

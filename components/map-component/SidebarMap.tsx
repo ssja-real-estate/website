@@ -307,22 +307,21 @@ const SidebarMap: FC<Props> = (props) => {
 
     const filter = buildFilter();
     const fetchedEstates = await searchService.current.searchEstates(filter);
-    console.log(fetchedEstates.length);
-    if (fetchedEstates.length === 0) {
-      // debugger;
-      setIsShowModal(true);
-      setModalOption({
-        message: "مکانی با مشخصات وارد شده یافت نشد",
-        closeModal: () => setIsShowModal(false),
-        icon: (
-          <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
-            <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
-            <span className="text-sm">توجه</span>
-          </div>
-        ),
-      });
-      return;
-    }
+    // if (fetchedEstates.length === 0) {
+    //   // debugger;
+    //   setIsShowModal(true);
+    //   setModalOption({
+    //     message: "مکانی با مشخصات وارد شده یافت نشد",
+    //     closeModal: () => setIsShowModal(false),
+    //     icon: (
+    //       <div className="flex flex-col items-center justify-center text-dark-blue gap-2">
+    //         <BSIcon.BsInfoCircleFill className="text-dark-blue text-[70px]" />
+    //         <span className="text-sm">توجه</span>
+    //       </div>
+    //     ),
+    //   });
+    //   return;
+    // }
 
     setSearchedEstates(fetchedEstates);
     setLoadingEstates((prev) => false);
@@ -737,7 +736,6 @@ const SidebarMap: FC<Props> = (props) => {
     console.log(isAdvancedFilter);
 
     if (isDefault) {
-      // toast.error(Strings.chooseDelegationAndEstateTypes);
       setIsShowModal(true);
 
       setModalOption({
@@ -768,7 +766,7 @@ const SidebarMap: FC<Props> = (props) => {
 
   return (
     <div
-      className={`MyScroll h-full py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
+      className={`MyScroll h-[490px] py-5 px-14 w-${props.width} bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between`}
     >
       <div className={`space-y-4 }`}>
         <div className="flex flex-col gap-1">

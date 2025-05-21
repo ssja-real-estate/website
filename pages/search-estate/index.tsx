@@ -52,12 +52,16 @@ const SearchEstate: NextPage = () => {
             
             
           
-              <div className="flex  h-[250px]">
+              <div className="flex  h-[490px]">
               <SsjaMapTest cordinate={cordinate} isDragable={false} />
               </div>
               
                
-               <div className=" grow  p-6">
+         
+               
+          </div>
+        </div>
+              <div className=" grow  p-6">
                
 
                 {fetchEsteate === undefined ? (
@@ -67,9 +71,6 @@ const SearchEstate: NextPage = () => {
                 )}
            
            </div>
-               
-          </div>
-        </div>
       </div>
       {isShowMenuInMobileDevice && (
         <div className="flex md:hidden justify-center items-center">
