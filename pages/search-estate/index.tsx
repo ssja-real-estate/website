@@ -135,6 +135,9 @@ const SearchEstate: NextPage = () => {
               <SsjaMapTest cordinate={cordinate} isDragable={false} />
             </div>
             {/* Desktop Results */}
+        
+          </div>
+        </div>
             <div className="flex-grow p-6 overflow-y-auto">
               {fetchEsteate === undefined ? (
                 <div className="alertBox text-center p-4">
@@ -148,8 +151,6 @@ const SearchEstate: NextPage = () => {
                 <NewViewHouses allestates={fetchEsteate} />
               )}
             </div>
-          </div>
-        </div>
       </div>
 
       {/* Mobile View Layout */}
