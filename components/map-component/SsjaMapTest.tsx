@@ -35,8 +35,7 @@ const SsjaMapTest: FC<{
   //   45.72187702416752,
   //   36.76853595794939
   // );
-  const [zoom, setZomm] = useState<number>(5);
-  // const [map, setMap] = useState<mapboxgl.Map>();
+
   const setMarkerHandler = (e: MapMouseEvent) => {
     // console.log(typeof e.lngLat.lat);
     // setMarkerPoint([e.lngLat.lng, e.lngLat.lat]);
@@ -45,10 +44,7 @@ const SsjaMapTest: FC<{
 
   useEffect(() => {
     const node = mapNode.current;
-    // if the window object is not found, that means
-    // the component is rendered on the server
-    // or the dom node is not initialized, then return early
-    if (typeof window === "undefined" || node === null) return;
+     if (typeof window === "undefined" || node === null) return;
     if (mapboxgl.getRTLTextPluginStatus() === "unavailable") {
       mapboxgl.setRTLTextPlugin(
         "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
@@ -66,6 +62,7 @@ const SsjaMapTest: FC<{
       container: node,
       style: "mapbox://styles/mapbox/streets-v11",
       doubleClickZoom: true,
+      minZoom:4,
     });
     map.flyTo({
       zoom: props.cordinate.zoom,

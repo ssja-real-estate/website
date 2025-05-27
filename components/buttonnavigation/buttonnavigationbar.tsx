@@ -40,12 +40,12 @@ const BottomNavigationBar = () => {
       <NavItem
         href="/add-estate" // مسیر صفحه ثبت ملک خود را جایگزین کنید
         // icon={<FiPlusSquare size={20} />}
-        label="ثبت ملک"
+        label="ثبت املاک"
       />
       <NavItem
         href="/search-estate" // مسیر همین صفحه جستجو
         // icon={<FiSearch size={20} />}
-        label="جستجو"
+        label="جستجوی املاک"
       />
       <NavItem
         href="/my-properties" // مسیر صفحه املاک من خود را جایگزین کنید
