@@ -219,26 +219,11 @@ function Navbar() {
               />
             </div>
             <span className=" font-['nastaliq']  text-4xl" dir="ltr">
-              {Strings.sajaSystem }
+              {Strings.sajaSystem }Mobile
             </span>
           </div>
 
-          {/* <div className="h-full  hidden sm:flex flex-row items-center gap-3">
-            <Link
-              href="
-https://t.me/samane_ssja"
-            >
-              <Image src="/icon/telegram.png" width={24} height={24} alt="telegram"></Image>
-       
-            </Link>
-            <Link
-              href="
-https://instagram.com/ssja.ir?igshid=MzRlODBiNWFlZA==
-"
-            >
-              <Image src="/icon/instagram.png" width={24} height={24} alt="instagram"></Image>
-            </Link>
-          </div> */}
+        
           <div
             onClick={() => {
               loginHanler();

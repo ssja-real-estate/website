@@ -217,9 +217,71 @@ function Navbar() {
 
   /* -------- unified nav data -------- */
   const navMenu: MenuItem[] = [
-    { label: Strings.home, path: "/" },
-    {label:Strings.addEstate,path:"/add-estate"},
-    { label: Strings.searchEstates, path: "/search-estate" },
+      { label: Strings.home, path: "/" },
+      {label:Strings.addEstate,path:"/add-estate"},
+      { label: Strings.searchEstates, path: "/search-estate" },
+    {
+      label: Strings.inquiries,
+      children: [
+        {
+          label: "استعلام سند",
+          path: "https://my.ssaa.ir/portal/estate/originality-document/",
+          external: true,
+        },
+        {
+          label: "استعلام وکالت‌نامه",
+          path: "https://my.ssaa.ir/portal/ssar/originality-document/",
+          external: true,
+        },
+        {
+          label: "استعلام چک صیادی",
+          path: "https://cbi.ir/simplelist/19689.aspx",
+          external: true,
+        },
+        {
+          label: "استعلام موقعیت ملک",
+          path: "https://geoplaner.com",
+          external: true,
+        },
+        {
+          label: "استعلام کد رهگیری",
+          path: "https://www.iranamlaak.ir/Forms/Contracts/FilterContractsByContractSide.aspx",
+          external: true,
+        },
+        {
+          label: "استعلام پروانه (کد ملی)",
+          path: "https://iranianasnaf.ir/forms/public/nationalcodeinquiry/default.aspx",
+          external: true,
+        },
+        {
+          label: "استعلام پروانه (کد پستی)",
+          path: "https://iranianasnaf.ir/forms/public/postalcodeinquiry/default.aspx",
+          external: true,
+        },
+      ],
+    },
+    {
+      label: Strings.amlaklaw,
+      children: docsType1.map((d) => ({
+        label: d.title,
+        path: `https://ssja.ir/api/getdocument/${d.path}`,
+        external: true,
+      })),
+    },
+    {
+      label: Strings.contractSamples,
+      children: docsType2.map((d) => ({
+        label: d.title,
+        path: `https://ssja.ir/api/getdocument/${d.path}`,
+        external: true,
+      })),
+    },
+    { label: Strings.laws, path: "/laws" },
+    { label: Strings.commissionCalculation, action: "modal" },
+  ];
+
+  const navMenumobile: MenuItem[] = [
+    
     {
       label: Strings.inquiries,
       children: [
@@ -330,7 +392,7 @@ function Navbar() {
           </div>
             {/* منوی موبایل */}
             <MobileMenu
-              items={navMenu}
+              items={navMenumobile}
               openSubs={openSubs}
               toggleSub={toggleSub}
               closeDrawer={closeDrawer}
