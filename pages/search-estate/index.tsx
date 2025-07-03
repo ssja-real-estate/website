@@ -184,7 +184,7 @@ const SearchEstate: NextPage = () => {
             </div>
           ) : fetchEsteate.length === 0 ? (
             <div className="alertBox text-center p-4">
-              موردی با این مشخصات یافت نشد
+             ملکی با مشخصات وارد شده موجود نیست. آیا مایلید در صورت موجود شدن به شما اطلاع داده شود ؟
             </div>
           ) : (
             <NewViewHouses allestates={fetchEsteate} />
