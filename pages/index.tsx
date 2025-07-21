@@ -24,8 +24,7 @@ const Home: NextPage = () => {
       <Ourmoto />
       {state.loggedIn && <MortgageRentSale />}
 
-      {/* <Header />
-      <main className="bg-red-400"></main> */}
+    
     </html>
   );
 };

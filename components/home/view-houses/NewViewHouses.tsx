@@ -14,11 +14,8 @@ const NewViewHouses: React.FC<{
   return (
     <div className=" grid grid-cols-1 md:grid-cols-2  lg:grid-cols-4 gap-4 mb-20">
       {props.allestates?.map(estate => {
-  // 1) تبدیل داده به فرمت کارت
   const cardData = parseEstateToCard(estate);
 
-  // 2) کل داده را با spread پاس بدهید
-  // 3) حتماً «key» یکتا تعیین کنید (React به‌طور خودکار از پراپ‌ id به‌عنوان key استفاده نمی‌کند)
   return <EstateCard key={cardData.id} {...cardData} />;
 })}
 
