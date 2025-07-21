@@ -153,9 +153,8 @@ const AddEstate: NextPage = () => {
       {/* Mobile View */}
       <div className="md:hidden flex flex-col h-full">
         {" "}
-        {/* ارتفاع کامل برای موبایل */}
-        {/* Mobile Map (30% height) */}
-        <div className="h-[40vh] border-b border-gray-300">
+    
+        <div className="h-[90vh] border-b border-gray-300">
           <SsjaMapTest cordinate={cordinate} isDragable={true} />{" "}
           {/* isDragable روی true تنظیم شد */}
         </div>

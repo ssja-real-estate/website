@@ -66,7 +66,7 @@ const AllEstateStatus: FC = () => {
       </div>
     );
   }
-  console.log(estates);
+  
 
   return (
     <div className="container">

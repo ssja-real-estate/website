@@ -48,7 +48,7 @@ const BottomNavigationBar = () => {
         label="جستجوی املاک"
       />
       <NavItem
-        href="/my-properties" // مسیر صفحه املاک من خود را جایگزین کنید
+        href="/my-estate" // مسیر صفحه املاک من خود را جایگزین کنید
         // icon={<FiUser size={20} />}
         label="املاک من"
       />

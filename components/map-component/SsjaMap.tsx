@@ -81,21 +81,7 @@ const SsjaMap: FC<{ lng: number; lat: number }> = (props) => {
         )
       )
       .addTo(map);
-    // new mapboxgl.Marker()
-    //   .setLngLat([47.72187702416752, 36.54])
-    //   .setPopup(
-    //     new mapboxgl.Popup({ offset: 20 }).setHTML(
-    //       `<a
-    //       target="_blank"
-    //       href="/productid"
-    //       style="display:block;width:150px;background-color:red"
-    //       >
-    //       <img src="/image/product/07.jpg" style="" />
-    //       2
-    //       </a>`
-    //     )
-    //   )
-    //   .addTo(map);
+  
   });
   return (
     <div

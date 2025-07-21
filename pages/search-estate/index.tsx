@@ -43,7 +43,7 @@ const SearchEstate: NextPage = () => {
       </div>
 
       <div className="md:hidden flex flex-col h-screen">
-        <div className="h-[30vh] flex-shrink-0">
+        <div className="h-[55vh] flex-shrink-0">
           <SsjaMapTest cordinate={cordinate} isDragable={false} />
         </div>
 

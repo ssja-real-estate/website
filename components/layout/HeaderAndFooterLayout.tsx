@@ -44,7 +44,7 @@ const HeaderAndFooterLayout = ({ children }: Props) => {
     } else {
       setLoaded(true);
     }
-  }, [router.route, state.loggedIn]); // loaded را از وابستگی حذف کردیم
+  }, [router.route, state.loggedIn]); 
 
   if (!loaded) {
     return (

@@ -10,11 +10,7 @@ import { FieldType } from "../../../global/types/Field";
 
 import LabelStatusEstatecard from "./LabelStatusEstatecard";
 import { useRouter } from "next/router";
-// const img:ImageLoader = {
-//   src: any;
-//   width: any;
-//   quality: any;
-// };
+
 interface EstateCardProps {
   estate: Estate;
   editButton?: boolean;
@@ -30,10 +26,6 @@ interface EstateCardProps {
 }
 const EstateCardDashboard: FC<EstateCardProps> = (props) => {
   const router = useRouter();
-  // const [src, setSrc] = useState<string | StaticImageData>("");
-  // useEffect(() => {
-  //   setSrc(imageFromPropsEstate());
-  // }, [src]);
 
   const myLoader: ImageLoader = ({ src, width, quality }) => {
     return `https://ssja.ir/api/images/${src}?w=${width}&q=${quality || 100}`;
@@ -56,8 +48,7 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
     <div className="w-full rounded-md overflow-hidden shadow-md relative">
       <LabelStatusEstatecard estatStatus={props.estate.estateStatus.status} />
       <Image
-        // loader={myLoader}
-        // src={`https://ssja.ir/api/images/${props.estate.id}/${imageFromPropsEstate}`}
+
         src={imageFromPropsEstate()}
         alt="house"
         layout="responsive"
@@ -79,7 +70,6 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
         <div className="flex flex-row justify-between items-end pt-2 mt-2">
           <a
             target="_blank"
-            // href={`/estate/${props.estate.id}`}
             onClick={() =>
               router.push({
                 pathname: "/estate/[estateid]",
@@ -128,10 +118,6 @@ const EstateCardDashboard: FC<EstateCardProps> = (props) => {
               </button>
             )}
 
-            {/* <span className="text-2xl font-bold">
-                {(150000000).toLocaleString("fa-ir")}
-              </span>
-              <span>تومان</span> */}
           </div>
         </div>
       </div>

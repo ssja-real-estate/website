@@ -79,13 +79,6 @@ const Profile: React.FC<{ children?: JSX.Element }> = (props) => {
     router.push("/");
   };
 
-  // const [isEdit, setEdit] = useState(false);
-  // const editProfile = (): void => {
-  //   setEdit(true);
-  // };
-  // const exitEdit = (): void => {
-  //   setEdit(false);
-  // };
 
   return (
     <>

@@ -51,24 +51,7 @@ const UserDashboard: FC = () => {
       },
       sectionName: sectionName.estateStatus,
     },
-    // {
-    //   id: 3,
-    //   title: "قالب ها",
-    //   icon: <TbIcon.TbLayoutGridAdd className="w-5 h-6 text-[#2c3e50]" />,
-    //   onClickHandler: () => {
-    //     setSection("templates");
-    //   },
-    //   sectionName: sectionName.templates,
-    // },
-    // {
-    //   id: 4,
-    //   title: "کاربران",
-    //   icon: <FiIcon.FiUsers className="w-5 h-6 text-[#2c3e50]" />,
-    //   onClickHandler: () => {
-    //     setSection("users");
-    //   },
-    //   sectionName: sectionName.users,
-    // },
+
   ];
   return (
     <div className="flex flex-row mb-10 gap-5">
@@ -86,15 +69,7 @@ const UserDashboard: FC = () => {
           ) : (
             section === "estateStatus" && <AllEstateStatus />
           )
-          // : section === "unVerifyEstate" ? (
-          //   <UnVerigyEstate />
-          // ) : section === "rejectEstate" ? (
-          //   <RejectEstates />
-          // ) : section === "users" ? (
-          //   <div>کاربران</div>
-          // ) : (
-          //   section === "templates" && <div className="">قالبها</div>
-          // )
+        
         }
       </div>
     </div>
