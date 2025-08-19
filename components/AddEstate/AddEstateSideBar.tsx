@@ -26,15 +26,13 @@ import EstateService from "../../services/api/EstateService/EstateService";
 import SearchService from "../../services/api/SearchService/SearchService";
 import { validateForm } from "../../services/utilities/fieldValidations";
 import { defaultForm, EstateForm } from "../../global/types/EstateForm";
-import { useRouter } from "next/router";
 import { Field, FieldType } from "../../global/types/Field";
 import SearchFilter from "../../global/types/Filter";
 import Spiner from "../spinner/Spiner";
-import ReactDOM from "react-dom";
+
 import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
-import AdvanceFilterButton from "../../components/map-component/AdvanceFilterButton";
-import { NextPage } from "next";
+
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
@@ -191,28 +189,7 @@ const SideBarForAddEstate: FC<Props> = (props) => {
     setLoading((prev) => false);
   }
 
-  // async function loadForm() {
-  //   if (!loading) {
-  //     setLoading((prev) => true);
-  //   }
-
-  //   if (!selectedDelegationType.id || !selectedEstateType.id) {
-  //     setLoading((prev) => false);
-  //     return;
-  //   }
-  //   const loadedForm = await searchService.current.getfilteredForm(
-  //     selectedDelegationType.id,
-  //     selectedEstateType.id
-  //   );
-
-  //   if (!loadedForm.id) {
-  //     setNoFilterExists((prev) => true);
-  //   } else {
-  //     setDataForm(loadedForm);
-  //   }
-  //   setLoading((prev) => false);
-  //   console.log(dataForm);
-  // }
+  
 
   async function submitEstate() {
 

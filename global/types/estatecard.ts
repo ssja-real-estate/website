@@ -9,4 +9,5 @@ export interface PriceEntry {
     address: string;
     prices: PriceEntry[];   // ← حالا فهرست است
     images: string[];
+    phone:string;
   }

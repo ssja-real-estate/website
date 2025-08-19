@@ -1,71 +1,7 @@
-// import Link from "next/link";
-// import { EstateCardProps } from "../../global/types/estatecard";
-// import Image from 'next/image';
-// export const EstateCard: React.FC<EstateCardProps> = (
-//   {
-//     id,
-//     title,
-//     address,
-//     prices,
-//     images,
-//   }
-
-  
-// ) => (
-    
-//     <Link
-//     href={`/estate/${id}`}
-//     rel="noopener noreferrer"
-//     target="_blank"
-//   >
-//     <article
-//       key={id}
-//       dir="rtl"
-//       className="overflow-hidden rounded-lg border bg-white shadow-sm"
-//     >
-//       {/* تصویر شاخص */}
-//       {images?.[0] && (
-//         <figure className="relative w-full pb-[56.25%]">
-//           <Image
-//             src={`https://ssja.ir/api/images/${id}/${images[0]}`}
-//             alt={title}
-//             fill
-//             priority
-//             className="object-cover"
-//           />
-//         </figure>
-//       )}
-  
-//       {/* محتوا */}
-//       <div className="space-y-2 p-4">
-//         <h2 className="text-lg font-semibold">{title}</h2>
-//         <p className="text-sm text-gray-600">{address}</p>
-  
-//         {/* فهرست قیمت‌ها (ممکن است بیش از یکی باشد) */}
-//         {prices?.length > 0 && (
-//           <div className="mt-3 space-y-1">
-//             {prices.map(({ label, amount }) => (
-//               <div key={label} className="flex items-center gap-1 text-sm">
-//                 <span className="font-medium">{label}:</span>
-//                 <span className="text-emerald-600">
-//                   {new Intl.NumberFormat('fa-IR').format(amount)} تومان
-//                 </span>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-//     </article>
-//     </Link>
-//   );
-
-
-
+// components/EstateCard.tsx
 import Link from "next/link";
+import Image from "next/image";
 import { EstateCardProps } from "../../global/types/estatecard";
-import Image from 'next/image';
-
-const DEFAULT_IMAGE = '/images/estate-placeholder.jpg';
 
 export const EstateCard: React.FC<EstateCardProps> = ({
   id,
@@ -73,48 +9,48 @@ export const EstateCard: React.FC<EstateCardProps> = ({
   address,
   prices,
   images,
+  phone,               
 }) => {
   const imageSrc =
-    images && images.length > 0
+    images?.length
       ? `https://ssja.ir/api/images/${id}/${images[0]}`
-      : '/image/blankImage/bl.jpg';
+      : "/image/blankImage/bl.jpg";
+
+  const phoneDisplay = phone ? phone : "۰۹*********";
 
   return (
-    <Link href={`/estate/${id}`} rel="noopener noreferrer" target="_blank">
+    <Link href={`/estate/${id}`} className="block" rel="noopener noreferrer" target="_blank">
       <article
-        key={id}
         dir="rtl"
-        className="h-[360px] flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm"
+        className="flex flex-col h-[400px] overflow-hidden rounded-lg border bg-white shadow-sm"
       >
-        {/* تصویر با ارتفاع ثابت */}
-        <figure className="relative h-[200px] w-full"> {/* 40% of 360px */}
-          <Image
-            src={imageSrc}
-            alt={title}
-            fill
-            priority
-            className="object-cover"
-          />
+        {/* عکس بالا */}
+        <figure className="relative h-[200px] w-full">
+          <Image src={imageSrc} alt={title} fill priority className="object-cover" />
         </figure>
 
-        {/* محتوا */}
-        <div className="flex-1 p-4 overflow-auto">
-          <h2 className="text-lg font-semibold line-clamp-2">{title}</h2>
-          <p className="mt-1 text-sm text-gray-600 line-clamp-3">{address}</p>
+        {/* محتوای میانی (عنوان، آدرس، قیمت‌ها) */}
+        <div className="flex flex-col flex-1 overflow-auto p-4 space-y-2">
+          <h2 className="text-base font-semibold line-clamp-2">{title}</h2>
+          <p className="text-xs text-gray-600 line-clamp-3">{address}</p>
 
-          {/* فهرست قیمت‌ها */}
           {prices?.length > 0 && (
-            <div className="mt-3 space-y-1">
+            <div className="space-y-1 text-xs">
               {prices.map(({ label, amount }) => (
-                <div key={label} className="flex items-center gap-1 text-sm">
+                <div key={label} className="flex items-center gap-1">
                   <span className="font-medium">{label}:</span>
                   <span className="text-emerald-600">
-                    {new Intl.NumberFormat('fa-IR').format(amount)} تومان
+                    {new Intl.NumberFormat("fa-IR").format(amount)}&nbsp;تومان
                   </span>
                 </div>
               ))}
             </div>
           )}
+        </div>
+
+        {/* شماره تماس در پایین کارت */}
+        <div dir="ltr" className="p-4  border-t text-start   text-sm font-medium tracking-widest">
+          {phoneDisplay}
         </div>
       </article>
     </Link>

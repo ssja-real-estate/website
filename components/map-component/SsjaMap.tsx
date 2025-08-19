@@ -1,93 +1,137 @@
-import React, { FC, useRef, useEffect, useState, useMemo, memo } from "react";
-import mapboxgl, { LngLat, LngLatLike, MapMouseEvent } from "mapbox-gl";
+import React, { FC, useRef, useEffect } from "react";
+import mapboxgl, { MapMouseEvent } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+// اختیاری: برای آیکن‌ها
 import * as BiIcon from "react-icons/bi";
 import * as MdIcom from "react-icons/md";
 
-const SsjaMap: FC<{ lng: number; lat: number }> = (props) => {
-  // const [lng, setLng] = useState<number>(props.lng);
-  // const [lat, setLat] = useState<number>(props.lat);
-  // const [marketPoint, setMarkerPoint] = useState<LngLatLike>([lng, lat]);
+// Recoil: اتم کلیک نقشه
+import { useSetRecoilState } from "recoil";
+import { mapClickState } from "../../global/states/mapClickStates";
 
-  // const [lnglat, setLngLat] = useState<LngLat>(
-  //   45.72187702416752,
-  //   36.76853595794939
-  // );
-  const [zoom, setZomm] = useState<number>(5);
-  // const [map, setMap] = useState<mapboxgl.Map>();
-  const setMarkerHandler = (e: MapMouseEvent) => {
-    // console.log(typeof e.lngLat.lat);
-    // setMarkerPoint([e.lngLat.lng, e.lngLat.lat]);
+
+type Props = { lng: number; lat: number; zoom?: number };
+
+const SsjaMap: FC<Props> = (props) => {
+  const setMapClick = useSetRecoilState(mapClickState);
+
+  const mapNode = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const popupRef = useRef<mapboxgl.Popup | null>(null);
+
+  // Helper اختیاری برای reverse-geocode و ساخت عنوان
+  const reverseGeocode = async (lat: number, lng: number) => {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=fa,en`;
+      const res = await fetch(url, { headers: { "User-Agent": "ssja/1.0" } });
+      const data = await res.json();
+      const a = data?.address || {};
+      const province =
+        a.state || a.province || a.region || a.county || "";
+      const city =
+        a.city || a.town || a.village || a.municipality || a.county || "";
+      const hood =
+        a.neighbourhood || a.suburb || a.city_district || a.district || a.quarter || "";
+      return { province, city, hood };
+    } catch {
+      return { province: "", city: "", hood: "" };
+    }
   };
-  const mapNode = useRef(null);
 
+  // Init map only once
   useEffect(() => {
     const node = mapNode.current;
-    // if the window object is not found, that means
-    // the component is rendered on the server
-    // or the dom node is not initialized, then return early
-    if (typeof window === "undefined" || node === null) return;
-    if (mapboxgl.getRTLTextPluginStatus() === "unavailable") {
-      mapboxgl.setRTLTextPlugin(
-        "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
-        (er) => {
-          console.log(er);
-        },
-        false // Lazy load the plugin
-      );
+    if (!node || typeof window === "undefined") return;
+    if (!mapRef.current) {
+      if (mapboxgl.getRTLTextPluginStatus() === "unavailable") {
+        mapboxgl.setRTLTextPlugin(
+          "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
+          () => {},
+          false
+        );
+      }
+
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoiYW1hbmMiLCJhIjoiY2w2b3F2YTQ0MDVpdTNjcXB1OGtrd2g4ciJ9.8aU5BS_hrx4_vghgcgrptA";
+
+      const map = new mapboxgl.Map({
+        container: node,
+        style: "mapbox://styles/mapbox/streets-v11",
+        attributionControl: false,
+        doubleClickZoom: true,
+        center: [props.lng, props.lat],
+        zoom: props.zoom ?? 5,
+      });
+      mapRef.current = map;
+
+      map.addControl(new mapboxgl.NavigationControl(), "top-left");
+
+      // مارکر اولیه
+      markerRef.current = new mapboxgl.Marker()
+        .setLngLat([props.lng, props.lat])
+        .addTo(map);
+
+      // یک پاپ‌آپ مشترک (اختیاری)
+      popupRef.current = new mapboxgl.Popup({ offset: 10, closeButton: true });
+
+      // کلیک روی نقشه
+      const onClick = async (e: MapMouseEvent) => {
+        const { lng, lat } = e.lngLat;
+
+        // 1) جا‌به‌جا کردن مارکر
+        markerRef.current?.setLngLat([lng, lat]);
+
+        // 2) انتشار مختصات برای فرم (Recoil)
+        setMapClick({ lat, lng });
+
+        // 3) اختیاری: گرفتن نام منطقه و نمایش در پاپ‌آپ
+        const info = await reverseGeocode(lat, lng);
+        if (popupRef.current) {
+          const title = [info.province, info.city, info.hood]
+            .filter(Boolean)
+            .join(" / ");
+          popupRef.current
+            .setLngLat([lng, lat])
+            .setHTML(
+              `<div style="direction: rtl; font-size: 12px;">
+                ${title || "نام منطقه نامشخص"}
+              </div>`
+            )
+            .addTo(map);
+        }
+      };
+
+      map.on("click", onClick);
+
+      // Cleanup
+      return () => {
+        map.off("click", onClick);
+        popupRef.current?.remove();
+        markerRef.current?.remove();
+        map.remove();
+        mapRef.current = null;
+      };
     }
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoiYW1hbmMiLCJhIjoiY2w2b3F2YTQ0MDVpdTNjcXB1OGtrd2g4ciJ9.8aU5BS_hrx4_vghgcgrptA";
+  }, []); // ← فقط یک‌بار
 
-    const map = new mapboxgl.Map({
-      attributionControl: false,
-      container: node,
-      style: "mapbox://styles/mapbox/streets-v11",
-      doubleClickZoom: true,
-    });
-    map.flyTo({
-      zoom: zoom,
+  // اگر props تغییر کرد، مرکز/مارکر آپدیت شود
+  useEffect(() => {
+    if (!mapRef.current || !markerRef.current) return;
+    mapRef.current.flyTo({
       center: [props.lng, props.lat],
+      zoom: props.zoom ?? mapRef.current.getZoom(),
+      essential: true,
     });
-    // map.on("dblclick", (e) => {
-    //   e.preventDefault();
-    //   // console.log(e);
-    //   setMarkerHandler(e);
-    // });
-    // map.on("moveend", () => {
-    //   console.log(map.getZoom());
-    //   setZomm((prev) => map.getZoom());
-    //   setLat((prev) => map.getCenter().lat);
-    //   setLng((prev) => map.getCenter().lng);
-    // });
-    // map.on("boxzoomstart", (e) => {
-    //   console.log("event type:", e.type);
-    //   // event type: boxzoomstart
-    // });
+    markerRef.current.setLngLat([props.lng, props.lat]);
+  }, [props.lng, props.lat, props.zoom]);
 
-    map.addControl(new mapboxgl.NavigationControl(), "top-left");
-    const mapmarker = new mapboxgl.Marker()
-      .setLngLat([props.lng, props.lat])
-      .setPopup(
-        new mapboxgl.Popup({ offset: 20 }).setHTML(
-          `<a
-          target="_blank"
-          href="/productid"
-          style="display:block;width:150px;background-color:red"
-          >
-          1
-          <img src="/image/product/06.jpg" style="" />
-          </a>`
-        )
-      )
-      .addTo(map);
-  
-  });
   return (
     <div
-      className="h-full w-full rounded-2xl shadow-lg border-[10px] border-white"
       ref={mapNode}
-    ></div>
+      className="h-full w-full rounded-2xl shadow-lg border-[10px] border-white"
+      style={{ cursor: "crosshair" }}
+    />
   );
 };
 
