@@ -1,4 +1,5 @@
 import { defaultForm, EstateForm } from "./EstateForm";
+import MapInfo, { defaultMapInfo } from "./MapInfo";
 
 interface EstateLocation {
   id: string;
@@ -21,6 +22,8 @@ interface Estate {
   province: EstateLocation;
   city: EstateLocation;
   neighborhood: EstateLocation;
+  address: string;
+  mapInfo: MapInfo;
   estateStatus: {
     description: string;
     status: EstateStatus;
@@ -33,6 +36,8 @@ const defaultEstate: Estate = {
   id: "",
   city: defaultLocation,
   province: defaultLocation,
+  mapInfo: defaultMapInfo,
+  address: "",
   neighborhood: defaultLocation,
   estateStatus: {
     description: "",
@@ -41,6 +46,6 @@ const defaultEstate: Estate = {
   dataForm: defaultForm,
   phone: undefined
 };
-
+defaultEstate.mapInfo = defaultMapInfo;
 export type { Estate, EstateLocation };
 export { defaultEstate, defaultLocation };
