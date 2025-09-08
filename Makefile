@@ -8,7 +8,7 @@ username?=webssja
 password?=
 
 # Dockerfile stage to build(default is set to prod)
-stage?=prod9
+stage?=prod10
 
 # image name 
 REMOTE_IMAGE_NAME=$(shell $(cnf) name $(username))
