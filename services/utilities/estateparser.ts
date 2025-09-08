@@ -82,5 +82,6 @@ export const parseEstateToCard = (estate: Estate): EstateCardData => {
     address: composeAddress(province, city, neighborhood),
     prices: extractPrices(fields),
     images: extractImages(fields),
+    phone: "",
   };
 };
