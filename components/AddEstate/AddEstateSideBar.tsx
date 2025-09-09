@@ -682,8 +682,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
           <textarea
             
             className="w-full"
-            typeof="text"
-            
+                     
             value={addressText}
             onChange={(e) => {
               const v = e.target.value;
