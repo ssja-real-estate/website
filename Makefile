@@ -8,7 +8,7 @@ username?=webssja
 password?=
 
 # Dockerfile stage to build(default is set to prod)
-stage?=prod11
+stage?=prod12
 
 # image name 
 REMOTE_IMAGE_NAME=$(shell $(cnf) name $(username))
@@ -76,9 +76,9 @@ run-local-dev: stop-local ## run-local-dev-container/params:stage
 		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src \
 		$(LOCAL_IMAGE_TAG):latest
 
-# Run docker container locally in production mode
 run-local-prod: stop-local ## run-prod-container-locally
 	docker run --rm -itd --name $(CONTAINER_NAME) \
+		--env-file .env.frontend \
 		-p $(PORT):$(CONTAINER_PORT) $(LOCAL_IMAGE_TAG):latest
 	
 # Execute docker container shell

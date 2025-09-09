@@ -618,37 +618,26 @@ const AddEstateSidebar: FC<Props> = (props) => {
       try {
         const r = await reverseMapIr(mapClick.lat, mapClick.lng);
 
-        const provinceName: string = r?.province || "";
-        const cityName: string = r?.city || "";
-        const neighborhoodName: string = r?.neighborhood || r?.region || "";
-        const fullAddress: string = r?.address || "";
-
+        console.log(r);
+       const neighborhoodName: string = r?.neighborhood || r?.region || "";
+        const fullAddress: string = r?.primary + " "+ r?.last + r?.poi ;
+         console.log((r.region));
         setAddressText(fullAddress || "");
 
-        // اگر نام‌ها با دیتابیس شما یکی است، ست خودکار:
-        if (provinceName) {
-          const p = provinces.find((x) => x.name === provinceName);
-          if (p) handleProvinceChange(p.id);
-        }
-        if (cityName) {
-          setTimeout(() => {
-            const c = cities.find((x) => x.name === cityName);
-            if (c) handleCityChange(c.id);
-          }, 0);
-        }
+     
         // اگر همچنان ستون/فیلد "neighborhood" در مدل‌تان دارید و می‌خواهید نگه دارید:
         setEstate((prev) => ({
           ...prev,
           neighborhood: {
             id: prev.neighborhood?.id || "",
-            name: neighborhoodName || prev.neighborhood?.name || "",
+            name:  prev.neighborhood?.name || "",
           },
         }));
 
         // ذخیره آدرس و مختصات برای ارسال به سرور
         setEstate((prev) => ({
           ...prev,
-          address: fullAddress || prev.address,
+          address: neighborhoodName || prev.address,
           mapInfo: {
             longitude: mapClick.lng,
             latitude: mapClick.lat,
@@ -688,11 +677,13 @@ const AddEstateSidebar: FC<Props> = (props) => {
         </div>
 
         {/* ✅ جایگزین Select منطقه: آدرس کامل + مختصات */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col  h-28  gap-1">
           <label className="dynamicLabel text-white">آدرس کامل (از نقشه)</label>
-          <input
-            type="text"
+          <textarea
+            
             className="w-full"
+            typeof="text"
+            
             value={addressText}
             onChange={(e) => {
               const v = e.target.value;

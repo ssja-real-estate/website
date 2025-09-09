@@ -8,7 +8,7 @@ import { useSetRecoilState } from "recoil";
 import { mapClickState } from "../../global/states/mapClickStates";
 import type MapInfo from "../../global/types/MapInfo";
 
-const MAPIR_API_KEY ="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjZlOWRmMzMyYTg2MTY0ZDkxOGFkOTRiMmExMzQzYjlmNjRmNmQzOTM4NzE5MzIyNGJjNTFkM2YyNjM3ZjhkMDllYmFiZDZkYTA4NDBiMmQ3In0.eyJhdWQiOiIzNDI5NSIsImp0aSI6IjZlOWRmMzMyYTg2MTY0ZDkxOGFkOTRiMmExMzQzYjlmNjRmNmQzOTM4NzE5MzIyNGJjNTFkM2YyNjM3ZjhkMDllYmFiZDZkYTA4NDBiMmQ3IiwiaWF0IjoxNzU3MzAxODI4LCJuYmYiOjE3NTczMDE4MjgsImV4cCI6MTc1OTg5MzgyOCwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.gcL99j9YLVXnK2TBCbRpZtDiKt6Ya4jhPajOZQuOjPu4qaog6XY2nGpmH_3le39cWcQV5SS1585CJftmxJccrndg5-NTYEdgSgqEfHeCbVINKiEHxAZsX99GN1rXsI9KhAm-tUiyeGZqJOKvz19x0v3sCtnBPLZTBRtkh39i6DT-8LMtUjgxNk8yLMWpRQA8UsTUaBbqrhfQkqSXDiMGrgDHLvseo7NLMmMJ7Tgt7zdwhzvbdRXIicv_zqYnf9pcAP-kza9PX7g81PPbhB8aoxtq89QKdDSW6qnqEZG6ICY7fmkefH8nHlTtQSl3x88gzx9BcZVr-XCSUmTjuKjtKQ";
+const MAPIR_API_KEY = process.env.NEXT_PUBLIC_MAPIR_KEY??"";
 const STYLE_URL = "https://map.ir/vector/styles/main/mapir-xyz-style.json";
 
 
