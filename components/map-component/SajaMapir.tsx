@@ -147,11 +147,12 @@ const SsjaMapIr: FC<Props> = ({ cordinate, isDragable }) => {
   }, [isDragable]);
 
   return (
-    <div
-      ref={mapNode}
-      className="w-full h-full"
-      style={{ cursor: "crosshair", direction: "rtl" }}
-    />
+    <div></div>
+    // <div
+    //   ref={mapNode}
+    //   className="w-full h-full"
+    //   style={{ cursor: "crosshair", direction: "rtl" }}
+    // />
   );
 };
 
