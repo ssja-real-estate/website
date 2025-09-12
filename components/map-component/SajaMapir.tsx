@@ -32,8 +32,8 @@ const SsjaMapIr: FC<Props> = ({ cordinate, isDragable }) => {
       address?: string;
       province?: string;
       city?: string;
-      region?: string;       // منطقه شهرداری
-      neighborhood?: string; // محله
+      region?: string;     
+      neighborhood?: string; 
     }>);
   }
 
