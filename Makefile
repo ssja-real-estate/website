@@ -71,12 +71,12 @@ run-remote-prod: stop ## run-remote-prod-container/params:stage,username
 		-p $(PORT):$(CONTAINER_PORT) $(REMOTE_IMAGE_TAG) 
 
 # Run docker container locally in development mode
-run-local-dev: stop-local ## run-local-dev-container/params:stage
+run-local-dev: stop ## run-local-dev-container/params:stage
 	docker run --rm -it --name $(CONTAINER_NAME) \
 		-p $(PORT):$(CONTAINER_PORT) -v $(WORKDIR)/src:/app/src \
 		$(LOCAL_IMAGE_TAG):latest
 
-run-local-prod: stop-local ## run-prod-container-locally
+run-local-prod: stop ## run-prod-container-locally
 	docker run --rm -itd --name $(CONTAINER_NAME) \
 		--env-file .env.frontend \
 		-p $(PORT):$(CONTAINER_PORT) $(LOCAL_IMAGE_TAG):latest
