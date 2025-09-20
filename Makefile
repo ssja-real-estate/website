@@ -120,7 +120,7 @@
 # ===================================================================
 DOCKER_USERNAME := webssja
 IMAGE_BASENAME  := ssja
-STAGE           := prod14
+STAGE           := prod15
 HOST_PORT       := 3000
 CONTAINER_PORT  := 3000
 
