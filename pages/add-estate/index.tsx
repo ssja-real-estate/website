@@ -56,7 +56,7 @@ const AddEstate: NextPage = () => {
           {/* <SsjaMapTest cordinate={cordinate} isDragable={true} />{" "} */}
           <div className="w-full h-96 rounded-xl overflow-hidden">
   <SsjaMapIr
-    cordinate={cordinate || { longitude: 51.3890, latitude: 35.6892, zoom: 11 }}
+    coordinate={cordinate || { longitude: 51.3890, latitude: 35.6892, zoom: 11 }}
     isDragable={true}
   />
 </div>
@@ -69,7 +69,7 @@ const AddEstate: NextPage = () => {
     
         <div className="h-[90vh] border-b border-gray-300">
         <SsjaMapIr
-    cordinate={cordinate || { longitude: 51.3890, latitude: 35.6892, zoom: 11 }}
+    coordinate={cordinate || { longitude: 51.3890, latitude: 35.6892, zoom: 11 }}
     isDragable={true}
   />
           {/* isDragable روی true تنظیم شد */}

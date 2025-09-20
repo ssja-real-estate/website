@@ -1,4 +1,3 @@
-// components/map-component/SsjaMapIr.tsx
 "use client";
 
 import { FC, useEffect, useRef } from "react";
@@ -8,44 +7,26 @@ import { useSetRecoilState } from "recoil";
 import { mapClickState } from "../../global/states/mapClickStates";
 import type MapInfo from "../../global/types/MapInfo";
 
-const MAPIR_API_KEY = process.env.NEXT_PUBLIC_MAPIR_KEY??"";
+const MAPIR_API_KEY = process.env.NEXT_PUBLIC_MAPIR_KEY || "";
 const STYLE_URL = "https://map.ir/vector/styles/main/mapir-xyz-style.json";
 
+type Props = { coordinate: MapInfo; isDragable: boolean };
 
-
-type Props = { cordinate: MapInfo; isDragable: boolean };
-
-const SsjaMapIr: FC<Props> = ({ cordinate, isDragable }) => {
-  const mapNode = useRef<HTMLDivElement | null>(null);
+const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
+  const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
-  const popupRef = useRef<maplibregl.Popup | null>(null);
   const setMapClick = useSetRecoilState(mapClickState);
 
-  async function reverseGeocode(lat: number, lon: number) {
-    const res = await fetch(`https://map.ir/reverse?lat=${lat}&lon=${lon}`, {
-      headers: { "x-api-key": MAPIR_API_KEY, Accept: "application/json" },
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error("reverse failed");
-    return (res.json() as Promise<{
-      address?: string;
-      province?: string;
-      city?: string;
-      region?: string;     
-      neighborhood?: string; 
-    }>);
-  }
-
+  // Effect for initializing the map
   useEffect(() => {
-    const node = mapNode.current;
-    if (!node || mapRef.current) return;
+    if (mapRef.current || !mapContainer.current) return; // Initialize map only once
 
     const map = new MLMap({
-      container: node,
+      container: mapContainer.current,
       style: STYLE_URL,
-      center: [cordinate.longitude, cordinate.latitude],
-      zoom: cordinate.zoom,
+      center: [coordinate.longitude, coordinate.latitude],
+      zoom: coordinate.zoom,
       transformRequest: (url) =>
         url.includes("map.ir")
           ? { url, headers: { "x-api-key": MAPIR_API_KEY } }
@@ -53,106 +34,54 @@ const SsjaMapIr: FC<Props> = ({ cordinate, isDragable }) => {
     });
     mapRef.current = map;
 
-    // کنترل‌ها
     map.addControl(new maplibregl.NavigationControl(), "top-left");
 
-    // مارکر اولیه
+    // Initialize marker
     markerRef.current = new maplibregl.Marker({ draggable: isDragable })
-      .setLngLat([cordinate.longitude, cordinate.latitude])
+      .setLngLat([coordinate.longitude, coordinate.latitude])
       .addTo(map);
 
-    const showPopup = (lng: number, lat: number, title: string, address?: string) => {
-      // فقط یک پاپ‌آپ فعال نگه داریم
-      popupRef.current?.remove();
-      popupRef.current = new maplibregl.Popup({ offset: 10, closeButton: true })
-        .setLngLat([lng, lat])
-        .setHTML(
-          `<div style="direction:rtl; font-size:12px; line-height:1.6">
-              <strong>${title}</strong><br/>${address || ""}
-           </div>`
-        )
-        .addTo(map);
+    const updatePosition = (lngLat: maplibregl.LngLat) => {
+      const { lng, lat } = lngLat;
+      setMapClick({ lat: +lat.toFixed(6), lng: +lng.toFixed(6) });
     };
 
-    // کلیک: ست مختصات + پاپ‌آپ
-    const handleClick = async (e: maplibregl.MapMouseEvent) => {
-      const lng = +e.lngLat.lng.toFixed(6);
-      const lat = +e.lngLat.lat.toFixed(6);
+    // Event listeners
+    map.on("click", (e) => {
+      markerRef.current?.setLngLat(e.lngLat);
+      updatePosition(e.lngLat);
+    });
 
-      markerRef.current?.setLngLat([lng, lat]);
-      setMapClick({ lat, lng });
-
-      try {
-        const r = await reverseGeocode(lat, lng);
-        const title =
-          [r.province, r.city, r.neighborhood || r.region].filter(Boolean).join(" / ") ||
-          "نام منطقه نامشخص";
-        showPopup(lng, lat, title, r.address);
-      } catch (err) {
-        console.error(err);
+    markerRef.current.on("dragend", () => {
+      const lngLat = markerRef.current?.getLngLat();
+      if (lngLat) {
+        updatePosition(lngLat);
       }
-    };
+    });
 
-    map.on("click", handleClick);
-
-    // درگ مارکر
-    const handleDragEnd = async () => {
-      const pos = markerRef.current?.getLngLat();
-      if (!pos) return;
-      const lng = +pos.lng.toFixed(6);
-      const lat = +pos.lat.toFixed(6);
-      setMapClick({ lat, lng });
-
-      try {
-        const r = await reverseGeocode(lat, lng);
-        const title =
-          [r.province, r.city, r.neighborhood || r.region].filter(Boolean).join(" / ") ||
-          "نام منطقه نامشخص";
-        showPopup(lng, lat, title, r.address);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    markerRef.current?.on("dragend", handleDragEnd);
-
-    // پاکسازی
+    // Cleanup on unmount
     return () => {
-      markerRef.current?.off("dragend", handleDragEnd);
-      map.off("click", handleClick);
-      popupRef.current?.remove();
-      markerRef.current?.remove();
       map.remove();
-      popupRef.current = null;
-      markerRef.current = null;
       mapRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once
 
-  // واکنش به تغییر ورودی مرکز/بزرگنمایی
+  // Effect for updating map center when coordinate prop changes
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    map.flyTo({
-      center: [cordinate.longitude, cordinate.latitude],
-      zoom: cordinate.zoom,
-      essential: true,
+    mapRef.current?.flyTo({
+      center: [coordinate.longitude, coordinate.latitude],
+      zoom: coordinate.zoom,
     });
-    markerRef.current?.setLngLat([cordinate.longitude, cordinate.latitude]);
-  }, [cordinate.longitude, cordinate.latitude, cordinate.zoom]);
+    markerRef.current?.setLngLat([coordinate.longitude, coordinate.latitude]);
+  }, [coordinate]);
 
-  // فعال/غیرفعال کردن درگ مارکر
+  // Effect for updating marker's draggability
   useEffect(() => {
-    markerRef.current?.setDraggable(!!isDragable);
+    markerRef.current?.setDraggable(isDragable);
   }, [isDragable]);
 
-  return (
-    <div
-      ref={mapNode}
-      className="w-full h-full"
-      style={{ cursor: "crosshair", direction: "rtl" }}
-    />
-  );
+  return <div ref={mapContainer} className="w-full h-full" />;
 };
 
 export default SsjaMapIr;
