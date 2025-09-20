@@ -113,6 +113,8 @@
 
 # pull-remote: ## pull-remote-image-from-registry/params:stage,username
 # 	docker pull $(REMOTE_IMAGE_TAG)
+
+
 # ===================================================================
 # ===               پیکربندی اصلی پروژه (اینجا را ویرایش کنید)               ===
 # ===================================================================
@@ -125,22 +127,20 @@ CONTAINER_PORT  := 3000
 # ===================================================================
 # ===      متغیرهای مشتق شده (این بخش را تغییر ندهید)      ===
 # ===================================================================
-# نام کامل ایمیج که در Docker Hub قرار دارد (e.g., webssja/ssja-prod12)
 FULL_IMAGE_NAME := $(DOCKER_USERNAME)/$(IMAGE_BASENAME)
-
-# نام کامل ایمیج به همراه تگ استیج
 IMAGE_TAG       := $(FULL_IMAGE_NAME)-$(STAGE)
-
-# نام کانتینر در حال اجرا (e.g., ssja-prod12)
 CONTAINER_NAME  := $(IMAGE_BASENAME)-$(STAGE)
+
+# این متغیر به ما اجازه می‌دهد که کلید را از خط فرمان پاس دهیم (برای CI/CD)
+# اگر از خط فرمان پاس داده نشود، از فایل .env.frontend می‌خواند (برای استفاده لوکال)
+API_KEY ?= $(shell grep NEXT_PUBLIC_MAPIR_KEY .env.frontend | cut -d '=' -f2)
 
 # ===================================================================
 # ===                       دستورات اصلی (Targets)                       ===
 # ===================================================================
 .DEFAULT_GOAL := help
-.PHONY: help build-local run-prod stop exec push-remote pull-remote
+.PHONY: help build-local run-prod stop exec push-remote pull-remote login
 
-# دستور پیش‌فرض برای نمایش راهنما
 help:
 	@echo "Available commands:"
 	@echo "  make build-local   -> Build the Docker image on this machine"
@@ -149,15 +149,16 @@ help:
 	@echo "  make exec          -> Get a shell inside the running container"
 	@echo "  make pull-remote   -> Pull the image from Docker Hub"
 	@echo "  make push-remote   -> Push the image to Docker Hub"
+	@echo "  make login         -> Log in to Docker Hub"
 
-# ساخت ایمیج به صورت لوکال با پاس دادن کلید API در زمان بیلد
+# ساخت ایمیج به صورت لوکال (برای استفاده در سرور و گیت‌هاب اکشن)
 build-local:
-	@echo ">>> Reading API Key from .env.frontend and passing it to the build..."
+	@echo ">>> Building image with API Key..."
 	docker build \
-		--build-arg NEXT_PUBLIC_MAPIR_KEY=$(shell grep NEXT_PUBLIC_MAPIR_KEY .env.frontend | cut -d '=' -f2) \
+		--build-arg NEXT_PUBLIC_MAPIR_KEY=$(API_KEY) \
 		-f Dockerfile.prod -t $(IMAGE_TAG) .
 
-# اجرای کانتینر در حالت پروداکشن (دستور اصلی شما)
+# اجرای کانتینر در حالت پروداکشن
 run-prod: stop
 	@echo "Running container '$(CONTAINER_NAME)' from image '$(IMAGE_TAG)'..."
 	docker run --rm -itd --name $(CONTAINER_NAME) \
@@ -180,3 +181,8 @@ push-remote:
 # پول کردن ایمیج از رجیستری
 pull-remote:
 	docker pull $(IMAGE_TAG)
+
+# لاگین به داکر هاب (برای استفاده در گیت‌هاب اکشن)
+login:
+	@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+
