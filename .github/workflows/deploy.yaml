@@ -1,38 +1,3 @@
-# name: deploy-website
-
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#       - master
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     env:
-#       IMAGE_TAG: ${{ github.sha }} 
-#     steps:
-#       - uses: actions/checkout@v2
-#       - run: make build-remote
-#       - run: make password=$DOCKER_PASSWORD login
-#         env:
-#           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-#       - run: make push-remote
-#       - run: make logout
-#       - uses: appleboy/ssh-action@master
-#         env:
-#           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-#         with:
-#           host: ${{ secrets.SERVER_HOST }}
-#           username: ${{ secrets.SERVER_USER }}
-#           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-#           envs: DOCKER_PASSWORD
-#           script: |
-#             cd ~/frontend/
-#             make password=$DOCKER_PASSWORD login
-#             make pull webssja/ssja_prod
-#             make run-local-prod
-#             make logout
 name: Deploy Website
 
 on:
@@ -48,17 +13,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # مرحله ساخت ایمیج اصلاح شده است
       - name: Build Docker Image
-        run: make build-local
-        env:
-          # تزریق کلید API از Secrets گیت‌هاب به فرآیند بیلد
-          API_KEY: ${{ secrets.NEXT_PUBLIC_MAPIR_KEY }}
+        # ما مقدار Secret را مستقیماً به عنوان پارامتر به دستور 'make' پاس می‌دهیم
+        run: make build-local API_KEY=${{ secrets.NEXT_PUBLIC_MAPIR_KEY }}
 
       - name: Log in to Docker Hub
         run: make login
         env:
-          # این متغیرها توسط دستور 'login' در Makefile استفاده می‌شوند
-          DOCKER_USERNAME: webssja
+          # نام کاربری داکر شما باید به عنوان یک Secret تعریف شود
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Image to Docker Hub
@@ -72,15 +36,8 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           script: |
             cd ~/frontend/
-            # لاگین روی سرور برای اینکه بتواند ایمیج را دانلود کند
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "webssja" --password-stdin
-            
-            # دانلود آخرین نسخه ایمیج
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             make pull-remote
-            
-            # اجرای کانتینر جدید
             make run-prod
-            
-            # خروج از حساب داکر روی سرور
             docker logout
 
