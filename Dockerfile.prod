@@ -20,52 +20,36 @@
 # CMD ["npm", "start"]
 
 # # Stage 1: Builder
-
-# Stage 1: Builder
-# This stage builds the Next.js application.
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Declare a build-time argument. This will allow us to pass the API key in during the build process.
-# We will pass the value to this argument from the Makefile.
+# این آرگومان مقدار را از دستور 'make' دریافت می‌کند
 ARG NEXT_PUBLIC_MAPIR_KEY
 
-# Copy dependency files
 COPY package.json package-lock.json ./
-
-# Install dependencies
 RUN npm ci
-
-# Copy the rest of the application source code
 COPY . .
 
-# Set the environment variable *before* the build command.
-# This makes the API key available to the 'npm run build' process.
-# Next.js will then correctly embed this key into the static JavaScript files.
+# +++ لاگ دیباگ شماره ۱: بررسی مقدار در زمان ساخت داکر +++
+# این دستور به ما نشان می‌دهد که آیا 'build-arg' به درستی پاس داده شده است یا خیر.
+RUN echo ">>> Docker Build-Time ARG NEXT_PUBLIC_MAPIR_KEY is: '$NEXT_PUBLIC_MAPIR_KEY'"
+
+# این متغیر، آرگومان بالا را برای دستور 'npm run build' قابل دسترس می‌کند
 ENV NEXT_PUBLIC_MAPIR_KEY=$NEXT_PUBLIC_MAPIR_KEY
 
-# Build the Next.js application
 RUN npm run build
 
-# ===================================================================
-
 # Stage 2: Production
-# This stage creates the final, lean image for running the application.
 FROM node:18-alpine AS runner
 WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Copy only the necessary artifacts from the builder stage
+# فقط نیازهای لازم را کپی می‌کنیم
 COPY --from=builder /app/.next .next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-
-# Expose the port the app runs on
+ENV NODE_ENV=production
 EXPOSE 3000
-
-# The command to start the application
 CMD ["npm", "start"]
+
