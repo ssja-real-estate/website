@@ -13,6 +13,12 @@ const STYLE_URL = "https://map.ir/vector/styles/main/mapir-xyz-style.json";
 type Props = { coordinate: MapInfo; isDragable: boolean };
 
 const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
+  // +++ لاگ برای دیباگ کردن کلید API +++
+  // این لاگ در کنسول مرورگر نمایش داده می‌شود و به ما نشان می‌دهد
+  // که آیا کلید API به درستی در زمان بیلد به کد تزریق شده است یا خیر.
+  console.log("Map Component Rendered. API Key is:", MAPIR_API_KEY);
+  // +++++++++++++++++++++++++++++++++++++
+
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
@@ -20,6 +26,11 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
 
   // Effect for initializing the map
   useEffect(() => {
+    // یک بررسی اضافه می‌کنیم که اگر کلید وجود نداشت، نقشه را اصلا مقداردهی اولیه نکند
+    if (!MAPIR_API_KEY) {
+      console.error("MapIR API Key is missing. The map cannot be initialized.");
+      return;
+    }
     if (mapRef.current || !mapContainer.current) return; // Initialize map only once
 
     const map = new MLMap({
