@@ -2,7 +2,7 @@
 "use client";
 
 import { FC, useEffect, useRef } from "react";
-import maplibregl, { Map as MLMap } from "maplibre-gl";
+import maplibregl, { Map as MLMap, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useSetRecoilState } from "recoil";
 import { mapClickState } from "../../global/states/mapClickStates";
@@ -11,21 +11,16 @@ import type MapInfo from "../../global/types/MapInfo";
 const MAPIR_API_KEY = process.env.NEXT_PUBLIC_MAPIR_KEY || "";
 const STYLE_URL = "https://map.ir/vector/styles/main/mapir-xyz-style.json";
 
-// --- مهم: فعال‌کردن شکل‌دهی متن RTL برای فارسی/عربی ---
+// --- باید پیش از ساخت نقشه لود شود (و بهتره lazy نباشد) ---
 if (typeof window !== "undefined" && (maplibregl as any).setRTLTextPlugin) {
-  try {
-    // فقط یک‌بار لود شود
-    const anyGL = maplibregl as any;
-    if (!anyGL.__rtl_loaded__) {
-      anyGL.__rtl_loaded__ = true;
-      maplibregl.setRTLTextPlugin(
-        "https://cdn.maptiler.com/maplibre-gl-rtl-text/latest/maplibre-gl-rtl-text.js",
- 
-        true // lazy-load
-      );
-    }
-  } catch (e) {
-    console.error("Failed to init RTL plugin:", e);
+  const anyGL = maplibregl as any;
+  if (!anyGL.__rtl_inited__) {
+    anyGL.__rtl_inited__ = true;
+    maplibregl.setRTLTextPlugin(
+      "https://cdn.maptiler.com/maplibre-gl-rtl-text/latest/maplibre-gl-rtl-text.js",
+   
+      false // ← اجباری لود شود تا لیبل‌ها حتماً نشان داده شوند
+    );
   }
 }
 
@@ -44,42 +39,71 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
     }
     if (mapRef.current || !mapContainer.current) return;
 
-    const map = new MLMap({
-      container: mapContainer.current,
-      style: STYLE_URL,
-      center: [coordinate.longitude, coordinate.latitude],
-      zoom: coordinate.zoom,
-      transformRequest: (url) =>
-        url.includes("map.ir")
-          ? { url, headers: { "x-api-key": MAPIR_API_KEY } }
-          : { url },
-    });
-    mapRef.current = map;
+    let cancelled = false;
 
-    map.addControl(new maplibregl.NavigationControl(), "top-left");
+    (async () => {
+      try {
+        // 1) استایل را خودمان با هدر می‌گیریم تا 401/403 نخوریم
+        const styleRes = await fetch(STYLE_URL, {
+          headers: { "x-api-key": MAPIR_API_KEY, Accept: "application/json" },
+          cache: "no-store",
+        });
+        if (!styleRes.ok) throw new Error(`Failed to load style: ${styleRes.status}`);
+        const styleJson = (await styleRes.json()) as StyleSpecification;
+        if (cancelled) return;
 
-    markerRef.current = new maplibregl.Marker({ draggable: isDragable })
-      .setLngLat([coordinate.longitude, coordinate.latitude])
-      .addTo(map);
+        // 2) نقشه
+        const map = new MLMap({
+          container: mapContainer.current!,
+          style: styleJson, // ← استایلِ آبجکت، نه URL
+          center: [coordinate.longitude, coordinate.latitude],
+          zoom: coordinate.zoom,
+          // برای tiles/glyphs/sprites هم هدر را بفرست
+          transformRequest: (url) =>
+            url.includes("map.ir")
+              ? { url, headers: { "x-api-key": MAPIR_API_KEY } }
+              : { url },
+        });
+        mapRef.current = map;
 
-    const updatePosition = (lngLat: maplibregl.LngLat) => {
-      const { lng, lat } = lngLat;
-      setMapClick({ lat: +lat.toFixed(6), lng: +lng.toFixed(6) });
-    };
+        // 3) کنترل‌ها
+        map.addControl(new maplibregl.NavigationControl(), "top-left");
 
-    map.on("click", (e) => {
-      markerRef.current?.setLngLat(e.lngLat);
-      updatePosition(e.lngLat);
-    });
+        // 4) مارکر
+        markerRef.current = new maplibregl.Marker({ draggable: isDragable })
+          .setLngLat([coordinate.longitude, coordinate.latitude])
+          .addTo(map);
 
-    markerRef.current.on("dragend", () => {
-      const lngLat = markerRef.current?.getLngLat();
-      if (lngLat) updatePosition(lngLat);
-    });
+        const updatePosition = (lngLat: maplibregl.LngLat) => {
+          const { lng, lat } = lngLat;
+          setMapClick({ lat: +lat.toFixed(6), lng: +lng.toFixed(6) });
+        };
+
+        map.on("click", (e) => {
+          markerRef.current?.setLngLat(e.lngLat);
+          updatePosition(e.lngLat);
+        });
+
+        markerRef.current.on("dragend", () => {
+          const lngLat = markerRef.current?.getLngLat();
+          if (lngLat) updatePosition(lngLat);
+        });
+
+        // برای دیباگ خطاهای شبکه/استایل (مثلاً glyphs 403)
+        map.on("error", (ev) => {
+          // @ts-ignore
+          const err = ev?.error;
+          if (err) console.error("Map error:", err);
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    })();
 
     return () => {
+      cancelled = true;
       markerRef.current?.remove();
-      map.remove();
+      mapRef.current?.remove();
       markerRef.current = null;
       mapRef.current = null;
     };
