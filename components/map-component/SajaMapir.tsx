@@ -11,15 +11,16 @@ import type MapInfo from "../../global/types/MapInfo";
 const MAPIR_API_KEY = process.env.NEXT_PUBLIC_MAPIR_KEY || "";
 const STYLE_URL = "https://map.ir/vector/styles/main/mapir-xyz-style.json";
 
-// --- باید پیش از ساخت نقشه لود شود (و بهتره lazy نباشد) ---
+// ✅ حتماً قبل از ساخت نقشه:
 if (typeof window !== "undefined" && (maplibregl as any).setRTLTextPlugin) {
   const anyGL = maplibregl as any;
   if (!anyGL.__rtl_inited__) {
     anyGL.__rtl_inited__ = true;
     maplibregl.setRTLTextPlugin(
-      "https://cdn.maptiler.com/maplibre-gl-rtl-text/latest/maplibre-gl-rtl-text.js",
-   
-      false // ← اجباری لود شود تا لیبل‌ها حتماً نشان داده شوند
+      // نسخه سازگار
+      "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.js",
+
+      false // ❗️غیرِ lazy: اول پلاگین، بعد رندر
     );
   }
 }
@@ -34,7 +35,7 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
 
   useEffect(() => {
     if (!MAPIR_API_KEY) {
-      console.error("MapIR API Key is missing. The map cannot be initialized.");
+      console.error("MapIR API Key is missing.");
       return;
     }
     if (mapRef.current || !mapContainer.current) return;
@@ -43,22 +44,41 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
 
     (async () => {
       try {
-        // 1) استایل را خودمان با هدر می‌گیریم تا 401/403 نخوریم
+        // 1) استایل را خودمان با هدر لود کنیم (تا لایه‌های لیبل مطمئناً بیایند)
         const styleRes = await fetch(STYLE_URL, {
           headers: { "x-api-key": MAPIR_API_KEY, Accept: "application/json" },
           cache: "no-store",
         });
         if (!styleRes.ok) throw new Error(`Failed to load style: ${styleRes.status}`);
         const styleJson = (await styleRes.json()) as StyleSpecification;
+
+        // 2) اطمینان از استفاده از name:fa
+        // برخی استایل‌ها فقط name یا name:en را می‌گذارند. این override کوچک کمک می‌کند.
+        if (Array.isArray(styleJson.layers)) {
+          styleJson.layers = styleJson.layers.map((ly: any) => {
+            if (ly.type === "symbol" && ly.layout && ly.layout["text-field"]) {
+              // اگر text-field از expression نیست، تبدیلش کنیم
+              ly.layout["text-field"] = [
+                "coalesce",
+                ["get", "name:fa"],
+                ["get", "name:ar"],
+                ["get", "name"]
+              ];
+              // (اختیاری) اگر فونت سفارشی داری، اینجا ست کن
+              // ly.layout["text-font"] = ["Noto Naskh Arabic Regular"];
+            }
+            return ly;
+          });
+        }
+
         if (cancelled) return;
 
-        // 2) نقشه
+        // 3) ساخت نقشه با style object (نه URL)
         const map = new MLMap({
           container: mapContainer.current!,
-          style: styleJson, // ← استایلِ آبجکت، نه URL
+          style: styleJson,
           center: [coordinate.longitude, coordinate.latitude],
           zoom: coordinate.zoom,
-          // برای tiles/glyphs/sprites هم هدر را بفرست
           transformRequest: (url) =>
             url.includes("map.ir")
               ? { url, headers: { "x-api-key": MAPIR_API_KEY } }
@@ -66,10 +86,8 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
         });
         mapRef.current = map;
 
-        // 3) کنترل‌ها
         map.addControl(new maplibregl.NavigationControl(), "top-left");
 
-        // 4) مارکر
         markerRef.current = new maplibregl.Marker({ draggable: isDragable })
           .setLngLat([coordinate.longitude, coordinate.latitude])
           .addTo(map);
@@ -89,7 +107,7 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
           if (lngLat) updatePosition(lngLat);
         });
 
-        // برای دیباگ خطاهای شبکه/استایل (مثلاً glyphs 403)
+        // دیباگ مفید: اگه glyphs/sprite 403 بده، اینجا می‌بینی
         map.on("error", (ev) => {
           // @ts-ignore
           const err = ev?.error;
@@ -107,8 +125,7 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable }) => {
       markerRef.current = null;
       mapRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [coordinate.latitude, coordinate.longitude, coordinate.zoom, isDragable]);
 
   useEffect(() => {
     mapRef.current?.flyTo({
