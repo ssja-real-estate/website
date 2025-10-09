@@ -41,6 +41,7 @@ const Forms = () => {
   const [estateType, setEstateType] = useState<EstateType>({
     id: "",
     name: "default",
+    order:1,
   });
 
   const isDefault =
@@ -287,6 +288,7 @@ const Forms = () => {
               setEstateType({
                 id: e.currentTarget.value,
                 name: e.currentTarget.value,
+                order:e.currentTarget.value
               });
             }}
           >

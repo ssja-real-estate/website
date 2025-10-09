@@ -22,6 +22,7 @@ function EstateTypesList() {
   const [newEstateType, setNewEstateType] = useState<EstateType>({
     id: "",
     name: "",
+    order:1,
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -95,6 +96,7 @@ function EstateTypesList() {
     let newType = await service.current.editEstateType({
       id: modalState.id,
       name: modalState.value,
+      order:modalState.order ??1,
     });
 
     if (newType) {

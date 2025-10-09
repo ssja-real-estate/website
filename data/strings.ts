@@ -36,6 +36,7 @@ class Strings {
   static units = "واحدها";
   static payments = "‌اشتراک‌ها";
   static forms = "فرم‌ها";
+  static order="ترتیب"
   static owners = "مدیران سایت";
   static admins = "نماینده‌های سایت";
   static users = "کاربرها";

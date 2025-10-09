@@ -14,6 +14,7 @@ enum EditItemType {
 interface EditItemModalState {
   id: string;
   value: string;
+  order?:number;
   displayMap: boolean[];
   editMap: boolean[];
   mapInfo?: MapInfo;
@@ -31,6 +32,7 @@ const defaultEditItemModalState: EditItemModalState = {
   editMap: [...defaultMap],
   title: "",
   credit: 0,
+  order:1,
   duration: 0,
 };
 

@@ -22,6 +22,7 @@ function EstateTypesList() {
   const [newEstateType, setNewEstateType] = useState<EstateType>({
     id: "",
     name: "",
+    order:0,
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -95,6 +96,7 @@ function EstateTypesList() {
     let newType = await service.current.editEstateType({
       id: modalState.id,
       name: modalState.value,
+      order:modalState.order ??1 ,
     });
 
     if (newType) {
@@ -137,14 +139,7 @@ function EstateTypesList() {
         <h4 className="text-2xl text-dark-blue font-bold">
           {Strings.estateTypes}
         </h4>
-        {/* <button
-          className="refresh-btn d-inline rounded-circle"
-          onClick={async () => {
-            await loadData();
-          }}
-        >
-          refresh
-        </button> */}
+        
       </div>
 
       <div className="my-5 flex flex-col gap-7 justify-between">
@@ -163,47 +158,10 @@ function EstateTypesList() {
                           ? "bg-red-100 text-red-800 hover:text-white text-sm hover:bg-red-800"
                           : "bg-[#f6f6f6]/60 text-dark-blue text-sm "
                       }  cursor-default transition-all duration-200`}
-                      // title={delegationType.name}
-                      // onRemove={() => {
-                      //   selectItemAsDeleted(delegationType);
-                      // }}
-                      // onEdit={() => {
-                      //   const newMap = buildMap(EditItemType.DelegationType);
-                      //   setModalState({
-                      //     ...defaultEditItemModalState,
-                      //     id: delegationType.id,
-                      //     value: delegationType.name,
-                      //     displayMap: [...newMap],
-                      //   });
-                      // }}
+                   
                     >
                       <span className="font-bold">{estateType.name}</span>
-                      {/* <div className="flex flex-row gap-1">
-                        <span
-                          onClick={() => {
-                            const newMap = buildMap(EditItemType.EstateType);
-                            setModalState({
-                              ...defaultEditItemModalState,
-                              id: estateType.id,
-                              value: estateType.name,
-                              displayMap: [...newMap],
-                            });
-                          }}
-                          title="ویرایش"
-                          className="border  p-1 rounded-full hover:bg-[#f3bc65] cursor-pointer"
-                        >
-                          <BiIcon.BiEditAlt className="text-gray-400 hover:text-white" />
-                        </span>
-                        <span
-                          onClick={() => {
-                            selectItemAsDeleted(estateType);
-                          }}
-                          title="حذف"
-                          className="border p-1 rounded-full hover:bg-red-700 cursor-pointer"
-                        >
-                          <MdIcon.MdOutlineRemove className="text-gray-400 hover:text-white" />
-                        </span>
-                      </div> */}
+               
                     </li>
                   </React.Fragment>
                 );
@@ -211,82 +169,9 @@ function EstateTypesList() {
             </ul>
           )}
         </div>
-        {/* <div className="flex flex-row">
-          <ul className="flex-1 flex flex-row flex-wrap gap-2">
-            {newItems.map((newItem, index) => {
-              return (
-                <li
-                  key={index}
-                  className="flex flex-row px-2 justify-between gap-5 items-center rounded-full p-2 bg-[#d99221]/60 text-dark-blue text-sm hover:bg-[#d99221] cursor-default transition-all duration-200"
-                >
-                  {newItem.name}
-
-                  <span
-                    onClick={() => {
-                      setNewItems((prev) =>
-                        prev.filter((_, id) => id !== index)
-                      );
-                    }}
-                    title="حذف"
-                    className="border border-white p-1 rounded-full hover:bg-red-700 cursor-pointer"
-                  >
-                    <MdIcon.MdOutlineRemove className="text-white" />
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-          {(newItems.length > 0 || removedItems.length > 0) && (
-            <button
-              className="text-sm bg-[#d99221] text-white h-9 px-2"
-              onClick={async () => {
-                await saveChanges();
-                setNewItems([]);
-                setRemovedItems([]);
-              }}
-            >
-              {Strings.saveChanges}
-            </button>
-          )}
-        </div> */}
+        
       </div>
-      {/* <div className="flex flex-row w-full gap-[2px] items-center">
-        <div className="flex-1 flex flex-row gap-[2px] items-center">
-          <input
-            type="text"
-            className="inputDecoration"
-            placeholder={Strings.addNewEstateType}
-            value={newEstateType.name}
-            onChange={(e) => {
-              setNewEstateType({
-                ...newEstateType,
-                name: e.target.value,
-              });
-            }}
-          />
-          <button
-            className="w-9 h-9 flex items-center justify-center border group border-[#f3bc65] hover:bg-[#f3bc65]"
-            onClick={() => {
-              newEstateType.name.trim() !== "" &&
-                setNewItems((prev) => [
-                  ...prev,
-                  {
-                    ...newEstateType,
-                    name: newEstateType.name.trim(),
-                  },
-                ]);
-              setNewEstateType({
-                ...newEstateType,
-                name: "",
-              });
-            }}
-          >
-            <AiIcon.AiOutlinePlus className="text-2xl transition-all text-[#f3bc65] group-hover:text-white" />
-          </button>
-        </div>
-
-        <div className="flex flex-col"></div>
-      </div> */}
+      
     </div>
   );
 }

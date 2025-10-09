@@ -260,7 +260,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
   }
 
   function handleTypeChange(data: string) {
-    setSelectedEstateType({ id: data, name: data });
+    setSelectedEstateType({ id: data, name: data,order:1});
   }
 
   function closeModal() {

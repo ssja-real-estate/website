@@ -93,6 +93,24 @@ const EditItemModal: React.FC<Props> = (props) => {
                   }}
                 />
               </div>
+              {props.editItemType===EditItemType.EstateType && (
+                <div>
+                  <label>{Strings.order}</label>
+                  <input
+                    className="inputDecoration my-1"
+                    type="number"
+                    value={modalState.order}
+                    onChange={(e: {
+                      currentTarget: { value: string | number };
+                    }) => {
+                      setModalState({
+                        ...modalState,
+                        order: +e.currentTarget.value,
+                      });
+                    }}
+                  />
+                </div>
+              )}
               {props.editItemType === EditItemType.Province ||
               props.editItemType === EditItemType.City ||
               props.editItemType === EditItemType.Neighborhood ? (

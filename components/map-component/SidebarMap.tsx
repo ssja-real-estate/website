@@ -276,11 +276,12 @@ const SidebarMap: FC<Props> = (props) => {
     setSelectedEstateType({
       id: data,
       name: data,
+      order:1,
     });
     console.log(selectedEstateType);
 
     setNoFilterExists((prev) => false);
-  }
+  } 
 
   async function searchEstate() {
    
