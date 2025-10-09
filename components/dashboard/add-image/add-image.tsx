@@ -7,11 +7,12 @@ import * as MdIcon from "react-icons/md";
 import Image  from "next/image";
 import { baseApiUrl } from "mapbox-gl";
 import BaseService from "../../../services/api/BaseService";
+import GlobalState from "../../../global/states/GlobalState";
 
 
 const SliderDashboard=() => {
 
-   const state = useRecoilValue(globalState);
+   const state = useRecoilValue<GlobalState>(globalState);
    const [isLoading, setIsLoading] = useState(false);
 
    const[sliders,setSliders]=useState<Slider[]>([])

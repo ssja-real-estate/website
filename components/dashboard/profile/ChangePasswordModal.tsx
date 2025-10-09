@@ -5,6 +5,7 @@ import Strings from "../../../data/strings";
 import { globalState } from "../../../global/states/globalStates";
 import UserService from "../../../services/api/UserService/UserService";
 import { profileModalState } from "./ProfileState";
+import GlobalState from "../../../global/states/GlobalState";
 
 interface Props {
   userId: string;
@@ -18,7 +19,7 @@ const ChangePasswordModal: React.FC<Props> = ({ userId, reloadScreen }) => {
   const [confirmationPassword, setConfirmationPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const userService = useRef(new UserService());
   const mounted = useRef(true);
 

@@ -7,9 +7,10 @@ import MortgageRentSale from "../components/home/mortgage-rent-sale/MortgageRent
 import Ourmoto from "../components/our-moto/Ourmoto";
 import Strings from "../data/strings";
 import { globalState } from "../global/states/globalStates";
+import GlobalState from "../global/states/GlobalState";
 
 const Home: NextPage = () => {
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   return (
     <html lang="fa-IR">
       <Head>

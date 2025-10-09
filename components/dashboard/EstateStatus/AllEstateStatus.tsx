@@ -11,13 +11,14 @@ import EstateService from "../../../services/api/EstateService/EstateService";
 import ModalAlert from "../../modal/ModalAlert";
 import Spiner from "../../spinner/Spiner";
 import EstateCardDashboard from "./EstateCardDashboard";
+import GlobalState from "../../../global/states/GlobalState";
 
 const AllEstateStatus: FC = () => {
   const estateService = useRef(new EstateService());
   const [estates, setEstates] = useState<Estate[]>();
   const router = useRouter();
   const setEstateScreenState = useSetRecoilState(estateScreenAtom);
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const mounted = useRef(true);
   const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {

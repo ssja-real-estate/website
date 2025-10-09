@@ -28,7 +28,7 @@ class EstateTypeService extends BaseService {
     try {
       await this.Api.post(
         this.estateTypeUrl,
-        { name: estateType.name },
+        { name: estateType.name ,order:estateType.order},
         this.config
       );
     } catch (error: any) {
@@ -46,6 +46,7 @@ class EstateTypeService extends BaseService {
         `${this.estateTypeUrl}/${estateType.id}`,
         {
           name: estateType.name,
+          order:estateType.order,
         },
         this.config
       );

@@ -14,6 +14,7 @@ import Spiner from "../../../../spinner/Spiner";
 import * as AiIcon from "react-icons/ai";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcon from "react-icons/md";
+import GlobalState from "../../../../../global/states/GlobalState";
 const DelegationTypesList: FC = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
@@ -25,7 +26,7 @@ const DelegationTypesList: FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const service = useRef(new DelegationTypeService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);

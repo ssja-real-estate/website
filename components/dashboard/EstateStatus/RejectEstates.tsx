@@ -7,11 +7,12 @@ import { globalState } from "../../../global/states/globalStates";
 import EstateCardDashboard from "./EstateCardDashboard";
 import { rejectEstateAtom } from "./RejectEstateModal/RejectEstateModalState";
 import ModalAlert from "../../modal/ModalAlert";
+import GlobalState from "../../../global/states/GlobalState";
 
 const RejectEstates: FC = () => {
   const estateService = useRef(new EstateService());
   const [rejectedEstate, setRejectedEstate] = useState<Estate[]>();
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [rejectEstateState, setRejectEstateState] =

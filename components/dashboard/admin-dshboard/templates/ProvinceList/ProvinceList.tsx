@@ -16,6 +16,7 @@ import * as BiIcon from "react-icons/bi";
 import * as MdIcon from "react-icons/md";
 import Spiner from "../../../../spinner/Spiner";
 import React from "react";
+import GlobalState from "../../../../../global/states/GlobalState";
 function ProvinceList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [removedItems, setRemovedItems] = useState<Province[]>([]);
@@ -28,7 +29,7 @@ function ProvinceList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const service = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);

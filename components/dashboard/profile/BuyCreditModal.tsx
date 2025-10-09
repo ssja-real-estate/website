@@ -7,6 +7,7 @@ import { globalState } from "../../../global/states/globalStates";
 import { Payment } from "../../../global/types/Payment";
 import PaymentService from "../../../services/api/PaymentService/PaymentService";
 import { profileModalState } from "./ProfileState";
+import GlobalState from "../../../global/states/GlobalState";
 
 interface Props {
   payments: Payment[];
@@ -17,7 +18,7 @@ const BuyCreditModal: React.FC<Props> = ({ payments, reloadScreen }) => {
   const [modalState, setModalState] = useRecoilState(profileModalState);
   const [selectedPaymentId, setSelectedPaymentId] = useState("");
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const paymentService = useRef(new PaymentService());
   const mounted = useRef(true);
 

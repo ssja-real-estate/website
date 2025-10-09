@@ -9,7 +9,6 @@ import * as IoIcon from "react-icons/io";
 import * as GoIcon from "react-icons/go";
 
 import Strings from "../../data/strings";
-import { globalState } from "../../global/states/globalStates";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Role } from "../../global/types/User";
 import { ownerSectionAtom } from "../dashboard/owner-dashboard/OwnerDashboard";
@@ -19,6 +18,9 @@ import { Document } from "../../global/types/document";
 import DocumentService from "../../services/api/DocumentService/DocumentService";
 
 import { MdKeyboardArrowDown } from "react-icons/md";
+import GlobalState from "../../global/states/GlobalState";
+import { globalState } from "../../global/states/globalStates";
+
 
 /* ---------- type ---------- */
 interface MenuItem {
@@ -154,8 +156,8 @@ function DesktopMenu({
 /* ==================== Navbar ==================== */
 function Navbar() {
   /* -------- recoil / router -------- */
-  const state = useRecoilValue(globalState);
-  const setGlobalState = useSetRecoilState(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
+  const setGlobalState = useSetRecoilState<GlobalState>(globalState);
   const [section, setSection] = useRecoilState(ownerSectionAtom);
   const [modalState, setModalState] = useRecoilState(commissionModalState);
   const router = useRouter();

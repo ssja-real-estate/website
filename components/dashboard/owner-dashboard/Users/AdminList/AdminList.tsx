@@ -12,6 +12,7 @@ import Spiner from "../../../../spinner/Spiner";
 import * as TbIcon from "react-icons/tb";
 import * as FaIcon from "react-icons/fa";
 import { TabList, Tabs } from "react-tabs";
+import GlobalState from "../../../../../global/states/GlobalState";
 
 const AdminList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -19,7 +20,7 @@ const AdminList = (): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState<User>(defaultUser);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const userService = useRef(new UserService());
   const mounted = useRef(true);
 
@@ -115,25 +116,7 @@ const AdminList = (): JSX.Element => {
                           <span>{user.mobile}</span>
                         </TabList>
 
-                        // <li
-                        //   key={index}
-                        //   // action
-                        //   // href={`#user${user.id}`}
-                        //   onClick={() => {
-                        //     setSelectedOwner({
-                        //       id: user.id,
-                        //       mobile: user.mobile,
-                        //       role: user.role,
-                        //       name: user.name,
-                        //     });
-                        //   }}
-                        // >
-                        //   <div className="d-flex justify-content-center">
-                        //     <span className="user-phone" style={{ width: 150 }}>
-                        //       {user.mobile}
-                        //     </span>
-                        //   </div>
-                        // </li>
+                    
                       );
                     })}
                 </Tabs>
@@ -146,17 +129,7 @@ const AdminList = (): JSX.Element => {
                     <h3 className="mb-4 text-xl text-center">
                       {Strings.adminInfo}
                     </h3>
-                    {/* {owners.map((user, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className=""
-                        //  eventKey={`#user${user.id}`}
-                      >
-                   
-                      </div>
-                    );
-                  })} */}
+                 
                     <div className="w-full shadow-md my-2 rounded-xl p-3 flex flex-col items-center justify-center border">
                       <div className="flex flex-row item-cnter justify-center font-bold gap-1 py-2">
                         <span className="">{selectedAdmin.mobile}</span>

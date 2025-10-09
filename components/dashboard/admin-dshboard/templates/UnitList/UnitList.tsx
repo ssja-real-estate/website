@@ -15,6 +15,7 @@ import * as AiIcon from "react-icons/ai";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcon from "react-icons/md";
 import React from "react";
+import GlobalState from "../../../../../global/states/GlobalState";
 
 function UnitList() {
   const [units, setUnits] = useState<Unit[]>([]);
@@ -27,7 +28,7 @@ function UnitList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const service = useRef(new UnitService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);

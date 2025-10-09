@@ -11,12 +11,13 @@ import EstateService from "../../../services/api/EstateService/EstateService";
 import NewViewHouses from "../view-houses/NewViewHouses";
 import Image from "next/image";
 import ShimerAnimationEstateCard from "../../ShimerAnimitionEstateCard/ShimerAnimationEstateCard";
+import GlobalState from "../../../global/states/GlobalState";
 
 function MortgageRentSale() {
   const [activeIndex, setActiveIndex] = useState(0);
   const estateService = useRef(new EstateService());
   const [allEstate, setAllEstate] = useState<Estate[]>([]);
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const mounted = useRef(true);
   const tabData: string[] = [Strings.mortgage, Strings.rent, Strings.sale];
   const indexHandler = (index: number) => {

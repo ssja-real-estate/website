@@ -29,7 +29,7 @@ import Spiner from "../spinner/Spiner";
 import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
 import { estateScreenAtom, ScreenType } from "../../global/states/EstateScreen";
-import { imagesBaseUrl } from "../../global/states/GlobalState";
+import GlobalState, { imagesBaseUrl } from "../../global/states/GlobalState";
 import Image from "next/image";
 
 interface Props {
@@ -64,7 +64,7 @@ const EditEstateSideBar: FC<Props> = (props) => {
   const [formData, setFormData] = useState<FormData>(new FormData());
   const [imagesCount, setImagesCount] = useState<number>(0);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const formService = useRef(new FormService());
   const delegationTypeService = useRef(new DelegationTypeService());
   const estateTypeService = useRef(new EstateTypeService());

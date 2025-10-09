@@ -1,13 +1,13 @@
 interface EstateType {
   id: string;
   name: string;
-  order:number;
+  order?:number;
 }
 
 export const defaultEstateType: EstateType = {
   id: "",
   name: "",
-  order:1,
+  order:0,
 };
 
 export default EstateType;

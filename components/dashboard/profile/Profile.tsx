@@ -3,7 +3,7 @@ import Router, { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import Strings from "../../../data/strings";
-import { defaultGlobalState } from "../../../global/states/GlobalState";
+import GlobalState, { defaultGlobalState } from "../../../global/states/GlobalState";
 import { globalState } from "../../../global/states/globalStates";
 import { Payment } from "../../../global/types/Payment";
 import User, { defaultUser } from "../../../global/types/User";
@@ -20,7 +20,7 @@ import * as FaIcon from "react-icons/fa";
 const Profile: React.FC<{ children?: JSX.Element }> = (props) => {
   const router = useRouter();
   const [modalState, setModalState] = useRecoilState(profileModalState);
-  const [state, setGlobalState] = useRecoilState(globalState);
+  const [state, setGlobalState] = useRecoilState<GlobalState>(globalState);
   const [user, setUser] = useState<User>(defaultUser);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(false);

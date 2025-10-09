@@ -15,6 +15,7 @@ import EditItemModal from "../../../../EditItemModal/EditItemModal";
 import Strings from "../../../../../data/strings";
 import Spiner from "../../../../spinner/Spiner";
 import React from "react";
+import GlobalState from "../../../../../global/states/GlobalState";
 function PaymentList() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [removedItems, setRemovedItems] = useState<Payment[]>([]);
@@ -23,7 +24,7 @@ function PaymentList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const service = useRef(new PaymentService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);

@@ -15,6 +15,7 @@ import * as MdIcon from "react-icons/md";
 import Strings from "../../../../../data/strings";
 import EditItemModal from "../../../../EditItemModal/EditItemModal";
 import React from "react";
+import GlobalState from "../../../../../global/states/GlobalState";
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [removedItems, setRemovedItems] = useState<EstateType[]>([]);
@@ -27,7 +28,7 @@ function EstateTypesList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const service = useRef(new EstateTypeService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
@@ -43,6 +44,7 @@ function EstateTypesList() {
   }, [state.token]);
 
   useEffect(() => {
+
     if (modalState.editMap[EditItemType.EstateType]) {
       editEstateType();
     }
@@ -54,10 +56,12 @@ function EstateTypesList() {
   }, [modalState.editMap[EditItemType.EstateType]]);
 
   const loadData = async () => {
+    console.log("*****************************************");
     if (!loading) {
       setLoading((prev) => true);
     }
     const data = await service.current.getAllEstateTypes();
+    console.log("Data=",data);
     if (!mounted.current) {
       setLoading((prev) => false);
       return;
@@ -139,14 +143,7 @@ function EstateTypesList() {
         <h4 className="text-2xl text-dark-blue font-bold">
           {Strings.estateTypes}
         </h4>
-        {/* <button
-          className="refresh-btn d-inline rounded-circle"
-          onClick={async () => {
-            await loadData();
-          }}
-        >
-          refresh
-        </button> */}
+     
       </div>
 
       <div className="my-5 flex flex-col gap-7 justify-between">
@@ -155,6 +152,7 @@ function EstateTypesList() {
             <Spiner />
           ) : (
             <ul className="flex flex-row flex-wrap gap-2">
+         
               {estateTypes.map((estateType, index) => {
                 return (
                   <React.Fragment key={index}>
@@ -165,19 +163,7 @@ function EstateTypesList() {
                           ? "bg-red-100 text-red-800 hover:text-white text-sm hover:bg-red-800"
                           : "bg-[#f6f6f6]/60 text-dark-blue text-sm "
                       }  cursor-default transition-all duration-200`}
-                      // title={delegationType.name}
-                      // onRemove={() => {
-                      //   selectItemAsDeleted(delegationType);
-                      // }}
-                      // onEdit={() => {
-                      //   const newMap = buildMap(EditItemType.DelegationType);
-                      //   setModalState({
-                      //     ...defaultEditItemModalState,
-                      //     id: delegationType.id,
-                      //     value: delegationType.name,
-                      //     displayMap: [...newMap],
-                      //   });
-                      // }}
+                  
                     >
                       <span className="font-bold">{estateType.name}</span>
                       <div className="flex flex-row gap-1">
@@ -188,6 +174,7 @@ function EstateTypesList() {
                               ...defaultEditItemModalState,
                               id: estateType.id,
                               value: estateType.name,
+                              order:estateType.order??1,
                               displayMap: [...newMap],
                             });
                           }}

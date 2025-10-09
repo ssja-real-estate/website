@@ -16,11 +16,12 @@ import commissionModalState from "../CommissionModal/CommissionModalState";
 import CommissionModal from "../CommissionModal/CommissionModal";
 import Image from "next/image";
 import DocumentService from "../../services/api/DocumentService/DocumentService";
+import GlobalState from "../../global/states/GlobalState";
 
 function Navbar() {
   const [modalState, setModalState] = useRecoilState(commissionModalState);
-  const state = useRecoilValue(globalState);
-  const setGlobalState = useSetRecoilState(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
+  const setGlobalState = useSetRecoilState<GlobalState>(globalState);
   const router = useRouter();
   const [section, setSection] = useRecoilState(ownerSectionAtom);
   const [isUserValide, setIsUserValid] = useState(false);

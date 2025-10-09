@@ -12,6 +12,7 @@ import * as FaIcon from "react-icons/fa";
 import { TabList, Tabs } from "react-tabs";
 import Spiner from "../../../../spinner/Spiner";
 import Strings from "../../../../../data/strings";
+import GlobalState from "../../../../../global/states/GlobalState";
 
 function UsersList() {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -19,7 +20,7 @@ function UsersList() {
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User>(defaultUser);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const userService = useRef(new UserService());
   const mounted = useRef(true);
 

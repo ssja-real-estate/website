@@ -5,10 +5,11 @@ import DocumentService from "../../../services/api/DocumentService/DocumentServi
 import { Document } from "../../../global/types/document";
 import * as MdIcon from "react-icons/md";
 import Select from "../../formcomponent/Select";
+import GlobalState from "../../../global/states/GlobalState";
 
 const LawDashboard=() => {
 
-   const state = useRecoilValue(globalState);
+   const state = useRecoilValue<GlobalState>(globalState);
    const [doctype,setDoctype]=useState(1)
    const[documents,setDocuments]=useState<Document[]>([])
    const documentService=useRef( new DocumentService())

@@ -9,12 +9,11 @@ import editItemModalState, {
   EditItemType,
 } from "../../../../EditItemModal/EditItemModalState";
 import Spiner from "../../../../spinner/Spiner";
-import * as AiIcon from "react-icons/ai";
-import * as BiIcon from "react-icons/bi";
-import * as MdIcon from "react-icons/md";
+
 import Strings from "../../../../../data/strings";
 import EditItemModal from "../../../../EditItemModal/EditItemModal";
 import React from "react";
+import GlobalState from "../../../../../global/states/GlobalState";
 function EstateTypesList() {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [removedItems, setRemovedItems] = useState<EstateType[]>([]);
@@ -27,7 +26,7 @@ function EstateTypesList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const service = useRef(new EstateTypeService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);
@@ -54,6 +53,7 @@ function EstateTypesList() {
   }, [modalState.editMap[EditItemType.EstateType]]);
 
   const loadData = async () => {
+    console.log("asdfasdfadsfadfasdfadfa");
     if (!loading) {
       setLoading((prev) => true);
     }
@@ -62,7 +62,8 @@ function EstateTypesList() {
       setLoading((prev) => false);
       return;
     }
-
+    console.log("*********************************************");
+    console.log(data);
     setEstateTypes(data);
     setLoading((prev) => false);
   };
@@ -98,7 +99,7 @@ function EstateTypesList() {
       name: modalState.value,
       order:modalState.order ??1 ,
     });
-
+   console.log(newType);
     if (newType) {
       setEstateTypes((types) => {
         let prevType = types.find((t) => t.id === newType!.id);

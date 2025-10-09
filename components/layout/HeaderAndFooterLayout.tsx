@@ -6,6 +6,7 @@ import Navbar from "../navbar/Navbar";
 import { useRecoilValue } from "recoil";
 import { globalState } from "../../global/states/globalStates";
 import BottomNavigationBar from "../../components/buttonnavigation/buttonnavigationbar";
+import GlobalState from "../../global/states/GlobalState";
 
 // ---- هوک ساده تشخیص موبایل بر اساس breakpoint Tailwind (md=768px) ----
 function useIsMobile(breakpoint: number = 768): boolean {
@@ -27,7 +28,7 @@ interface Props {
 }
 
 const HeaderAndFooterLayout = ({ children }: Props) => {
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const [loaded, setLoaded] = useState(false);
   const router = useRouter();
   const isMobile = useIsMobile(); // true زمانی‌که عرض < md

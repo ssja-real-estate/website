@@ -5,8 +5,9 @@ import AdminDashboard from "../../components/dashboard/admin-dshboard/AdminDashb
 import OwnerDashboard from "../../components/dashboard/owner-dashboard/OwnerDashboard";
 import UserDashboard from "../../components/dashboard/user-dashboard/UserDashboard";
 import { Role } from "../../global/types/User";
+import GlobalState from "../../global/states/GlobalState";
 const Dashboard: NextPage = () => {
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   console.log(state.role);
   return (
     <div className="container">

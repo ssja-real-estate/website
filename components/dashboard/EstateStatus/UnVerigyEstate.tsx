@@ -13,6 +13,7 @@ import CustomModal from "../../modal/CustomModal";
 import Strings from "../../../data/strings";
 import RejectModal from "../../modal/RejectModal";
 import ModalAlert from "../../modal/ModalAlert";
+import GlobalState from "../../../global/states/GlobalState";
 
 const UnVerigyEstate: FC = () => {
   const estateService = useRef(new EstateService());
@@ -20,7 +21,7 @@ const UnVerigyEstate: FC = () => {
     useRecoilState(rejectEstateAtom);
   const [unVerifyEstates, setUnVerifyEstates] = useState<Estate[]>();
   const [loading, setLoading] = useState(true);
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const [errorMessage, setErrorMessage] = useState("");
   const mounted = useRef(true);
   useEffect(() => {

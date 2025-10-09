@@ -12,13 +12,14 @@ import Spiner from "../../../../spinner/Spiner";
 import * as TbIcon from "react-icons/tb";
 import * as FaIcon from "react-icons/fa";
 import { TabList, Tabs } from "react-tabs";
+import GlobalState from "../../../../../global/states/GlobalState";
 const AgentList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [agents, setAgents] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<User>(defaultUser);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const userService = useRef(new UserService());
   const mounted = useRef(true);
 

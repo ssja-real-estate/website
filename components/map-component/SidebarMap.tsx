@@ -1,5 +1,5 @@
 import React, { FC, useState, useRef, useEffect } from "react";
-import * as FiIcon from "react-icons/fi";
+
 import * as RiIcon from "react-icons/ri";
 import * as BSIcon from "react-icons/bs";
 
@@ -27,14 +27,15 @@ import EstateService from "../../services/api/EstateService/EstateService";
 import SearchService from "../../services/api/SearchService/SearchService";
 import { validateForm } from "../../services/utilities/fieldValidations";
 import { defaultForm, EstateForm } from "../../global/types/EstateForm";
-import { useRouter } from "next/router";
+
 import { Field, FieldType } from "../../global/types/Field";
 import SearchFilter from "../../global/types/Filter";
 import Spiner from "../spinner/Spiner";
-import ReactDOM from "react-dom";
+
 import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
 import AdvanceFilterButton from "./AdvanceFilterButton";
+import GlobalState from "../../global/states/GlobalState";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
@@ -71,7 +72,7 @@ const SidebarMap: FC<Props> = (props) => {
   const [formData, setFormData] = useState<FormData>(new FormData());
   const [imagesCount, setImagesCount] = useState<number>(0);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const formService = useRef(new FormService());
   const delegationTypeService = useRef(new DelegationTypeService());
   const estateTypeService = useRef(new EstateTypeService());

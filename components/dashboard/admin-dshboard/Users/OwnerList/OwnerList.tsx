@@ -12,10 +12,11 @@ import Spiner from "../../../../spinner/Spiner";
 import * as TbIcon from "react-icons/tb";
 import * as FaIcon from "react-icons/fa";
 import { TabList, Tabs } from "react-tabs";
+import GlobalState from "../../../../../global/states/GlobalState";
 const OwnerList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>("");
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const [owners, setOwners] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedOwner, setSelectedOwner] = useState<User>(defaultUser);

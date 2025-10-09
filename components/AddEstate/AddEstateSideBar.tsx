@@ -32,6 +32,7 @@ import Modal from "../modal/Modal";
 import ModalOption from "../../global/types/ModalOption";
 
 import { mapClickState } from "../../global/states/mapClickStates";
+import GlobalState from "../../global/states/GlobalState";
 
 interface Props {
   setCore: (mapinfo: MapInfo) => void;
@@ -62,7 +63,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
   const [formData, setFormData] = useState<FormData>(new FormData());
   const [imagesCount, setImagesCount] = useState<number>(0);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const mapClick = useRecoilValue(mapClickState);
 
   const formService = useRef(new FormService());

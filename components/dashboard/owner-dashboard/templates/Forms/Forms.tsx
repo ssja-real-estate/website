@@ -29,6 +29,7 @@ import EditSection from "./EditSection";
 import Spiner from "../../../../spinner/Spiner";
 import { getFieldTypeAndNecessity } from "../../../../../services/utilities/stringUtility";
 import * as HiIcon from "react-icons/hi";
+import GlobalState from "../../../../../global/states/GlobalState";
 const Forms = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
@@ -55,7 +56,7 @@ const Forms = () => {
     useState<boolean>(false);
   const [modalSection, setModalSection] = useRecoilState(modalSectionAtom);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const formService = useRef(new FormService());
   const delegationTypeService = useRef(new DelegationTypeService());
   const estateTypeService = useRef(new EstateTypeService());

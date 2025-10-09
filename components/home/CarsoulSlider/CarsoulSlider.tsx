@@ -14,8 +14,9 @@ import Image from "next/image";
 import { Slider } from "../../../global/types/slider";
 import SliderService from "../../../services/api/SliderService/SliderService";
 import { globalState } from "../../../global/states/globalStates";
+import GlobalState from "../../../global/states/GlobalState";
 function CarsoulSlider() {
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const[sliders,setSliders]=useState<Slider[]>([])
   const sliderService=useRef( new SliderService())
   const getSliders=async() => {

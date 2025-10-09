@@ -20,6 +20,7 @@ import * as AiIcon from "react-icons/ai";
 import * as BiIcon from "react-icons/bi";
 import * as MdIcon from "react-icons/md";
 import CityList from "../CityList/CityList";
+import GlobalState from "../../../../../global/states/GlobalState";
 function NeighborhoodList() {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [cities, setCities] = useState<City[]>([]);
@@ -37,7 +38,7 @@ function NeighborhoodList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const locationService = useRef(new LocationService());
   const mounted = useRef(true);
   const modalMounted = useRef(true);

@@ -12,6 +12,7 @@ import Spiner from "../../../../spinner/Spiner";
 import * as TbIcon from "react-icons/tb";
 import * as FaIcon from "react-icons/fa";
 import { TabList, Tabs } from "react-tabs";
+import GlobalState from "../../../../../global/states/GlobalState";
 
 const AdminList = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -19,7 +20,7 @@ const AdminList = (): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState<User>(defaultUser);
 
-  const state = useRecoilValue(globalState);
+  const state = useRecoilValue<GlobalState>(globalState);
   const userService = useRef(new UserService());
   const mounted = useRef(true);
 
