@@ -62,8 +62,7 @@ function EstateTypesList() {
       setLoading((prev) => false);
       return;
     }
-    console.log("*********************************************");
-    console.log(data);
+   
     setEstateTypes(data);
     setLoading((prev) => false);
   };
@@ -99,7 +98,6 @@ function EstateTypesList() {
       name: modalState.value,
       order:modalState.order ??1 ,
     });
-   console.log(newType);
     if (newType) {
       setEstateTypes((types) => {
         let prevType = types.find((t) => t.id === newType!.id);

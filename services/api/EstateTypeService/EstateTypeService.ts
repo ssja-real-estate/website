@@ -45,6 +45,7 @@ class EstateTypeService extends BaseService {
       const response = await this.Api.put(
         `${this.estateTypeUrl}/${estateType.id}`,
         {
+          id: estateType.id,
           name: estateType.name,
           order:estateType.order,
         },
