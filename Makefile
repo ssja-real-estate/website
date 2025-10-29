@@ -5,20 +5,15 @@ STAGE           := prod15
 HOST_PORT       := 3000
 CONTAINER_PORT  := 3000
 
-# ===================================================================
-# ===      متغیرهای مشتق شده (این بخش را تغییر ندهید)      ===
-# ===================================================================
+
 FULL_IMAGE_NAME := $(DOCKER_USERNAME)/$(IMAGE_BASENAME)
 IMAGE_TAG       := $(FULL_IMAGE_NAME)-$(STAGE)
 CONTAINER_NAME  := $(IMAGE_BASENAME)-$(STAGE)
 
-# این متغیر به ما اجازه می‌دهد که کلید را از خط فرمان پاس دهیم (برای CI/CD)
-# اگر از خط فرمان پاس داده نشود، از فایل .env.frontend می‌خواند (برای استفاده لوکال)
+
 API_KEY ?= $(shell grep NEXT_PUBLIC_MAPIR_KEY .env.frontend | cut -d '=' -f2)
 
-# ===================================================================
-# ===                       دستورات اصلی (Targets)                       ===
-# ===================================================================
+
 .DEFAULT_GOAL := help
 .PHONY: help build-local run-prod stop exec push-remote pull-remote login
 
