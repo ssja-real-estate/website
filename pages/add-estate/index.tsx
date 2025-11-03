@@ -63,8 +63,7 @@ const AddEstate: NextPage = () => {
           </div>
         </div>
 
-        {/* Bottom Sheet متحرک با Framer Motion */}
-        <motion.div
+            <motion.div
           className="absolute bottom-0 left-0 right-0 z-30 bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 touch-none"
           style={{ y, opacity: sheetOpacity }}
           drag="y"
@@ -74,7 +73,7 @@ const AddEstate: NextPage = () => {
           animate={{ y: isFormOpen ? 0 : 320 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          {/* دسته‌ی کشیدن */}
+      
           <div
             className="w-full flex justify-center py-2 cursor-grab active:cursor-grabbing"
             onClick={() => setIsFormOpen((v) => !v)}
@@ -82,7 +81,6 @@ const AddEstate: NextPage = () => {
             <div className="h-1.5 w-10 bg-slate-300 rounded-full" />
           </div>
 
-          {/* حالت خلاصه (بسته) */}
           {!isFormOpen && (
             <div className="flex justify-between items-center px-4 pb-3">
  
