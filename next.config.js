@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-     
+  output: 'standalone',
+  productionBrowserSourceMaps: false,
       //  output: 'export', // ✅ اضافه شده برای static export
   images: {
     // loader: "default",
