@@ -1,7 +1,7 @@
 
 DOCKER_USERNAME := webssja
 IMAGE_BASENAME  := ssja
-STAGE           := prod15
+STAGE           := prod16
 HOST_PORT       := 3000
 CONTAINER_PORT  := 3000
 
