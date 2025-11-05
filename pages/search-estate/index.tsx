@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 
 import SidebarMap from "../../components/map-component/SidebarMap";
-import SsjaMapIr from "../../components/map-component/SajaMapir"; // 👈 جایگزین با کامپوننت واقعی نقشه
+import SsjaMapIr from "../../components/map-component/SajaMapir"; 
 import MapInfo, { defaultMapInfo } from "../../global/types/MapInfo";
 import { Estate } from "../../global/types/Estate";
 import NewViewHouses from "../../components/home/view-houses/NewViewHouses";
@@ -33,21 +33,23 @@ const SearchEstate: NextPage = () => {
     <main dir="rtl" className="bg-white text-slate-800">
       {/* ==== DESKTOP ==== */}
       <div className="hidden md:grid md:grid-cols-[22rem_1fr] lg:grid-cols-[24rem_1fr] h-screen">
-        {/* Sidebar فیلترها */}
-        <aside className="border-r border-slate-200 overflow-hidden">
-          <SidebarMap setCore={setCordinate} onSetEstate={setEstate} width={""} />
+        {/* Sidebar در سمت چپ با ارتفاع کامل */}
+        <aside className="border-l border-slate-200 overflow-y-auto h-full bg-white shadow-sm">
+          <SidebarMap setCore={setCordinate} onSetEstate={setEstate} width="" />
         </aside>
 
-        {/* نقشه + لیست */}
-        <section className="relative flex flex-col">
-          <div className="h-[50vh] border-b border-slate-200 relative">
+        {/* بخش راست: نقشه + لیست */}
+        <section className="flex flex-col h-full overflow-hidden">
+          {/* نقشه بالا، نصف ارتفاع */}
+          <div className="flex-1 basis-1/2 relative border-b border-slate-200">
             <SsjaMapIr coordinate={safeCoord} isDragable={true} />
             <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
               <div className="w-4 h-4 rounded-full bg-slate-900/90 shadow ring-2 ring-white" />
             </div>
           </div>
 
-          <div className="flex-grow overflow-y-auto p-4">
+          {/* لیست املاک پایین، نصف دیگر صفحه */}
+          <div className="flex-1 basis-1/2 overflow-y-auto bg-gray-50 p-6">
             {fetchEstate === undefined ? (
               <div className="text-center text-gray-500 p-4">
                 جستجویی انجام نشده است
@@ -57,7 +59,9 @@ const SearchEstate: NextPage = () => {
                 موردی با این مشخصات یافت نشد
               </div>
             ) : (
-              <NewViewHouses allestates={fetchEstate} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <NewViewHouses allestates={fetchEstate} />
+              </div>
             )}
           </div>
         </section>
@@ -99,7 +103,7 @@ const SearchEstate: NextPage = () => {
           )}
         </AnimatePresence>
 
-        {/* Bottom Sheet */}
+        {/* Bottom Sheet برای فیلتر و لیست */}
         <motion.div
           className="absolute bottom-0 left-0 right-0 z-40 backdrop-blur-lg bg-white/95 rounded-t-3xl shadow-2xl border-t border-slate-200"
           style={{ y, opacity: sheetOpacity }}
@@ -110,7 +114,6 @@ const SearchEstate: NextPage = () => {
           animate={{ y: isFilterOpen ? 0 : 500 }}
           transition={{ type: "spring", stiffness: 280, damping: 32 }}
         >
-          {/* دسته کشیدن */}
           <div
             className="w-full flex justify-center py-2 cursor-grab active:cursor-grabbing"
             onClick={() => setIsFilterOpen((v) => !v)}
@@ -118,7 +121,6 @@ const SearchEstate: NextPage = () => {
             <div className="h-1.5 w-10 bg-slate-300 rounded-full" />
           </div>
 
-          {/* محتوای bottom sheet */}
           {isFilterOpen && (
             <div className="h-[calc(85dvh-40px)] overflow-y-auto p-4">
               <h3 className="text-sm font-semibold mb-3 text-gray-700">فیلترهای جستجو</h3>
