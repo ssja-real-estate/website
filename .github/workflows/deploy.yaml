@@ -13,9 +13,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # مرحله ساخت ایمیج اصلاح شده است
+
       - name: Build Docker Image
-        # ما مقدار Secret را مستقیماً به عنوان پارامتر به دستور 'make' پاس می‌دهیم
+
         run: make build-local API_KEY=${{ secrets.NEXT_PUBLIC_MAPIR_KEY }}
 
       - name: Log in to Docker Hub
