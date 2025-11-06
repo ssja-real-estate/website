@@ -46,9 +46,9 @@ const SearchEstate: NextPage = () => {
             </div>
           </div>
 
-          {/* نتایج؛ اسکرول مستقل + گرید تمیز */}
+          {/* نتایج؛ فقط چهار ردیف و اسکرول مرتب */}
           <div className="flex-1 min-h-0 overflow-y-auto bg-gray-50">
-            <div className="mx-auto max-w-[1400px] px-6 py-6">
+            <div className="mx-auto max-w-[1400px] px-6 py-6 h-full">
               {fetchEstate === undefined ? (
                 <div className="text-center text-gray-500">جستجویی انجام نشده است</div>
               ) : fetchEstate.length === 0 ? (
@@ -58,6 +58,9 @@ const SearchEstate: NextPage = () => {
                   className="
                     grid gap-6
                     grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4
+                    grid-rows-4
+                    overflow-y-auto
+                    h-full
                     [&>*]:w-full
                   "
                 >
