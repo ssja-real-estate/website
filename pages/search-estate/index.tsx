@@ -15,7 +15,7 @@ const SearchEstate: NextPage = () => {
 
   const safeCoord = cordinate || { longitude: 51.389, latitude: 35.6892, zoom: 12 };
 
-  // Motion bottom sheet (mobile)
+  // Motion bottom sheet
   const y = useMotionValue(0);
   const sheetOpacity = useTransform(y, [-200, 0, 200], [1, 1, 0.9]);
 
@@ -28,18 +28,15 @@ const SearchEstate: NextPage = () => {
 
   return (
     <main dir="rtl" className="bg-white text-slate-800">
-      {/* ===== DESKTOP ===== */}
+      {/* DESKTOP */}
       <div className="hidden md:grid h-screen grid-cols-[24rem_1fr]">
-        {/* Sidebar سمت چپ */}
         <aside className="h-screen overflow-y-auto border-l border-slate-200 bg-slate-800/90 text-white shadow-md">
           <div className="p-4">
             <SidebarMap setCore={setCordinate} onSetEstate={setEstate} width="full" />
           </div>
         </aside>
 
-        {/* بخش راست: نقشه بالا، املاک پایین */}
         <section className="flex flex-col min-h-0">
-          {/* نقشه بالا */}
           <div className="relative h-[50vh] border-b border-slate-200">
             <SsjaMapIr coordinate={safeCoord} isDragable={true} />
             <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
@@ -47,27 +44,16 @@ const SearchEstate: NextPage = () => {
             </div>
           </div>
 
-          {/* لیست املاک پایین */}
-          <div className="flex-1 min-h-0 overflow-y-auto bg-gray-50">
-            <div className="mx-auto max-w-[1400px] px-6 py-6 h-full">
-              {fetchEstate === undefined ? (
-                // حالت لودینگ: اسکلت کارت‌ها
-                <NewViewHouses allestates={undefined} />
-              ) : fetchEstate.length === 0 ? (
-                <div className="text-center text-gray-500 py-10">
-                  موردی با این مشخصات یافت نشد 😔
-                </div>
-              ) : (
-                <NewViewHouses allestates={fetchEstate} />
-              )}
+          <div className="flex-1 overflow-y-auto bg-gray-50">
+            <div className="mx-auto max-w-[1400px] px-6 py-6">
+              <NewViewHouses allestates={fetchEstate} />
             </div>
           </div>
         </section>
       </div>
 
-      {/* ===== MOBILE ===== */}
+      {/* MOBILE */}
       <div className="md:hidden relative h-[100dvh] overflow-hidden">
-        {/* نقشه تمام‌صفحه */}
         <div className="absolute inset-0">
           <SsjaMapIr coordinate={safeCoord} isDragable={true} />
           <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
@@ -75,7 +61,6 @@ const SearchEstate: NextPage = () => {
           </div>
         </div>
 
-        {/* دکمه باز کردن فیلتر */}
         {!isFilterOpen && (
           <button
             onClick={() => setIsFilterOpen(true)}
@@ -87,7 +72,6 @@ const SearchEstate: NextPage = () => {
           </button>
         )}
 
-        {/* لایه تار هنگام باز بودن */}
         <AnimatePresence>
           {isFilterOpen && (
             <motion.div
@@ -101,7 +85,6 @@ const SearchEstate: NextPage = () => {
           )}
         </AnimatePresence>
 
-        {/* bottom sheet فیلترها */}
         <motion.div
           className="absolute bottom-0 left-0 right-0 z-40 backdrop-blur-lg bg-white/95 rounded-t-3xl shadow-2xl border-t border-slate-200"
           style={{ y, opacity: sheetOpacity }}
@@ -112,7 +95,6 @@ const SearchEstate: NextPage = () => {
           animate={{ y: isFilterOpen ? 0 : 500 }}
           transition={{ type: "spring", stiffness: 280, damping: 32 }}
         >
-          {/* دسته کشیدن */}
           <div
             className="w-full flex justify-center py-2 cursor-grab active:cursor-grabbing"
             onClick={() => setIsFilterOpen((v) => !v)}
@@ -123,17 +105,8 @@ const SearchEstate: NextPage = () => {
           {isFilterOpen && (
             <div className="h-[calc(85dvh-40px)] overflow-y-auto p-4">
               <SidebarMap setCore={setCordinate} onSetEstate={setEstate} width="full" />
-
               <div className="mt-4">
-                {fetchEstate === undefined ? (
-                  <NewViewHouses allestates={undefined} />
-                ) : fetchEstate.length === 0 ? (
-                  <div className="text-center text-gray-500 py-6">
-                    ملکی با مشخصات وارد شده موجود نیست 😔
-                  </div>
-                ) : (
-                  <NewViewHouses allestates={fetchEstate} />
-                )}
+                <NewViewHouses allestates={fetchEstate} isMobile />
               </div>
             </div>
           )}

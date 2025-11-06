@@ -4,28 +4,33 @@ import { Estate } from "../../../global/types/Estate";
 import { EstateCard, EstateCardSkeleton } from "../../Estatecard/estatecard";
 import { parseEstateToCard } from "../../../services/utilities/estateparser";
 
-const NewViewHouses: React.FC<{ allestates?: Estate[] }> = ({ allestates }) => {
-  // وقتی هنوز داده نیومده → اسکلت لودینگ نشون بده
+const NewViewHouses: React.FC<{ allestates?: Estate[]; isMobile?: boolean }> = ({
+  allestates,
+  isMobile = false,
+}) => {
   if (allestates === undefined) {
+    // حالت اسکلت لودینگ
     return (
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <EstateCardSkeleton key={i} />
+      <div
+        className={
+          isMobile
+            ? "flex flex-col gap-4"
+            : "grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+        }
+      >
+        {Array.from({ length: isMobile ? 4 : 8 }).map((_, i) => (
+          <EstateCardSkeleton key={i} isMobile={isMobile} />
         ))}
       </div>
     );
   }
 
-  // وقتی داده اومده ولی خالیه
   if (allestates.length === 0) {
     return (
-      <div className="alertBox text-center p-6 text-gray-600">
-        ملکی با این مشخصات یافت نشد 😔
-      </div>
+      <div className="text-center p-6 text-gray-600">ملکی با این مشخصات یافت نشد 😔</div>
     );
   }
 
-  // انیمیشن کلی برای کارت‌ها
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -48,18 +53,17 @@ const NewViewHouses: React.FC<{ allestates?: Estate[] }> = ({ allestates }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="
-        grid gap-6
-        grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4
-        auto-rows-[minmax(380px,1fr)]
-        px-2 md:px-0
-      "
+      className={
+        isMobile
+          ? "flex flex-col gap-4"
+          : "grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 auto-rows-[minmax(420px,1fr)]"
+      }
     >
       {allestates.map((estate) => {
         const cardData = parseEstateToCard(estate);
         return (
           <motion.div key={cardData.id} variants={cardVariants}>
-            <EstateCard {...cardData} />
+            <EstateCard {...cardData} isMobile={isMobile} />
           </motion.div>
         );
       })}
