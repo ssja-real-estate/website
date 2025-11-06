@@ -15,7 +15,7 @@ const SearchEstate: NextPage = () => {
 
   const safeCoord = cordinate || { longitude: 51.389, latitude: 35.6892, zoom: 12 };
 
-  // --- Motion (برای موبایل bottom sheet) ---
+  // Motion bottom sheet (mobile)
   const y = useMotionValue(0);
   const sheetOpacity = useTransform(y, [-200, 0, 200], [1, 1, 0.9]);
 
@@ -30,16 +30,16 @@ const SearchEstate: NextPage = () => {
     <main dir="rtl" className="bg-white text-slate-800">
       {/* ===== DESKTOP ===== */}
       <div className="hidden md:grid h-screen grid-cols-[24rem_1fr]">
-        {/* سایدبار چپ */}
+        {/* Sidebar سمت چپ */}
         <aside className="h-screen overflow-y-auto border-l border-slate-200 bg-slate-800/90 text-white shadow-md">
           <div className="p-4">
             <SidebarMap setCore={setCordinate} onSetEstate={setEstate} width="full" />
           </div>
         </aside>
 
-        {/* ستون راست: نقشه بالا / املاک پایین */}
+        {/* بخش راست: نقشه بالا، املاک پایین */}
         <section className="flex flex-col min-h-0">
-          {/* --- نقشه (نصف صفحه بالا) --- */}
+          {/* نقشه بالا */}
           <div className="relative h-[50vh] border-b border-slate-200">
             <SsjaMapIr coordinate={safeCoord} isDragable={true} />
             <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
@@ -47,35 +47,18 @@ const SearchEstate: NextPage = () => {
             </div>
           </div>
 
-          {/* --- لیست املاک (پایین) --- */}
+          {/* لیست املاک پایین */}
           <div className="flex-1 min-h-0 overflow-y-auto bg-gray-50">
             <div className="mx-auto max-w-[1400px] px-6 py-6 h-full">
               {fetchEstate === undefined ? (
-                <div className="text-center text-gray-500">
-                  جستجویی انجام نشده است
-                </div>
+                // حالت لودینگ: اسکلت کارت‌ها
+                <NewViewHouses allestates={undefined} />
               ) : fetchEstate.length === 0 ? (
-                <div className="text-center text-gray-500">
-                  موردی با این مشخصات یافت نشد
+                <div className="text-center text-gray-500 py-10">
+                  موردی با این مشخصات یافت نشد 😔
                 </div>
               ) : (
-                // گرید مرتب با ۴ ردیف
-                <div
-                  className="
-                    grid gap-6
-                    grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4
-                    grid-rows-4
-                    overflow-y-auto
-                    h-full
-                    [&>*]:w-full
-                  "
-                >
-                  {fetchEstate.slice(0, 16).map((estate, i) => (
-                    <div key={i} className="w-full">
-                      <NewViewHouses allestates={[estate]} />
-                    </div>
-                  ))}
-                </div>
+                <NewViewHouses allestates={fetchEstate} />
               )}
             </div>
           </div>
@@ -92,7 +75,7 @@ const SearchEstate: NextPage = () => {
           </div>
         </div>
 
-        {/* دکمه بازکردن فیلترها */}
+        {/* دکمه باز کردن فیلتر */}
         {!isFilterOpen && (
           <button
             onClick={() => setIsFilterOpen(true)}
@@ -129,7 +112,7 @@ const SearchEstate: NextPage = () => {
           animate={{ y: isFilterOpen ? 0 : 500 }}
           transition={{ type: "spring", stiffness: 280, damping: 32 }}
         >
-          {/* نوار بالا */}
+          {/* دسته کشیدن */}
           <div
             className="w-full flex justify-center py-2 cursor-grab active:cursor-grabbing"
             onClick={() => setIsFilterOpen((v) => !v)}
@@ -140,14 +123,13 @@ const SearchEstate: NextPage = () => {
           {isFilterOpen && (
             <div className="h-[calc(85dvh-40px)] overflow-y-auto p-4">
               <SidebarMap setCore={setCordinate} onSetEstate={setEstate} width="full" />
+
               <div className="mt-4">
                 {fetchEstate === undefined ? (
-                  <div className="text-center text-gray-500">
-                    جستجویی انجام نشده است
-                  </div>
+                  <NewViewHouses allestates={undefined} />
                 ) : fetchEstate.length === 0 ? (
-                  <div className="text-center text-gray-500">
-                    ملکی با مشخصات وارد شده موجود نیست.
+                  <div className="text-center text-gray-500 py-6">
+                    ملکی با مشخصات وارد شده موجود نیست 😔
                   </div>
                 ) : (
                   <NewViewHouses allestates={fetchEstate} />
