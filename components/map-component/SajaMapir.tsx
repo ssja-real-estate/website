@@ -11,20 +11,9 @@ import type { Estate } from "../../global/types/Estate";
 import { useRouter } from "next/router";
 import type { Feature, FeatureCollection, Point } from "geojson";
 
-/**
- * SajaMapIr.tsx
- * - clustering (geojson source)
- * - hover popup (show image, title, address)
- * - click => router.push(`/estate/{id}`)
- * - when zoom >= threshold only show estates inside current bounds
- *
- * ✅ این فایل با ساختار پروژه‌ی شما (فیلدهای image در dataForm.fields و مسیر تصاویر) منطبق است.
- */
-
 const MAPIR_API_KEY = process.env.NEXT_PUBLIC_MAPIR_KEY || "";
 const STYLE_URL = "https://map.ir/vector/styles/main/mapir-xyz-style.json";
 
-// RTL plugin (مانند نسخهٔ اولیهٔ پروژه)
 if (typeof window !== "undefined" && (maplibregl as any).setRTLTextPlugin) {
   const anyGL = maplibregl as any;
   if (!anyGL.__rtl_inited__) {
@@ -42,9 +31,8 @@ type Props = {
   estates?: Estate[]; // لیست املاک که از سرور می‌آید
 };
 
-const ZOOM_THRESHOLD_SHOW_REGION = 13; // بالاتر از این مقدار، فقط املاک داخل bounds نمایش داده می‌شوند
+const ZOOM_THRESHOLD_SHOW_REGION = 13;
 
-// تایپ دقیق برای FeatureCollection با Geometry Point و properties دلخواه
 type EstateFeature = Feature<Point, {
   id: string;
   title: string;
@@ -59,49 +47,8 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const router = useRouter();
   const setMapClick = useSetRecoilState(mapClickState);
+  const countControlRef = useRef<HTMLDivElement | null>(null);
 
-  // تبدیل لیست املاک به FeatureCollection با تایپ‌های geojson
-  const buildGeoJSON = (arr: Estate[] | undefined): FeatureCollection<Point, Record<string, any>> => {
-    const features: EstateFeature[] = (arr || []).map((est) => {
-      const lat = est?.mapInfo?.latitude ?? 0;
-      const lng = est?.mapInfo?.longitude ?? 0;
-
-      // استخراج تصویر اول از فیلد image (FieldType.Image === 5)
-      let firstImage: string | null = null;
-      try {
-        const imgField = est?.dataForm?.fields?.find((f: any) => f.type === 5);
-        if (imgField && Array.isArray(imgField.value) && imgField.value.length > 0) {
-          firstImage = `https://ssja.ir/api/images/${est.id}/${imgField.value[0]}`;
-        }
-      } catch (e) {
-        firstImage = null;
-      }
-
-      const title = est?.dataForm?.title || "";
-      const addr = est?.address || "";
-
-      return {
-        type: "Feature" as const,
-        geometry: {
-          type: "Point" as const,
-          coordinates: [lng, lat],
-        },
-        properties: {
-          id: est.id,
-          title,
-          address: addr,
-          image: firstImage,
-        },
-      };
-    });
-
-    return {
-      type: "FeatureCollection" as const,
-      features,
-    };
-  };
-
-  // ایمن‌سازی سادهٔ HTML برای جلوگیری از XSS در popup
   const escapeHtml = (unsafe: any) => {
     if (unsafe === null || unsafe === undefined) return "";
     return String(unsafe)
@@ -112,7 +59,56 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
       .replaceAll("'", "&#039;");
   };
 
-  // آیا مختصات درون bounds است؟
+  // تبدیل و فیلتر املاک: فقط املاکی که lat/lng معتبر دارند را تبدیل کن
+  const buildGeoJSON = (arr: Estate[] | undefined): FeatureCollection<Point, Record<string, any>> => {
+    const raw = arr || [];
+    console.debug("[SajaMapIr] Estates received:", raw.length);
+    const features: EstateFeature[] = raw
+      .map((est) => {
+        const lat = Number(est?.mapInfo?.latitude);
+        const lng = Number(est?.mapInfo?.longitude);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+          return null;
+        }
+
+        let firstImage: string | null = null;
+        try {
+          const imgField = est?.dataForm?.fields?.find((f: any) => f.type === 5);
+          if (imgField && Array.isArray(imgField.value) && imgField.value.length > 0) {
+            firstImage = `https://ssja.ir/api/images/${est.id}/${imgField.value[0]}`;
+          }
+        } catch (e) {
+          firstImage = null;
+        }
+
+        const title = est?.dataForm?.title || "";
+        const addr = est?.address || "";
+
+        return {
+          type: "Feature" as const,
+          geometry: {
+            type: "Point" as const,
+            coordinates: [lng, lat],
+          },
+          properties: {
+            id: est.id,
+            title,
+            address: addr,
+            image: firstImage,
+          },
+        } as EstateFeature;
+      })
+      .filter((f): f is EstateFeature => f !== null);
+
+    console.debug("[SajaMapIr] Valid features prepared:", features.length);
+
+    return {
+      type: "FeatureCollection" as const,
+      features,
+    };
+  };
+
   const inBounds = (lat: number, lng: number, bounds: maplibregl.LngLatBounds) => {
     return (
       lat >= bounds.getSouth() &&
@@ -122,7 +118,7 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
     );
   };
 
-  // --- ساخت و پیکربندی اولیهٔ نقشه (یکبار)
+  // ساخت و پیکربندی نقشه
   useEffect(() => {
     if (!MAPIR_API_KEY) {
       console.error("MapIR API Key is missing.");
@@ -131,9 +127,9 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
     if (mapRef.current || !mapContainer.current) return;
 
     let cancelled = false;
+
     (async () => {
       try {
-        // بارگذاری استایل با هدر x-api-key
         const styleRes = await fetch(STYLE_URL, {
           headers: { "x-api-key": MAPIR_API_KEY, Accept: "application/json" },
           cache: "no-store",
@@ -141,7 +137,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
         if (!styleRes.ok) throw new Error(`Failed to load style: ${styleRes.status}`);
         const styleJson = (await styleRes.json()) as StyleSpecification;
 
-        // اطمینان از نمایش name:fa برای لایه‌های label
         if (Array.isArray(styleJson.layers)) {
           styleJson.layers = styleJson.layers.map((ly: any) => {
             if (ly.type === "symbol" && ly.layout && ly.layout["text-field"]) {
@@ -172,7 +167,22 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
         mapRef.current = map;
         map.addControl(new maplibregl.NavigationControl(), "top-left");
 
-        // marker مرکزی (قابل دراگ)
+        // کنترل شمارندهٔ املاک (نمایش در بالا-راست)
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "mapboxgl-ctrl my-estate-count";
+        infoDiv.style.cssText =
+          "background:white;padding:6px 10px;border-radius:6px;margin:8px;font-size:13px;box-shadow:0 1px 4px rgba(0,0,0,0.15)";
+        infoDiv.innerText = "املاک: 0";
+        countControlRef.current = infoDiv;
+        const control: any = {
+          onAdd: () => infoDiv,
+          onRemove: () => {
+            infoDiv.parentNode?.removeChild(infoDiv);
+          },
+        };
+        map.addControl(control, "top-right");
+
+        // marker مرکزی
         centerMarkerRef.current = new maplibregl.Marker({ draggable: isDragable })
           .setLngLat([coordinate.longitude, coordinate.latitude])
           .addTo(map);
@@ -192,18 +202,16 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
           if (lngLat) updatePosition(lngLat);
         });
 
-        // پس از load: اضافه کردن source و لایه‌ها (clustering)
         map.on("load", () => {
-          // منبع GeoJSON با پشتیبانی از clustering
+          // منبع با clustering
           map.addSource("estates", {
             type: "geojson",
-            data: buildGeoJSON(estates || []),
+            data: buildGeoJSON(estates),
             cluster: true,
-            clusterMaxZoom: 14, // زیر این زوم کلاسترها فعالند
+            clusterMaxZoom: 14,
             clusterRadius: 50,
           });
 
-          // لایهٔ دایره‌ای برای cluster
           map.addLayer({
             id: "clusters",
             type: "circle",
@@ -225,7 +233,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
             },
           });
 
-          // شمارش داخل cluster
           map.addLayer({
             id: "cluster-count",
             type: "symbol",
@@ -241,7 +248,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
             },
           });
 
-          // لایه برای نقاط منفرد (unclustered)
           map.addLayer({
             id: "unclustered-point",
             type: "circle",
@@ -255,7 +261,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
             },
           });
 
-          // hover روی نقاط منفرد => popup
           map.on("mouseenter", "unclustered-point", (e) => {
             map.getCanvas().style.cursor = "pointer";
             if (!e.features || !e.features.length) return;
@@ -274,8 +279,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
                 <div style="font-size:13px;"><a href="/estate/${escapeHtml(props.id)}" style="color:#0b74ff;text-decoration:underline">نمایش جزئیات</a></div>
               </div>
             `;
-
-            // پاک کردن popup قبلی و ساخت popup جدید
             popupRef.current?.remove();
             popupRef.current = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
               .setLngLat(coords)
@@ -289,7 +292,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
             popupRef.current = null;
           });
 
-          // کلیک روی نقطه منفرد => رفتن به صفحه ملک
           map.on("click", "unclustered-point", (e) => {
             if (!e.features || !e.features.length) return;
             const props = (e.features[0].properties as any) || {};
@@ -299,7 +301,6 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
             }
           });
 
-          // کلیک روی کلاستر => باز کردن یا zoom
           map.on("click", "clusters", (e) => {
             if (!e.features || !e.features.length) return;
             const clusterId = (e.features[0].properties as any).cluster_id;
@@ -325,26 +326,20 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
       }
     })();
 
-    // cleanup
     return () => {
-      cancelled = true;
       popupRef.current?.remove();
       centerMarkerRef.current?.remove();
       if (mapRef.current) {
         try {
           mapRef.current.remove();
-        } catch (e) {
-          // ignore
-        }
+        } catch (e) {}
       }
       mapRef.current = null;
-      centerMarkerRef.current = null;
-      popupRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // فقط یکبار اجرا شود
+  }, []);
 
-  // مانور نقشه هنگام تغییر coordinate
+  // مانور هنگام تغییر coordinate
   useEffect(() => {
     if (!mapRef.current) return;
     mapRef.current.flyTo({
@@ -355,26 +350,27 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
     centerMarkerRef.current?.setLngLat([coordinate.longitude, coordinate.latitude]);
   }, [coordinate.latitude, coordinate.longitude, coordinate.zoom]);
 
-  // تغییر درایگابل بودن marker مرکزی
   useEffect(() => {
     centerMarkerRef.current?.setDraggable(!!isDragable);
   }, [isDragable]);
 
-  // هر بار که estates تغییر کنند (یا پس از load)، source data را آپدیت می‌کنیم.
-  // اگر zoom >= آستانه، فقط املاک داخل bounds را می‌گذاریم؛ در غیر اینصورت همه را می‌گذاریم (clustering اعمال می‌شود).
+  // به‌روز‌رسانی source بر اساس estates و bounds/zoom
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
     const updateSourceData = (arr: Estate[] | undefined) => {
       const src = map.getSource("estates") as maplibregl.GeoJSONSource | undefined;
-      if (!src) {
-        // ممکن است source هنوز ساخته نشده باشد؛ در این صورت یکبار بعد از load صدا زده خواهد شد
-        return;
-      }
+      if (!src) return;
       const fc = buildGeoJSON(arr || []);
       try {
         src.setData(fc);
+        console.debug("[SajaMapIr] Source set with", fc.features.length, "features");
+        if (countControlRef.current) {
+          countControlRef.current.innerText = `املاک: ${fc.features.length}`;
+        }
+        // اگر فیچر داریم و در زوم پایین هستیم، می‌تونیم به باند فیچرها فیت کنیم (اختیاری)
+        // اگر خواستی این رفتار را فعال کنم بگو
       } catch (e) {
         console.warn("setData error:", e);
       }
@@ -396,11 +392,8 @@ const SsjaMapIr: FC<Props> = ({ coordinate, isDragable, estates }) => {
       }
     };
 
-    // attach events
     map.on("moveend", handleMoveEnd);
     map.on("zoomend", handleMoveEnd);
-
-    // call once immediately
     handleMoveEnd();
 
     return () => {
