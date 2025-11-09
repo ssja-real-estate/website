@@ -1,3 +1,4 @@
+// pages/search-estate/index.tsx
 import { NextPage } from "next";
 import React, { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
@@ -38,7 +39,7 @@ const SearchEstate: NextPage = () => {
 
         <section className="flex flex-col min-h-0">
           <div className="relative h-[50vh] border-b border-slate-200">
-          <SsjaMapIr coordinate={safeCoord} isDragable={true} estates={fetchEstate} />
+            <SsjaMapIr coordinate={safeCoord} isDragable={true} estates={fetchEstate} />
             <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
               <div className="w-4 h-4 rounded-full bg-slate-900/90 shadow ring-2 ring-white" />
             </div>
@@ -55,9 +56,8 @@ const SearchEstate: NextPage = () => {
       {/* MOBILE */}
       <div className="md:hidden relative h-[100dvh] overflow-hidden">
         <div className="absolute inset-0">
-        // pages/search-estate/index.tsx  (قابل جایگزینی)
-
-<SsjaMapIr coordinate={safeCoord} isDragable={true} estates={fetchEstate} />
+          {/* pages/search-estate/index.tsx  (قابل جایگزینی) */}
+          <SsjaMapIr coordinate={safeCoord} isDragable={true} estates={fetchEstate} />
 
           <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
             <div className="w-4 h-4 rounded-full bg-slate-900/90 shadow ring-2 ring-white" />
