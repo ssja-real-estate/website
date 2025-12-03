@@ -11,13 +11,15 @@ import { useRecoilValue } from "recoil";
 import Strings from "../../data/strings";
 import Select from "../formcomponent/Select";
 import City, { defaultCity } from "../../global/types/City";
-// حذف import Neighborhood (لیست کشویی منطقه دیگر نداریم)
+// منطقه را حذف کردیم
 // import Neighborhood, { defaultNeighborhood } from "../../global/types/Neighborhood";
 
 import MapInfo from "../../global/types/MapInfo";
 import { defaultEstate, Estate } from "../../global/types/Estate";
 import EstateType, { defaultEstateType } from "../../global/types/EstateType";
-import DelegationType, { defaultDelegationType } from "../../global/types/DelegationType";
+import DelegationType, {
+  defaultDelegationType,
+} from "../../global/types/DelegationType";
 import FormService from "../../services/api/FormService/FormService";
 import DelegationTypeService from "../../services/api/DelegationTypeService/DelegationTypeService";
 import EstateTypeService from "../../services/api/EstateTypeService/EstateTypeService";
@@ -48,16 +50,18 @@ const AddEstateSidebar: FC<Props> = (props) => {
   const [estateTypes, setEstateTypes] = useState<EstateType[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [cities, setCities] = useState<City[]>([]);
-  // const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]); // حذف شد
 
-  const [selectedProvince, setSelectedProvince] = useState<Province>(defaultProvince);
+  const [selectedProvince, setSelectedProvince] =
+    useState<Province>(defaultProvince);
   const [selectedCity, setSelectedCity] = useState<City>(defaultCity);
-  // const [selectedNeighborhood, setSelectedNeighborhood] = useState<Neighborhood>(defaultNeighborhood); // حذف
 
-  const [selectedDelegationType, setSelectedDelegationType] = useState<DelegationType>(defaultDelegationType);
-  const [selectedEstateType, setSelectedEstateType] = useState<EstateType>(defaultEstateType);
+  const [selectedDelegationType, setSelectedDelegationType] =
+    useState<DelegationType>(defaultDelegationType);
+  const [selectedEstateType, setSelectedEstateType] =
+    useState<EstateType>(defaultEstateType);
 
-  const isDefault: boolean = !selectedDelegationType.name || !selectedEstateType.name ? true : false;
+  const isDefault: boolean =
+    !selectedDelegationType.name || !selectedEstateType.name ? true : false;
 
   const searchService = useRef(new SearchService());
   const [formData, setFormData] = useState<FormData>(new FormData());
@@ -79,10 +83,13 @@ const AddEstateSidebar: FC<Props> = (props) => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [modalOption, setModalOption] = useState<ModalOption>();
 
-  // NEW: آدرس کامل از reverse
+  // آدرس کامل از reverse
   const [addressText, setAddressText] = useState<string>("");
 
-  // env key
+  // برای اسکرول خودکار به فرم در موبایل
+  const formRef = useRef<HTMLDivElement | null>(null);
+
+  // env key – اگر جایی لازم شد
   const MAPIR_API_KEY =
     (process.env.NEXT_PUBLIC_MAPIR_KEY ||
       (import.meta as any)?.env?.VITE_MAPIR_KEY ||
@@ -107,27 +114,35 @@ const AddEstateSidebar: FC<Props> = (props) => {
 
   const addCommas = (num: string): string => {
     const n = parseInt(num);
-    return Number.isNaN(n) ? "" : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return Number.isNaN(n)
+      ? ""
+      : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
   const removeNonNumeric = (num: string) => num.toString().replace(/[^0-9]/g, "");
   const handleChange = (e: string) => setValue(addCommas(removeNonNumeric(e)));
-  const handleChangeMortgage = (e: string) => setMortgage(addCommas(removeNonNumeric(e)));
+  const handleChangeMortgage = (e: string) =>
+    setMortgage(addCommas(removeNonNumeric(e)));
 
   const loadLocations = async () => {
     locationService.current
       .getAllProvinces()
       .then((fetchedProvinces) => {
-        setProvinces(fetchedProvinces.sort((a, b) => a.name.localeCompare(b.name)));
+        setProvinces(
+          fetchedProvinces.sort((a, b) => a.name.localeCompare(b.name))
+        );
         if (selectedProvince?.id) {
-          const province = fetchedProvinces.find((p) => p.id === selectedProvince.id);
+          const province = fetchedProvinces.find(
+            (p) => p.id === selectedProvince.id
+          );
           if (province) {
             setSelectedProvince({ ...province });
-            setCities(() => province.cities.sort((a, b) => a.name.localeCompare(b.name)));
+            setCities(() =>
+              province.cities.sort((a, b) => a.name.localeCompare(b.name))
+            );
             if (selectedCity?.id) {
               const city = province.cities.find((c) => c.id === selectedCity.id);
               if (city) {
                 setSelectedCity({ ...city });
-                // setNeighborhoods(city.neighborhoods); // حذف
               }
             }
           }
@@ -163,34 +178,31 @@ const AddEstateSidebar: FC<Props> = (props) => {
       setLoading(false);
       return;
     }
-    const loadedForm = await formService.current.getForm(selectedDelegationType.id, selectedEstateType.id);
+    const loadedForm = await formService.current.getForm(
+      selectedDelegationType.id,
+      selectedEstateType.id
+    );
     setEstate({ ...estate, dataForm: loadedForm });
-    await loadLocations();
-    await loadOptions();
     setLoading(false);
   }
 
-  // -------------------------------
-  // ===  این useEffect جدید  ===
-  // پس از خط: const mapClick = useRecoilValue(mapClickState);
-  // -------------------------------
+  // واکنش به کلیک روی نقشه + اسکرول خودکار روی موبایل
   useEffect(() => {
-    // وقتی mapClick خالیه کاری نکن
     if (!mapClick) return;
 
     const { lat, lng } = mapClick;
     console.debug("[AddEstate] mapClick received:", { lat, lng });
 
-    // 1) ست کردن estate.mapInfo و mapInfo محلی
+    // 1) ست‌کردن مختصات روی estate
     setEstate((prev) => {
-      const zoomVal = prev?.mapInfo?.zoom ?? 16; // اگر zoom قبلی نبود 16 بذار
+      const zoomVal = prev?.mapInfo?.zoom ?? 16;
       const newMapInfo: MapInfo = {
         latitude: Number(lat),
         longitude: Number(lng),
         zoom: zoomVal,
       };
 
-      setMapInfo(newMapInfo); // برای نمایش محلی
+      setMapInfo(newMapInfo);
       console.debug("[AddEstate] setting estate.mapInfo =", newMapInfo);
 
       return {
@@ -199,7 +211,17 @@ const AddEstateSidebar: FC<Props> = (props) => {
       };
     });
 
-    // 2) reverse-geocode با Nominatim برای پر کردن addressText (فارسی یا انگلیسی)
+    // اسکرول خودکار به فرم در موبایل
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 50);
+    }
+
+    // 2) reverse-geocode برای آدرس
     let cancelled = false;
     (async () => {
       try {
@@ -234,15 +256,14 @@ const AddEstateSidebar: FC<Props> = (props) => {
       cancelled = true;
     };
   }, [mapClick]);
-  // -------------------------------
 
   async function submitEstate() {
-    // حالا به جای «Select منطقه»، آدرس و مختصات الزامی‌اند
+    // الان شرط: استان + شهر + مختصات
     const hasCoords = !!(estate.mapInfo?.latitude && estate.mapInfo?.longitude);
     if (!selectedProvince.id || !selectedCity.id || !hasCoords) {
       setIsShowModal(true);
       setModalOption({
-        message: Strings.enterlocationInfo, // <-- اصلاح‌شده
+        message: Strings.enterlocationInfo,
         closeModal: () => setIsShowModal(false),
       });
       return;
@@ -268,9 +289,10 @@ const AddEstateSidebar: FC<Props> = (props) => {
 
     setLoading(true);
     const fd = new FormData();
-    for (const [k, v] of (formData as any).entries?.() || []) fd.append(k, v as any);
+    for (const [k, v] of (formData as any).entries?.() || []) {
+      fd.append(k, v as any);
+    }
 
-    // برای باگ‌فری بودن، لاگ‌کردن estate قبل از ارسال
     console.debug("[AddEstate] submitting estate object:", estate);
 
     fd.append("estate", JSON.stringify(estate));
@@ -299,7 +321,12 @@ const AddEstateSidebar: FC<Props> = (props) => {
     const province = provinces.find((p) => p.id === provinceId);
     if (!province) return;
 
-    setSelectedProvince({ id: provinceId, name: provinceId, cities: province.cities, mapInfo: province.mapInfo });
+    setSelectedProvince({
+      id: provinceId,
+      name: provinceId,
+      cities: province.cities,
+      mapInfo: province.mapInfo,
+    });
     setSelectedCity(defaultCity);
     setMapInfo(province.mapInfo);
     setCities(province.cities.sort((a, b) => a.name.localeCompare(b.name)));
@@ -316,7 +343,12 @@ const AddEstateSidebar: FC<Props> = (props) => {
     const city = cities.find((c) => c.id === cityId);
     if (!city) return;
 
-    setSelectedCity({ id: cityId, name: cityId, neighborhoods: city.neighborhoods, mapInfo: city.mapInfo });
+    setSelectedCity({
+      id: cityId,
+      name: cityId,
+      neighborhoods: city.neighborhoods,
+      mapInfo: city.mapInfo,
+    });
     if (city.mapInfo) props.setCore(city.mapInfo);
 
     setEstate((prev) => ({
@@ -333,10 +365,6 @@ const AddEstateSidebar: FC<Props> = (props) => {
     setSelectedEstateType({ id: data, name: data, order: 1 });
   }
 
-  function closeModal() {
-    if (props.closeModalHandler) props.closeModalHandler(false);
-  }
-
   function buildFilter() {
     const filter: SearchFilter = {
       header: {
@@ -344,7 +372,6 @@ const AddEstateSidebar: FC<Props> = (props) => {
         estateTypeId: selectedEstateType.id,
         provinceId: selectedProvince.id,
         cityId: selectedCity.id,
-        // neighbordhoodId حذف می‌شود یا  بر حسب نیاز صفر/خالی شود
       },
       form: dataForm.id ? dataForm : undefined,
     };
@@ -352,7 +379,9 @@ const AddEstateSidebar: FC<Props> = (props) => {
   }
 
   function checkFileSizes(files: File[]): boolean {
-    const sumOfFileSizes = files.map((f) => f.size).reduce((a, b) => a + b, 0);
+    const sumOfFileSizes = files
+      .map((f) => f.size)
+      .reduce((a, b) => a + b, 0);
     return sumOfFileSizes > 2048;
   }
 
@@ -404,7 +433,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
               }}
             />
           ) : (
-            <div>{/* سایر انواع فیلدها (مثلاً Select, Range و ... ) در کد اصلی شما هست */}</div>
+            <div>{/* سایر انواع فیلدها در فرم اصلی */}</div>
           )}
         </div>
       );
@@ -416,43 +445,175 @@ const AddEstateSidebar: FC<Props> = (props) => {
       ...estate.dataForm.fields[fieldIndex],
     };
     currentField.value = targetValue;
-    const newForm = { ...estate.dataForm, fields: estate.dataForm.fields.map((f, i) => (i === fieldIndex ? currentField : f)) };
+    const newForm = {
+      ...estate.dataForm,
+      fields: estate.dataForm.fields.map((f, i) =>
+        i === fieldIndex ? currentField : f
+      ),
+    };
     setEstate((prev) => ({ ...prev, dataForm: newForm }));
   }
 
+  function closeModal() {
+    if (props.closeModalHandler) props.closeModalHandler(false);
+  }
+
+  // =======================
+  // UI شبیه EditEstateSideBar
+  // =======================
   return (
-    <div className={`p-4 ${props.width ?? ""}`}>
-      {/* یک UI ساده که فرم و دکمه ارسال را نمایش می‌دهد.
-          قالب کامل UI در فایل اصلیِ پروژه‌ات وجود دارد؛ اینجا تنها بخش کلیدی برای ارسال قرار داده شده است. */}
-      <div className="mb-3">
-        <label className="block text-sm font-medium text-gray-700">آدرس انتخاب شده</label>
-        <div className="mt-1 text-sm text-gray-600">{addressText || Strings.enterlocationInfo}</div>
+    <div
+      className={`MyScroll h-full py-5 px-14 w-96 bg-[rgba(44,62,80,.85)] overflow-y-auto flex flex-col justify-between ${
+        props.width ?? ""
+      }`}
+    >
+      <div className="space-y-4">
+        {/* استان */}
+        <div className="flex flex-col gap-1">
+          <Select
+            options={provinces}
+            defaultValue=""
+            label={{
+              htmlForLabler: "provinces",
+              titleLabel: "استان",
+              labelColor: "white",
+            }}
+            value={selectedProvince?.name}
+            onChange={handleProvinceChange}
+          />
+        </div>
+
+        {/* شهر */}
+        <div className="flex flex-col gap-1">
+          <Select
+            options={cities}
+            defaultValue=""
+            label={{
+              htmlForLabler: "cities",
+              titleLabel: "شهرستان",
+              labelColor: "white",
+            }}
+            value={selectedCity.name}
+            onChange={handleCityChange}
+          />
+        </div>
+
+        {/* نوع درخواست */}
+        <div className="flex flex-col gap-1">
+          <Select
+            options={delegationTypes}
+            value={selectedDelegationType.id}
+            label={{
+              htmlForLabler: "delegationTypes",
+              titleLabel: "نوع درخواست",
+              labelColor: "white",
+            }}
+            onChange={handleDelegationChange}
+          />
+        </div>
+
+        {/* نوع ملک */}
+        <div className="flex flex-col gap-1">
+          <Select
+            options={estateTypes}
+            value={selectedEstateType.id}
+            label={{
+              htmlForLabler: "estateTypes",
+              titleLabel: "نوع ملک",
+              labelColor: "white",
+            }}
+            onChange={handleTypeChange}
+          />
+        </div>
+
+        {/* آدرس انتخاب‌شده از روی نقشه */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-white">آدرس انتخاب شده روی نقشه</label>
+          <div className="text-xs text-gray-100 bg-[rgba(255,255,255,.08)] border border-white/30 rounded px-2 py-2 min-h-[40px]">
+            {addressText || Strings.enterlocationInfo}
+          </div>
+          {!estate.mapInfo?.latitude && (
+            <p className="mt-1 text-[11px] text-yellow-200">
+              روی نقشه یک نقطه انتخاب کنید تا آدرس و مختصات ثبت شود.
+            </p>
+          )}
+        </div>
+
+        {/* نقطه شروع فرم برای اسکرول موبایل */}
+        <div ref={formRef} />
+
+        {/* مبلغ / رهن – اگر می‌خوای واقعاً ذخیره‌شان کنی، بعداً وصلشون کن به estate.dataForm */}
+        <div className="flex flex-col gap-2">
+          <div>
+            <label className="text-xs text-white">مبلغ (تومان)</label>
+            <input
+              type="text"
+              className="w-full mt-1 px-2 py-1 rounded text-left text-sm"
+              dir="ltr"
+              value={value}
+              onChange={(e) => handleChange(e.target.value)}
+              placeholder="مثلاً 2,500,000,000"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-white">رهن / ودیعه (در صورت نیاز)</label>
+            <input
+              type="text"
+              className="w-full mt-1 px-2 py-1 rounded text-left text-sm"
+              dir="ltr"
+              value={mortgage}
+              onChange={(e) => handleChangeMortgage(e.target.value)}
+              placeholder="مثلاً 500,000,000"
+            />
+          </div>
+        </div>
+
+        {/* بدنه فرم داینامیک */}
+        {isDefault ? (
+          <div className="flex justify-center py-4">
+            <Spiner />
+          </div>
+        ) : loading ? (
+          <div className="flex justify-center py-4">
+            <Spiner />
+          </div>
+        ) : (
+          <>
+            <div className="w-full">
+              {estate.dataForm?.fields?.length > 0 ? (
+                mapFields(estate.dataForm.fields, estate.dataForm)
+              ) : (
+                <h4 className="text-white border rounded-2xl px-2 py-2 flex flex-row items-center text-sm justify-between">
+                  {Strings.formDoesNotExist}
+                  <BSIcon.BsFillExclamationTriangleFill />
+                </h4>
+              )}
+            </div>
+            {estate.dataForm.id && (
+              <button
+                className="bg-[#f3bc65] h-10 px-3  border-b-4 border-b-[#d99221] hover:border-b-[#f3bc65] w-full font-bold text-[#222222]  active:border-b-0 active:border-t-4 active:border-t-[#d99221] mt-3"
+                onClick={submitEstate}
+                disabled={loading}
+              >
+                {Strings.addEstate}
+              </button>
+            )}
+          </>
+        )}
       </div>
 
-      {/* در کد اصلی شما فرم پیچیده‌تری هست؛ اینجا فقط دکمه ارسال اضافه شده است */}
-      <div className="mt-4">
+      {/* دکمه بستن در موبایل */}
+      <div className="block md:hidden mt-4">
         <button
-          onClick={() => submitEstate()}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          disabled={loading || isDefault}
+          onClick={closeModal}
+          className="border border-white w-full h-10 px-3 flex flex-row items-center justify-center text-white gap-2 transition-all duration-200 hover:shadow-lg active:pt-2"
         >
-          {loading ? <Spiner /> : "ارسال ملک"}
+          <RiIcon.RiCloseCircleFill className="w-5 h-5" />
+          <span>بستن</span>
         </button>
       </div>
 
-      {/* modal ها، پیام‌ها و سایر بخش‌ها در فایل پروژهٔ اصلی هستند */}
-      {isShowModal && (
-        <Modal
-          options={{
-            message: modalOption?.message ?? "",
-            icon: modalOption?.icon,
-            closeModal: () => {
-              setIsShowModal(false);
-              modalOption?.closeModal && modalOption.closeModal();
-            },
-          }}
-        />
-      )}
+      {isShowModal && modalOption && <Modal options={modalOption} />}
     </div>
   );
 };
