@@ -15,12 +15,6 @@ import GlobalState from "../../../../../global/states/GlobalState";
 const DelegationTypesList: FC = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
-  const [newItems, setNewItems] = useState<DelegationType[]>([]);
-  const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
-    id: "",
-    name: "",
-    order: 0, // فیلد ترتیب برای آیتم جدید
-  });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
 
@@ -52,9 +46,8 @@ const DelegationTypesList: FC = () => {
 
   const loadData = async () => {
     setDelegationTypes([]);
-    if (!loading) {
-      setLoading(true);
-    }
+    if (!loading) setLoading(true);
+
     const data = await service.current.getAllDelegationTypes();
 
     if (!mounted.current) {
@@ -62,12 +55,10 @@ const DelegationTypesList: FC = () => {
       return;
     }
 
-    // اگر خواستی اینجا هم مرتب کنی (در صورتی که بک‌اند مرتب نکرده):
+    // اگر بک‌اند هنوز sort نمی‌کند، این خط را باز کن:
     // data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
     setDelegationTypes(data);
-    console.log(data);
-
     setLoading(false);
   };
 
@@ -81,13 +72,10 @@ const DelegationTypesList: FC = () => {
     });
   };
 
-  const createNewDelegationTypes = async () => {
-    for (let i = 0; i < newItems.length; i++) {
-      const element = newItems[i];
-      await service.current.createDelegationType({
-        name: element.name,
-        order: element.order ?? 0,
-      } as any);
+  const deleteDelegationTypes = async () => {
+    for (let i = 0; i < removedItems.length; i++) {
+      const element = removedItems[i];
+      await service.current.deleteDelegationType(element.id);
     }
   };
 
@@ -96,7 +84,6 @@ const DelegationTypesList: FC = () => {
 
     setLoading(true);
 
-    // مقدار order فعلی آیتم
     const prevType = delegationTypes.find((t) => t.id === modalState.id);
 
     const response = await service.current.editDelegationType({
@@ -123,21 +110,13 @@ const DelegationTypesList: FC = () => {
     setLoading(false);
   };
 
-  const deleteDelegationTypes = async () => {
-    for (let i = 0; i < removedItems.length; i++) {
-      const element = removedItems[i];
-      await service.current.deleteDelegationType(element.id);
-    }
-  };
-
   const saveChanges = async () => {
     setLoading(true);
     await deleteDelegationTypes();
-    await createNewDelegationTypes();
     await loadData();
   };
 
-  // تغییر order برای آیتم‌های موجود
+  // تغییر مقدار order در state
   const handleOrderChange = (id: string, value: string) => {
     const num = value === "" ? undefined : Number(value);
     setDelegationTypes((prev) =>
@@ -152,9 +131,10 @@ const DelegationTypesList: FC = () => {
     );
   };
 
-  // ذخیرهٔ order برای آیتم‌های موجود (روی blur)
+  // روی blur ذخیره در بک‌اند
   const handleOrderBlur = async (delegationType: DelegationType) => {
     if (!delegationType.id) return;
+
     try {
       await service.current.editDelegationType({
         id: delegationType.id,
@@ -166,41 +146,6 @@ const DelegationTypesList: FC = () => {
     } catch (err) {
       console.error("Failed to update order", err);
     }
-  };
-
-  // مدیریت ورود نام و order برای آیتم جدید
-  const handleNewNameChange = (value: string) => {
-    setNewDelegationType((prev) => ({ ...prev, name: value }));
-  };
-
-  const handleNewOrderChange = (value: string) => {
-    const num = value === "" ? 0 : Number(value);
-    setNewDelegationType((prev) => ({
-      ...prev,
-      order: Number.isNaN(num) ? 0 : num,
-    }));
-  };
-
-  const handleAddNewItem = () => {
-    if (!newDelegationType.name.trim()) return;
-
-    const item: DelegationType = {
-      id: "", // بک‌اند id را می‌سازد
-      name: newDelegationType.name.trim(),
-      order: newDelegationType.order ?? 0,
-    };
-
-    setNewItems((prev) => [...prev, item]);
-
-    // می‌توانی هم‌زمان در لیست فعلی نشان بدهی (اختیاری):
-    setDelegationTypes((prev) => [...prev, item]);
-
-    // ریست فرم
-    setNewDelegationType({
-      id: "",
-      name: "",
-      order: 0,
-    });
   };
 
   return (
@@ -218,7 +163,6 @@ const DelegationTypesList: FC = () => {
       </div>
 
       <div className="my-5 flex flex-col gap-7 justify-between">
-        {/* لیست آیتم‌ها */}
         <div>
           {loading ? (
             <Spiner />
@@ -231,20 +175,22 @@ const DelegationTypesList: FC = () => {
                 return (
                   <React.Fragment key={index}>
                     <li
-                      className={`flex flex-row px-2 justify-between gap-3 items-center rounded-full p-2 shadow-xl ${
+                      className={`flex flex-row px-3 justify-between gap-4 items-center rounded-full p-2 shadow-xl ${
                         isRemoved
                           ? "bg-red-100 text-red-800 hover:text-white text-sm hover:bg-red-800"
-                          : "bg-[#f6f6f6]/60 text-dark-blue text-sm "
+                          : "bg-[#f6f6f6]/60 text-dark-blue text-sm"
                       } cursor-default transition-all duration-200`}
                     >
                       <span className="font-bold">{delegationType.name}</span>
 
-                      {/* فیلد order برای آیتم‌های موجود */}
+                      {/* فیلد order که کاربر می‌تونه مقدار بده */}
                       <div className="flex items-center gap-1">
-                        <span className="text-[11px] text-gray-500">ترتیب</span>
+                        <span className="text-[11px] text-gray-500">
+                          ترتیب
+                        </span>
                         <input
                           type="number"
-                          className="w-16 border rounded px-1 py-0.5 text-xs text-center"
+                          className="w-16 border border-gray-300 bg-white rounded px-1 py-0.5 text-xs text-center"
                           value={
                             delegationType.order !== undefined &&
                             delegationType.order !== null
@@ -266,55 +212,6 @@ const DelegationTypesList: FC = () => {
                 );
               })}
             </ul>
-          )}
-        </div>
-
-        {/* بخش افزودن آیتم جدید با name + order */}
-        <div className="mt-4 border-t pt-4">
-          <h5 className="text-sm font-semibold text-dark-blue mb-2">
-            افزودن نوع درخواست جدید
-          </h5>
-          <div className="flex flex-row flex-wrap items-center gap-2">
-            <input
-              type="text"
-              className="border rounded px-2 py-1 text-sm min-w-[180px]"
-              placeholder={Strings.delegationType}
-              value={newDelegationType.name}
-              onChange={(e) => handleNewNameChange(e.target.value)}
-            />
-            <div className="flex items-center gap-1">
-              <span className="text-[11px] text-gray-500">ترتیب</span>
-              <input
-                type="number"
-                className="w-16 border rounded px-1 py-0.5 text-xs text-center"
-                value={
-                  newDelegationType.order !== undefined &&
-                  newDelegationType.order !== null
-                    ? newDelegationType.order
-                    : ""
-                }
-                onChange={(e) => handleNewOrderChange(e.target.value)}
-                placeholder="#"
-              />
-            </div>
-            <button
-              onClick={handleAddNewItem}
-              className="bg-dark-blue text-white text-sm px-3 py-1 rounded hover:bg-blue-900 transition-all"
-            >
-              افزودن
-            </button>
-          </div>
-
-          {/* اگر بخواهی یکجا ذخیره کنی */}
-          {newItems.length > 0 && (
-            <div className="mt-3">
-              <button
-                onClick={saveChanges}
-                className="bg-green-600 text-white text-sm px-3 py-1 rounded hover:bg-green-700 transition-all"
-              >
-                ذخیره تغییرات جدید
-              </button>
-            </div>
           )}
         </div>
       </div>
