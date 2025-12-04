@@ -1,6 +1,4 @@
 import React, { SetStateAction, useEffect, useState } from "react";
-// import { Button, Container, Form, Modal } from "react-bootstrap";
-
 import { useRecoilState } from "recoil";
 import Strings from "../../data/strings";
 import MapInfo, { defaultMapInfo } from "../../global/types/MapInfo";
@@ -60,6 +58,8 @@ const EditItemModal: React.FC<Props> = (props) => {
       title: newValue.trim(),
       credit,
       duration,
+      // توجه: order را دست نمی‌زنیم، چون input مربوطه
+      // خودش مستقیم modalState.order را آپدیت می‌کند.
     });
     setNewValue("");
     setMapInfo(defaultMapInfo);
@@ -93,13 +93,16 @@ const EditItemModal: React.FC<Props> = (props) => {
                   }}
                 />
               </div>
-              {props.editItemType===EditItemType.EstateType && (
+
+              {/* 🔹 اینجا را عوض کردیم: هم برای EstateType هم DelegationType */}
+              {(props.editItemType === EditItemType.EstateType ||
+                props.editItemType === EditItemType.DelegationType) && (
                 <div>
                   <label>{Strings.order}</label>
                   <input
                     className="inputDecoration my-1"
                     type="number"
-                    value={modalState.order}
+                    value={modalState.order ?? 0}
                     onChange={(e: {
                       currentTarget: { value: string | number };
                     }) => {
@@ -111,6 +114,7 @@ const EditItemModal: React.FC<Props> = (props) => {
                   />
                 </div>
               )}
+
               {props.editItemType === EditItemType.Province ||
               props.editItemType === EditItemType.City ||
               props.editItemType === EditItemType.Neighborhood ? (
@@ -162,6 +166,7 @@ const EditItemModal: React.FC<Props> = (props) => {
                   </div>
                 </>
               ) : null}
+
               {props.editItemType === EditItemType.Payment ? (
                 <>
                   <div>
