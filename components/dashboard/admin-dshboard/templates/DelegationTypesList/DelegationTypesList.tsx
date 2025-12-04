@@ -11,10 +11,9 @@ import editItemModalState, {
   EditItemType,
 } from "../../../../EditItemModal/EditItemModalState";
 import Spiner from "../../../../spinner/Spiner";
-import * as AiIcon from "react-icons/ai";
-import * as BiIcon from "react-icons/bi";
-import * as MdIcon from "react-icons/md";
+
 import GlobalState from "../../../../../global/states/GlobalState";
+
 const DelegationTypesList: FC = () => {
   const [delegationTypes, setDelegationTypes] = useState<DelegationType[]>([]);
   const [removedItems, setRemovedItems] = useState<DelegationType[]>([]);
@@ -22,6 +21,8 @@ const DelegationTypesList: FC = () => {
   const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
     id: "",
     name: "",
+    // 🔹 فیلد جدید برای ترتیب (اختیاری)
+    order: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -64,6 +65,10 @@ const DelegationTypesList: FC = () => {
       return;
     }
 
+    // 🔹 فرض می‌کنیم بک‌اند خودش براساس order مرتب کرده؛
+    // اگر نخواستی، می‌تونی اینجا هم sort کنی.
+    // data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
     setDelegationTypes(data);
     console.log(data);
 
@@ -73,7 +78,7 @@ const DelegationTypesList: FC = () => {
   const selectItemAsDeleted = (delegationType: DelegationType) => {
     setRemovedItems((prev) => {
       let type = prev.find((item) => item.id === delegationType.id);
-      let newRemovedItems = [];
+      let newRemovedItems: DelegationType[] = [];
       if (type) {
         newRemovedItems = prev.filter((item) => item.id !== delegationType.id);
         return newRemovedItems;
@@ -87,6 +92,7 @@ const DelegationTypesList: FC = () => {
   const createNewDelegationTypes = async () => {
     for (let i = 0; i < newItems.length; i++) {
       const element = newItems[i];
+      // 🔹 حالا element شامل order هم هست
       await service.current.createDelegationType(element);
     }
   };
@@ -95,18 +101,21 @@ const DelegationTypesList: FC = () => {
     if (modalState.id === "") return;
 
     setLoading((prev) => true);
+
+    // type قبلی را پیدا می‌کنیم تا orderش را نگه داریم
+    const prevType = delegationTypes.find((t) => t.id === modalState.id);
+
     let newType = await service.current.editDelegationType({
       id: modalState.id,
       name: modalState.value,
+      order: prevType?.order ?? 0,
     });
 
     if (newType) {
       setDelegationTypes((types) => {
-        let prevType = types.find((t) => t.id === newType!.id);
-        if (prevType) {
-          prevType.name = newType!.name;
-        }
-        return types;
+        return types.map((t) =>
+          t.id === newType.id ? { ...t, name: newType.name, order: newType.order } : t
+        );
       });
     }
     if (modalMounted.current) {
@@ -128,6 +137,39 @@ const DelegationTypesList: FC = () => {
     await createNewDelegationTypes();
     await loadData();
   };
+
+  // 🔹 تغییر مقدار order در state
+  const handleOrderChange = (id: string, value: string) => {
+    const num = value === "" ? undefined : Number(value);
+    setDelegationTypes((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? {
+              ...t,
+              order: Number.isNaN(num as number) ? undefined : (num as number),
+            }
+          : t
+      )
+    );
+  };
+
+  // 🔹 وقتی کاربر از فیلد order خارج می‌شود (blur)، تغییر را به بک‌اند می‌فرستیم
+  const handleOrderBlur = async (delegationType: DelegationType) => {
+    if (!delegationType.id) return;
+    try {
+      await service.current.editDelegationType({
+        id: delegationType.id,
+        name: delegationType.name,
+        order: delegationType.order ?? 0,
+      });
+      // اگر خواستی بعد از ذخیره مجدد دیتا بگیری:
+      // await loadData();
+    } catch (err) {
+      console.error("Failed to update order", err);
+      // اینجا می‌تونی toast یا modal خطا نشان بدهی
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       <EditItemModal
@@ -135,18 +177,11 @@ const DelegationTypesList: FC = () => {
         placeholder={Strings.delegationType}
         editItemType={EditItemType.DelegationType}
       />
+
       <div className="flex flex-row items-center gap-2 justify-center">
         <h4 className="text-2xl text-dark-blue font-bold">
           {Strings.delegationTypes}
         </h4>
-        {/* <button
-          className="refresh-btn d-inline rounded-circle"
-          onClick={async () => {
-            await loadData();
-          }}
-        >
-          refresh
-        </button> */}
       </div>
 
       <div className="my-5 flex flex-col gap-7 justify-between">
@@ -156,60 +191,39 @@ const DelegationTypesList: FC = () => {
           ) : (
             <ul className="flex flex-row flex-wrap gap-2">
               {delegationTypes.map((delegationType, index) => {
+                const isRemoved = !!removedItems.find(
+                  (item) => item.id === delegationType.id
+                );
                 return (
                   <React.Fragment key={index}>
                     <li
-                      className={`flex flex-row px-2 justify-between gap-5 items-center rounded-full p-2 shadow-xl ${
-                        removedItems.length > 0 &&
-                        removedItems.find(
-                          (item) => item.id === delegationType.id
-                        )
+                      className={`flex flex-row px-2 justify-between gap-3 items-center rounded-full p-2 shadow-xl ${
+                        isRemoved
                           ? "bg-red-100 text-red-800 hover:text-white text-sm hover:bg-red-800"
                           : "bg-[#f6f6f6]/60 text-dark-blue text-sm "
-                      }  cursor-default transition-all duration-200`}
-                      // title={delegationType.name}
-                      // onRemove={() => {
-                      //   selectItemAsDeleted(delegationType);
-                      // }}
-                      // onEdit={() => {
-                      //   const newMap = buildMap(EditItemType.DelegationType);
-                      //   setModalState({
-                      //     ...defaultEditItemModalState,
-                      //     id: delegationType.id,
-                      //     value: delegationType.name,
-                      //     displayMap: [...newMap],
-                      //   });
-                      // }}
+                      } cursor-default transition-all duration-200`}
                     >
                       <span className="font-bold">{delegationType.name}</span>
-                      {/* <div className="flex flex-row gap-1">
-                        <span
-                          onClick={() => {
-                            const newMap = buildMap(
-                              EditItemType.DelegationType
-                            );
-                            setModalState({
-                              ...defaultEditItemModalState,
-                              id: delegationType.id,
-                              value: delegationType.name,
-                              displayMap: [...newMap],
-                            });
-                          }}
-                          title="ویرایش"
-                          className="border  p-1 rounded-full hover:bg-[#f3bc65] cursor-pointer"
-                        >
-                          <BiIcon.BiEditAlt className="text-gray-400 hover:text-white" />
-                        </span>
-                        <span
-                          onClick={() => {
-                            selectItemAsDeleted(delegationType);
-                          }}
-                          title="حذف"
-                          className="border p-1 rounded-full hover:bg-red-700 cursor-pointer"
-                        >
-                          <MdIcon.MdOutlineRemove className="text-gray-400 hover:text-white" />
-                        </span>
-                      </div> */}
+
+                      {/* 🔹 فیلد جدید order برای کنترل ترتیب نمایش (سمت بک‌اند) */}
+                      <div className="flex items-center gap-1">
+                        <span className="text-[11px] text-gray-500">ترتیب</span>
+                        <input
+                          type="number"
+                          className="w-16 border rounded px-1 py-0.5 text-xs text-center"
+                          value={
+                            delegationType.order !== undefined &&
+                            delegationType.order !== null
+                              ? delegationType.order
+                              : ""
+                          }
+                          onChange={(e) =>
+                            handleOrderChange(delegationType.id, e.target.value)
+                          }
+                          onBlur={() => handleOrderBlur(delegationType)}
+                          placeholder="#"
+                        />
+                      </div>
                     </li>
                   </React.Fragment>
                 );
@@ -217,82 +231,7 @@ const DelegationTypesList: FC = () => {
             </ul>
           )}
         </div>
-        {/* <div className="flex flex-row">
-          <ul className="flex-1 flex flex-row flex-wrap gap-2">
-            {newItems.map((newItem, index) => {
-              return (
-                <li
-                  key={index}
-                  className="flex flex-row px-2 justify-between gap-5 items-center rounded-full p-2 bg-[#d99221]/60 text-dark-blue text-sm hover:bg-[#d99221] cursor-default transition-all duration-200"
-                >
-                  {newItem.name}
-
-                  <span
-                    onClick={() => {
-                      setNewItems((prev) =>
-                        prev.filter((_, id) => id !== index)
-                      );
-                    }}
-                    title="حذف"
-                    className="border border-white p-1 rounded-full hover:bg-red-700 cursor-pointer"
-                  >
-                    <MdIcon.MdOutlineRemove className="text-white" />
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-          {(newItems.length > 0 || removedItems.length > 0) && (
-            <button
-              className="text-sm bg-[#d99221] text-white h-9 px-2"
-              onClick={async () => {
-                await saveChanges();
-                setNewItems([]);
-                setRemovedItems([]);
-              }}
-            >
-              {Strings.saveChanges}
-            </button>
-          )}
-        </div> */}
       </div>
-      {/* <div className="flex flex-row w-full gap-[2px] items-center">
-        <div className="flex-1 flex flex-row gap-[2px] items-center">
-          <input
-            type="text"
-            className="inputDecoration"
-            placeholder={Strings.addNewDelegationType}
-            value={newDelegationType.name}
-            onChange={(e) => {
-              setNewDelegationType({
-                ...newDelegationType,
-                name: e.target.value,
-              });
-            }}
-          />
-          <button
-            className="w-9 h-9 flex items-center justify-center border group border-[#f3bc65] hover:bg-[#f3bc65]"
-            onClick={() => {
-              newDelegationType.name.trim() !== "" &&
-                setNewItems((prev) => [
-                  ...prev,
-                  {
-                    ...newDelegationType,
-                    name: newDelegationType.name.trim(),
-                  },
-                ]);
-              setNewDelegationType({
-                ...newDelegationType,
-                name: "",
-              });
-            }}
-          >
-            <AiIcon.AiOutlinePlus className="text-2xl transition-all text-[#f3bc65] group-hover:text-white" />
-          </button>
-        </div>
-
-        <div className="flex flex-col"></div>
-      </div> */}
     </div>
   );
 };
