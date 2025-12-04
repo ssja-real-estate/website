@@ -6,12 +6,10 @@ import DelegationType from "../../../../../global/types/DelegationType";
 import DelegationTypeService from "../../../../../services/api/DelegationTypeService/DelegationTypeService";
 import EditItemModal from "../../../../EditItemModal/EditItemModal";
 import editItemModalState, {
-  buildMap,
   defaultEditItemModalState,
   EditItemType,
 } from "../../../../EditItemModal/EditItemModalState";
 import Spiner from "../../../../spinner/Spiner";
-
 import GlobalState from "../../../../../global/states/GlobalState";
 
 const DelegationTypesList: FC = () => {
@@ -21,7 +19,7 @@ const DelegationTypesList: FC = () => {
   const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
     id: "",
     name: "",
-    // 🔹 فیلد جدید برای ترتیب (اختیاری)
+    // 🔹 فیلد جدید برای ترتیب
     order: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
@@ -56,43 +54,37 @@ const DelegationTypesList: FC = () => {
   const loadData = async () => {
     setDelegationTypes([]);
     if (!loading) {
-      setLoading((prev) => true);
+      setLoading(true);
     }
     const data = await service.current.getAllDelegationTypes();
 
     if (!mounted.current) {
-      setLoading((prev) => false);
+      setLoading(false);
       return;
     }
 
-    // 🔹 فرض می‌کنیم بک‌اند خودش براساس order مرتب کرده؛
-    // اگر نخواستی، می‌تونی اینجا هم sort کنی.
+    // اگر خواستی اینجا هم براساس order مرتب کن:
     // data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
     setDelegationTypes(data);
     console.log(data);
 
-    setLoading((prev) => false);
+    setLoading(false);
   };
 
   const selectItemAsDeleted = (delegationType: DelegationType) => {
     setRemovedItems((prev) => {
-      let type = prev.find((item) => item.id === delegationType.id);
-      let newRemovedItems: DelegationType[] = [];
-      if (type) {
-        newRemovedItems = prev.filter((item) => item.id !== delegationType.id);
-        return newRemovedItems;
-      } else {
-        newRemovedItems = [...prev, delegationType];
-        return newRemovedItems;
+      const exists = prev.find((item) => item.id === delegationType.id);
+      if (exists) {
+        return prev.filter((item) => item.id !== delegationType.id);
       }
+      return [...prev, delegationType];
     });
   };
 
   const createNewDelegationTypes = async () => {
     for (let i = 0; i < newItems.length; i++) {
       const element = newItems[i];
-      // 🔹 حالا element شامل order هم هست
       await service.current.createDelegationType(element);
     }
   };
@@ -100,28 +92,33 @@ const DelegationTypesList: FC = () => {
   const editDelegationType = async () => {
     if (modalState.id === "") return;
 
-    setLoading((prev) => true);
+    setLoading(true);
 
     // type قبلی را پیدا می‌کنیم تا orderش را نگه داریم
     const prevType = delegationTypes.find((t) => t.id === modalState.id);
 
-    let newType = await service.current.editDelegationType({
+    const response = await service.current.editDelegationType({
       id: modalState.id,
       name: modalState.value,
       order: prevType?.order ?? 0,
     });
 
-    if (newType) {
-      setDelegationTypes((types) => {
-        return types.map((t) =>
-          t.id === newType.id ? { ...t, name: newType.name, order: newType.order } : t
-        );
-      });
+    const updated = response; // 🔹 const برای narrowing پایدار
+
+    if (updated) {
+      setDelegationTypes((types) =>
+        types.map((t) =>
+          t.id === updated.id
+            ? { ...t, name: updated.name, order: updated.order }
+            : t
+        )
+      );
     }
+
     if (modalMounted.current) {
       setModalState(defaultEditItemModalState);
     }
-    setLoading((prev) => false);
+    setLoading(false);
   };
 
   const deleteDelegationTypes = async () => {
@@ -132,7 +129,7 @@ const DelegationTypesList: FC = () => {
   };
 
   const saveChanges = async () => {
-    setLoading((prev) => true);
+    setLoading(true);
     await deleteDelegationTypes();
     await createNewDelegationTypes();
     await loadData();
@@ -153,7 +150,7 @@ const DelegationTypesList: FC = () => {
     );
   };
 
-  // 🔹 وقتی کاربر از فیلد order خارج می‌شود (blur)، تغییر را به بک‌اند می‌فرستیم
+  // 🔹 روی blur مقدار order را به بک‌اند می‌فرستیم
   const handleOrderBlur = async (delegationType: DelegationType) => {
     if (!delegationType.id) return;
     try {
@@ -162,11 +159,10 @@ const DelegationTypesList: FC = () => {
         name: delegationType.name,
         order: delegationType.order ?? 0,
       });
-      // اگر خواستی بعد از ذخیره مجدد دیتا بگیری:
+      // اگر خواستی بعدش دوباره loadData بزنی:
       // await loadData();
     } catch (err) {
       console.error("Failed to update order", err);
-      // اینجا می‌تونی toast یا modal خطا نشان بدهی
     }
   };
 
@@ -205,7 +201,7 @@ const DelegationTypesList: FC = () => {
                     >
                       <span className="font-bold">{delegationType.name}</span>
 
-                      {/* 🔹 فیلد جدید order برای کنترل ترتیب نمایش (سمت بک‌اند) */}
+                      {/* فیلد order برای کنترل ترتیب (سمت بک‌اند) */}
                       <div className="flex items-center gap-1">
                         <span className="text-[11px] text-gray-500">ترتیب</span>
                         <input
@@ -218,7 +214,10 @@ const DelegationTypesList: FC = () => {
                               : ""
                           }
                           onChange={(e) =>
-                            handleOrderChange(delegationType.id, e.target.value)
+                            handleOrderChange(
+                              delegationType.id,
+                              e.target.value
+                            )
                           }
                           onBlur={() => handleOrderBlur(delegationType)}
                           placeholder="#"
