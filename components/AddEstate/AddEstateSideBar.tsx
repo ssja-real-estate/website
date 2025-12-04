@@ -186,7 +186,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
     setLoading(false);
   }
 
-  // واکنش به کلیک روی نقشه + اسکرول خودکار روی موبایل
+  // واکنش به کلیک روی نقشه + اسکرول خودکار روی موبایل + آدرس کامل
   useEffect(() => {
     if (!mapClick) return;
 
@@ -221,7 +221,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
       }, 50);
     }
 
-    // 2) reverse-geocode برای آدرس
+    // 2) reverse-geocode برای آدرس (کامل‌تر)
     let cancelled = false;
     (async () => {
       try {
@@ -231,19 +231,30 @@ const AddEstateSidebar: FC<Props> = (props) => {
           console.warn("[AddEstate] reverse-geocode failed:", res.status);
           return;
         }
-        const json = await res.json();
+        const json: any = await res.json();
         const addr = json?.address || {};
 
-        const nice = [
-          addr.state,
-          addr.city || addr.town || addr.village,
-          addr.neighbourhood || addr.suburb || addr.city_district,
-        ]
-          .filter(Boolean)
-          .join(" / ");
+        // آدرس کامل که خود Nominatim می‌دهد
+        const fullDisplayName: string = json.display_name || "";
+
+        // سعی می‌کنیم آدرس را به صورت مرتب شده بسازیم
+        const parts: string[] = [
+          addr.state, // استان
+          addr.city || addr.town || addr.village, // شهر / روستا
+          addr.suburb ||
+            addr.city_district ||
+            addr.neighbourhood, // محله / ناحیه
+          addr.road, // خیابان
+          addr.residential, // مجتمع / بلوک
+          addr.house_number, // پلاک
+          addr.postcode, // کد پستی
+        ].filter(Boolean);
+
+        // اگر چیزی از parts داشتیم، از آن استفاده می‌کنیم، وگرنه از fullDisplayName
+        const display: string =
+          parts.length > 0 ? parts.join(" ، ") : fullDisplayName;
 
         if (!cancelled) {
-          const display = nice || json.display_name || "";
           setAddressText(display);
           console.debug("[AddEstate] reverse-geocode addressText =", display);
         }
@@ -497,7 +508,9 @@ const AddEstateSidebar: FC<Props> = (props) => {
             onChange={handleCityChange}
           />
         </div>
-          <div className="flex flex-col gap-1">
+
+        {/* آدرس انتخاب‌شده از روی نقشه */}
+        <div className="flex flex-col gap-1">
           <label className="text-xs text-white">آدرس انتخاب شده روی نقشه</label>
           <div className="text-xs text-gray-100 bg-[rgba(255,255,255,.08)] border border-white/30 rounded px-2 py-2 min-h-[40px]">
             {addressText || Strings.enterlocationInfo}
@@ -508,6 +521,7 @@ const AddEstateSidebar: FC<Props> = (props) => {
             </p>
           )}
         </div>
+
         {/* نوع درخواست */}
         <div className="flex flex-col gap-1">
           <Select
@@ -536,14 +550,8 @@ const AddEstateSidebar: FC<Props> = (props) => {
           />
         </div>
 
-        {/* آدرس انتخاب‌شده از روی نقشه */}
-        
-
         {/* نقطه شروع فرم برای اسکرول موبایل */}
         <div ref={formRef} />
-
-        {/* مبلغ / رهن – اگر می‌خوای واقعاً ذخیره‌شان کنی، بعداً وصلشون کن به estate.dataForm */}
-     
 
         {/* بدنه فرم داینامیک */}
         {isDefault ? (
