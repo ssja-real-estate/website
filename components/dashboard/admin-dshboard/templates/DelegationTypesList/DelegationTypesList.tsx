@@ -19,8 +19,7 @@ const DelegationTypesList: FC = () => {
   const [newDelegationType, setNewDelegationType] = useState<DelegationType>({
     id: "",
     name: "",
-    // 🔹 فیلد جدید برای ترتیب
-    order: 0,
+    order: 0, // فیلد ترتیب برای آیتم جدید
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [modalState, setModalState] = useRecoilState(editItemModalState);
@@ -63,7 +62,7 @@ const DelegationTypesList: FC = () => {
       return;
     }
 
-    // اگر خواستی اینجا هم براساس order مرتب کن:
+    // اگر خواستی اینجا هم مرتب کنی (در صورتی که بک‌اند مرتب نکرده):
     // data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
     setDelegationTypes(data);
@@ -85,7 +84,10 @@ const DelegationTypesList: FC = () => {
   const createNewDelegationTypes = async () => {
     for (let i = 0; i < newItems.length; i++) {
       const element = newItems[i];
-      await service.current.createDelegationType(element);
+      await service.current.createDelegationType({
+        name: element.name,
+        order: element.order ?? 0,
+      } as any);
     }
   };
 
@@ -94,16 +96,16 @@ const DelegationTypesList: FC = () => {
 
     setLoading(true);
 
-    // type قبلی را پیدا می‌کنیم تا orderش را نگه داریم
+    // مقدار order فعلی آیتم
     const prevType = delegationTypes.find((t) => t.id === modalState.id);
 
     const response = await service.current.editDelegationType({
       id: modalState.id,
       name: modalState.value,
       order: prevType?.order ?? 0,
-    });
+    } as any);
 
-    const updated = response; // 🔹 const برای narrowing پایدار
+    const updated = response;
 
     if (updated) {
       setDelegationTypes((types) =>
@@ -135,7 +137,7 @@ const DelegationTypesList: FC = () => {
     await loadData();
   };
 
-  // 🔹 تغییر مقدار order در state
+  // تغییر order برای آیتم‌های موجود
   const handleOrderChange = (id: string, value: string) => {
     const num = value === "" ? undefined : Number(value);
     setDelegationTypes((prev) =>
@@ -150,7 +152,7 @@ const DelegationTypesList: FC = () => {
     );
   };
 
-  // 🔹 روی blur مقدار order را به بک‌اند می‌فرستیم
+  // ذخیرهٔ order برای آیتم‌های موجود (روی blur)
   const handleOrderBlur = async (delegationType: DelegationType) => {
     if (!delegationType.id) return;
     try {
@@ -158,12 +160,47 @@ const DelegationTypesList: FC = () => {
         id: delegationType.id,
         name: delegationType.name,
         order: delegationType.order ?? 0,
-      });
-      // اگر خواستی بعدش دوباره loadData بزنی:
+      } as any);
+      // اگر خواستی بعد از هر تغییر دوباره از سرور بخونی:
       // await loadData();
     } catch (err) {
       console.error("Failed to update order", err);
     }
+  };
+
+  // مدیریت ورود نام و order برای آیتم جدید
+  const handleNewNameChange = (value: string) => {
+    setNewDelegationType((prev) => ({ ...prev, name: value }));
+  };
+
+  const handleNewOrderChange = (value: string) => {
+    const num = value === "" ? 0 : Number(value);
+    setNewDelegationType((prev) => ({
+      ...prev,
+      order: Number.isNaN(num) ? 0 : num,
+    }));
+  };
+
+  const handleAddNewItem = () => {
+    if (!newDelegationType.name.trim()) return;
+
+    const item: DelegationType = {
+      id: "", // بک‌اند id را می‌سازد
+      name: newDelegationType.name.trim(),
+      order: newDelegationType.order ?? 0,
+    };
+
+    setNewItems((prev) => [...prev, item]);
+
+    // می‌توانی هم‌زمان در لیست فعلی نشان بدهی (اختیاری):
+    setDelegationTypes((prev) => [...prev, item]);
+
+    // ریست فرم
+    setNewDelegationType({
+      id: "",
+      name: "",
+      order: 0,
+    });
   };
 
   return (
@@ -181,7 +218,8 @@ const DelegationTypesList: FC = () => {
       </div>
 
       <div className="my-5 flex flex-col gap-7 justify-between">
-        <div className="">
+        {/* لیست آیتم‌ها */}
+        <div>
           {loading ? (
             <Spiner />
           ) : (
@@ -201,7 +239,7 @@ const DelegationTypesList: FC = () => {
                     >
                       <span className="font-bold">{delegationType.name}</span>
 
-                      {/* فیلد order برای کنترل ترتیب (سمت بک‌اند) */}
+                      {/* فیلد order برای آیتم‌های موجود */}
                       <div className="flex items-center gap-1">
                         <span className="text-[11px] text-gray-500">ترتیب</span>
                         <input
@@ -228,6 +266,55 @@ const DelegationTypesList: FC = () => {
                 );
               })}
             </ul>
+          )}
+        </div>
+
+        {/* بخش افزودن آیتم جدید با name + order */}
+        <div className="mt-4 border-t pt-4">
+          <h5 className="text-sm font-semibold text-dark-blue mb-2">
+            افزودن نوع درخواست جدید
+          </h5>
+          <div className="flex flex-row flex-wrap items-center gap-2">
+            <input
+              type="text"
+              className="border rounded px-2 py-1 text-sm min-w-[180px]"
+              placeholder={Strings.delegationType}
+              value={newDelegationType.name}
+              onChange={(e) => handleNewNameChange(e.target.value)}
+            />
+            <div className="flex items-center gap-1">
+              <span className="text-[11px] text-gray-500">ترتیب</span>
+              <input
+                type="number"
+                className="w-16 border rounded px-1 py-0.5 text-xs text-center"
+                value={
+                  newDelegationType.order !== undefined &&
+                  newDelegationType.order !== null
+                    ? newDelegationType.order
+                    : ""
+                }
+                onChange={(e) => handleNewOrderChange(e.target.value)}
+                placeholder="#"
+              />
+            </div>
+            <button
+              onClick={handleAddNewItem}
+              className="bg-dark-blue text-white text-sm px-3 py-1 rounded hover:bg-blue-900 transition-all"
+            >
+              افزودن
+            </button>
+          </div>
+
+          {/* اگر بخواهی یکجا ذخیره کنی */}
+          {newItems.length > 0 && (
+            <div className="mt-3">
+              <button
+                onClick={saveChanges}
+                className="bg-green-600 text-white text-sm px-3 py-1 rounded hover:bg-green-700 transition-all"
+              >
+                ذخیره تغییرات جدید
+              </button>
+            </div>
           )}
         </div>
       </div>
