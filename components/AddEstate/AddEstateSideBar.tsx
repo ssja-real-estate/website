@@ -497,7 +497,17 @@ const AddEstateSidebar: FC<Props> = (props) => {
             onChange={handleCityChange}
           />
         </div>
-
+          <div className="flex flex-col gap-1">
+          <label className="text-xs text-white">آدرس انتخاب شده روی نقشه</label>
+          <div className="text-xs text-gray-100 bg-[rgba(255,255,255,.08)] border border-white/30 rounded px-2 py-2 min-h-[40px]">
+            {addressText || Strings.enterlocationInfo}
+          </div>
+          {!estate.mapInfo?.latitude && (
+            <p className="mt-1 text-[11px] text-yellow-200">
+              روی نقشه یک نقطه انتخاب کنید تا آدرس و مختصات ثبت شود.
+            </p>
+          )}
+        </div>
         {/* نوع درخواست */}
         <div className="flex flex-col gap-1">
           <Select
@@ -527,46 +537,13 @@ const AddEstateSidebar: FC<Props> = (props) => {
         </div>
 
         {/* آدرس انتخاب‌شده از روی نقشه */}
-        <div className="flex flex-col gap-1">
-          <label className="text-xs text-white">آدرس انتخاب شده روی نقشه</label>
-          <div className="text-xs text-gray-100 bg-[rgba(255,255,255,.08)] border border-white/30 rounded px-2 py-2 min-h-[40px]">
-            {addressText || Strings.enterlocationInfo}
-          </div>
-          {!estate.mapInfo?.latitude && (
-            <p className="mt-1 text-[11px] text-yellow-200">
-              روی نقشه یک نقطه انتخاب کنید تا آدرس و مختصات ثبت شود.
-            </p>
-          )}
-        </div>
+        
 
         {/* نقطه شروع فرم برای اسکرول موبایل */}
         <div ref={formRef} />
 
         {/* مبلغ / رهن – اگر می‌خوای واقعاً ذخیره‌شان کنی، بعداً وصلشون کن به estate.dataForm */}
-        <div className="flex flex-col gap-2">
-          <div>
-            <label className="text-xs text-white">مبلغ (تومان)</label>
-            <input
-              type="text"
-              className="w-full mt-1 px-2 py-1 rounded text-left text-sm"
-              dir="ltr"
-              value={value}
-              onChange={(e) => handleChange(e.target.value)}
-              placeholder="مثلاً 2,500,000,000"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-white">رهن / ودیعه (در صورت نیاز)</label>
-            <input
-              type="text"
-              className="w-full mt-1 px-2 py-1 rounded text-left text-sm"
-              dir="ltr"
-              value={mortgage}
-              onChange={(e) => handleChangeMortgage(e.target.value)}
-              placeholder="مثلاً 500,000,000"
-            />
-          </div>
-        </div>
+     
 
         {/* بدنه فرم داینامیک */}
         {isDefault ? (
